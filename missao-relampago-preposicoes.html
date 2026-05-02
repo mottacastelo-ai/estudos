@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão Relâmpago – Locuções Adjetivas</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8EC;
+    --card: #fff;
+    --primary: #f0932b;
+    --primary-dark: #d07b1a;
+    --primary-light: #fdebd0;
+    --accent: #f9ca24;
+    --green: #20bf6b;
+    --green-light: #d5f5e3;
+    --red: #e74c3c;
+    --red-light: #fadbd8;
+    --purple: #7B68EE;
+    --text: #2D3436;
+    --muted: #636E72;
+    --border: #DDE3EE;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); min-height: 100vh; padding: 24px 16px; color: var(--text); }
+  .container { max-width: 660px; margin: 0 auto; }
+
+  .header { text-align: center; margin-bottom: 24px; }
+  .badge { display: inline-block; background: var(--primary); color: white; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-bottom: 10px; }
+  h1 { font-family: 'Fredoka One', cursive; font-size: 34px; color: var(--primary-dark); margin-bottom: 6px; }
+  .subtitle { font-size: 14px; color: var(--muted); font-weight: 600; }
+
+  /* Start screen */
+  .start-screen { background: var(--card); border: 2px solid var(--border); border-radius: 24px; padding: 28px 24px; text-align: center; }
+  .start-screen h2 { font-family: 'Fredoka One', cursive; font-size: 24px; color: var(--primary-dark); margin-bottom: 12px; }
+  .start-screen p { font-size: 14px; color: var(--muted); font-weight: 700; line-height: 1.7; margin-bottom: 14px; }
+  .example-box { background: var(--primary-light); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 800; color: var(--primary-dark); margin-bottom: 20px; text-align: left; line-height: 1.7; }
+  .diff-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .diff-btn { flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 14px; background: var(--card); font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; transition: all .18s; color: var(--text); }
+  .diff-btn:hover, .diff-btn.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+  .btn-start { background: var(--primary); color: white; border: none; border-radius: 14px; padding: 16px 40px; font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800; cursor: pointer; transition: all .18s; }
+  .btn-start:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+  /* Game area */
+  #game-area { display: none; }
+
+  .top-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .stat-pill { flex: 1; background: var(--card); border: 2px solid var(--border); border-radius: 14px; padding: 10px; text-align: center; font-weight: 800; }
+  .stat-pill .big { font-size: 26px; font-family: 'Fredoka One', cursive; }
+  .stat-pill .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .stat-pill.green .big { color: var(--green); }
+  .stat-pill.red .big { color: var(--red); }
+  .stat-pill.orange .big { color: var(--primary); }
+
+  /* Big timer */
+  .timer-block {
+    background: var(--card); border: 3px solid var(--primary);
+    border-radius: 20px; padding: 16px 20px; margin-bottom: 16px;
+    text-align: center; box-shadow: 0 4px 20px rgba(240,147,43,.12);
+  }
+  .big-timer { font-family: 'Fredoka One', cursive; font-size: 56px; line-height: 1; transition: color .3s; }
+  .big-timer.ok { color: var(--green); }
+  .big-timer.warn { color: var(--primary); }
+  .big-timer.danger { color: var(--red); }
+  .timer-bar-wrap { background: #EEE; border-radius: 20px; height: 10px; overflow: hidden; margin-top: 10px; }
+  .timer-bar { height: 100%; border-radius: 20px; transition: width .9s linear, background .3s; }
+
+  /* Input */
+  .input-card { background: var(--card); border: 2px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+  .input-label { font-size: 13px; font-weight: 800; color: var(--muted); margin-bottom: 10px; display: block; }
+  .locucao-input { width: 100%; border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); outline: none; transition: border-color .2s; }
+  .locucao-input:focus { border-color: var(--primary); }
+
+  .btn-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .btn { flex: 1; padding: 14px; border: none; border-radius: 14px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: all .18s; }
+  .btn-add { background: var(--primary); color: white; }
+  .btn-add:hover { background: var(--primary-dark); transform: translateY(-2px); }
+  .btn-add:disabled { opacity: .4; cursor: default; transform: none; }
+
+  /* Log */
+  .log-section { margin-bottom: 20px; }
+  .log-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 10px; }
+  .log-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .log-tag { padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 800; border: 2px solid; animation: pop .25s ease; }
+  @keyframes pop { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+  .log-tag.valid { background: var(--green-light); color: var(--green); border-color: var(--green); }
+  .log-tag.invalid { background: var(--red-light); color: var(--red); border-color: var(--red); text-decoration: line-through; }
+
+  /* Result */
+  .result-screen { display: none; background: var(--card); border: 2px solid var(--border); border-radius: 24px; padding: 32px 24px; text-align: center; animation: popIn .4s ease; }
+  .result-screen.show { display: block; }
+  @keyframes popIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .result-emoji { font-size: 60px; margin-bottom: 12px; }
+  .result-title { font-family: 'Fredoka One', cursive; font-size: 30px; color: var(--primary-dark); margin-bottom: 6px; }
+  .result-big { font-size: 52px; font-weight: 900; color: var(--text); }
+  .result-big span { color: var(--primary-dark); }
+  .result-sub { font-size: 14px; color: var(--muted); font-weight: 700; margin: 8px 0 20px; }
+  .medal-chip { display: inline-block; background: var(--accent); padding: 8px 20px; border-radius: 20px; font-weight: 800; font-size: 15px; margin-bottom: 24px; }
+  .btn-restart { background: var(--primary); color: white; border: none; border-radius: 14px; padding: 14px 32px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: all .18s; }
+  .btn-restart:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+  .valid-list { text-align: left; margin-bottom: 20px; }
+  .valid-list-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">⚡ Método ativo – Praticar</div>
+    <h1>Missão Relâmpago!</h1>
+    <p class="subtitle">Escreva o máximo de locuções adjetivas que conseguir antes do tempo acabar</p>
+  </div>
+
+  <!-- Start screen -->
+  <div class="start-screen" id="start-screen">
+    <h2>O que são locuções adjetivas?</h2>
+    <p>São expressões formadas por <strong>preposição + substantivo</strong> que funcionam como adjetivos — descrevem um outro substantivo.</p>
+    <div class="example-box">
+      💡 Exemplos corretos:<br>
+      flor <strong>do campo</strong> • pão <strong>de queijo</strong> • bolo <strong>de chocolate</strong><br>
+      boneca <strong>de pano</strong> • panela <strong>de barro</strong> • festa <strong>da roça</strong>
+    </div>
+    <p>Escolha o nível de dificuldade:</p>
+    <div class="diff-row">
+      <button class="diff-btn selected" id="diff-facil" onclick="setDiff('facil')">😊 Fácil<br><small>2 minutos</small></button>
+      <button class="diff-btn" id="diff-medio" onclick="setDiff('medio')">🔥 Médio<br><small>1 minuto</small></button>
+      <button class="diff-btn" id="diff-dificil" onclick="setDiff('dificil')">⚡ Difícil<br><small>30 segundos</small></button>
+    </div>
+    <button class="btn-start" onclick="startGame()">⚡ Iniciar missão!</button>
+  </div>
+
+  <!-- Game area -->
+  <div id="game-area">
+    <div class="top-row">
+      <div class="stat-pill green"><div class="big" id="cnt-valid">0</div><div class="lbl">✅ Corretas</div></div>
+      <div class="stat-pill red"><div class="big" id="cnt-invalid">0</div><div class="lbl">❌ Inválidas</div></div>
+      <div class="stat-pill orange"><div class="big" id="cnt-total-words">0</div><div class="lbl">Total</div></div>
+    </div>
+
+    <div class="timer-block">
+      <div class="big-timer ok" id="big-timer">2:00</div>
+      <div class="timer-bar-wrap">
+        <div class="timer-bar" id="timer-bar" style="width:100%;background:var(--green)"></div>
+      </div>
+    </div>
+
+    <div class="input-card">
+      <span class="input-label">✏️ Digite uma locução adjetiva e pressione Enter:</span>
+      <input type="text" class="locucao-input" id="locucao-input" placeholder="Ex: pão de queijo" maxlength="60" onkeydown="handleKey(event)">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-add" id="btn-add" onclick="addLocucao()">➕ Adicionar</button>
+    </div>
+
+    <div class="log-section" id="log-section" style="display:none">
+      <div class="log-title" id="log-title">Suas locuções:</div>
+      <div class="log-grid" id="log-grid"></div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-screen" id="result-screen">
+    <div class="result-emoji" id="result-emoji">🏆</div>
+    <div class="result-title" id="result-title">Incrível!</div>
+    <div class="result-big"><span id="result-valid">0</span> corretas</div>
+    <div class="result-sub" id="result-sub"></div>
+    <div class="medal-chip" id="result-medal">🥇</div>
+    <div class="valid-list" id="valid-list"></div>
+    <button class="btn-restart" onclick="restartGame()">🔄 Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+// Known valid locuções adjetivas (expandable)
+const validLocucoes = new Set([
+  'pão de queijo','bolo de chocolate','flor do campo','boneca de pano','panela de barro',
+  'festa da roça','festa do morango','festa com barracas','boneco de madeira','viagem para alagoas',
+  'vestido de seda','sapato de couro','anel de ouro','colar de prata','copo de vidro',
+  'casa de pedra','telhado de palha','sopa de legumes','bolo de cenoura','bolo de laranja',
+  'suco de laranja','suco de maracujá','torta de limão','biscoito de polvilho',
+  'queijo de minas','vaca de leite','galo de briga','ave de rapina','peixe de água doce',
+  'livro de receitas','caderno de matemática','quadro de avisos','mesa de jantar',
+  'sala de aula','uniforme de escola','tênis de corrida','chapéu de palha',
+  'bolsa de couro','óculos de sol','garrafa de água','caixa de papelão',
+  'papel de parede','porta de madeira','janela de vidro','sofá de couro',
+  'cama de casal','colchão de mola','travesseiro de pena','roupa de cama',
+  'máquina de lavar','fogão de quatro bocas','geladeira de duas portas',
+  'panela de pressão','colher de pau','garfo de metal','faca de cozinha',
+  'tábua de corte','forma de bolo','assadeira de alumínio',
+  'homem de ferro','mulher de negócios','criança de rua',
+  'animal de estimação','cachorro de guarda','gato de rua',
+  'passarinho de gaiola','peixe de aquário','cobra de estimação',
+  'árvore de natal','flor de plástico','pedra de gelo',
+  'campo de futebol','quadra de tênis','pista de corrida',
+  'time de futebol','jogador de basquete','atleta de alto nível',
+  'medalha de ouro','troféu de prata','copo de campeão',
+]);
+
+const diffSettings = { facil: 120, medio: 60, dificil: 30 };
+let selectedDiff = 'facil';
+let totalTime = 120;
+let timeLeft = 120;
+let timer = null;
+let entries = [];
+let gameOver = false;
+
+function setDiff(diff) {
+  selectedDiff = diff;
+  totalTime = diffSettings[diff];
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('diff-' + diff).classList.add('selected');
+}
+
+function startGame() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+  entries = []; gameOver = false;
+  timeLeft = totalTime;
+  updateStats();
+  updateTimerDisplay();
+  document.getElementById('locucao-input').focus();
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) { clearInterval(timer); endGame(); }
+  }, 1000);
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); addLocucao(); }
+}
+
+function addLocucao() {
+  if (gameOver) return;
+  const input = document.getElementById('locucao-input');
+  const val = input.value.trim().toLowerCase();
+  if (!val) return;
+
+  // Check duplicate
+  const isDupe = entries.some(e => e.text === val);
+  if (isDupe) { input.value = ''; input.focus(); return; }
+
+  const isValid = validLocucoes.has(val) || looksLikeLocucao(val);
+  entries.push({ text: val, valid: isValid });
+  input.value = '';
+  input.focus();
+  updateStats();
+  updateLog();
+}
+
+function looksLikeLocucao(text) {
+  // Accepts: word + prep + word(s) pattern
+  const preps = ['de','do','da','dos','das','em','na','no','nas','nos','com','para','por','pelo','pela','sobre','após','até','sem','a','ao','à'];
+  const words = text.split(' ');
+  if (words.length < 2) return false;
+  return preps.some(p => words.includes(p));
+}
+
+function updateStats() {
+  const valid = entries.filter(e => e.valid).length;
+  const invalid = entries.filter(e => !e.valid).length;
+  document.getElementById('cnt-valid').textContent = valid;
+  document.getElementById('cnt-invalid').textContent = invalid;
+  document.getElementById('cnt-total-words').textContent = entries.length;
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('big-timer');
+  const bar = document.getElementById('timer-bar');
+  const pct = (timeLeft / totalTime) * 100;
+  const mins = Math.floor(timeLeft / 60);
+  const secs = timeLeft % 60;
+  el.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+  bar.style.width = pct + '%';
+  el.className = 'big-timer';
+  if (pct > 40) { el.classList.add('ok'); bar.style.background = '#20bf6b'; }
+  else if (pct > 20) { el.classList.add('warn'); bar.style.background = '#f0932b'; }
+  else { el.classList.add('danger'); bar.style.background = '#e74c3c'; }
+}
+
+function updateLog() {
+  const section = document.getElementById('log-section');
+  const grid = document.getElementById('log-grid');
+  const title = document.getElementById('log-title');
+  section.style.display = 'block';
+  title.textContent = `Suas locuções (${entries.length}):`;
+  grid.innerHTML = '';
+  entries.forEach(e => {
+    const tag = document.createElement('div');
+    tag.className = 'log-tag ' + (e.valid ? 'valid' : 'invalid');
+    tag.textContent = e.text;
+    grid.appendChild(tag);
+  });
+}
+
+function endGame() {
+  gameOver = true;
+  document.getElementById('locucao-input').disabled = true;
+  document.getElementById('btn-add').disabled = true;
+  document.getElementById('game-area').style.display = 'none';
+
+  const valid = entries.filter(e => e.valid);
+  const rs = document.getElementById('result-screen');
+  rs.className = 'result-screen show';
+
+  document.getElementById('result-valid').textContent = valid.length;
+  document.getElementById('result-sub').textContent = `Você escreveu ${entries.length} locuções no total. ${entries.length - valid.length} não foram reconhecidas.`;
+
+  let emoji, title, medal;
+  const v = valid.length;
+  if (v >= 10) { emoji='🏆'; title='Mestre das locuções!'; medal='🥇 Recordista!'; }
+  else if (v >= 6) { emoji='🌟'; title='Excelente!'; medal='🥈 Muito bem!'; }
+  else if (v >= 3) { emoji='😊'; title='Bom trabalho!'; medal='🥉 Continue assim!'; }
+  else { emoji='🔄'; title='Pratique mais!'; medal='📚 Revise e tente de novo!'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-medal').textContent = medal;
+
+  const vl = document.getElementById('valid-list');
+  if (valid.length > 0) {
+    vl.innerHTML = '<div class="valid-list-title">✅ Locuções válidas que você escreveu:</div><div style="display:flex;flex-wrap:wrap;gap:8px">' +
+      valid.map(e => `<span style="background:#d5f5e3;color:#1B5E20;border:2px solid #20bf6b;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:800">${e.text}</span>`).join('') + '</div>';
+  }
+}
+
+function restartGame() {
+  document.getElementById('result-screen').className = 'result-screen';
+  document.getElementById('locucao-input').disabled = false;
+  document.getElementById('btn-add').disabled = false;
+  document.getElementById('log-section').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+}
+</script>
+</body>
+</html>

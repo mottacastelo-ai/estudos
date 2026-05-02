@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caça ao Erro – Tabuada</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0D1B2A; --card:#1B2A3B; --card2:#0D1B2A;
+    --primary:#00C2FF; --primary-dark:#0099CC; --primary-light:#7DE8FF;
+    --gold:#FFD166; --green:#06D6A0; --red:#EF233C;
+    --text:#E8F4FD; --muted:#6B8CA4; --border:#1E3A4F;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Baloo 2',cursive; background:var(--bg); min-height:100vh; color:var(--text); padding:20px 16px; }
+  .container { max-width:620px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:24px; }
+  .badge { display:inline-block; background:var(--red); color:white; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Space Mono',monospace; font-size:28px; color:var(--primary-light); margin-bottom:4px; }
+  .subtitle { font-size:14px; color:var(--muted); font-weight:600; }
+  .card { background:var(--card); border:1.5px solid var(--border); border-radius:20px; padding:22px; margin-bottom:14px; }
+  .setup-lbl { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
+  .diff-row { display:flex; gap:8px; margin-bottom:18px; }
+  .diff-btn { flex:1; padding:14px 10px; border:2px solid var(--border); border-radius:14px; background:var(--card2); font-family:'Baloo 2',cursive; font-size:13px; font-weight:800; color:var(--muted); cursor:pointer; transition:all .18s; text-align:center; }
+  .diff-btn:hover { border-color:var(--primary); color:var(--primary-light); }
+  .diff-btn.sel { border-color:var(--primary); background:rgba(0,194,255,.12); color:var(--primary-light); }
+  .diff-btn .diff-icon { font-size:24px; display:block; margin-bottom:4px; }
+  .diff-btn .diff-name { font-size:13px; }
+  .diff-btn .diff-desc { font-size:10px; color:var(--muted); margin-top:2px; }
+  .tab-grid { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:6px; }
+  .tab-btn { width:42px; height:42px; border:2px solid var(--border); border-radius:10px; background:var(--card2); font-family:'Space Mono',monospace; font-size:15px; font-weight:700; color:var(--muted); cursor:pointer; transition:all .18s; }
+  .tab-btn:hover { border-color:var(--primary); color:var(--primary-light); }
+  .tab-btn.sel { background:var(--primary-dark); border-color:var(--primary); color:white; }
+  .tab-btn.wide { width:auto; padding:0 12px; font-size:12px; font-family:'Baloo 2',cursive; }
+  .btn-start { width:100%; padding:15px; background:var(--red); border:none; border-radius:14px; font-family:'Baloo 2',cursive; font-size:17px; font-weight:800; color:white; cursor:pointer; transition:all .18s; margin-top:16px; }
+  .btn-start:hover { background:#FF4560; transform:translateY(-2px); box-shadow:0 6px 20px rgba(239,35,60,.4); }
+  .btn-start:disabled { opacity:.35; cursor:default; transform:none; box-shadow:none; }
+
+  #game { display:none; }
+  .hud { display:flex; gap:10px; margin-bottom:12px; }
+  .hud-pill { flex:1; background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:10px; text-align:center; }
+  .hud-pill .big { font-family:'Space Mono',monospace; font-size:22px; font-weight:700; }
+  .hud-pill .lbl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+
+  .instr { background:rgba(0,194,255,.08); border:1.5px solid rgba(0,194,255,.2); border-radius:14px; padding:12px 16px; font-size:13px; font-weight:700; color:var(--primary-light); margin-bottom:14px; line-height:1.6; }
+
+  .ops-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  @media(max-width:400px){ .ops-grid { grid-template-columns:1fr; } }
+  .op-card { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:16px; cursor:pointer; transition:all .18s; text-align:center; position:relative; }
+  .op-card:hover:not(.locked) { border-color:var(--primary); transform:translateY(-2px); }
+  .op-card.marked { border-color:var(--red); background:rgba(239,35,60,.1); }
+  .op-card.locked { cursor:default; }
+  .op-card.result-correct-err { border-color:var(--green); background:rgba(6,214,160,.12); }
+  .op-card.result-missed { border-color:var(--red); background:rgba(239,35,60,.12); }
+  .op-card.result-correct-ok { border-color:var(--green); background:rgba(6,214,160,.08); }
+  .op-card.result-false-alarm { border-color:var(--red); background:rgba(239,35,60,.12); }
+  .op-text { font-family:'Space Mono',monospace; font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .op-mark { font-size:11px; font-weight:800; height:18px; }
+  .op-mark.marked-lbl { color:var(--red); }
+  .op-fb { font-size:11px; font-weight:700; margin-top:6px; display:none; line-height:1.4; }
+  .op-fb.show { display:block; }
+  .op-fb.ok { color:var(--green); }
+  .op-fb.nok { color:var(--red); }
+
+  .btn-row { display:flex; gap:10px; }
+  .btn { flex:1; padding:13px; border:none; border-radius:14px; font-family:'Baloo 2',cursive; font-size:15px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-check { background:var(--red); color:white; }
+  .btn-check:hover { background:#FF4560; transform:translateY(-2px); }
+  .btn-reset { background:var(--border); color:var(--muted); }
+  .btn-reset:hover { background:#2A4A65; }
+
+  .result { display:none; background:var(--card); border:1.5px solid var(--border); border-radius:24px; padding:32px 20px; text-align:center; animation:pop .4s ease; margin-top:14px; }
+  .result.show { display:block; }
+  @keyframes pop { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:60px; margin-bottom:10px; }
+  .r-title { font-family:'Space Mono',monospace; font-size:22px; color:var(--primary-light); margin-bottom:20px; }
+  .r-stats { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:22px; }
+  .rs { background:var(--card2); border:1.5px solid var(--border); border-radius:14px; padding:12px 16px; min-width:88px; }
+  .rs .rb { font-family:'Space Mono',monospace; font-size:26px; font-weight:700; }
+  .rs .rl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+  .btn-again { background:var(--red); border:none; border-radius:14px; padding:13px 32px; font-family:'Baloo 2',cursive; font-size:15px; font-weight:800; color:white; cursor:pointer; transition:all .18s; }
+  .btn-again:hover { background:#FF4560; transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🔍 Caça ao Erro</div>
+    <h1>TABUADA</h1>
+    <p class="subtitle">Encontre os resultados errados — e ignore os corretos!</p>
+  </div>
+
+  <div class="card" id="setup">
+    <div class="setup-lbl">Dificuldade</div>
+    <div class="diff-row">
+      <button class="diff-btn sel" onclick="setDiff('facil',this)">
+        <span class="diff-icon">😊</span>
+        <div class="diff-name">Fácil</div>
+        <div class="diff-desc">6 operações<br>Erros óbvios</div>
+      </button>
+      <button class="diff-btn" onclick="setDiff('medio',this)">
+        <span class="diff-icon">🔥</span>
+        <div class="diff-name">Médio</div>
+        <div class="diff-desc">9 operações<br>Erros sutis</div>
+      </button>
+      <button class="diff-btn" onclick="setDiff('dificil',this)">
+        <span class="diff-icon">💀</span>
+        <div class="diff-name">Difícil</div>
+        <div class="diff-desc">12 operações<br>Erros de ±1 ou ±2</div>
+      </button>
+    </div>
+    <div class="setup-lbl">Tabuadas</div>
+    <div class="tab-grid">
+      <button class="tab-btn wide" onclick="toggleAll()">Todas</button>
+      <button class="tab-btn" onclick="tog(2)" id="t2">2</button>
+      <button class="tab-btn" onclick="tog(3)" id="t3">3</button>
+      <button class="tab-btn" onclick="tog(4)" id="t4">4</button>
+      <button class="tab-btn" onclick="tog(5)" id="t5">5</button>
+      <button class="tab-btn" onclick="tog(6)" id="t6">6</button>
+      <button class="tab-btn" onclick="tog(7)" id="t7">7</button>
+      <button class="tab-btn" onclick="tog(8)" id="t8">8</button>
+      <button class="tab-btn" onclick="tog(9)" id="t9">9</button>
+      <button class="tab-btn" onclick="tog(10)" id="t10">10</button>
+    </div>
+    <button class="btn-start" id="btn-start" onclick="startGame()" disabled>🔍 Encontrar erros!</button>
+  </div>
+
+  <div id="game">
+    <div class="hud">
+      <div class="hud-pill"><div class="big" id="h-marked" style="color:var(--red)">0</div><div class="lbl">Marcados</div></div>
+      <div class="hud-pill"><div class="big" id="h-total" style="color:var(--primary-light)">0</div><div class="lbl">Total</div></div>
+      <div class="hud-pill"><div class="big" id="h-erros-count" style="color:var(--gold)">?</div><div class="lbl">Erros na lista</div></div>
+    </div>
+    <div class="instr">🕵️ Clique nas operações com resultado <strong>ERRADO</strong>. Cuidado — algumas estão certas!</div>
+    <div class="ops-grid" id="ops-grid"></div>
+    <div class="btn-row">
+      <button class="btn btn-check" onclick="checkAll()">✅ Verificar</button>
+      <button class="btn btn-reset" onclick="resetMarks()">↩ Desmarcar tudo</button>
+    </div>
+    <div class="result" id="result">
+      <div class="r-emoji" id="r-emoji">🏆</div>
+      <div class="r-title" id="r-title">DETETIVE!</div>
+      <div class="r-stats">
+        <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Corretos</div></div>
+        <div class="rs"><div class="rb" id="r-er" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+        <div class="rs"><div class="rb" id="r-tot" style="color:var(--primary-light)">0</div><div class="rl">Total</div></div>
+      </div>
+      <button class="btn-again" onclick="restart()">🔄 Nova rodada</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let diff='facil', tabs=new Set(), ops=[], marked=new Set(), checked=false;
+const diffConfig={facil:{count:6,range:8},medio:{count:9,range:5},dificil:{count:12,range:2}};
+
+function tog(n){const b=document.getElementById('t'+n);tabs.has(n)?(tabs.delete(n),b.classList.remove('sel')):(tabs.add(n),b.classList.add('sel'));document.getElementById('btn-start').disabled=tabs.size===0;}
+function toggleAll(){if(tabs.size===9){tabs.clear();document.querySelectorAll('#setup .tab-btn:not(.wide)').forEach(b=>b.classList.remove('sel'));}else{[2,3,4,5,6,7,8,9,10].forEach(n=>{tabs.add(n);document.getElementById('t'+n).classList.add('sel');});}document.getElementById('btn-start').disabled=tabs.size===0;}
+function setDiff(d,btn){diff=d;document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+
+function shuffle(a){return [...a].sort(()=>Math.random()-.5);}
+
+function generateOps(){
+  const cfg=diffConfig[diff];
+  const used=new Set();
+  const list=[];
+  const tabArr=[...tabs];
+  let attempts=0;
+  while(list.length<cfg.count&&attempts<200){
+    attempts++;
+    const a=tabArr[Math.floor(Math.random()*tabArr.length)];
+    const b=Math.floor(Math.random()*9)+2;
+    const key=`${a}×${b}`;
+    if(used.has(key))continue;
+    used.add(key);
+    const correct=a*b;
+    const isError=Math.random()<0.5;
+    let displayed=correct;
+    if(isError){
+      let offset=0;
+      while(offset===0){offset=Math.floor(Math.random()*cfg.range*2)-cfg.range;}
+      displayed=correct+offset;
+      if(displayed<=0)displayed=correct+Math.abs(offset);
+    }
+    list.push({a,b,correct,displayed,isError});
+  }
+  // guarantee at least 1 error and 1 correct
+  const hasErr=list.some(o=>o.isError);
+  const hasOk=list.some(o=>!o.isError);
+  if(!hasErr&&list.length>0){list[0].isError=true;list[0].displayed=list[0].correct+(diff==='dificil'?1:5);}
+  if(!hasOk&&list.length>1){list[1].isError=false;list[1].displayed=list[1].correct;}
+  return shuffle(list);
+}
+
+function renderOps(){
+  const grid=document.getElementById('ops-grid');
+  grid.innerHTML='';
+  const errCount=ops.filter(o=>o.isError).length;
+  document.getElementById('h-total').textContent=ops.length;
+  document.getElementById('h-erros-count').textContent='?';
+  ops.forEach((op,i)=>{
+    const card=document.createElement('div');
+    card.className='op-card';
+    card.id='op-'+i;
+    card.innerHTML=`<div class="op-text">${op.a} × ${op.b} = ${op.displayed}</div><div class="op-mark" id="mk-${i}"></div><div class="op-fb" id="fb-${i}"></div>`;
+    card.onclick=()=>toggleMark(i,card);
+    grid.appendChild(card);
+  });
+}
+
+function toggleMark(i,card){
+  if(checked)return;
+  if(marked.has(i)){marked.delete(i);card.classList.remove('marked');document.getElementById('mk-'+i).textContent='';}
+  else{marked.add(i);card.classList.add('marked');document.getElementById('mk-'+i).className='op-mark marked-lbl';document.getElementById('mk-'+i).textContent='⚠ Marcado como erro';}
+  document.getElementById('h-marked').textContent=marked.size;
+}
+
+function resetMarks(){if(checked)return;marked.clear();ops.forEach((_,i)=>{const c=document.getElementById('op-'+i);c.classList.remove('marked');document.getElementById('mk-'+i).textContent='';document.getElementById('mk-'+i).className='op-mark';});document.getElementById('h-marked').textContent=0;}
+
+function checkAll(){
+  checked=true;
+  let score=0;const total=ops.length;
+  const errCount=ops.filter(o=>o.isError).length;
+  document.getElementById('h-erros-count').textContent=errCount;
+  ops.forEach((op,i)=>{
+    const card=document.getElementById('op-'+i);
+    const fb=document.getElementById('fb-'+i);
+    const mk=document.getElementById('mk-'+i);
+    card.classList.add('locked');
+    fb.className='op-fb show';
+    if(op.isError&&marked.has(i)){score++;card.className='op-card locked result-correct-err';mk.textContent='';fb.className='op-fb show ok';fb.textContent=`✓ Correto! Era ${op.correct}`;}
+    else if(op.isError&&!marked.has(i)){card.className='op-card locked result-missed';mk.textContent='';fb.className='op-fb show nok';fb.textContent=`✗ Perdido! Era ${op.correct}`;}
+    else if(!op.isError&&!marked.has(i)){score++;card.className='op-card locked result-correct-ok';mk.textContent='';fb.className='op-fb show ok';fb.textContent='✓ Certo, sem erro!';}
+    else{card.className='op-card locked result-false-alarm';mk.textContent='';fb.className='op-fb show nok';fb.textContent=`✗ Estava correto! ${op.a}×${op.b}=${op.correct}`;}
+  });
+  const pct=Math.round(score/total*100);
+  const rs=document.getElementById('result');rs.className='result show';
+  document.getElementById('r-ac').textContent=score;
+  document.getElementById('r-er').textContent=total-score;
+  document.getElementById('r-tot').textContent=total;
+  let e,t;if(pct===100){e='🏆';t='DETETIVE PERFEITO!';}else if(pct>=75){e='🔍';t='MUITO BEM!';}else if(pct>=50){e='🤔';t='BOM COMEÇO!';}else{e='🔄';t='TREINE MAIS!';}
+  document.getElementById('r-emoji').textContent=e;document.getElementById('r-title').textContent=t;
+}
+
+function startGame(){
+  document.getElementById('setup').style.display='none';
+  document.getElementById('game').style.display='block';
+  document.getElementById('result').className='result';
+  marked.clear();checked=false;
+  ops=generateOps();
+  renderOps();
+  document.getElementById('h-marked').textContent=0;
+}
+
+function restart(){document.getElementById('result').className='result';document.getElementById('setup').style.display='block';document.getElementById('game').style.display='none';}
+</script>
+</body>
+</html>

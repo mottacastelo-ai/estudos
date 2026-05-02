@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards – Tabuada</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0B1120; --card:#131F35; --card2:#0B1120;
+    --primary:#3B82F6; --primary-light:#93C5FD;
+    --gold:#F59E0B; --green:#10B981; --red:#EF4444;
+    --orange:#F97316; --text:#EFF6FF; --muted:#64748B; --border:#1E3A5F;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Baloo 2',cursive; background:var(--bg); min-height:100vh; color:var(--text); padding:20px 16px; }
+  .container { max-width:560px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:24px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Space Mono',monospace; font-size:28px; color:var(--primary-light); margin-bottom:4px; }
+  .subtitle { font-size:14px; color:var(--muted); font-weight:600; }
+
+  .card { background:var(--card); border:1.5px solid var(--border); border-radius:20px; padding:22px; margin-bottom:14px; }
+  .setup-lbl { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
+  .tab-grid { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:6px; }
+  .tab-btn { width:42px; height:42px; border:2px solid var(--border); border-radius:10px; background:var(--card2); font-family:'Space Mono',monospace; font-size:15px; font-weight:700; color:var(--muted); cursor:pointer; transition:all .18s; }
+  .tab-btn:hover { border-color:var(--primary); color:var(--primary-light); }
+  .tab-btn.sel { background:var(--primary); border-color:var(--primary); color:white; }
+  .tab-btn.wide { width:auto; padding:0 12px; font-size:12px; font-family:'Baloo 2',cursive; }
+  .btn-start { width:100%; padding:15px; background:var(--primary); border:none; border-radius:14px; font-family:'Baloo 2',cursive; font-size:17px; font-weight:800; color:white; cursor:pointer; transition:all .18s; margin-top:16px; }
+  .btn-start:hover { background:#2563EB; transform:translateY(-2px); box-shadow:0 6px 20px rgba(59,130,246,.4); }
+  .btn-start:disabled { opacity:.35; cursor:default; transform:none; box-shadow:none; }
+
+  /* Leitner box display */
+  .leitner-row { display:flex; gap:8px; margin-bottom:14px; }
+  .box-pill { flex:1; background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:8px; text-align:center; }
+  .box-pill .bp-num { font-family:'Space Mono',monospace; font-size:18px; font-weight:700; }
+  .box-pill .bp-lbl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+  .box-pill.b1 .bp-num { color:var(--red); }
+  .box-pill.b2 .bp-num { color:var(--orange); }
+  .box-pill.b3 .bp-num { color:var(--gold); }
+  .box-pill.b4 .bp-num { color:var(--green); }
+
+  .progress-wrap { background:var(--border); border-radius:20px; height:6px; margin-bottom:16px; overflow:hidden; }
+  .progress-bar { height:100%; border-radius:20px; background:var(--primary); transition:width .4s ease; }
+
+  /* Flashcard */
+  #game { display:none; }
+  .flashcard-scene { perspective:1000px; height:220px; margin-bottom:16px; cursor:pointer; }
+  .flashcard-inner { width:100%; height:100%; transition:transform .5s ease; transform-style:preserve-3d; position:relative; }
+  .flashcard-inner.flipped { transform:rotateY(180deg); }
+  .flashcard-face { position:absolute; width:100%; height:100%; backface-visibility:hidden; border-radius:24px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:2px solid var(--border); }
+  .flashcard-front { background:var(--card); }
+  .flashcard-back { background:linear-gradient(135deg, #1E3A5F, #0F2744); transform:rotateY(180deg); border-color:var(--primary); }
+  .fc-hint { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; }
+  .fc-question { font-family:'Space Mono',monospace; font-size:40px; font-weight:700; color:var(--text); }
+  .fc-question .op { color:var(--primary-light); }
+  .fc-tap { font-size:13px; color:var(--muted); font-weight:600; margin-top:12px; }
+  .fc-answer { font-family:'Space Mono',monospace; font-size:56px; font-weight:700; color:var(--gold); }
+  .fc-check { font-size:14px; color:var(--primary-light); font-weight:600; margin-top:8px; }
+
+  /* Rating buttons */
+  .rating-row { display:flex; gap:10px; margin-bottom:14px; opacity:0; transition:opacity .3s; pointer-events:none; }
+  .rating-row.visible { opacity:1; pointer-events:all; }
+  .rating-btn { flex:1; padding:14px 10px; border:2px solid var(--border); border-radius:14px; background:var(--card); font-family:'Baloo 2',cursive; font-size:13px; font-weight:800; cursor:pointer; transition:all .18s; text-align:center; color:var(--text); }
+  .rating-btn:hover { transform:translateY(-2px); }
+  .rating-btn.easy { border-color:var(--green); }
+  .rating-btn.easy:hover { background:rgba(16,185,129,.15); }
+  .rating-btn.good { border-color:var(--primary); }
+  .rating-btn.good:hover { background:rgba(59,130,246,.15); }
+  .rating-btn.hard { border-color:var(--orange); }
+  .rating-btn.hard:hover { background:rgba(249,115,22,.15); }
+  .rating-btn.fail { border-color:var(--red); }
+  .rating-btn.fail:hover { background:rgba(239,68,68,.15); }
+  .rating-icon { font-size:20px; display:block; margin-bottom:3px; }
+  .rating-lbl { font-size:11px; display:block; }
+
+  .session-info { background:rgba(59,130,246,.08); border:1.5px solid rgba(59,130,246,.2); border-radius:12px; padding:10px 14px; font-size:13px; font-weight:700; color:var(--primary-light); margin-bottom:14px; text-align:center; }
+
+  /* Result */
+  .result { display:none; background:var(--card); border:1.5px solid var(--border); border-radius:24px; padding:32px 20px; text-align:center; animation:pop .4s ease; }
+  .result.show { display:block; }
+  @keyframes pop { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:60px; margin-bottom:10px; }
+  .r-title { font-family:'Space Mono',monospace; font-size:22px; color:var(--primary-light); margin-bottom:20px; }
+  .r-stats { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:22px; }
+  .rs { background:var(--card2); border:1.5px solid var(--border); border-radius:14px; padding:12px 16px; min-width:88px; }
+  .rs .rb { font-family:'Space Mono',monospace; font-size:26px; font-weight:700; }
+  .rs .rl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+  .hard-cards { text-align:left; margin-bottom:22px; }
+  .hard-t { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
+  .hard-grid { display:flex; flex-wrap:wrap; gap:6px; }
+  .hard-tag { background:rgba(239,68,68,.15); border:1.5px solid var(--red); color:var(--red); font-family:'Space Mono',monospace; font-size:12px; font-weight:700; padding:3px 10px; border-radius:8px; }
+  .btn-again { background:var(--primary); border:none; border-radius:14px; padding:13px 32px; font-family:'Baloo 2',cursive; font-size:15px; font-weight:800; color:white; cursor:pointer; transition:all .18s; }
+  .btn-again:hover { background:#2563EB; transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🧠 Repetição Espaçada</div>
+    <h1>FLASHCARDS</h1>
+    <p class="subtitle">Sistema Leitner — o que você erra aparece mais vezes</p>
+  </div>
+
+  <div class="card" id="setup">
+    <div class="setup-lbl">Tabuadas para estudar</div>
+    <div class="tab-grid">
+      <button class="tab-btn wide" onclick="toggleAll()">Todas</button>
+      <button class="tab-btn" onclick="tog(2)" id="t2">2</button>
+      <button class="tab-btn" onclick="tog(3)" id="t3">3</button>
+      <button class="tab-btn" onclick="tog(4)" id="t4">4</button>
+      <button class="tab-btn" onclick="tog(5)" id="t5">5</button>
+      <button class="tab-btn" onclick="tog(6)" id="t6">6</button>
+      <button class="tab-btn" onclick="tog(7)" id="t7">7</button>
+      <button class="tab-btn" onclick="tog(8)" id="t8">8</button>
+      <button class="tab-btn" onclick="tog(9)" id="t9">9</button>
+      <button class="tab-btn" onclick="tog(10)" id="t10">10</button>
+    </div>
+    <button class="btn-start" id="btn-start" onclick="startGame()" disabled>🧠 Começar sessão</button>
+  </div>
+
+  <div id="game">
+    <!-- Leitner boxes -->
+    <div class="leitner-row">
+      <div class="box-pill b1"><div class="bp-num" id="b1">0</div><div class="bp-lbl">🔴 Difícil</div></div>
+      <div class="box-pill b2"><div class="bp-num" id="b2">0</div><div class="bp-lbl">🟠 Médio</div></div>
+      <div class="box-pill b3"><div class="bp-num" id="b3">0</div><div class="bp-lbl">🟡 Bom</div></div>
+      <div class="box-pill b4"><div class="bp-num" id="b4">0</div><div class="bp-lbl">🟢 Fácil</div></div>
+    </div>
+
+    <div class="progress-wrap"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+    <div class="session-info" id="session-info">Carta 1 de 0</div>
+
+    <div class="flashcard-scene" onclick="flipCard()">
+      <div class="flashcard-inner" id="fc-inner">
+        <div class="flashcard-face flashcard-front">
+          <div class="fc-hint">Quanto é?</div>
+          <div class="fc-question" id="fc-q"></div>
+          <div class="fc-tap">👆 Toque para ver a resposta</div>
+        </div>
+        <div class="flashcard-face flashcard-back">
+          <div class="fc-hint">Resposta</div>
+          <div class="fc-answer" id="fc-a"></div>
+          <div class="fc-check">Como você foi?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rating-row" id="rating-row">
+      <button class="rating-btn fail" onclick="rate(0)"><span class="rating-icon">😵</span><span class="rating-lbl">Não lembrei</span></button>
+      <button class="rating-btn hard" onclick="rate(1)"><span class="rating-icon">😓</span><span class="rating-lbl">Difícil</span></button>
+      <button class="rating-btn good" onclick="rate(2)"><span class="rating-icon">🙂</span><span class="rating-lbl">Lembrei</span></button>
+      <button class="rating-btn easy" onclick="rate(3)"><span class="rating-icon">😄</span><span class="rating-lbl">Fácil!</span></button>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title">SESSÃO COMPLETA!</div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-easy" style="color:var(--green)">0</div><div class="rl">Fáceis</div></div>
+      <div class="rs"><div class="rb" id="r-good" style="color:var(--primary-light)">0</div><div class="rl">Lembradas</div></div>
+      <div class="rs"><div class="rb" id="r-hard" style="color:var(--orange)">0</div><div class="rl">Difíceis</div></div>
+      <div class="rs"><div class="rb" id="r-fail" style="color:var(--red)">0</div><div class="rl">Erradas</div></div>
+    </div>
+    <div class="hard-cards" id="hard-section" style="display:none">
+      <div class="hard-t">📌 Para praticar mais:</div>
+      <div class="hard-grid" id="hard-grid"></div>
+    </div>
+    <button class="btn-again" onclick="restart()">🔄 Nova sessão</button>
+  </div>
+</div>
+
+<script>
+// Sistema Leitner simplificado:
+// Box 1 (difícil): aparece toda sessão
+// Box 2: aparece a cada 2 sessões
+// Box 3: aparece a cada 3 sessões
+// Box 4 (fácil): dominado
+
+let tabs=new Set(), deck=[], queue=[], idx=0, flipped=false;
+let boxes={1:[],2:[],3:[],4:[]};
+let ratings={easy:0,good:0,hard:0,fail:0};
+let hardLog=[];
+
+function tog(n){const b=document.getElementById('t'+n);tabs.has(n)?(tabs.delete(n),b.classList.remove('sel')):(tabs.add(n),b.classList.add('sel'));document.getElementById('btn-start').disabled=tabs.size===0;}
+function toggleAll(){if(tabs.size===9){tabs.clear();document.querySelectorAll('#setup .tab-btn:not(.wide)').forEach(b=>b.classList.remove('sel'));}else{[2,3,4,5,6,7,8,9,10].forEach(n=>{tabs.add(n);document.getElementById('t'+n).classList.add('sel');});}document.getElementById('btn-start').disabled=tabs.size===0;}
+
+function buildDeck(){
+  const d=[];
+  tabs.forEach(a=>{for(let b=2;b<=10;b++)d.push({a,b,ans:a*b,box:1,key:`${a}×${b}`});});
+  return d.sort(()=>Math.random()-.5);
+}
+
+function flipCard(){
+  const inner=document.getElementById('fc-inner');
+  if(!flipped){
+    inner.classList.add('flipped');
+    flipped=true;
+    document.getElementById('rating-row').classList.add('visible');
+  }
+}
+
+function rate(score){
+  // 0=fail,1=hard,2=good,3=easy
+  const card=queue[idx];
+  if(score===0){card.box=1;ratings.fail++;hardLog.push(card.key);}
+  else if(score===1){card.box=Math.max(1,card.box-1);ratings.hard++;if(card.box<=2)hardLog.push(card.key);}
+  else if(score===2){card.box=Math.min(4,card.box+1);ratings.good++;}
+  else{card.box=Math.min(4,card.box+2);ratings.easy++;}
+  updateBoxes();
+  idx++;
+  if(idx>=queue.length){endSession();}
+  else{loadCard();}
+}
+
+function loadCard(){
+  flipped=false;
+  document.getElementById('fc-inner').classList.remove('flipped');
+  document.getElementById('rating-row').classList.remove('visible');
+  const card=queue[idx];
+  document.getElementById('fc-q').innerHTML=`${card.a} <span class="op">×</span> ${card.b} <span class="op">=</span> <span class="op">?</span>`;
+  document.getElementById('fc-a').textContent=card.ans;
+  const pct=Math.round((idx/queue.length)*100);
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('session-info').textContent=`Carta ${idx+1} de ${queue.length}`;
+}
+
+function updateBoxes(){
+  const cnt={1:0,2:0,3:0,4:0};
+  deck.forEach(c=>cnt[c.box]++);
+  [1,2,3,4].forEach(b=>document.getElementById('b'+b).textContent=cnt[b]);
+}
+
+function startGame(){
+  document.getElementById('setup').style.display='none';
+  document.getElementById('game').style.display='block';
+  ratings={easy:0,good:0,hard:0,fail:0};hardLog=[];
+  deck=buildDeck();
+  // First session: all cards from box 1
+  queue=[...deck].sort(()=>Math.random()-.5);
+  idx=0;
+  updateBoxes();
+  loadCard();
+}
+
+function endSession(){
+  document.getElementById('game').style.display='none';
+  const rs=document.getElementById('result');rs.className='result show';
+  document.getElementById('r-easy').textContent=ratings.easy;
+  document.getElementById('r-good').textContent=ratings.good;
+  document.getElementById('r-hard').textContent=ratings.hard;
+  document.getElementById('r-fail').textContent=ratings.fail;
+  const cnt={1:0,2:0,3:0,4:0};deck.forEach(c=>cnt[c.box]++);
+  const mastered=cnt[4];const total=deck.length;
+  const pct=Math.round(mastered/total*100);
+  let e,t;
+  if(pct>=80){e='🏆';t='MESTRE DA TABUADA!';}
+  else if(pct>=50){e='🌟';t='ÓTIMA SESSÃO!';}
+  else if(ratings.fail+ratings.hard<ratings.good+ratings.easy){e='💪';t='PROGREDINDO!';}
+  else{e='🔄';t='CONTINUE PRATICANDO!';}
+  document.getElementById('r-emoji').textContent=e;document.getElementById('r-title').textContent=t;
+  const unique=[...new Set(hardLog)];
+  if(unique.length>0){
+    const hs=document.getElementById('hard-section'),hg=document.getElementById('hard-grid');
+    hs.style.display='block';hg.innerHTML='';
+    unique.forEach(k=>{const tg=document.createElement('div');tg.className='hard-tag';tg.textContent=k;hg.appendChild(tg);});
+  }
+}
+
+function restart(){document.getElementById('result').className='result';document.getElementById('setup').style.display='block';}
+</script>
+</body>
+</html>

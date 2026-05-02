@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz de Preposições</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8F0;
+    --card: #FFFFFF;
+    --primary: #FF6B35;
+    --primary-light: #FFE0D3;
+    --secondary: #4ECDC4;
+    --secondary-light: #D8F5F3;
+    --accent: #FFE66D;
+    --accent-dark: #F4C430;
+    --purple: #7B68EE;
+    --purple-light: #E8E5FF;
+    --green: #2ECC71;
+    --green-light: #D5F5E3;
+    --red: #E74C3C;
+    --red-light: #FADBD8;
+    --text: #2D3436;
+    --text-muted: #636E72;
+    --border: #EAEAEA;
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --shadow-hover: 0 8px 30px rgba(0,0,0,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 24px 16px;
+    color: var(--text);
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 36px;
+    color: var(--primary);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    background: #EEE;
+    border-radius: 20px;
+    height: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent-dark));
+    border-radius: 20px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-label {
+    text-align: right;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  /* Score display */
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .score-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .score-pill span { color: var(--primary); font-size: 16px; }
+
+  /* Question card */
+  .question-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    border: 2px solid var(--border);
+    animation: slideIn 0.35s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .q-text em {
+    font-style: normal;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 1px 6px;
+    border-radius: 6px;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    background: #FAFAFA;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+  }
+  .option:hover:not(:disabled) {
+    border-color: var(--secondary);
+    background: var(--secondary-light);
+    transform: translateX(4px);
+  }
+  .option .opt-letter {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    flex-shrink: 0;
+    transition: background 0.18s;
+  }
+  .option.correct {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+  .option.correct .opt-letter {
+    background: var(--green);
+    color: white;
+  }
+  .option.wrong {
+    border-color: var(--red);
+    background: var(--red-light);
+  }
+  .option.wrong .opt-letter {
+    background: var(--red);
+    color: white;
+  }
+  .option:disabled { cursor: default; }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 14px;
+    display: none;
+    animation: popIn 0.25s ease;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb {
+    background: var(--green-light);
+    color: #1A7A45;
+    border: 2px solid var(--green);
+  }
+  .feedback.wrong-fb {
+    background: var(--red-light);
+    color: #922B21;
+    border: 2px solid var(--red);
+  }
+  .feedback-icon { font-size: 20px; margin-right: 6px; }
+
+  /* Next button */
+  .btn-next {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 15px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 14px;
+    display: none;
+    transition: all 0.18s;
+    letter-spacing: 0.02em;
+  }
+  .btn-next:hover { background: #E55A28; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,107,53,0.35); }
+  .btn-next.show { display: block; }
+
+  /* Results screen */
+  .results {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 40px 28px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 2px solid var(--border);
+    display: none;
+    animation: slideIn 0.4s ease;
+  }
+  .results.show { display: block; }
+  .results-emoji { font-size: 64px; margin-bottom: 16px; }
+  .results h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 30px;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  .results-score {
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--text);
+    margin: 16px 0 4px;
+  }
+  .results-score span { color: var(--primary); }
+  .results-subtitle {
+    font-size: 15px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 28px;
+  }
+  .medal {
+    display: inline-block;
+    background: var(--accent);
+    border-radius: 16px;
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 28px;
+    color: var(--text);
+  }
+  .review-list {
+    text-align: left;
+    margin-bottom: 28px;
+  }
+  .review-item {
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1.5px solid;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .review-item.ok { background: var(--green-light); border-color: var(--green); color: #1A7A45; }
+  .review-item.nok { background: var(--red-light); border-color: var(--red); color: #922B21; }
+  .review-item .ri-icon { flex-shrink: 0; font-size: 15px; }
+  .btn-restart {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 15px 36px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-restart:hover { background: #E55A28; transform: translateY(-2px); }
+
+  /* Decorative dots */
+  .dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 20px; }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .dot.done { background: var(--primary); }
+  .dot.current { background: var(--accent-dark); transform: scale(1.3); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-badge">Português • 5º ano</div>
+    <h1>Quiz de Preposições</h1>
+    <p>Leia cada pergunta com atenção e escolha a resposta certa!</p>
+  </div>
+
+  <div id="quiz-area">
+    <div class="score-row">
+      <div class="score-pill">⭐ Pontos: <span id="score-display">0</span></div>
+      <div class="score-pill">🎯 Acertos: <span id="hits-display">0</span></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progress-label">Questão 1 de 10</div>
+
+    <div class="dots" id="dots"></div>
+
+    <div class="question-card" id="question-card">
+      <div class="q-number" id="q-number">Questão 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima pergunta →</button>
+    </div>
+  </div>
+
+  <div class="results" id="results">
+    <div class="results-emoji" id="results-emoji">🏆</div>
+    <h2 id="results-title">Parabéns!</h2>
+    <div class="results-score"><span id="final-score">0</span> <small style="font-size:24px;color:#636E72">pts</small></div>
+    <div class="results-subtitle" id="results-subtitle"></div>
+    <div class="medal" id="medal"></div>
+    <div class="review-list" id="review-list"></div>
+    <button class="btn-restart" onclick="restartQuiz()">🔄 Jogar de novo</button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "O que é uma <em>preposição</em>?",
+    options: [
+      "Uma palavra que indica ação",
+      "Uma palavra que liga dois termos da frase",
+      "Uma palavra que substitui um substantivo",
+      "Uma palavra que descreve um adjetivo"
+    ],
+    correct: 1,
+    explanation: "A preposição é a palavra que liga dois termos, estabelecendo uma relação entre eles. Exemplos: de, em, para, com, sem."
+  },
+  {
+    text: "Qual preposição completa corretamente: \"Festa ___ roça\" (indicando <em>lugar</em>)?",
+    options: ["com", "sem", "na", "do"],
+    correct: 2,
+    explanation: "\"Na\" (contração de em + a) indica lugar. Festa NA roça = festa que acontece no lugar chamado roça."
+  },
+  {
+    text: "No verso \"Não há moça <em>sem</em> beleza\", o que a palavra SEM indica?",
+    options: ["Lugar", "Falta / ausência", "Material", "Companhia"],
+    correct: 1,
+    explanation: "SEM indica falta ou ausência. Moça sem beleza = moça que não tem beleza."
+  },
+  {
+    text: "Qual é a diferença entre \"boneco de madeira\" e \"boneco com madeira\"?",
+    options: [
+      "Nenhuma diferença",
+      "\"De\" indica o material; \"com\" indica companhia",
+      "\"De\" indica lugar; \"com\" indica tempo",
+      "São a mesma coisa, apenas variações"
+    ],
+    correct: 1,
+    explanation: "\"De\" indica o material do qual o boneco é feito. \"Com\" indicaria que o boneco estava acompanhado de madeira — o sentido muda completamente!"
+  },
+  {
+    text: "\"Viagem <em>para</em> Alagoas\" — o que a preposição PARA indica aqui?",
+    options: ["Tempo", "Material", "Lugar de destino", "Falta"],
+    correct: 2,
+    explanation: "PARA indica o lugar para onde se vai — o destino da viagem."
+  },
+  {
+    text: "Qual das palavras abaixo é uma preposição?",
+    options: ["Correr", "Bonito", "Sobre", "Menino"],
+    correct: 2,
+    explanation: "SOBRE é uma preposição. As outras são: verbo (correr), adjetivo (bonito) e substantivo (menino)."
+  },
+  {
+    text: "\"Festa ___ barracas\" (o que a festa <em>contém</em>). Qual preposição usar?",
+    options: ["sem", "com", "do", "na"],
+    correct: 1,
+    explanation: "COM indica conteúdo ou companhia. Festa com barracas = festa que tem barracas."
+  },
+  {
+    text: "\"Pão de queijo\" é uma locução adjetiva. O que ela indica sobre o pão?",
+    options: [
+      "O lugar onde o pão foi feito",
+      "O tipo / material do pão",
+      "A quantidade de pão",
+      "O tempo de preparo"
+    ],
+    correct: 1,
+    explanation: "\"De queijo\" é uma locução adjetiva que indica o tipo ou material — o pão é feito de queijo."
+  },
+  {
+    text: "Se trocarmos <em>SEM</em> por <em>COM</em> no verso \"Não há rico sem riqueza\", o sentido...",
+    options: [
+      "Continua o mesmo",
+      "Fica sem sentido / muda completamente",
+      "Fica mais bonito",
+      "Não muda nada na frase"
+    ],
+    correct: 1,
+    explanation: "A troca de preposição muda o sentido da frase. \"Rico sem riqueza\" = rico que não tem riqueza (irônico). \"Rico com riqueza\" = rico que tem riqueza (óbvio). São ideias opostas!"
+  },
+  {
+    text: "Qual das opções abaixo tem uma preposição usada de forma <em>errada</em>?",
+    options: [
+      "Festa na roça",
+      "Panela de chocolate",
+      "Viagem para o parque",
+      "Boneca em madeira"
+    ],
+    correct: 3,
+    explanation: "O correto seria \"boneca DE madeira\" (material). \"Em\" não é usado para indicar material. As outras opções estão corretas."
+  }
+];
+
+let current = 0;
+let score = 0;
+let hits = 0;
+let answered = false;
+let results_log = [];
+
+function buildDots() {
+  const dots = document.getElementById('dots');
+  dots.innerHTML = '';
+  questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' current' : '');
+    d.id = 'dot-' + i;
+    dots.appendChild(d);
+  });
+}
+
+function updateDots() {
+  questions.forEach((_, i) => {
+    const d = document.getElementById('dot-' + i);
+    d.className = 'dot';
+    if (i < current) d.classList.add('done');
+    else if (i === current) d.classList.add('current');
+  });
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = questions[current];
+  document.getElementById('q-number').textContent = `Questão ${current + 1}`;
+  document.getElementById('q-text').innerHTML = q.text;
+  document.getElementById('progress-label').textContent = `Questão ${current + 1} de ${questions.length}`;
+  document.getElementById('progress-bar').style.width = `${(current / questions.length) * 100}%`;
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => selectOption(i);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('btn-next').className = 'btn-next';
+  document.getElementById('question-card').style.animation = 'none';
+  requestAnimationFrame(() => {
+    document.getElementById('question-card').style.animation = 'slideIn 0.35s ease';
+  });
+  updateDots();
+}
+
+function selectOption(index) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const opts = document.querySelectorAll('.option');
+  const fb = document.getElementById('feedback');
+
+  opts.forEach(o => o.disabled = true);
+
+  if (index === q.correct) {
+    opts[index].classList.add('correct');
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `<span class="feedback-icon">✅</span> Muito bem! ${q.explanation}`;
+    score += 10;
+    hits++;
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('hits-display').textContent = hits;
+    results_log.push({ ok: true, text: q.text.replace(/<[^>]+>/g, '') });
+  } else {
+    opts[index].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `<span class="feedback-icon">❌</span> Quase! A resposta certa era a <strong>${['A','B','C','D'][q.correct]}</strong>. ${q.explanation}`;
+    results_log.push({ ok: false, text: q.text.replace(/<[^>]+>/g, '') });
+  }
+
+  if (current < questions.length - 1) {
+    document.getElementById('btn-next').className = 'btn-next show';
+  } else {
+    setTimeout(showResults, 1600);
+  }
+}
+
+function nextQuestion() {
+  current++;
+  loadQuestion();
+}
+
+function showResults() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const res = document.getElementById('results');
+  res.className = 'results show';
+
+  const pct = Math.round((hits / questions.length) * 100);
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('results-subtitle').textContent = `Você acertou ${hits} de ${questions.length} questões (${pct}%)`;
+
+  let emoji, title, medal;
+  if (hits === questions.length) { emoji = '🏆'; title = 'Perfeito! Monstro das preposições!'; medal = '🥇 Medalha de Ouro'; }
+  else if (hits >= 8) { emoji = '🌟'; title = 'Incrível! Quase perfeito!'; medal = '🥈 Medalha de Prata'; }
+  else if (hits >= 6) { emoji = '😊'; title = 'Muito bem! Bom trabalho!'; medal = '🥉 Medalha de Bronze'; }
+  else if (hits >= 4) { emoji = '💪'; title = 'Continue praticando!'; medal = '📚 Continua estudando!'; }
+  else { emoji = '🔄'; title = 'Revise o conteúdo e tente de novo!'; medal = '📖 Hora de revisar!'; }
+
+  document.getElementById('results-emoji').textContent = emoji;
+  document.getElementById('results-title').textContent = title;
+  document.getElementById('medal').textContent = medal;
+
+  const rl = document.getElementById('review-list');
+  rl.innerHTML = '<p style="font-size:13px;font-weight:800;margin-bottom:10px;color:var(--text-muted)">RESUMO DAS QUESTÕES:</p>';
+  results_log.forEach((r, i) => {
+    const d = document.createElement('div');
+    d.className = 'review-item ' + (r.ok ? 'ok' : 'nok');
+    d.innerHTML = `<span class="ri-icon">${r.ok ? '✅' : '❌'}</span><span><strong>Q${i+1}.</strong> ${r.text.substring(0, 70)}${r.text.length > 70 ? '…' : ''}</span>`;
+    rl.appendChild(d);
+  });
+}
+
+function restartQuiz() {
+  current = 0; score = 0; hits = 0; answered = false; results_log = [];
+  document.getElementById('score-display').textContent = 0;
+  document.getElementById('hits-display').textContent = 0;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('results').className = 'results';
+  buildDots();
+  loadQuestion();
+}
+
+buildDots();
+loadQuestion();
+</script>
+</body>
+</html>

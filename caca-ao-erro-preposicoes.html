@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caça ao Erro – Preposições</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF5F5;
+    --card: #FFFFFF;
+    --primary: #E74C3C;
+    --primary-light: #FADBD8;
+    --green: #27AE60;
+    --green-light: #D5F5E3;
+    --yellow: #F39C12;
+    --yellow-light: #FDEBD0;
+    --neutral: #4B7BEC;
+    --neutral-light: #D6E4FF;
+    --text: #2D3436;
+    --text-muted: #636E72;
+    --border: #EAEAEA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); min-height: 100vh; padding: 24px 16px; color: var(--text); }
+  .container { max-width: 640px; margin: 0 auto; }
+
+  .header { text-align: center; margin-bottom: 24px; }
+  .header-badge { display: inline-block; background: var(--primary); color: white; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-bottom: 10px; }
+  .header h1 { font-family: 'Fredoka One', cursive; font-size: 34px; color: var(--primary); margin-bottom: 6px; }
+  .header p { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+
+  .instruction-card { background: var(--yellow-light); border: 2px solid var(--yellow); border-radius: 16px; padding: 14px 18px; margin-bottom: 20px; font-size: 14px; font-weight: 700; color: #7D5000; line-height: 1.6; }
+  .instruction-card strong { display: block; margin-bottom: 4px; font-size: 15px; color: #5D3800; }
+
+  .counter-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .counter-pill { flex: 1; background: var(--card); border: 2px solid var(--border); border-radius: 14px; padding: 10px; text-align: center; font-weight: 800; }
+  .counter-pill .big { font-size: 24px; font-family: 'Fredoka One', cursive; }
+  .counter-pill .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+  .counter-pill.red .big { color: var(--primary); }
+  .counter-pill.blue .big { color: var(--neutral); }
+
+  .section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 18px 0 10px; }
+
+  .sentence-card { background: var(--card); border: 2px solid var(--border); border-radius: 16px; padding: 16px 18px; margin-bottom: 10px; transition: border-color 0.2s, background 0.2s; }
+  .sentence-card .s-number { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .sentence-card .s-text { font-size: 16px; font-weight: 700; line-height: 1.7; margin-bottom: 4px; }
+
+  /* All words look identical — neutral blue — before submission */
+  .highlight-word {
+    display: inline-block;
+    background: var(--neutral-light);
+    color: var(--neutral);
+    font-weight: 900;
+    padding: 1px 8px;
+    border-radius: 6px;
+    border: 1.5px solid var(--neutral);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .highlight-word:hover { background: var(--neutral); color: white; }
+  .highlight-word.marked { background: var(--primary); color: white; border-color: var(--primary); }
+
+  /* Revealed only after check */
+  .highlight-word.result-correct-error { background: var(--green-light); color: var(--green); border-color: var(--green); text-decoration: line-through; }
+  .highlight-word.result-missed-error { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+  .highlight-word.result-correct-ok { background: var(--green-light); color: var(--green); border-color: var(--green); }
+  .highlight-word.result-false-alarm { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+  .correction-row { display: none; gap: 8px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+  .correction-row.show { display: flex; }
+  .correction-label { font-size: 12px; font-weight: 800; color: var(--text-muted); }
+  .correction-btn { background: #F1F3F8; border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 14px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.15s; color: var(--text); }
+  .correction-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+  .correction-btn.selected-correction { background: var(--primary); color: white; border-color: var(--primary); }
+  .correction-btn.result-right { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .correction-btn.result-wrong { background: var(--primary-light); border-color: var(--primary); color: var(--primary); opacity: 0.5; }
+
+  .sentence-feedback { font-size: 13px; font-weight: 700; margin-top: 8px; padding: 8px 12px; border-radius: 10px; display: none; }
+  .sentence-feedback.show { display: block; }
+  .sentence-feedback.ok { background: var(--green-light); color: #1A7A45; }
+  .sentence-feedback.nok { background: var(--primary-light); color: #922B21; }
+
+  .sentence-card.correct-card { border-color: var(--green); background: #F0FBF5; }
+  .sentence-card.wrong-card { border-color: var(--primary); background: #FFF5F5; }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn { flex:1; padding: 14px; border: none; border-radius: 14px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.18s; }
+  .btn-check { background: var(--primary); color: white; }
+  .btn-check:hover { background: #c0392b; transform: translateY(-2px); }
+  .btn-reset { background: var(--border); color: var(--text-muted); }
+  .btn-reset:hover { background: #c8d0e0; }
+
+  .result-card { background: var(--card); border: 2px solid var(--border); border-radius: 20px; padding: 28px; text-align: center; margin-top: 20px; display: none; animation: popIn 0.3s ease; }
+  .result-card.show { display: block; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+  .result-emoji { font-size: 56px; margin-bottom: 12px; }
+  .result-title { font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--primary); margin-bottom: 8px; }
+  .result-sub { font-size: 14px; color: var(--text-muted); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-badge">🔍 Detetive das preposições</div>
+    <h1>Caça ao Erro</h1>
+    <p>Encontre as preposições erradas e corrija-as!</p>
+  </div>
+
+  <div class="instruction-card">
+    <strong>Como jogar:</strong>
+    Cada frase tem uma palavra destacada em azul. Algumas estão <strong>erradas</strong>, outras estão <strong>certas</strong> — você não sabe quais! Clique nas que você acha que estão erradas e escolha a correção. Quando terminar, clique em "Verificar respostas".
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-pill red"><div class="big" id="cnt-marked">0</div><div class="label">Marcadas como erro</div></div>
+    <div class="counter-pill blue"><div class="big" id="cnt-total">8</div><div class="label">Total de frases</div></div>
+  </div>
+
+  <div class="section-label">Clique nas palavras que você acha que estão erradas</div>
+  <div id="sentences-container"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkResults()">✅ Verificar respostas</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="result-emoji" id="result-emoji">🏆</div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-sub" id="result-sub"></div>
+  </div>
+</div>
+
+<script>
+const data = [
+  { id:0, before:'Não há pasto ', word:'com', after:' capim.', isError:true, correct:'sem', options:['sem','de','para','em'], explanation:'A preposição correta é SEM, indicando ausência. COM indicaria que o pasto tem companhia de capim.' },
+  { id:1, before:'Viagem ', word:'de', after:' Alagoas.', isError:true, correct:'para', options:['para','em','sem','com'], explanation:'PARA indica destino. DE indicaria origem — "viagem de Alagoas" seria vindo de lá.' },
+  { id:2, before:'Boneco ', word:'de', after:' madeira.', isError:false, explanation:'Frase correta! DE indica o material do qual o boneco é feito.' },
+  { id:3, before:'Festa ', word:'na', after:' roça.', isError:false, explanation:'Frase correta! NA (em + a) indica lugar.' },
+  { id:4, before:'Não há moça ', word:'com', after:' beleza.', isError:true, correct:'sem', options:['sem','de','para','na'], explanation:'O verso original usa SEM, indicando ausência. COM mudaria o sentido para "moça que tem beleza".' },
+  { id:5, before:'Pão ', word:'com', after:' queijo.', isError:true, correct:'de', options:['de','em','para','sobre'], explanation:'DE indica o tipo/material. Pão DE queijo é o tipo de pão. COM indicaria um pão acompanhado de queijo.' },
+  { id:6, before:'Festa ', word:'com', after:' barracas.', isError:false, explanation:'Frase correta! COM indica que a festa contém barracas.' },
+  { id:7, before:'A palavra que liga dois termos chama-se ', word:'conjunção', after:'.', isError:true, correct:'preposição', options:['preposição','substantivo','adjetivo','advérbio'], explanation:'A palavra que liga dois termos estabelecendo uma relação entre eles é a PREPOSIÇÃO, não conjunção.' }
+];
+
+let userActions = {};
+let marked = 0;
+let checked = false;
+
+function init() {
+  userActions = {}; marked = 0; checked = false;
+  updateCounter();
+  renderSentences();
+  document.getElementById('result-card').className = 'result-card';
+}
+
+function renderSentences() {
+  const container = document.getElementById('sentences-container');
+  container.innerHTML = '';
+  data.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'sentence-card';
+    card.id = 'scard-' + s.id;
+
+    const num = document.createElement('div');
+    num.className = 's-number';
+    num.textContent = 'Frase ' + (s.id + 1);
+    card.appendChild(num);
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 's-text';
+    textDiv.appendChild(document.createTextNode(s.before));
+
+    const wordSpan = document.createElement('span');
+    wordSpan.className = 'highlight-word';
+    wordSpan.textContent = s.word;
+    wordSpan.id = 'word-' + s.id;
+    wordSpan.onclick = () => toggleMark(s.id);
+    textDiv.appendChild(wordSpan);
+    textDiv.appendChild(document.createTextNode(s.after));
+    card.appendChild(textDiv);
+
+    if (s.isError) {
+      const corrRow = document.createElement('div');
+      corrRow.className = 'correction-row';
+      corrRow.id = 'corrrow-' + s.id;
+      const lbl = document.createElement('span');
+      lbl.className = 'correction-label';
+      lbl.textContent = 'Qual é a certa?';
+      corrRow.appendChild(lbl);
+      s.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'correction-btn';
+        btn.textContent = opt;
+        btn.id = `corropt-${s.id}-${opt}`;
+        btn.onclick = () => chooseCorrection(s.id, opt);
+        corrRow.appendChild(btn);
+      });
+      card.appendChild(corrRow);
+    }
+
+    const fb = document.createElement('div');
+    fb.className = 'sentence-feedback';
+    fb.id = 'sfb-' + s.id;
+    card.appendChild(fb);
+
+    container.appendChild(card);
+  });
+}
+
+function toggleMark(id) {
+  if (checked) return;
+  const action = userActions[id] || { marked: false, correction: null };
+  const wordEl = document.getElementById('word-' + id);
+  const s = data.find(x => x.id === id);
+
+  if (!action.marked) {
+    action.marked = true;
+    wordEl.classList.add('marked');
+    if (s.isError) document.getElementById('corrrow-' + id).className = 'correction-row show';
+    marked++;
+  } else {
+    action.marked = false; action.correction = null;
+    wordEl.classList.remove('marked');
+    if (s.isError) {
+      document.getElementById('corrrow-' + id).className = 'correction-row';
+      document.querySelectorAll(`[id^="corropt-${id}-"]`).forEach(b => b.className = 'correction-btn');
+    }
+    marked = Math.max(0, marked - 1);
+  }
+  userActions[id] = action;
+  updateCounter();
+}
+
+function chooseCorrection(id, chosen) {
+  if (checked) return;
+  const action = userActions[id] || { marked: true };
+  action.correction = chosen;
+  userActions[id] = action;
+  const s = data.find(x => x.id === id);
+  s.options.forEach(opt => {
+    document.getElementById(`corropt-${id}-${opt}`).className = 'correction-btn' + (opt === chosen ? ' selected-correction' : '');
+  });
+}
+
+function updateCounter() {
+  document.getElementById('cnt-marked').textContent = marked;
+}
+
+function checkResults() {
+  checked = true;
+  let score = 0;
+
+  data.forEach(s => {
+    const action = userActions[s.id] || { marked: false, correction: null };
+    const card = document.getElementById('scard-' + s.id);
+    const wordEl = document.getElementById('word-' + s.id);
+    const fb = document.getElementById('sfb-' + s.id);
+
+    if (s.isError) {
+      const corrRow = document.getElementById('corrrow-' + s.id);
+      if (action.marked && action.correction === s.correct) {
+        score++;
+        card.className = 'sentence-card correct-card';
+        wordEl.className = 'highlight-word result-correct-error';
+        wordEl.textContent = s.correct;
+        fb.className = 'sentence-feedback ok show';
+        fb.textContent = '✅ Perfeito! ' + s.explanation;
+        s.options.forEach(opt => {
+          const btn = document.getElementById(`corropt-${s.id}-${opt}`);
+          btn.className = 'correction-btn ' + (opt === s.correct ? 'result-right' : (opt === action.correction ? 'result-wrong' : ''));
+        });
+      } else if (action.marked && action.correction && action.correction !== s.correct) {
+        card.className = 'sentence-card wrong-card';
+        wordEl.className = 'highlight-word result-missed-error';
+        fb.className = 'sentence-feedback nok show';
+        fb.textContent = `❌ Você achou o erro, mas a correção certa era "${s.correct}". ${s.explanation}`;
+        s.options.forEach(opt => {
+          const btn = document.getElementById(`corropt-${s.id}-${opt}`);
+          btn.className = 'correction-btn ' + (opt === s.correct ? 'result-right' : (opt === action.correction ? 'result-wrong' : ''));
+        });
+      } else {
+        card.className = 'sentence-card wrong-card';
+        wordEl.className = 'highlight-word result-missed-error';
+        fb.className = 'sentence-feedback nok show';
+        fb.textContent = `❌ Esta frase tinha um erro! "${s.word}" deveria ser "${s.correct}". ${s.explanation}`;
+        if (corrRow) {
+          corrRow.className = 'correction-row show';
+          s.options.forEach(opt => {
+            document.getElementById(`corropt-${s.id}-${opt}`).className = 'correction-btn ' + (opt === s.correct ? 'result-right' : '');
+          });
+        }
+      }
+    } else {
+      if (!action.marked) {
+        score++;
+        card.className = 'sentence-card correct-card';
+        wordEl.className = 'highlight-word result-correct-ok';
+        fb.className = 'sentence-feedback ok show';
+        fb.textContent = '✅ Correto! Esta frase não tinha erros. ' + s.explanation;
+      } else {
+        card.className = 'sentence-card wrong-card';
+        wordEl.className = 'highlight-word result-false-alarm';
+        fb.className = 'sentence-feedback nok show';
+        fb.textContent = `❌ Esta frase estava correta! Não havia erro. ${s.explanation}`;
+      }
+    }
+  });
+
+  const pct = score / data.length;
+  let emoji, title, sub;
+  if (pct === 1) { emoji='🏆'; title='Detetive perfeito!'; sub='Você encontrou todos os erros sem se enganar com as frases corretas!'; }
+  else if (pct >= 0.75) { emoji='🌟'; title='Muito bem!'; sub=`${score} de ${data.length} corretos. Quase perfeito!`; }
+  else if (pct >= 0.5) { emoji='😊'; title='Bom trabalho!'; sub=`${score} de ${data.length} corretos. Revise os erros e tente de novo.`; }
+  else { emoji='🔄'; title='Continue praticando!'; sub=`${score} de ${data.length} corretos. Releia o conteúdo e tente outra vez.`; }
+
+  document.getElementById('result-card').className = 'result-card show';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+}
+
+function resetAll() { init(); }
+init();
+</script>
+</body>
+</html>

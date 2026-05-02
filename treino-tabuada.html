@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treino Cronometrado – Tabuada</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0F0F1A; --card: #1A1A2E; --card2: #16213E;
+    --primary: #E94560; --primary-light: #FF6B81;
+    --gold: #F5A623; --green: #2ECC71; --red: #E74C3C;
+    --text: #E8E8F0; --muted: #888899; --border: #2A2A4A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Baloo 2', cursive; background: var(--bg); min-height: 100vh; color: var(--text); padding: 20px 16px; }
+  .container { max-width: 580px; margin: 0 auto; }
+  .header { text-align: center; margin-bottom: 24px; }
+  .badge { display: inline-block; background: var(--primary); color: white; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-bottom: 10px; }
+  h1 { font-family: 'Space Mono', monospace; font-size: 28px; color: var(--primary-light); margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .card { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; padding: 22px; margin-bottom: 14px; }
+  .setup-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
+  .tab-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .tab-btn { width: 44px; height: 44px; border: 2px solid var(--border); border-radius: 12px; background: var(--card2); font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .18s; }
+  .tab-btn:hover { border-color: var(--primary); color: var(--primary-light); }
+  .tab-btn.sel { background: var(--primary); border-color: var(--primary); color: white; }
+  .tab-btn.wide { width: auto; padding: 0 14px; font-size: 12px; font-family: 'Baloo 2', cursive; }
+  .time-row { display: flex; gap: 8px; }
+  .time-btn { flex: 1; padding: 11px; border: 2px solid var(--border); border-radius: 12px; background: var(--card2); font-family: 'Baloo 2', cursive; font-size: 14px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .18s; }
+  .time-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .time-btn.sel { background: var(--gold); border-color: var(--gold); color: #1A1A00; }
+  .btn-start { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 14px; font-family: 'Baloo 2', cursive; font-size: 17px; font-weight: 800; color: white; cursor: pointer; transition: all .18s; margin-top: 18px; }
+  .btn-start:hover { background: var(--primary-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233,69,96,.4); }
+  .btn-start:disabled { opacity: .35; cursor: default; transform: none; box-shadow: none; }
+  #game-area { display: none; }
+  .hud { display: flex; gap: 10px; margin-bottom: 12px; }
+  .hud-pill { flex: 1; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 10px; text-align: center; }
+  .hud-pill .big { font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700; }
+  .hud-pill .lbl { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .bar-wrap { background: var(--border); border-radius: 20px; height: 7px; margin-bottom: 16px; overflow: hidden; }
+  .bar { height: 100%; border-radius: 20px; transition: width .9s linear, background .3s; }
+  .q-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 30px 20px; text-align: center; margin-bottom: 14px; position: relative; overflow: hidden; }
+  .q-card::before { content: '×'; position: absolute; top: -20px; right: -8px; font-size: 110px; font-family: 'Space Mono', monospace; color: rgba(233,69,96,.05); pointer-events: none; }
+  .q-lbl { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 14px; }
+  .q-text { font-family: 'Space Mono', monospace; font-size: 44px; font-weight: 700; color: var(--text); margin-bottom: 22px; line-height: 1; }
+  .q-text .op { color: var(--primary-light); }
+  .ans-input { width: 100%; max-width: 180px; background: var(--card2); border: 2px solid var(--border); border-radius: 14px; padding: 12px; font-family: 'Space Mono', monospace; font-size: 26px; font-weight: 700; color: var(--text); text-align: center; outline: none; transition: border-color .2s; display: block; margin: 0 auto 14px; }
+  .ans-input:focus { border-color: var(--primary); }
+  .ans-input.ok { border-color: var(--green); background: rgba(46,204,113,.1); color: var(--green); }
+  .ans-input.nok { border-color: var(--red); background: rgba(231,76,60,.1); color: var(--red); animation: shake .3s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .fb { font-size: 16px; font-weight: 800; height: 26px; }
+  .fb.ok { color: var(--green); } .fb.nok { color: var(--red); }
+  .btn-ok { background: var(--primary); border: none; border-radius: 12px; padding: 11px 28px; font-family: 'Baloo 2', cursive; font-size: 15px; font-weight: 800; color: white; cursor: pointer; transition: all .18s; margin-top: 8px; }
+  .btn-ok:hover { background: var(--primary-light); transform: translateY(-2px); }
+  .err-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 14px; display: none; }
+  .err-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+  .err-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .err-tag { background: rgba(231,76,60,.15); border: 1.5px solid var(--red); color: var(--red); font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 8px; }
+  .result { display: none; background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 32px 20px; text-align: center; animation: pop .4s ease; }
+  .result.show { display: block; }
+  @keyframes pop { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size: 60px; margin-bottom: 10px; }
+  .r-title { font-family: 'Space Mono', monospace; font-size: 24px; color: var(--primary-light); margin-bottom: 20px; }
+  .r-stats { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 22px; }
+  .rs { background: var(--card2); border: 1.5px solid var(--border); border-radius: 14px; padding: 12px 18px; min-width: 90px; }
+  .rs .rb { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; }
+  .rs .rl { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .weak { text-align: left; margin-bottom: 22px; }
+  .weak-t { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+  .btn-restart { background: var(--primary); border: none; border-radius: 14px; padding: 13px 32px; font-family: 'Baloo 2', cursive; font-size: 15px; font-weight: 800; color: white; cursor: pointer; transition: all .18s; }
+  .btn-restart:hover { background: var(--primary-light); transform: translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">⏱ Treino Cronometrado</div>
+    <h1>TABUADA</h1>
+    <p class="subtitle">Responda o máximo antes do tempo acabar</p>
+  </div>
+
+  <div class="card" id="setup">
+    <div class="setup-title">Quais tabuadas treinar?</div>
+    <div class="tab-grid">
+      <button class="tab-btn wide" onclick="toggleAll()">Todas</button>
+      <button class="tab-btn" onclick="tog(2)" id="t2">2</button>
+      <button class="tab-btn" onclick="tog(3)" id="t3">3</button>
+      <button class="tab-btn" onclick="tog(4)" id="t4">4</button>
+      <button class="tab-btn" onclick="tog(5)" id="t5">5</button>
+      <button class="tab-btn" onclick="tog(6)" id="t6">6</button>
+      <button class="tab-btn" onclick="tog(7)" id="t7">7</button>
+      <button class="tab-btn" onclick="tog(8)" id="t8">8</button>
+      <button class="tab-btn" onclick="tog(9)" id="t9">9</button>
+      <button class="tab-btn" onclick="tog(10)" id="t10">10</button>
+    </div>
+    <div class="setup-title">Tempo</div>
+    <div class="time-row">
+      <button class="time-btn sel" onclick="setT(60,this)">1 min</button>
+      <button class="time-btn" onclick="setT(120,this)">2 min</button>
+      <button class="time-btn" onclick="setT(180,this)">3 min</button>
+    </div>
+    <button class="btn-start" id="btn-start" onclick="startGame()" disabled>⚡ Iniciar treino</button>
+  </div>
+
+  <div id="game-area">
+    <div class="hud">
+      <div class="hud-pill"><div class="big" id="t-disp" style="color:var(--gold)">1:00</div><div class="lbl">Tempo</div></div>
+      <div class="hud-pill"><div class="big" id="s-disp" style="color:var(--green)">0</div><div class="lbl">Acertos</div></div>
+      <div class="hud-pill"><div class="big" id="st-disp" style="color:var(--primary-light)">0</div><div class="lbl">Sequência</div></div>
+    </div>
+    <div class="bar-wrap"><div class="bar" id="t-bar" style="width:100%;background:var(--gold)"></div></div>
+    <div class="q-card">
+      <div class="q-lbl">Quanto é?</div>
+      <div class="q-text" id="q-text"></div>
+      <input type="number" class="ans-input" id="ans" placeholder="?" onkeydown="if(event.key==='Enter'){event.preventDefault();confirm();}" autocomplete="off" inputmode="numeric">
+      <div class="fb" id="fb"></div>
+      <button class="btn-ok" onclick="confirm2()">Confirmar →</button>
+    </div>
+    <div class="err-card" id="err-card">
+      <div class="err-title">⚠️ Erros nessa sessão</div>
+      <div class="err-grid" id="err-grid"></div>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title">SHOW!</div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-a" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-e" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+      <div class="rs"><div class="rb" id="r-s" style="color:var(--primary-light)">0</div><div class="rl">Maior seq.</div></div>
+      <div class="rs"><div class="rb" id="r-p" style="color:var(--gold)">0%</div><div class="rl">Precisão</div></div>
+    </div>
+    <div class="weak" id="weak" style="display:none">
+      <div class="weak-t">📌 Revisar:</div>
+      <div class="err-grid" id="w-grid"></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Treinar de novo</button>
+  </div>
+</div>
+<script>
+let tabs=new Set(),totalT=60,timeLeft=60,tmr=null,score=0,errs=0,streak=0,maxStreak=0,curQ=null,errLog={},done=false;
+function tog(n){const b=document.getElementById('t'+n);tabs.has(n)?(tabs.delete(n),b.classList.remove('sel')):(tabs.add(n),b.classList.add('sel'));document.getElementById('btn-start').disabled=tabs.size===0;}
+function toggleAll(){if(tabs.size===9){tabs.clear();document.querySelectorAll('.tab-btn:not(.wide)').forEach(b=>b.classList.remove('sel'));}else{[2,3,4,5,6,7,8,9,10].forEach(n=>{tabs.add(n);document.getElementById('t'+n).classList.add('sel');});}document.getElementById('btn-start').disabled=tabs.size===0;}
+function setT(t,btn){totalT=t;timeLeft=t;document.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function genQ(){const a=[...tabs][Math.floor(Math.random()*tabs.size)],b=Math.floor(Math.random()*9)+2;return{a,b,ans:a*b};}
+function loadQ(){done=false;curQ=genQ();document.getElementById('q-text').innerHTML=`<span>${curQ.a}</span> <span class="op">×</span> <span>${curQ.b}</span> <span class="op">=</span> <span class="op">?</span>`;const i=document.getElementById('ans');i.value='';i.className='ans-input';i.focus();document.getElementById('fb').textContent='';document.getElementById('fb').className='fb';}
+function confirm2(){if(done)return;const i=document.getElementById('ans'),v=parseInt(i.value);if(isNaN(v)){i.focus();return;}done=true;const fb=document.getElementById('fb');if(v===curQ.ans){score++;streak++;if(streak>maxStreak)maxStreak=streak;i.className='ans-input ok';fb.textContent=`✓ Correto!`;fb.className='fb ok';}else{errs++;streak=0;const k=`${curQ.a}×${curQ.b}`;errLog[k]=(errLog[k]||0)+1;i.className='ans-input nok';fb.textContent=`✗ Era ${curQ.ans}`;fb.className='fb nok';updErr();}document.getElementById('s-disp').textContent=score;document.getElementById('st-disp').textContent=streak;setTimeout(loadQ,600);}
+function updErr(){const c=document.getElementById('err-card'),g=document.getElementById('err-grid');c.style.display='block';g.innerHTML='';Object.entries(errLog).forEach(([k,v])=>{const t=document.createElement('div');t.className='err-tag';t.textContent=k+(v>1?` (${v}×)`:'');g.appendChild(t);});}
+function startGame(){document.getElementById('setup').style.display='none';document.getElementById('game-area').style.display='block';score=0;errs=0;streak=0;maxStreak=0;errLog={};timeLeft=totalT;updTimer();loadQ();tmr=setInterval(()=>{timeLeft--;updTimer();if(timeLeft<=0){clearInterval(tmr);endGame();}},1000);}
+function updTimer(){const p=(timeLeft/totalT)*100,m=Math.floor(timeLeft/60),s=timeLeft%60,el=document.getElementById('t-disp'),bar=document.getElementById('t-bar');el.textContent=`${m}:${s.toString().padStart(2,'0')}`;bar.style.width=p+'%';if(p>40){el.style.color='var(--gold)';bar.style.background='var(--gold)';}else if(p>20){el.style.color='var(--primary-light)';bar.style.background='var(--primary-light)';}else{el.style.color='var(--red)';bar.style.background='var(--red)';}}
+function endGame(){document.getElementById('game-area').style.display='none';const rs=document.getElementById('result');rs.className='result show';const tot=score+errs,p=tot>0?Math.round(score/tot*100):0;document.getElementById('r-a').textContent=score;document.getElementById('r-e').textContent=errs;document.getElementById('r-s').textContent=maxStreak;document.getElementById('r-p').textContent=p+'%';let e,t;if(p===100){e='🏆';t='PERFEITO!';}else if(p>=80){e='🌟';t='MUITO BEM!';}else if(p>=60){e='💪';t='BOM TREINO!';}else{e='🔄';t='CONTINUE!';}document.getElementById('r-emoji').textContent=e;document.getElementById('r-title').textContent=t;if(Object.keys(errLog).length>0){const w=document.getElementById('weak'),wg=document.getElementById('w-grid');w.style.display='block';wg.innerHTML='';Object.entries(errLog).sort((a,b)=>b[1]-a[1]).forEach(([k])=>{const tg=document.createElement('div');tg.className='err-tag';tg.textContent=k;wg.appendChild(tg);});}}
+function restart(){document.getElementById('result').className='result';document.getElementById('err-card').style.display='none';document.getElementById('setup').style.display='block';}
+function confirm(){confirm2();}
+</script>
+</body>
+</html>

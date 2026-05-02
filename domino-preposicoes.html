@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dominó de Preposições – Para Imprimir</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #F8F9FA;
+    padding: 24px 16px;
+    color: #2D3436;
+  }
+  .container { max-width: 760px; margin: 0 auto; }
+
+  @media print {
+    body { background: white; padding: 6px; margin: 0; }
+    .screen-only { display: none !important; }
+    .print-header { display: block !important; }
+    .rules-card { page-break-before: always; }
+  }
+
+  .screen-only {}
+
+  .header { text-align: center; margin-bottom: 20px; }
+  .header h1 { font-family: 'Fredoka One', cursive; font-size: 30px; color: #4B7BEC; margin-bottom: 6px; }
+  .header p { font-size: 14px; color: #636E72; font-weight: 600; }
+
+  .instructions {
+    background: #FFF9E6; border: 2px solid #F4C430;
+    border-radius: 14px; padding: 14px 18px; margin-bottom: 20px;
+    font-size: 13px; font-weight: 700; color: #7D5000; line-height: 1.6;
+  }
+  .instructions strong { display: block; font-size: 14px; margin-bottom: 4px; color: #5D3800; }
+
+  .btn-print {
+    display: block; width: 100%;
+    background: #4B7BEC; color: white; border: none;
+    border-radius: 12px; padding: 14px;
+    font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
+    cursor: pointer; margin-bottom: 28px; transition: all 0.18s;
+  }
+  .btn-print:hover { background: #3867d6; transform: translateY(-2px); }
+
+  .print-header { display: none; text-align: center; margin-bottom: 12px; }
+  .print-header h2 { font-family: 'Fredoka One', cursive; font-size: 18px; color: #4B7BEC; }
+  .print-header p { font-size: 10px; color: #636E72; }
+
+  /* Grid: 2 colunas para dar espaço às peças */
+  .domino-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* Cada peça: orientação horizontal, altura generosa */
+  .domino {
+    display: flex;
+    border: 2.5px solid #2D3436;
+    border-radius: 12px;
+    overflow: hidden;
+    min-height: 110px;
+    background: white;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .domino-half {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 8px;
+    text-align: center;
+    min-width: 0;
+  }
+
+  .domino-divider {
+    width: 3px;
+    background: #2D3436;
+    flex-shrink: 0;
+  }
+
+  /* Lado com preposição: fonte grande */
+  .domino-prep {
+    font-family: 'Fredoka One', cursive;
+    font-size: 26px;
+    line-height: 1.1;
+    word-break: break-word;
+  }
+
+  /* Lado com frase: fonte menor, wrap garantido */
+  .domino-phrase {
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.45;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .domino-phrase .hint {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.7;
+    margin-top: 3px;
+  }
+
+  /* Cores dos fundos */
+  .bg-blue   { background: #D6E4FF; } .text-blue   { color: #1565C0; }
+  .bg-green  { background: #D5F5E3; } .text-green  { color: #1B5E20; }
+  .bg-orange { background: #FFE0D3; } .text-orange { color: #BF360C; }
+  .bg-yellow { background: #FFF9C4; } .text-yellow { color: #6D4C00; }
+  .bg-purple { background: #EDE7F6; } .text-purple { color: #4527A0; }
+  .bg-teal   { background: #E0F7FA; } .text-teal   { color: #006064; }
+  .bg-pink   { background: #FCE4EC; } .text-pink   { color: #880E4F; }
+  .bg-amber  { background: #FFF8E1; } .text-amber  { color: #E65100; }
+  .bg-gray   { background: #F5F5F5; } .text-gray   { color: #424242; }
+  .bg-red    { background: #FFEBEE; } .text-red    { color: #B71C1C; }
+
+  hr.cut { border: none; border-top: 2px dashed #CCC; margin: 16px 0; }
+  @media print { hr.cut { margin: 8px 0; } }
+
+  .rules-card {
+    background: white; border: 2.5px solid #2D3436;
+    border-radius: 14px; padding: 16px 20px; margin-top: 24px;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .rules-card h3 { font-family: 'Fredoka One', cursive; font-size: 18px; color: #4B7BEC; margin-bottom: 10px; }
+  .rules-card ol { padding-left: 18px; font-size: 13px; font-weight: 700; line-height: 1.9; color: #2D3436; }
+
+  .count-badge {
+    display: inline-block;
+    background: #4B7BEC; color: white;
+    font-size: 12px; font-weight: 800;
+    padding: 3px 12px; border-radius: 20px;
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="screen-only">
+    <div class="header">
+      <h1>🎲 Dominó de Preposições</h1>
+      <p>Imprima, recorte e jogue com a família!</p>
+    </div>
+    <div class="instructions">
+      <strong>Como usar:</strong>
+      Clique em "Imprimir dominó", recorte cada peça pela borda. Embaralhe e distribua entre os jogadores. Conecte a preposição de uma peça com a frase que ela completa — e vice-versa. Quem colocar todas as peças primeiro, vence!
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir dominó</button>
+  </div>
+
+  <div class="print-header">
+    <h2>Dominó de Preposições — Português</h2>
+    <p>Recorte cada peça pela borda. Conecte preposição ↔ frase. Quem terminar primeiro vence!</p>
+  </div>
+
+  <div class="count-badge screen-only">16 peças — número par ✓</div>
+
+  <div class="domino-grid">
+
+    <!-- Peça 1 -->
+    <div class="domino">
+      <div class="domino-half bg-gray">
+        <span class="domino-prep text-gray">🎲</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-blue">
+        <span class="domino-phrase text-blue">
+          Festa ___ roça
+          <span class="hint">(indica lugar)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 2 -->
+    <div class="domino">
+      <div class="domino-half bg-blue">
+        <span class="domino-prep text-blue">NA</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-green">
+        <span class="domino-phrase text-green">
+          Não há pasto ___ capim
+          <span class="hint">(indica ausência)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 3 -->
+    <div class="domino">
+      <div class="domino-half bg-green">
+        <span class="domino-prep text-green">SEM</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-orange">
+        <span class="domino-phrase text-orange">
+          Viagem ___ Alagoas
+          <span class="hint">(indica destino)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 4 -->
+    <div class="domino">
+      <div class="domino-half bg-orange">
+        <span class="domino-prep text-orange">PARA</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-purple">
+        <span class="domino-phrase text-purple">
+          Boneco ___ madeira
+          <span class="hint">(indica material)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 5 -->
+    <div class="domino">
+      <div class="domino-half bg-purple">
+        <span class="domino-prep text-purple">DE</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-teal">
+        <span class="domino-phrase text-teal">
+          Festa ___ barracas
+          <span class="hint">(indica conteúdo)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 6 -->
+    <div class="domino">
+      <div class="domino-half bg-teal">
+        <span class="domino-prep text-teal">COM</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-yellow">
+        <span class="domino-phrase text-yellow">
+          Pão ___ queijo
+          <span class="hint">(indica tipo)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 7 -->
+    <div class="domino">
+      <div class="domino-half bg-yellow">
+        <span class="domino-prep text-yellow">DE</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-pink">
+        <span class="domino-phrase text-pink">
+          Festa ___ morango
+          <span class="hint">(indica tipo/caract.)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 8 -->
+    <div class="domino">
+      <div class="domino-half bg-pink">
+        <span class="domino-prep text-pink">DO</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-amber">
+        <span class="domino-phrase text-amber">
+          Não há moça ___ beleza
+          <span class="hint">(indica falta)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 9 -->
+    <div class="domino">
+      <div class="domino-half bg-amber">
+        <span class="domino-prep text-amber">SEM</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-red">
+        <span class="domino-phrase text-red">
+          Panela ___ chocolate
+          <span class="hint">(indica tipo)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 10 -->
+    <div class="domino">
+      <div class="domino-half bg-red">
+        <span class="domino-prep text-red">DE</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-blue">
+        <span class="domino-phrase text-blue">
+          Flor ___ campo
+          <span class="hint">(locução adjetiva)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 11 -->
+    <div class="domino">
+      <div class="domino-half bg-blue">
+        <span class="domino-prep text-blue">DO</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-green">
+        <span class="domino-phrase text-green">
+          Boneca ___ barro
+          <span class="hint">(indica material)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 12 -->
+    <div class="domino">
+      <div class="domino-half bg-green">
+        <span class="domino-prep text-green">DE</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-purple">
+        <span class="domino-phrase text-purple">
+          Sem rio não há ___ floresta
+          <span class="hint">(indica ausência)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 13 -->
+    <div class="domino">
+      <div class="domino-half bg-purple">
+        <span class="domino-prep text-purple">SEM</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-orange">
+        <span class="domino-phrase text-orange">
+          Bolo ___ chocolate
+          <span class="hint">(indica tipo)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 14 -->
+    <div class="domino">
+      <div class="domino-half bg-orange">
+        <span class="domino-prep text-orange">DE</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-teal">
+        <span class="domino-phrase text-teal">
+          Não há verso ___ seu fim
+          <span class="hint">(indica falta)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 15 -->
+    <div class="domino">
+      <div class="domino-half bg-teal">
+        <span class="domino-prep text-teal">SEM</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-pink">
+        <span class="domino-phrase text-pink">
+          Pano ___ prato
+          <span class="hint">(indica uso/função)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Peça 16 -->
+    <div class="domino">
+      <div class="domino-half bg-pink">
+        <span class="domino-prep text-pink">DE</span>
+      </div>
+      <div class="domino-divider"></div>
+      <div class="domino-half bg-gray">
+        <span class="domino-phrase text-gray">
+          Palavra que liga<br>dois termos =<br>prepo___ção
+          <span class="hint">(complete a palavra)</span>
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="cut">
+
+  <div class="rules-card">
+    <h3>📋 Regras do Dominó</h3>
+    <ol>
+      <li>Recorte as 16 peças e embaralhe.</li>
+      <li>Distribua igualmente entre 2 a 4 jogadores.</li>
+      <li>Quem tiver a peça com 🎲 começa.</li>
+      <li>Na sua vez, encaixe uma peça: <strong>preposição ↔ frase</strong> ou <strong>frase ↔ preposição</strong>.</li>
+      <li>Ao encaixar, leia a frase completa em voz alta com a preposição correta. Se errar, perde a vez.</li>
+      <li>Se não tiver peça para jogar, passe a vez.</li>
+      <li>Vence quem terminar todas as peças primeiro!</li>
+    </ol>
+  </div>
+
+</div>
+</body>
+</html>

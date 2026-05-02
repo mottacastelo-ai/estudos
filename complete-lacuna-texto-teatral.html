@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete a Lacuna – Texto Teatral</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F0F7FF; --card:#fff; --primary:#4B7BEC; --primary-light:#D6E4FF;
+    --green:#20bf6b; --green-light:#D5F5E3; --red:#E74C3C; --red-light:#FADBD8;
+    --accent:#FFE66D; --text:#2D3436; --muted:#636E72; --border:#DDE3EE;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:660px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:24px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+  .word-bank { background:var(--card); border:2px dashed var(--primary); border-radius:16px; padding:16px 18px; margin-bottom:18px; }
+  .wb-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:10px; }
+  .words { display:flex; flex-wrap:wrap; gap:8px; }
+  .word-chip { background:var(--primary-light); color:var(--primary); font-weight:800; font-size:14px; padding:5px 14px; border-radius:20px; border:1.5px solid var(--primary); cursor:pointer; transition:all .15s; user-select:none; }
+  .word-chip:hover { background:var(--primary); color:white; }
+  .word-chip.used { opacity:.35; cursor:default; text-decoration:line-through; }
+  .sel-indicator { background:var(--primary); color:white; border-radius:12px; padding:8px 14px; font-size:13px; font-weight:800; margin-bottom:14px; display:none; text-align:center; }
+  .sel-indicator.show { display:block; }
+  .section-lbl { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin:18px 0 10px; }
+  .sentence-card { background:var(--card); border:2px solid var(--border); border-radius:15px; padding:15px 17px; margin-bottom:9px; font-size:15px; font-weight:700; line-height:1.7; transition:border-color .2s; }
+  .sentence-card .sn { font-size:10px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .sentence-card.correct { border-color:var(--green); background:#F0FBF5; }
+  .sentence-card.wrong { border-color:var(--red); background:#FFF5F5; }
+  .blank { display:inline-flex; align-items:center; justify-content:center; min-width:80px; border-bottom:3px solid var(--primary); padding:1px 8px; font-size:14px; font-weight:900; color:var(--primary); cursor:pointer; border-radius:4px 4px 0 0; transition:background .15s; }
+  .blank:hover { background:var(--primary-light); }
+  .blank.filled { color:var(--primary); }
+  .blank.correct-blank { color:var(--green); border-color:var(--green); }
+  .blank.wrong-blank { color:var(--red); border-color:var(--red); }
+  .sent-fb { font-size:11px; font-weight:700; display:block; margin-top:6px; }
+  .sent-fb.ok { color:var(--green); }
+  .sent-fb.nok { color:var(--red); }
+  .btn-row { display:flex; gap:10px; margin-top:18px; }
+  .btn { flex:1; padding:13px; border:none; border-radius:13px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-check { background:var(--primary); color:white; }
+  .btn-check:hover { background:#3867d6; transform:translateY(-2px); }
+  .btn-reset { background:var(--border); color:var(--muted); }
+  .btn-reset:hover { background:#c8d0e0; }
+  .score-bar { background:var(--card); border-radius:16px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; border:2px solid var(--border); margin-top:16px; display:none; animation:popIn .3s ease; }
+  .score-bar.show { display:flex; }
+  @keyframes popIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:scale(1)} }
+  .score-big { font-family:'Fredoka One',cursive; font-size:26px; color:var(--primary); }
+  .score-lbl { font-size:12px; font-weight:700; color:var(--muted); }
+  .medal-chip { background:var(--accent); padding:6px 16px; border-radius:20px; font-weight:800; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">Português • Texto Teatral</div>
+    <h1>Complete a Lacuna</h1>
+    <p class="subtitle">Clique em uma palavra do banco, depois clique na lacuna</p>
+  </div>
+
+  <div class="word-bank">
+    <div class="wb-title">📦 Banco de palavras</div>
+    <div class="words" id="word-bank"></div>
+  </div>
+
+  <div class="sel-indicator" id="sel-ind"></div>
+
+  <div class="section-lbl">Grupo A — O texto e suas personagens</div>
+  <div id="group-a"></div>
+
+  <div class="section-lbl">Grupo B — Características do texto teatral</div>
+  <div id="group-b"></div>
+
+  <div class="section-lbl">Grupo C — A moral da história</div>
+  <div id="group-c"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✅ Verificar respostas</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+  <div class="score-bar" id="score-bar">
+    <div><div class="score-big" id="score-val">0/9</div><div class="score-lbl">respostas corretas</div></div>
+    <div class="medal-chip" id="medal-chip">📚</div>
+  </div>
+</div>
+<script>
+const allWords = ['rubricas','Sol','teatral','Vento','inteligência','plateia','cenário','personagens','falas'];
+
+const sentences = [
+  { group:'a', before:'O texto "O Vento e o Sol" é um texto ', blank:'teatral', after:' — criado para ser encenado.', hint:'tipo de texto' },
+  { group:'a', before:'As ', blank:'personagens', after:' são: Sol, Vento, Menino, Pombo 1 e Pombo 2.', hint:'quem participa' },
+  { group:'a', before:'O ', blank:'Vento', after:' soprou muito forte, mas o Menino só se agasalhou mais.', hint:'perdedor da aposta' },
+  { group:'a', before:'O ', blank:'Sol', after:' venceu a aposta ao se aproximar e aumentar o calor.', hint:'vencedor da aposta' },
+  { group:'b', before:'As informações sobre o que as personagens fazem e sentem são chamadas de ', blank:'rubricas', after:'.', hint:'instruções de cena' },
+  { group:'b', before:'Os nomes em destaque antes das ', blank:'falas', after:' indicam quem está falando.', hint:'o que as personagens dizem' },
+  { group:'b', before:'A rubrica "para a ', blank:'plateia', after:'" indica que o Pombo 1 fala para o público.', hint:'quem assiste' },
+  { group:'b', before:'O ', blank:'cenário', after:' da peça é um ponto de ônibus (ou uma praça).', hint:'lugar da história' },
+  { group:'c', before:'Os pombos ensinam que é mais fácil vencer com ', blank:'inteligência', after:' do que com violência.', hint:'moral da história' },
+];
+
+let selected = null;
+let answers = {};
+
+function init() {
+  selected = null; answers = {};
+  const wb = document.getElementById('word-bank');
+  wb.innerHTML = '';
+  allWords.forEach(function(w) {
+    const chip = document.createElement('button');
+    chip.className = 'word-chip';
+    chip.textContent = w;
+    chip.id = 'chip-' + w;
+    chip.onclick = function() { selectWord(w, chip); };
+    wb.appendChild(chip);
+  });
+  renderGroup('a', 'group-a');
+  renderGroup('b', 'group-b');
+  renderGroup('c', 'group-c');
+  document.getElementById('score-bar').className = 'score-bar';
+}
+
+function renderGroup(g, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  sentences.filter(function(s){ return s.group === g; }).forEach(function(s, i) {
+    const idx = sentences.indexOf(s);
+    const card = document.createElement('div');
+    card.className = 'sentence-card';
+    card.id = 'card-' + idx;
+    const sn = document.createElement('div');
+    sn.className = 'sn';
+    sn.textContent = 'Frase ' + (i + 1) + ' — ' + s.hint;
+    card.appendChild(sn);
+    const line = document.createElement('div');
+    const b1 = document.createTextNode(s.before + ' ');
+    const blankEl = document.createElement('span');
+    blankEl.className = 'blank';
+    blankEl.id = 'blank-' + idx;
+    blankEl.textContent = '___';
+    blankEl.onclick = function() { fillBlank(idx); };
+    const b2 = document.createTextNode(' ' + s.after);
+    line.appendChild(b1); line.appendChild(blankEl); line.appendChild(b2);
+    card.appendChild(line);
+    const fb = document.createElement('span');
+    fb.className = 'sent-fb';
+    fb.id = 'sfb-' + idx;
+    card.appendChild(fb);
+    container.appendChild(card);
+  });
+}
+
+function selectWord(w, chip) {
+  document.querySelectorAll('.word-chip').forEach(function(c) { c.style.outline = ''; });
+  selected = w;
+  chip.style.outline = '3px solid var(--primary)';
+  chip.style.outlineOffset = '2px';
+  const ind = document.getElementById('sel-ind');
+  ind.textContent = 'Palavra selecionada: "' + w + '" — clique na lacuna';
+  ind.className = 'sel-indicator show';
+}
+
+function fillBlank(idx) {
+  if (!selected) return;
+  answers[idx] = selected;
+  const blank = document.getElementById('blank-' + idx);
+  blank.textContent = selected;
+  blank.className = 'blank filled';
+  document.getElementById('sfb-' + idx).textContent = '';
+  document.getElementById('card-' + idx).className = 'sentence-card';
+  selected = null;
+  document.querySelectorAll('.word-chip').forEach(function(c) { c.style.outline = ''; });
+  document.getElementById('sel-ind').className = 'sel-indicator';
+}
+
+function checkAll() {
+  let correct = 0;
+  sentences.forEach(function(s, idx) {
+    const user = (answers[idx] || '').toLowerCase();
+    const card = document.getElementById('card-' + idx);
+    const blank = document.getElementById('blank-' + idx);
+    const fb = document.getElementById('sfb-' + idx);
+    if (user === s.blank.toLowerCase()) {
+      correct++;
+      card.className = 'sentence-card correct';
+      blank.className = 'blank correct-blank';
+      fb.className = 'sent-fb ok'; fb.textContent = '✓ Correto!';
+    } else {
+      card.className = 'sentence-card wrong';
+      blank.className = 'blank wrong-blank';
+      fb.className = 'sent-fb nok';
+      fb.textContent = '✗ A resposta certa era: "' + s.blank + '"';
+    }
+  });
+  const bar = document.getElementById('score-bar');
+  bar.className = 'score-bar show';
+  document.getElementById('score-val').textContent = correct + '/' + sentences.length;
+  const pct = correct / sentences.length;
+  let medal;
+  if (pct === 1) medal = '🏆 Perfeito!';
+  else if (pct >= .77) medal = '🌟 Muito bem!';
+  else if (pct >= .55) medal = '😊 Bom trabalho!';
+  else medal = '📚 Revise e tente de novo!';
+  document.getElementById('medal-chip').textContent = medal;
+}
+
+function resetAll() { init(); }
+init();
+</script>
+</body>
+</html>

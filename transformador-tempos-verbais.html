@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformador de Verbos</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FFFBEB; --card:#fff;
+    --past:#8B5CF6; --past-light:#EDE9FE;
+    --present:#10B981; --present-light:#D1FAE5;
+    --future:#F59E0B; --future-light:#FEF3C7;
+    --primary:#F59E0B; --primary-dark:#D97706;
+    --green:#10B981; --green-light:#D1FAE5;
+    --text:#1A1A2E; --muted:#6B7280; --border:#E5E7EB;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:660px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary-dark); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  .instr { background:var(--future-light); border:2px solid var(--primary); border-radius:14px; padding:13px 17px; margin-bottom:20px; font-size:13px; font-weight:700; color:#78350F; line-height:1.6; }
+  .instr strong { display:block; font-size:14px; margin-bottom:4px; color:#451A03; }
+
+  /* Progress */
+  .prog-wrap { background:#E5E7EB; border-radius:20px; height:7px; margin-bottom:6px; overflow:hidden; }
+  .prog-bar { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--past),var(--primary)); transition:width .5s ease; }
+  .prog-lbl { text-align:right; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:18px; }
+
+  /* Challenge card */
+  .challenge-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:24px; margin-bottom:14px; animation:slideIn .35s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  .challenge-num { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary-dark); margin-bottom:10px; }
+
+  .original-frase { border-radius:12px; padding:14px 16px; margin-bottom:16px; }
+  .original-frase.past-orig { background:var(--past-light); border-left:4px solid var(--past); }
+  .original-frase.present-orig { background:var(--present-light); border-left:4px solid var(--present); }
+  .original-frase.future-orig { background:var(--future-light); border-left:4px solid var(--primary); }
+  .orig-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .orig-label.past-orig { color:var(--past); }
+  .orig-label.present-orig { color:var(--present); }
+  .orig-label.future-orig { color:var(--primary-dark); }
+  .orig-text { font-size:16px; font-weight:800; }
+  .orig-verb { padding:1px 6px; border-radius:5px; font-style:normal; }
+  .past-verb { background:var(--past); color:white; }
+  .present-verb { background:var(--present); color:white; }
+  .future-verb { background:var(--primary); color:white; }
+
+  .target-row { display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
+  .target-badge { padding:6px 12px; border-radius:10px; font-size:12px; font-weight:800; white-space:nowrap; flex-shrink:0; margin-top:4px; }
+  .target-badge.past { background:var(--past-light); color:var(--past); border:1.5px solid var(--past); }
+  .target-badge.present { background:var(--present-light); color:var(--present); border:1.5px solid var(--present); }
+  .target-badge.future { background:var(--future-light); color:var(--primary-dark); border:1.5px solid var(--primary); }
+
+  .answer-input { flex:1; border:2px solid var(--border); border-radius:12px; padding:10px 13px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:700; color:var(--text); outline:none; transition:border-color .2s; }
+  .answer-input:focus { border-color:var(--primary); }
+  .answer-input.correct-input { border-color:var(--green); background:var(--green-light); }
+  .answer-input.wrong-input { border-color:#EF4444; background:#FEE2E2; }
+  .answer-input:disabled { cursor:default; }
+
+  .check-btn { background:var(--primary); border:none; border-radius:12px; padding:10px 18px; font-family:'Nunito',sans-serif; font-size:13px; font-weight:800; color:white; cursor:pointer; transition:all .18s; white-space:nowrap; }
+  .check-btn:hover { background:var(--primary-dark); }
+  .check-btn:disabled { opacity:.4; cursor:default; }
+
+  .answer-feedback { font-size:12px; font-weight:700; margin-left:94px; margin-top:3px; min-height:18px; }
+  .answer-feedback.ok { color:var(--green); }
+  .answer-feedback.nok { color:#EF4444; }
+
+  .btn-next { width:100%; background:var(--primary); color:white; border:none; border-radius:13px; padding:14px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; margin-top:14px; display:none; transition:all .18s; }
+  .btn-next:hover { background:var(--primary-dark); transform:translateY(-2px); }
+  .btn-next.show { display:block; }
+
+  /* Result */
+  .result { background:var(--card); border:2px solid var(--border); border-radius:24px; padding:36px 24px; text-align:center; display:none; animation:popIn .4s ease; }
+  .result.show { display:block; }
+  @keyframes popIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:60px; margin-bottom:12px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:28px; color:var(--primary-dark); margin-bottom:16px; }
+  .r-stats { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:20px; }
+  .rstat { background:#F9FAFB; border:2px solid var(--border); border-radius:14px; padding:12px 18px; min-width:100px; text-align:center; }
+  .rstat .rb { font-family:'Fredoka One',cursive; font-size:28px; }
+  .rstat .rl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+  .medal { display:inline-block; background:var(--future-light); border:2px solid var(--primary); border-radius:16px; padding:8px 22px; font-size:14px; font-weight:800; margin-bottom:20px; color:#92400E; }
+  .btn-restart { background:var(--primary); color:white; border:none; border-radius:13px; padding:14px 32px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-restart:hover { background:var(--primary-dark); transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">⚡ Método ativo – Praticar</div>
+    <h1>Transformador de Verbos</h1>
+    <p class="subtitle">Reescreva as frases mudando o tempo verbal — como fez no caderno, mas com correção automática!</p>
+  </div>
+
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Você vai ver uma frase original e precisa reescrevê-la mudando o verbo para o tempo indicado (passado, presente ou futuro). Depois clique em "Verificar" para saber se acertou.
+  </div>
+
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Desafio 1 de 8</div>
+
+  <div id="challenge-area">
+    <div class="challenge-card" id="challenge-card">
+      <div class="challenge-num" id="ch-num">Desafio 1</div>
+      <div class="original-frase" id="orig-frase">
+        <div class="orig-label" id="orig-label"></div>
+        <div class="orig-text" id="orig-text"></div>
+      </div>
+      <div id="targets-area"></div>
+      <button class="btn-next" id="btn-next" onclick="nextChallenge()">Próximo desafio →</button>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rstat"><div class="rb" id="r-correct" style="color:var(--green)">0</div><div class="rl">Corretos</div></div>
+      <div class="rstat"><div class="rb" id="r-total" style="color:var(--past)">0</div><div class="rl">Total</div></div>
+    </div>
+    <div class="medal" id="r-medal"></div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+var challenges = [
+  {
+    original: { text: 'Menino {tira} o casaco.', verb: 'tira', time: 'present' },
+    targets: [
+      { time: 'past',   label: '⏮️ Passado',   answers: ['menino tirou o casaco','tirou o casaco','menino tirou o casaco.'] },
+      { time: 'future', label: '⏭️ Futuro',     answers: ['menino tirará o casaco','tirará o casaco','menino tirará o casaco.','menino vai tirar o casaco','vai tirar o casaco'] },
+    ]
+  },
+  {
+    original: { text: 'Ok, você {venceu}!', verb: 'venceu', time: 'past' },
+    targets: [
+      { time: 'present', label: '▶️ Presente', answers: ['ok, você vence','você vence','vence','ok você vence'] },
+      { time: 'future',  label: '⏭️ Futuro',   answers: ['ok, você vencerá','você vencerá','vencerá','ok você vencerá','ok, você vai vencer','você vai vencer'] },
+    ]
+  },
+  {
+    original: { text: 'O Vento {soprará} mais forte.', verb: 'soprará', time: 'future' },
+    targets: [
+      { time: 'past',    label: '⏮️ Passado',  answers: ['o vento soprou mais forte','soprou mais forte','o vento soprou','vento soprou mais forte'] },
+      { time: 'present', label: '▶️ Presente', answers: ['o vento sopra mais forte','sopra mais forte','o vento sopra','vento sopra mais forte'] },
+    ]
+  },
+  {
+    original: { text: 'Sol {observa} a cena.', verb: 'observa', time: 'present' },
+    targets: [
+      { time: 'past',   label: '⏮️ Passado', answers: ['sol observou a cena','observou a cena','sol observou','observou'] },
+      { time: 'future', label: '⏭️ Futuro',  answers: ['sol observará a cena','observará a cena','sol observará','observará','sol vai observar a cena','vai observar a cena'] },
+    ]
+  },
+  {
+    original: { text: 'Exausto, Vento {desiste}.', verb: 'desiste', time: 'present' },
+    targets: [
+      { time: 'past',   label: '⏮️ Passado', answers: ['exausto, vento desistiu','vento desistiu','desistiu'] },
+      { time: 'future', label: '⏭️ Futuro',  answers: ['exausto, vento desistirá','vento desistirá','desistirá','vento vai desistir'] },
+    ]
+  },
+  {
+    original: { text: 'Sol {venceu} a aposta.', verb: 'venceu', time: 'past' },
+    targets: [
+      { time: 'present', label: '▶️ Presente', answers: ['sol vence a aposta','vence a aposta','sol vence','vence'] },
+      { time: 'future',  label: '⏭️ Futuro',   answers: ['sol vencerá a aposta','vencerá a aposta','sol vencerá','vencerá','sol vai vencer a aposta','vai vencer a aposta'] },
+    ]
+  },
+  {
+    original: { text: 'Menino {sentiu} frio.', verb: 'sentiu', time: 'past' },
+    targets: [
+      { time: 'present', label: '▶️ Presente', answers: ['menino sente frio','sente frio','sente'] },
+      { time: 'future',  label: '⏭️ Futuro',   answers: ['menino sentirá frio','sentirá frio','sentirá','menino vai sentir frio','vai sentir frio'] },
+    ]
+  },
+  {
+    original: { text: 'Sol {se aproxima} do Menino.', verb: 'se aproxima', time: 'present' },
+    targets: [
+      { time: 'past',   label: '⏮️ Passado', answers: ['sol se aproximou do menino','se aproximou do menino','sol se aproximou','aproximou'] },
+      { time: 'future', label: '⏭️ Futuro',  answers: ['sol se aproximará do menino','se aproximará do menino','sol se aproximará','aproximará','sol vai se aproximar do menino','vai se aproximar'] },
+    ]
+  },
+];
+
+var cur = 0;
+var totalCorrect = 0;
+var totalAnswers = 0;
+var checkedTargets = {};
+
+function timeClass(t) { return t === 'past' ? 'past' : t === 'present' ? 'present' : 'future'; }
+function timeLabel(t) { return t === 'past' ? 'PASSADO' : t === 'present' ? 'PRESENTE' : 'FUTURO'; }
+function verbClass(t) { return t + '-verb'; }
+
+function loadChallenge() {
+  checkedTargets = {};
+  var ch = challenges[cur];
+  document.getElementById('ch-num').textContent = 'Desafio ' + (cur+1);
+  document.getElementById('prog').style.width = ((cur/challenges.length)*100) + '%';
+  document.getElementById('prog-lbl').textContent = 'Desafio ' + (cur+1) + ' de ' + challenges.length;
+
+  // Original
+  var origFrase = document.getElementById('orig-frase');
+  origFrase.className = 'original-frase ' + timeClass(ch.original.time) + '-orig';
+  var origLabel = document.getElementById('orig-label');
+  origLabel.className = 'orig-label ' + timeClass(ch.original.time) + '-orig';
+  origLabel.textContent = '📌 Frase original — tempo ' + timeLabel(ch.original.time).toLowerCase();
+  var origText = document.getElementById('orig-text');
+  origText.innerHTML = ch.original.text.replace(
+    '{' + ch.original.verb + '}',
+    '<em class="orig-verb ' + verbClass(ch.original.time) + '">' + ch.original.verb + '</em>'
+  );
+
+  // Targets
+  var area = document.getElementById('targets-area');
+  area.innerHTML = '';
+  ch.targets.forEach(function(target, tidx) {
+    var row = document.createElement('div');
+    row.className = 'target-row';
+
+    var badge = document.createElement('div');
+    badge.className = 'target-badge ' + timeClass(target.time);
+    badge.textContent = target.label;
+    row.appendChild(badge);
+
+    var inp = document.createElement('input');
+    inp.type = 'text';
+    inp.className = 'answer-input';
+    inp.id = 'inp-' + tidx;
+    inp.placeholder = 'Reescreva no ' + timeLabel(target.time).toLowerCase() + '...';
+    inp.onkeydown = function(e) { if (e.key === 'Enter') { e.preventDefault(); checkTarget(tidx); } };
+    row.appendChild(inp);
+
+    var btn = document.createElement('button');
+    btn.className = 'check-btn';
+    btn.id = 'cbtn-' + tidx;
+    btn.textContent = 'Verificar';
+    btn.onclick = (function(i){ return function(){ checkTarget(i); }; })(tidx);
+    row.appendChild(btn);
+
+    area.appendChild(row);
+
+    var fb = document.createElement('div');
+    fb.className = 'answer-feedback';
+    fb.id = 'afb-' + tidx;
+    area.appendChild(fb);
+  });
+
+  document.getElementById('btn-next').className = 'btn-next';
+  document.getElementById('challenge-card').style.animation = 'none';
+  requestAnimationFrame(function(){ document.getElementById('challenge-card').style.animation = 'slideIn .35s ease'; });
+}
+
+function normalize(s) {
+  return s.toLowerCase().trim()
+    .replace(/[áàãâä]/g, 'a').replace(/[éèêë]/g, 'e')
+    .replace(/[íìîï]/g, 'i').replace(/[óòõôö]/g, 'o')
+    .replace(/[úùûü]/g, 'u').replace(/[ç]/g, 'c')
+    .replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function checkTarget(tidx) {
+  if (checkedTargets[tidx]) return;
+  var ch = challenges[cur];
+  var target = ch.targets[tidx];
+  var inp = document.getElementById('inp-' + tidx);
+  var fb = document.getElementById('afb-' + tidx);
+  var btn = document.getElementById('cbtn-' + tidx);
+  var userVal = normalize(inp.value);
+  if (!userVal) { inp.focus(); return; }
+
+  checkedTargets[tidx] = true;
+  inp.disabled = true;
+  btn.disabled = true;
+  totalAnswers++;
+
+  var isCorrect = target.answers.some(function(a){ return normalize(a) === userVal; });
+  if (isCorrect) {
+    inp.className = 'answer-input correct-input';
+    fb.className = 'answer-feedback ok';
+    fb.textContent = '✅ Correto!';
+    totalCorrect++;
+  } else {
+    inp.className = 'answer-input wrong-input';
+    fb.className = 'answer-feedback nok';
+    fb.textContent = '❌ Uma opção correta: "' + target.answers[0] + '"';
+  }
+
+  // Check if all targets answered
+  if (Object.keys(checkedTargets).length === ch.targets.length) {
+    if (cur < challenges.length - 1) {
+      document.getElementById('btn-next').className = 'btn-next show';
+    } else {
+      setTimeout(showResult, 1000);
+    }
+  }
+}
+
+function nextChallenge() { cur++; loadChallenge(); }
+
+function showResult() {
+  document.getElementById('challenge-area').style.display = 'none';
+  var rs = document.getElementById('result');
+  rs.className = 'result show';
+  document.getElementById('r-correct').textContent = totalCorrect;
+  document.getElementById('r-total').textContent = totalAnswers;
+  var pct = totalAnswers > 0 ? totalCorrect / totalAnswers : 0;
+  var e, t, m;
+  if (pct === 1)     { e='🏆'; t='Mestre dos verbos!';       m='🥇 Conjugação perfeita!'; }
+  else if (pct>=.8)  { e='🌟'; t='Excelente!';               m='🥈 Quase perfeito!'; }
+  else if (pct>=.6)  { e='😊'; t='Muito bem!';               m='🥉 Continue praticando!'; }
+  else               { e='🔄'; t='Continue treinando!';      m='📚 Revise os tempos verbais!'; }
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+  document.getElementById('r-medal').textContent = m;
+}
+
+function restart() {
+  cur=0; totalCorrect=0; totalAnswers=0; checkedTargets={};
+  document.getElementById('challenge-area').style.display = 'block';
+  document.getElementById('result').className = 'result';
+  loadChallenge();
+}
+
+loadChallenge();
+</script>
+</body>
+</html>

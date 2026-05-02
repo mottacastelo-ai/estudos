@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caça ao Erro – Texto Teatral</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FFF5F5; --card:#fff; --primary:#E74C3C; --primary-light:#FADBD8;
+    --neutral:#4B7BEC; --neutral-light:#D6E4FF;
+    --green:#27AE60; --green-light:#D5F5E3;
+    --yellow:#F39C12; --yellow-light:#FDEBD0;
+    --text:#2D3436; --muted:#636E72; --border:#EAEAEA;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:640px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  .instr { background:var(--yellow-light); border:2px solid var(--yellow); border-radius:14px; padding:13px 17px; margin-bottom:18px; font-size:13px; font-weight:700; color:#7D5000; line-height:1.6; }
+  .instr strong { display:block; font-size:14px; margin-bottom:4px; color:#5D3800; }
+
+  .counter-row { display:flex; gap:10px; margin-bottom:14px; }
+  .counter-pill { flex:1; background:var(--card); border:2px solid var(--border); border-radius:13px; padding:9px; text-align:center; font-weight:800; }
+  .counter-pill .big { font-size:22px; font-family:'Fredoka One',cursive; }
+  .counter-pill .lbl { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  .counter-pill.red .big { color:var(--primary); }
+  .counter-pill.blue .big { color:var(--neutral); }
+
+  .sent-card { background:var(--card); border:2px solid var(--border); border-radius:15px; padding:15px 17px; margin-bottom:9px; transition:border-color .2s, background .2s; }
+  .sent-card .sn { font-size:10px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .sent-card .s-text { font-size:15px; font-weight:700; line-height:1.7; margin-bottom:4px; }
+  .sent-card.c-correct { border-color:var(--green); background:#F0FBF5; }
+  .sent-card.c-wrong { border-color:var(--primary); background:#FFF5F5; }
+
+  .highlight { display:inline-block; background:var(--neutral-light); color:var(--neutral); font-weight:900; padding:1px 8px; border-radius:6px; border:1.5px solid var(--neutral); cursor:pointer; transition:all .15s; user-select:none; }
+  .highlight:hover { background:var(--neutral); color:white; }
+  .highlight.marked { background:var(--primary); color:white; border-color:var(--primary); }
+  .highlight.res-correct-err { background:var(--green-light); color:var(--green); border-color:var(--green); text-decoration:line-through; }
+  .highlight.res-missed { background:var(--primary-light); color:var(--primary); border-color:var(--primary); }
+  .highlight.res-ok { background:var(--green-light); color:var(--green); border-color:var(--green); }
+  .highlight.res-false { background:var(--primary-light); color:var(--primary); border-color:var(--primary); }
+
+  .sent-fb { font-size:12px; font-weight:700; margin-top:8px; padding:8px 12px; border-radius:10px; display:none; line-height:1.5; }
+  .sent-fb.show { display:block; }
+  .sent-fb.ok { background:var(--green-light); color:#1A7A45; }
+  .sent-fb.nok { background:var(--primary-light); color:#922B21; }
+
+  .btn-row { display:flex; gap:10px; margin-top:18px; }
+  .btn { flex:1; padding:13px; border:none; border-radius:13px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-check { background:var(--primary); color:white; }
+  .btn-check:hover { background:#c0392b; transform:translateY(-2px); }
+  .btn-reset { background:var(--border); color:var(--muted); }
+  .btn-reset:hover { background:#c8d0e0; }
+
+  .result-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:26px; text-align:center; margin-top:16px; display:none; animation:popIn .3s ease; }
+  .result-card.show { display:block; }
+  @keyframes popIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:52px; margin-bottom:10px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:26px; color:var(--primary); margin-bottom:6px; }
+  .r-sub { font-size:13px; color:var(--muted); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🔍 Detetive do Texto Teatral</div>
+    <h1>Caça ao Erro</h1>
+    <p class="subtitle">Encontre as afirmações erradas sobre o texto!</p>
+  </div>
+
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Cada frase tem uma palavra destacada em azul. Algumas estão <strong>erradas</strong>, outras estão <strong>certas</strong>. Clique nas que você acha que estão erradas. Quando terminar, clique em "Verificar".
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-pill red"><div class="big" id="cnt-marked">0</div><div class="lbl">Marcadas</div></div>
+    <div class="counter-pill blue"><div class="big" id="cnt-total">9</div><div class="lbl">Total</div></div>
+  </div>
+
+  <div id="sentences-container"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✅ Verificar</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+
+  <div class="result-card" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-sub" id="r-sub"></div>
+  </div>
+</div>
+
+<script>
+// ── Dados ──────────────────────────────────────────────
+var data = [
+  {
+    before: 'O texto "O Vento e o Sol" é um texto ',
+    word: 'narrativo',
+    after: ' — criado para ser encenado.',
+    isError: true,
+    correct: 'teatral',
+    exp: 'É um texto TEATRAL (dramático), não narrativo. Foi criado para ser encenado no palco.'
+  },
+  {
+    before: 'As rubricas descrevem o ',
+    word: 'cenário',
+    after: ' e as ações das personagens.',
+    isError: false,
+    exp: 'Correto! As rubricas descrevem o cenário, as ações e os sentimentos das personagens.'
+  },
+  {
+    before: 'O ',
+    word: 'Vento',
+    after: ' venceu a aposta ao fazer o Menino tirar a roupa.',
+    isError: true,
+    correct: 'Sol',
+    exp: 'Foi o SOL que venceu. O Vento não conseguiu — o Menino só se agasalhava mais quando ele soprava.'
+  },
+  {
+    before: 'Os nomes em destaque antes das falas indicam ',
+    word: 'quem está falando',
+    after: '.',
+    isError: false,
+    exp: 'Correto! Os nomes antes das falas identificam qual personagem está com a palavra.'
+  },
+  {
+    before: 'O Menino ',
+    word: 'tem muitas falas',
+    after: ' ao longo do texto.',
+    isError: true,
+    correct: 'não tem falas',
+    exp: 'O Menino NÃO TEM falas. Ele é uma personagem de ação, descrita pelas rubricas.'
+  },
+  {
+    before: 'A rubrica "para a plateia" indica que o Pombo 1 fala para ',
+    word: 'o público',
+    after: ' que assiste à peça.',
+    isError: false,
+    exp: 'Correto! "Para a plateia" significa que o personagem fala diretamente para o público.'
+  },
+  {
+    before: 'O cenário da peça é ',
+    word: 'uma floresta',
+    after: '.',
+    isError: true,
+    correct: 'um ponto de ônibus',
+    exp: 'O cenário é um PONTO DE ÔNIBUS (ou uma praça), conforme indicado no início do texto.'
+  },
+  {
+    before: 'O Vento desistiu porque ficou ',
+    word: 'exausto',
+    after: ' de soprar sem conseguir arrancar a roupa do Menino.',
+    isError: false,
+    exp: 'Correto! O texto diz exatamente: "Exausto, Vento desiste."'
+  },
+  {
+    before: 'A moral da história é que a ',
+    word: 'força',
+    after: ' é mais eficaz do que a inteligência.',
+    isError: true,
+    correct: 'inteligência',
+    exp: 'A moral é o oposto: é mais fácil conseguir o que se quer com INTELIGÊNCIA do que com violência ou força.'
+  }
+];
+
+// ── Estado ─────────────────────────────────────────────
+var marked = {};   // { index: true/false }
+var checked = false;
+
+// ── Render ─────────────────────────────────────────────
+function render() {
+  var container = document.getElementById('sentences-container');
+  container.innerHTML = '';
+
+  for (var i = 0; i < data.length; i++) {
+    (function(idx) {
+      var s = data[idx];
+
+      var card = document.createElement('div');
+      card.className = 'sent-card';
+      card.id = 'card-' + idx;
+
+      var sn = document.createElement('div');
+      sn.className = 'sn';
+      sn.textContent = 'Afirmação ' + (idx + 1);
+      card.appendChild(sn);
+
+      var textDiv = document.createElement('div');
+      textDiv.className = 's-text';
+
+      textDiv.appendChild(document.createTextNode(s.before + ' '));
+
+      var hl = document.createElement('span');
+      hl.className = 'highlight';
+      hl.id = 'hl-' + idx;
+      hl.textContent = s.word;
+      hl.onclick = function() { toggleMark(idx); };
+      textDiv.appendChild(hl);
+
+      textDiv.appendChild(document.createTextNode(' ' + s.after));
+      card.appendChild(textDiv);
+
+      var fb = document.createElement('div');
+      fb.className = 'sent-fb';
+      fb.id = 'fb-' + idx;
+      card.appendChild(fb);
+
+      container.appendChild(card);
+    })(i);
+  }
+
+  updateCounter();
+}
+
+// ── Interação ───────────────────────────────────────────
+function toggleMark(idx) {
+  if (checked) return;
+  var hl = document.getElementById('hl-' + idx);
+  if (marked[idx]) {
+    marked[idx] = false;
+    hl.classList.remove('marked');
+  } else {
+    marked[idx] = true;
+    hl.classList.add('marked');
+  }
+  updateCounter();
+}
+
+function updateCounter() {
+  var count = 0;
+  for (var k in marked) { if (marked[k]) count++; }
+  document.getElementById('cnt-marked').textContent = count;
+}
+
+// ── Verificação ─────────────────────────────────────────
+function checkAll() {
+  checked = true;
+  var score = 0;
+
+  for (var i = 0; i < data.length; i++) {
+    var s = data[i];
+    var isMarked = marked[i] === true;
+    var card = document.getElementById('card-' + i);
+    var hl = document.getElementById('hl-' + i);
+    var fb = document.getElementById('fb-' + i);
+
+    if (s.isError && isMarked) {
+      // Achou o erro corretamente
+      score++;
+      card.className = 'sent-card c-correct';
+      hl.className = 'highlight res-correct-err';
+      fb.className = 'sent-fb show ok';
+      fb.textContent = '✅ ' + s.exp;
+
+    } else if (s.isError && !isMarked) {
+      // Não marcou mas devia
+      card.className = 'sent-card c-wrong';
+      hl.className = 'highlight res-missed';
+      fb.className = 'sent-fb show nok';
+      fb.textContent = '❌ Esta estava errada! O correto é "' + s.correct + '". ' + s.exp;
+
+    } else if (!s.isError && !isMarked) {
+      // Corretamente não marcou
+      score++;
+      card.className = 'sent-card c-correct';
+      hl.className = 'highlight res-ok';
+      fb.className = 'sent-fb show ok';
+      fb.textContent = '✅ ' + s.exp;
+
+    } else {
+      // Marcou mas estava certa
+      card.className = 'sent-card c-wrong';
+      hl.className = 'highlight res-false';
+      fb.className = 'sent-fb show nok';
+      fb.textContent = '❌ Esta estava correta! ' + s.exp;
+    }
+  }
+
+  // Resultado
+  var pct = score / data.length;
+  var rs = document.getElementById('result');
+  rs.className = 'result-card show';
+
+  var e, t, sub;
+  if (pct === 1)       { e='🏆'; t='Detetive perfeito!';    sub='Você identificou todos os erros sem se enganar!'; }
+  else if (pct >= .77) { e='🌟'; t='Muito bem!';             sub=score+' de '+data.length+' corretos. Quase perfeito!'; }
+  else if (pct >= .55) { e='😊'; t='Bom trabalho!';          sub=score+' de '+data.length+' corretos. Revise e tente de novo.'; }
+  else                 { e='🔄'; t='Continue praticando!';   sub=score+' de '+data.length+' corretos. Releia o texto com atenção.'; }
+
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+  document.getElementById('r-sub').textContent = sub;
+}
+
+// ── Reset ───────────────────────────────────────────────
+function resetAll() {
+  marked = {};
+  checked = false;
+  document.getElementById('result').className = 'result-card';
+  render();
+}
+
+// ── Iniciar ─────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>

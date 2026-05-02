@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – O Vento e o Sol</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FFF8F0; --card:#fff; --primary:#FF6B35; --primary-light:#FFE0D3;
+    --secondary:#4ECDC4; --accent:#FFE66D; --accent-dark:#F4C430;
+    --green:#2ECC71; --green-light:#D5F5E3; --red:#E74C3C; --red-light:#FADBD8;
+    --text:#2D3436; --muted:#636E72; --border:#EAEAEA;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:640px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:24px; }
+  .badge { display:inline-block; background:var(--accent); color:var(--text); font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:32px; color:var(--primary); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+  .score-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .score-pill { display:flex; align-items:center; gap:6px; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:6px 14px; font-size:13px; font-weight:800; }
+  .score-pill span { color:var(--primary); font-size:15px; }
+  .prog-wrap { background:#EEE; border-radius:20px; height:8px; margin-bottom:6px; overflow:hidden; }
+  .prog-bar { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--primary),var(--accent-dark)); transition:width .5s ease; }
+  .prog-lbl { text-align:right; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:18px; }
+  .q-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:24px; margin-bottom:14px; animation:slideIn .35s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  .q-num { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:8px; }
+  .q-text { font-size:16px; font-weight:700; line-height:1.5; margin-bottom:18px; }
+  .q-text em { font-style:normal; background:var(--primary-light); color:var(--primary); padding:1px 6px; border-radius:6px; }
+  .options { display:flex; flex-direction:column; gap:9px; }
+  .opt { background:#FAFAFA; border:2px solid var(--border); border-radius:13px; padding:12px 15px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; transition:all .18s; display:flex; align-items:center; gap:10px; color:var(--text); }
+  .opt:hover:not(:disabled) { border-color:var(--secondary); background:#F0FFFE; transform:translateX(4px); }
+  .opt .ol { width:28px; height:28px; border-radius:50%; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; flex-shrink:0; transition:background .18s; }
+  .opt.correct { border-color:var(--green); background:var(--green-light); }
+  .opt.correct .ol { background:var(--green); color:white; }
+  .opt.wrong { border-color:var(--red); background:var(--red-light); }
+  .opt.wrong .ol { background:var(--red); color:white; }
+  .opt:disabled { cursor:default; }
+  .feedback { border-radius:13px; padding:12px 16px; font-size:13px; font-weight:700; margin-top:12px; display:none; }
+  .feedback.show { display:block; }
+  .feedback.ok { background:var(--green-light); color:#1A7A45; border:2px solid var(--green); }
+  .feedback.nok { background:var(--red-light); color:#922B21; border:2px solid var(--red); }
+  .btn-next { width:100%; background:var(--primary); color:white; border:none; border-radius:13px; padding:14px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; margin-top:12px; display:none; transition:all .18s; }
+  .btn-next:hover { background:#E55A28; transform:translateY(-2px); }
+  .btn-next.show { display:block; }
+  .result { background:var(--card); border:2px solid var(--border); border-radius:24px; padding:36px 24px; text-align:center; display:none; animation:popIn .4s ease; }
+  .result.show { display:block; }
+  @keyframes popIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:60px; margin-bottom:12px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:28px; color:var(--primary); margin-bottom:20px; }
+  .r-score { font-size:48px; font-weight:900; color:var(--text); }
+  .r-score span { color:var(--primary); }
+  .r-sub { font-size:14px; color:var(--muted); font-weight:600; margin:8px 0 24px; }
+  .medal { display:inline-block; background:var(--accent); border-radius:16px; padding:8px 22px; font-size:14px; font-weight:800; margin-bottom:24px; }
+  .review { text-align:left; margin-bottom:24px; }
+  .review-item { padding:10px 14px; border-radius:11px; margin-bottom:7px; font-size:12px; font-weight:600; border:1.5px solid; display:flex; align-items:flex-start; gap:7px; }
+  .review-item.ok { background:var(--green-light); border-color:var(--green); color:#1A7A45; }
+  .review-item.nok { background:var(--red-light); border-color:var(--red); color:#922B21; }
+  .btn-restart { background:var(--primary); color:white; border:none; border-radius:13px; padding:14px 32px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-restart:hover { background:#E55A28; transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">Português • Texto Teatral</div>
+    <h1>O Vento e o Sol</h1>
+    <p class="subtitle">Quiz de interpretação e características do texto teatral</p>
+  </div>
+
+  <div id="quiz-area">
+    <div class="score-row">
+      <div class="score-pill">⭐ Pontos: <span id="score">0</span></div>
+      <div class="score-pill">🎯 Acertos: <span id="hits">0</span></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+    <div class="prog-lbl" id="prog-lbl">Questão 1 de 10</div>
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num">Questão 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title">Parabéns!</div>
+    <div class="r-score"><span id="r-pts">0</span> pts</div>
+    <div class="r-sub" id="r-sub"></div>
+    <div class="medal" id="r-medal"></div>
+    <div class="review" id="review"></div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    text: "O texto <em>O Vento e o Sol</em> é um exemplo de qual tipo de texto?",
+    opts: ["Texto narrativo (conto)","Texto teatral (dramático)","Texto informativo","Texto poético"],
+    correct: 1,
+    exp: "É um texto teatral, também chamado de dramático — criado para ser encenado no palco."
+  },
+  {
+    text: "Quem fez a aposta no texto?",
+    opts: ["Os dois pombos","O Menino e o Vento","O Sol e o Vento","O Sol e o Menino"],
+    correct: 2,
+    exp: "O Sol e o Vento fizeram a aposta para ver quem era o mais forte."
+  },
+  {
+    text: "Qual foi a aposta entre o Vento e o Sol?",
+    opts: ["Quem voasse mais alto","Quem conseguisse arrancar a roupa do Menino","Quem soprava mais forte","Quem aquecia a cidade mais rápido"],
+    correct: 1,
+    exp: "A aposta era ver quem conseguia arrancar a roupa do Menino — ganharia quem fosse o mais forte."
+  },
+  {
+    text: "Em um texto teatral, as informações sobre o cenário e o que as personagens fazem são chamadas de:",
+    opts: ["Falas","Diálogos","Rubricas","Narração"],
+    correct: 2,
+    exp: "As rubricas descrevem o cenário, as ações e os sentimentos das personagens — são as instruções para quem vai encenar."
+  },
+  {
+    text: "No trecho <em>'POMBO 1 (para a plateia)'</em>, a rubrica indica que o Pombo 1 se dirige:",
+    opts: ["Ao Pombo 2","Ao Vento","Ao público que assiste à peça","Ao Menino"],
+    correct: 2,
+    exp: "A rubrica 'para a plateia' indica que o Pombo 1 fala diretamente para o público, não para outra personagem."
+  },
+  {
+    text: "Por que o Vento desistiu da aposta?",
+    opts: ["Ficou com preguiça","O Sol pediu para ele parar","Quanto mais soprava, mais o Menino se agasalhava","O Menino fugiu do ponto de ônibus"],
+    correct: 2,
+    exp: "O Vento soprou cada vez mais forte, mas o Menino reagia se agasalhando mais. Exausto, o Vento desistiu."
+  },
+  {
+    text: "Como o Sol conseguiu vencer a aposta?",
+    opts: ["Soprando mais forte que o Vento","Aproximando-se e aumentando o calor, fazendo o Menino tirar a roupa","Pedindo ajuda aos pombos","Apagando a luz"],
+    correct: 1,
+    exp: "O Sol se aproximou gradualmente, aumentando o calor — o Menino começou a sentir calor e foi tirando a roupa sozinho."
+  },
+  {
+    text: "Qual personagem do texto <em>não tem falas</em>?",
+    opts: ["O Sol","O Vento","O Menino","Os Pombos"],
+    correct: 2,
+    exp: "O Menino não tem nenhuma fala no texto — ele é uma personagem de ação, descrita pelas rubricas."
+  },
+  {
+    text: "A fala final dos pombos transmite uma moral. Qual é essa moral?",
+    opts: ["Quem tem mais força sempre vence","É mais fácil conseguir o que se quer com inteligência do que com violência","O frio é mais forte que o calor","Nunca faça apostas"],
+    correct: 1,
+    exp: "Os pombos concluem: é mais fácil conseguir o que se quer usando a inteligência, sem precisar de violência."
+  },
+  {
+    text: "Para que servem os nomes das personagens em destaque antes de cada fala (ex: POMBO 1:, VENTO:)?",
+    opts: ["Para decorar o texto","Para indicar quem está falando naquele momento","Para descrever o cenário","Para indicar os movimentos dos atores"],
+    correct: 1,
+    exp: "Os nomes antes das falas indicam qual personagem está falando — é uma característica fundamental do texto teatral."
+  }
+];
+
+let cur=0, score=0, hits=0, log=[], answered=false;
+
+function loadQ() {
+  answered=false;
+  const q=questions[cur];
+  document.getElementById('q-num').textContent='Questão '+(cur+1);
+  document.getElementById('q-text').innerHTML=q.text;
+  document.getElementById('prog-lbl').textContent='Questão '+(cur+1)+' de '+questions.length;
+  document.getElementById('prog').style.width=((cur/questions.length)*100)+'%';
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  const letters=['A','B','C','D'];
+  q.opts.forEach(function(o,i){
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="ol">'+letters[i]+'</span>'+o;
+    btn.onclick=function(){selectOpt(i);};
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('q-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('q-card').style.animation='slideIn .35s ease';});
+}
+
+function selectOpt(idx) {
+  if(answered) return;
+  answered=true;
+  const q=questions[cur];
+  const btns=document.querySelectorAll('.opt');
+  btns.forEach(function(b){b.disabled=true;});
+  const fb=document.getElementById('feedback');
+  if(idx===q.correct){
+    btns[idx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.innerHTML='✅ '+q.exp;
+    score+=10; hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+    log.push({ok:true,text:q.text.replace(/<[^>]+>/g,'')});
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.innerHTML='❌ A correta era <strong>'+['A','B','C','D'][q.correct]+'</strong>. '+q.exp;
+    log.push({ok:false,text:q.text.replace(/<[^>]+>/g,'')});
+  }
+  if(cur<questions.length-1){
+    document.getElementById('btn-next').className='btn-next show';
+  } else {
+    setTimeout(showResult,1600);
+  }
+}
+
+function nextQ(){cur++;loadQ();}
+
+function showResult(){
+  document.getElementById('quiz-area').style.display='none';
+  const rs=document.getElementById('result');
+  rs.className='result show';
+  const pct=Math.round((hits/questions.length)*100);
+  document.getElementById('r-pts').textContent=score;
+  document.getElementById('r-sub').textContent='Você acertou '+hits+' de '+questions.length+' ('+pct+'%)';
+  let e,t,m;
+  if(hits===questions.length){e='🏆';t='Perfeito!';m='🥇 Medalha de Ouro';}
+  else if(hits>=8){e='🌟';t='Excelente!';m='🥈 Medalha de Prata';}
+  else if(hits>=6){e='😊';t='Muito bem!';m='🥉 Medalha de Bronze';}
+  else{e='🔄';t='Continue estudando!';m='📚 Revise e tente de novo';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+  document.getElementById('r-medal').textContent=m;
+  const rev=document.getElementById('review');
+  rev.innerHTML='<p style="font-size:12px;font-weight:800;color:var(--muted);margin-bottom:8px">RESUMO:</p>';
+  log.forEach(function(r,i){
+    const d=document.createElement('div');
+    d.className='review-item '+(r.ok?'ok':'nok');
+    d.innerHTML=(r.ok?'✅':'❌')+' <span><strong>Q'+(i+1)+'.</strong> '+r.text.substring(0,60)+'…</span>';
+    rev.appendChild(d);
+  });
+}
+
+function restart(){
+  cur=0;score=0;hits=0;log=[];answered=false;
+  document.getElementById('score').textContent=0;
+  document.getElementById('hits').textContent=0;
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+
+loadQ();
+</script>
+</body>
+</html>

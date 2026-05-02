@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete a Lacuna – Tempos Verbais</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F5F3FF; --card:#fff;
+    --past:#8B5CF6; --past-light:#EDE9FE;
+    --present:#10B981; --present-light:#D1FAE5;
+    --future:#F59E0B; --future-light:#FEF3C7;
+    --primary:#6D28D9; --primary-light:#EDE9FE;
+    --green:#10B981; --green-light:#D1FAE5;
+    --red:#EF4444; --red-light:#FEE2E2;
+    --text:#1A1A2E; --muted:#6B7280; --border:#DDD6FE;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:660px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  .ref-card { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:16px 18px; margin-bottom:18px; }
+  .ref-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--primary); margin-bottom:10px; }
+  .ref-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .ref-item { flex:1; min-width:120px; padding:10px; border-radius:12px; text-align:center; }
+  .ref-item.past { background:var(--past-light); border:1.5px solid var(--past); }
+  .ref-item.present { background:var(--present-light); border:1.5px solid var(--present); }
+  .ref-item.future { background:var(--future-light); border:1.5px solid var(--future); }
+  .ref-item .ri-icon { font-size:20px; display:block; margin-bottom:4px; }
+  .ref-item .ri-name { font-size:12px; font-weight:900; display:block; margin-bottom:3px; }
+  .ref-item.past .ri-name { color:var(--past); }
+  .ref-item.present .ri-name { color:var(--present); }
+  .ref-item.future .ri-name { color:var(--future); }
+  .ref-item .ri-example { font-size:11px; font-weight:700; color:var(--muted); }
+
+  .word-bank { background:var(--card); border:2px dashed var(--primary); border-radius:15px; padding:15px 18px; margin-bottom:16px; }
+  .wb-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:10px; }
+  .words { display:flex; flex-wrap:wrap; gap:7px; }
+  .word-chip { font-weight:800; font-size:13px; padding:5px 13px; border-radius:20px; border:1.5px solid; cursor:pointer; transition:all .15s; user-select:none; }
+  .word-chip.past-chip { background:var(--past-light); color:var(--past); border-color:var(--past); }
+  .word-chip.present-chip { background:var(--present-light); color:var(--present); border-color:var(--present); }
+  .word-chip.future-chip { background:var(--future-light); color:var(--future); border-color:var(--future); }
+  .word-chip:hover { opacity:.75; }
+  .word-chip.used { opacity:.3; cursor:default; text-decoration:line-through; }
+
+  .sel-ind { border-radius:12px; padding:8px 14px; font-size:13px; font-weight:800; margin-bottom:14px; display:none; text-align:center; color:white; }
+  .sel-ind.show { display:block; }
+
+  .section-lbl { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin:16px 0 10px; }
+
+  .sent-card { background:var(--card); border:2px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:9px; transition:border-color .2s; }
+  .sent-card .sn { font-size:10px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; display:flex; justify-content:space-between; }
+  .sent-card .s-text { font-size:15px; font-weight:700; line-height:1.7; }
+  .sent-card.correct { border-color:var(--green); background:#F0FDF9; }
+  .sent-card.wrong { border-color:var(--red); background:#FFF5F5; }
+
+  .blank { display:inline-flex; align-items:center; justify-content:center; min-width:90px; border-bottom:3px solid var(--primary); padding:1px 8px; font-size:14px; font-weight:900; color:var(--primary); cursor:pointer; border-radius:4px 4px 0 0; transition:background .15s; }
+  .blank:hover { background:var(--primary-light); }
+  .blank.correct-blank { color:var(--green); border-color:var(--green); }
+  .blank.wrong-blank { color:var(--red); border-color:var(--red); }
+
+  .sent-fb { font-size:11px; font-weight:700; display:block; margin-top:5px; }
+  .sent-fb.ok { color:var(--green); }
+  .sent-fb.nok { color:var(--red); }
+
+  .btn-row { display:flex; gap:10px; margin-top:18px; }
+  .btn { flex:1; padding:13px; border:none; border-radius:13px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-check { background:var(--primary); color:white; }
+  .btn-check:hover { background:#5B21B6; transform:translateY(-2px); }
+  .btn-reset { background:var(--border); color:var(--muted); }
+  .btn-reset:hover { background:#C4B5FD; }
+
+  .score-bar { background:var(--card); border-radius:15px; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; border:2px solid var(--border); margin-top:16px; display:none; animation:pop .3s ease; }
+  .score-bar.show { display:flex; }
+  @keyframes pop { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:scale(1)} }
+  .score-big { font-family:'Fredoka One',cursive; font-size:24px; color:var(--primary); }
+  .medal-chip { padding:6px 14px; border-radius:20px; font-weight:800; font-size:13px; background:var(--future-light); color:#92400E; border:1.5px solid var(--future); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">Português • Tempos Verbais</div>
+    <h1>Complete a Lacuna</h1>
+    <p class="subtitle">Clique na forma verbal correta e depois na lacuna</p>
+  </div>
+
+  <div class="ref-card">
+    <div class="ref-title">📋 Lembrete rápido</div>
+    <div class="ref-row">
+      <div class="ref-item past"><span class="ri-icon">⏮️</span><span class="ri-name">PASSADO</span><span class="ri-example">já aconteceu<br>ex: venceu, soprou</span></div>
+      <div class="ref-item present"><span class="ri-icon">▶️</span><span class="ri-name">PRESENTE</span><span class="ri-example">acontece agora<br>ex: tira, observa</span></div>
+      <div class="ref-item future"><span class="ri-icon">⏭️</span><span class="ri-name">FUTURO</span><span class="ri-example">ainda vai acontecer<br>ex: soprará, ganhará</span></div>
+    </div>
+  </div>
+
+  <div class="word-bank">
+    <div class="wb-title">🎯 Banco de verbos — clique para selecionar</div>
+    <div class="words" id="word-bank"></div>
+  </div>
+
+  <div class="sel-ind" id="sel-ind"></div>
+
+  <div class="section-lbl">Grupo A — Identifique o tempo verbal</div>
+  <div id="group-a"></div>
+
+  <div class="section-lbl">Grupo B — Complete com a forma correta</div>
+  <div id="group-b"></div>
+
+  <div class="section-lbl">Grupo C — Reescreva no tempo indicado</div>
+  <div id="group-c"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✅ Verificar respostas</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+  <div class="score-bar" id="score-bar">
+    <div><div class="score-big" id="score-val">0/9</div><div style="font-size:12px;font-weight:700;color:var(--muted)">corretos</div></div>
+    <div class="medal-chip" id="medal-chip">📚</div>
+  </div>
+</div>
+
+<script>
+var words = [
+  { text:'passado', type:'past' },
+  { text:'presente', type:'present' },
+  { text:'futuro', type:'future' },
+  { text:'tirou', type:'past' },
+  { text:'tira', type:'present' },
+  { text:'tirará', type:'future' },
+  { text:'venceu', type:'past' },
+  { text:'observa', type:'present' },
+  { text:'soprará', type:'future' },
+];
+
+var sentences = [
+  { group:'a', before:'"Ok, você venceu!" — o verbo VENCEU está no ', blank:'passado', after:'.', hint:'que tempo?' },
+  { group:'a', before:'"Menino tira o casaco" — o verbo TIRA está no ', blank:'presente', after:'.', hint:'que tempo?' },
+  { group:'a', before:'"O Vento soprará mais forte" — SOPRARÁ está no ', blank:'futuro', after:'.', hint:'que tempo?' },
+  { group:'b', before:'A rubrica diz que Sol ', blank:'observa', after:' a cena (ação que acontece agora).', hint:'presente de observar' },
+  { group:'b', before:'Na fala do Pombo, o verbo indica algo que já ocorreu: eles ', blank:'venceu', after:' a aposta.', hint:'passado de vencer' },
+  { group:'b', before:'Ganha____ quem conseguir arrancar a roupa — ainda vai acontecer.', blank:'soprará', after:'', hint:'futuro de soprar' },
+  { group:'c', before:'"Menino tira o casaco" no passado: "Menino ', blank:'tirou', after:' o casaco."', hint:'passado de tirar' },
+  { group:'c', before:'"Sol venceu" no presente: "Sol ', blank:'tira', after:' (vence agora)."', hint:'presente de tirar/vencer' },
+  { group:'c', before:'"Sol venceu" no futuro: "Sol ', blank:'tirará', after:' (vencerá)."', hint:'futuro de tirar/vencer' },
+];
+
+var selected = null;
+var answers = {};
+
+function init() {
+  selected = null; answers = {};
+  var wb = document.getElementById('word-bank');
+  wb.innerHTML = '';
+  words.forEach(function(w) {
+    var chip = document.createElement('button');
+    chip.className = 'word-chip ' + w.type + '-chip';
+    chip.textContent = w.text;
+    chip.id = 'chip-' + w.text;
+    chip.onclick = function() { selectWord(w.text, w.type, chip); };
+    wb.appendChild(chip);
+  });
+  renderGroup('a', 'group-a');
+  renderGroup('b', 'group-b');
+  renderGroup('c', 'group-c');
+  document.getElementById('score-bar').className = 'score-bar';
+}
+
+function renderGroup(g, cid) {
+  var container = document.getElementById(cid);
+  container.innerHTML = '';
+  sentences.forEach(function(s, idx) {
+    if (s.group !== g) return;
+    var card = document.createElement('div');
+    card.className = 'sent-card';
+    card.id = 'card-' + idx;
+    var sn = document.createElement('div');
+    sn.className = 'sn';
+    sn.innerHTML = '<span>Frase ' + (sentences.filter(function(x,i){ return x.group===g && i<=idx; }).length) + '</span><span style="color:var(--muted)">' + s.hint + '</span>';
+    card.appendChild(sn);
+    var line = document.createElement('div');
+    line.className = 's-text';
+    line.appendChild(document.createTextNode(s.before + ' '));
+    var blankEl = document.createElement('span');
+    blankEl.className = 'blank';
+    blankEl.id = 'blank-' + idx;
+    blankEl.textContent = '___';
+    blankEl.onclick = (function(i){ return function(){ fillBlank(i); }; })(idx);
+    line.appendChild(blankEl);
+    line.appendChild(document.createTextNode(' ' + s.after));
+    card.appendChild(line);
+    var fb = document.createElement('span');
+    fb.className = 'sent-fb';
+    fb.id = 'sfb-' + idx;
+    card.appendChild(fb);
+    container.appendChild(card);
+  });
+}
+
+function selectWord(w, type, chip) {
+  document.querySelectorAll('.word-chip').forEach(function(c){ c.style.outline=''; });
+  selected = w;
+  chip.style.outline = '3px solid var(--primary)';
+  chip.style.outlineOffset = '2px';
+  var colors = { past:'#8B5CF6', present:'#10B981', future:'#F59E0B' };
+  var ind = document.getElementById('sel-ind');
+  ind.textContent = 'Selecionado: "' + w + '" — clique na lacuna para preencher';
+  ind.className = 'sel-ind show';
+  ind.style.background = colors[type] || '#6D28D9';
+}
+
+function fillBlank(idx) {
+  if (!selected) return;
+  answers[idx] = selected;
+  var blank = document.getElementById('blank-' + idx);
+  blank.textContent = selected;
+  blank.className = 'blank filled';
+  document.getElementById('sfb-' + idx).textContent = '';
+  document.getElementById('card-' + idx).className = 'sent-card';
+  selected = null;
+  document.querySelectorAll('.word-chip').forEach(function(c){ c.style.outline=''; });
+  document.getElementById('sel-ind').className = 'sel-ind';
+}
+
+function checkAll() {
+  var correct = 0;
+  sentences.forEach(function(s, idx) {
+    var user = (answers[idx] || '').toLowerCase().trim();
+    var card = document.getElementById('card-' + idx);
+    var blank = document.getElementById('blank-' + idx);
+    var fb = document.getElementById('sfb-' + idx);
+    if (user === s.blank.toLowerCase()) {
+      correct++;
+      card.className = 'sent-card correct';
+      blank.className = 'blank correct-blank';
+      fb.className = 'sent-fb ok'; fb.textContent = '✓ Correto!';
+    } else {
+      card.className = 'sent-card wrong';
+      blank.className = 'blank wrong-blank';
+      fb.className = 'sent-fb nok';
+      fb.textContent = '✗ Era: "' + s.blank + '"';
+    }
+  });
+  var bar = document.getElementById('score-bar');
+  bar.className = 'score-bar show';
+  document.getElementById('score-val').textContent = correct + '/' + sentences.length;
+  var pct = correct / sentences.length;
+  var m;
+  if (pct===1) m='🏆 Perfeito!';
+  else if (pct>=.77) m='🌟 Muito bem!';
+  else if (pct>=.55) m='😊 Bom trabalho!';
+  else m='📚 Revise e tente!';
+  document.getElementById('medal-chip').textContent = m;
+}
+
+function resetAll() { init(); }
+init();
+</script>
+</body>
+</html>

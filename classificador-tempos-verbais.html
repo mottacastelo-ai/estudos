@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linha do Tempo dos Verbos</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F0F4FF; --card:#fff;
+    --past:#8B5CF6; --past-light:#EDE9FE;
+    --present:#10B981; --present-light:#D1FAE5;
+    --future:#F59E0B; --future-light:#FEF3C7;
+    --text:#1A1A2E; --muted:#6B7280; --border:#E5E7EB;
+    --green:#10B981; --green-light:#D1FAE5;
+    --red:#EF4444; --red-light:#FEE2E2;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:660px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--past); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--past); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  .instr { background:var(--past-light); border:2px solid var(--past); border-radius:14px; padding:13px 17px; margin-bottom:20px; font-size:13px; font-weight:700; color:#4C1D95; line-height:1.6; }
+  .instr strong { display:block; font-size:14px; margin-bottom:4px; }
+
+  /* Score */
+  .score-row { display:flex; gap:10px; margin-bottom:18px; }
+  .score-pill { flex:1; background:var(--card); border:2px solid var(--border); border-radius:13px; padding:9px; text-align:center; }
+  .score-pill .big { font-family:'Fredoka One',cursive; font-size:20px; }
+  .score-pill .lbl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+  .score-pill.s-past .big { color:var(--past); }
+  .score-pill.s-present .big { color:var(--present); }
+  .score-pill.s-future .big { color:var(--future); }
+
+  /* Timeline columns */
+  .timeline { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; }
+  .col-header { border-radius:14px; padding:12px 10px; text-align:center; margin-bottom:10px; }
+  .col-header.past { background:var(--past-light); border:2px solid var(--past); }
+  .col-header.present { background:var(--present-light); border:2px solid var(--present); }
+  .col-header.future { background:var(--future-light); border:2px solid var(--future); }
+  .col-icon { font-size:22px; display:block; margin-bottom:3px; }
+  .col-name { font-weight:900; font-size:13px; display:block; }
+  .col-name.past { color:var(--past); }
+  .col-name.present { color:var(--present); }
+  .col-name.future { color:var(--future); }
+  .col-example { font-size:10px; font-weight:700; color:var(--muted); margin-top:2px; }
+
+  .drop-zone {
+    min-height:120px; border-radius:14px; border:2px dashed;
+    padding:8px; display:flex; flex-direction:column; gap:7px;
+    transition:background .2s;
+  }
+  .drop-zone.past { border-color:var(--past); background:rgba(139,92,246,.04); }
+  .drop-zone.present { border-color:var(--present); background:rgba(16,185,129,.04); }
+  .drop-zone.future { border-color:var(--future); background:rgba(245,158,11,.04); }
+  .drop-zone.drag-over { opacity:.7; }
+
+  /* Verb cards */
+  .verb-bank { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:16px 18px; margin-bottom:18px; }
+  .verb-bank-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:12px; }
+  .verb-pool { display:flex; flex-wrap:wrap; gap:8px; min-height:40px; }
+
+  .verb-card {
+    background:var(--card); border:2px solid var(--border);
+    border-radius:11px; padding:8px 14px;
+    font-size:14px; font-weight:800; color:var(--text);
+    cursor:pointer; transition:all .18s; user-select:none;
+    display:flex; align-items:center; gap:6px;
+  }
+  .verb-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.1); }
+  .verb-card.selected { border-color:var(--past); background:var(--past-light); color:var(--past); transform:scale(1.05); }
+  .verb-card.placed-past { background:var(--past-light); border-color:var(--past); color:var(--past); }
+  .verb-card.placed-present { background:var(--present-light); border-color:var(--present); color:var(--present); }
+  .verb-card.placed-future { background:var(--future-light); border-color:var(--future); color:var(--future); }
+  .verb-card.result-ok::after { content:'✓'; font-size:12px; }
+  .verb-card.result-nok::after { content:'✗'; font-size:12px; color:var(--red); }
+
+  .drop-zone .verb-card { cursor:pointer; }
+  .drop-zone .verb-card:hover { transform:none; box-shadow:none; opacity:.7; }
+
+  .empty-hint { font-size:12px; color:var(--muted); font-weight:600; text-align:center; padding:16px 8px; opacity:.6; }
+
+  .btn-row { display:flex; gap:10px; margin-bottom:16px; }
+  .btn { flex:1; padding:13px; border:none; border-radius:13px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-check { background:var(--past); color:white; }
+  .btn-check:hover { background:#7C3AED; transform:translateY(-2px); }
+  .btn-reset { background:var(--border); color:var(--muted); }
+  .btn-reset:hover { background:#DDD6FE; }
+
+  .result-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:26px; text-align:center; display:none; animation:pop .3s ease; }
+  .result-card.show { display:block; }
+  @keyframes pop { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:56px; margin-bottom:10px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:26px; color:var(--past); margin-bottom:8px; }
+  .r-sub { font-size:14px; color:var(--muted); font-weight:700; margin-bottom:16px; }
+  .answer-key { text-align:left; }
+  .ak-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:10px; }
+  .ak-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px; align-items:center; }
+  .ak-label { font-size:12px; font-weight:800; min-width:80px; }
+  .ak-label.past { color:var(--past); }
+  .ak-label.present { color:var(--present); }
+  .ak-label.future { color:var(--future); }
+  .ak-chip { font-size:12px; font-weight:800; padding:3px 10px; border-radius:20px; }
+  .ak-chip.past { background:var(--past-light); color:var(--past); }
+  .ak-chip.present { background:var(--present-light); color:var(--present); }
+  .ak-chip.future { background:var(--future-light); color:var(--future); }
+  .btn-restart { background:var(--past); color:white; border:none; border-radius:13px; padding:13px 30px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; margin-top:16px; }
+  .btn-restart:hover { background:#7C3AED; transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">⏱ Linha do Tempo dos Verbos</div>
+    <h1>Classifique os Verbos!</h1>
+    <p class="subtitle">Clique num verbo do banco e depois na coluna correta</p>
+  </div>
+
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Clique em um verbo do banco (ele fica destacado) e depois clique na coluna do tempo certo — Passado, Presente ou Futuro. Para devolver um verbo ao banco, clique nele dentro da coluna.
+  </div>
+
+  <div class="verb-bank">
+    <div class="verb-bank-title">🎯 Banco de verbos — clique para selecionar</div>
+    <div class="verb-pool" id="verb-pool"></div>
+  </div>
+
+  <div class="timeline">
+    <div>
+      <div class="col-header past">
+        <span class="col-icon">⏮️</span>
+        <span class="col-name past">PASSADO</span>
+        <div class="col-example">já aconteceu</div>
+      </div>
+      <div class="drop-zone past" id="zone-past" onclick="placeVerb('past')">
+        <div class="empty-hint" id="hint-past">← Clique aqui para colocar</div>
+      </div>
+    </div>
+    <div>
+      <div class="col-header present">
+        <span class="col-icon">▶️</span>
+        <span class="col-name present">PRESENTE</span>
+        <div class="col-example">acontece agora</div>
+      </div>
+      <div class="drop-zone present" id="zone-present" onclick="placeVerb('present')">
+        <div class="empty-hint" id="hint-present">← Clique aqui para colocar</div>
+      </div>
+    </div>
+    <div>
+      <div class="col-header future">
+        <span class="col-icon">⏭️</span>
+        <span class="col-name future">FUTURO</span>
+        <div class="col-example">ainda vai acontecer</div>
+      </div>
+      <div class="drop-zone future" id="zone-future" onclick="placeVerb('future')">
+        <div class="empty-hint" id="hint-future">← Clique aqui para colocar</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-row">
+    <div class="score-pill s-past"><div class="big" id="cnt-past">0</div><div class="lbl">⏮️ Passado</div></div>
+    <div class="score-pill s-present"><div class="big" id="cnt-present">0</div><div class="lbl">▶️ Presente</div></div>
+    <div class="score-pill s-future"><div class="big" id="cnt-future">0</div><div class="lbl">⏭️ Futuro</div></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✅ Verificar</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+
+  <div class="result-card" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <div class="answer-key" id="answer-key"></div>
+    <button class="btn-restart" onclick="resetAll()">🔄 Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+var verbs = [
+  { id:'v1', text:'venceu', correct:'past', sentence:'"Ok, você venceu!"' },
+  { id:'v2', text:'tira', correct:'present', sentence:'"Menino tira o casaco"' },
+  { id:'v3', text:'soprará', correct:'future', sentence:'"O Vento soprará mais forte"' },
+  { id:'v4', text:'observa', correct:'present', sentence:'"Sol observa a cena"' },
+  { id:'v5', text:'fizeram', correct:'past', sentence:'"Fizeram uma aposta"' },
+  { id:'v6', text:'ganhará', correct:'future', sentence:'"Ganhará quem arrancar a roupa"' },
+  { id:'v7', text:'desistiu', correct:'past', sentence:'"Exausto, Vento desistiu"' },
+  { id:'v8', text:'aproxima', correct:'present', sentence:'"Sol se aproxima do Menino"' },
+  { id:'v9', text:'tirará', correct:'future', sentence:'Menino ___ o casaco (ainda vai tirar)' },
+];
+
+var placement = {};   // verbId -> 'past'|'present'|'future'|null
+var selected = null;  // verbId currently selected
+var checked = false;
+
+function init() {
+  placement = {}; selected = null; checked = false;
+  verbs.forEach(function(v) { placement[v.id] = null; });
+  document.getElementById('result').className = 'result-card';
+  render();
+}
+
+function render() {
+  // Pool
+  var pool = document.getElementById('verb-pool');
+  pool.innerHTML = '';
+  verbs.forEach(function(v) {
+    if (placement[v.id] !== null) return;
+    var card = createVerbCard(v, 'pool');
+    pool.appendChild(card);
+  });
+  if (pool.children.length === 0) {
+    var hint = document.createElement('div');
+    hint.style.cssText = 'font-size:12px;color:var(--muted);font-weight:600;padding:8px;';
+    hint.textContent = 'Todos os verbos foram classificados!';
+    pool.appendChild(hint);
+  }
+
+  // Zones
+  ['past','present','future'].forEach(function(zone) {
+    var zoneEl = document.getElementById('zone-' + zone);
+    // Remove verb cards but keep hint
+    Array.from(zoneEl.querySelectorAll('.verb-card')).forEach(function(c){ c.remove(); });
+    var hint = document.getElementById('hint-' + zone);
+
+    var placed = verbs.filter(function(v){ return placement[v.id] === zone; });
+    if (placed.length > 0) {
+      hint.style.display = 'none';
+      placed.forEach(function(v) {
+        var card = createVerbCard(v, zone);
+        zoneEl.appendChild(card);
+      });
+    } else {
+      hint.style.display = 'block';
+    }
+  });
+
+  updateCounts();
+}
+
+function createVerbCard(v, location) {
+  var card = document.createElement('div');
+  var cls = 'verb-card';
+  if (location !== 'pool') cls += ' placed-' + location;
+  if (v.id === selected) cls += ' selected';
+  card.className = cls;
+  card.id = 'vcard-' + v.id + '-' + location;
+  card.textContent = v.text;
+  card.title = v.sentence;
+
+  if (location === 'pool') {
+    card.onclick = function(e) { e.stopPropagation(); selectVerb(v.id); };
+  } else {
+    card.onclick = function(e) { e.stopPropagation(); returnToPool(v.id); };
+  }
+  return card;
+}
+
+function selectVerb(vid) {
+  if (checked) return;
+  selected = (selected === vid) ? null : vid;
+  render();
+}
+
+function placeVerb(zone) {
+  if (checked || !selected) return;
+  placement[selected] = zone;
+  selected = null;
+  render();
+}
+
+function returnToPool(vid) {
+  if (checked) return;
+  placement[vid] = null;
+  if (selected === vid) selected = null;
+  render();
+}
+
+function updateCounts() {
+  ['past','present','future'].forEach(function(z) {
+    var cnt = verbs.filter(function(v){ return placement[v.id] === z; }).length;
+    document.getElementById('cnt-' + z).textContent = cnt;
+  });
+}
+
+function checkAll() {
+  if (verbs.some(function(v){ return placement[v.id] === null; })) {
+    alert('Classifique todos os verbos antes de verificar!');
+    return;
+  }
+  checked = true;
+  var score = 0;
+  verbs.forEach(function(v) {
+    if (placement[v.id] === v.correct) score++;
+  });
+
+  var pct = score / verbs.length;
+  var rs = document.getElementById('result');
+  rs.className = 'result-card show';
+  var e, t, sub;
+  if (pct===1)       { e='🏆'; t='Perfeito!';           sub='Todos os verbos classificados corretamente!'; }
+  else if (pct>=.77) { e='🌟'; t='Muito bem!';           sub=score+' de '+verbs.length+' corretos.'; }
+  else if (pct>=.55) { e='😊'; t='Bom trabalho!';        sub=score+' de '+verbs.length+' corretos. Revise!'; }
+  else               { e='🔄'; t='Continue praticando!'; sub=score+' de '+verbs.length+' corretos.'; }
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+  document.getElementById('r-sub').textContent = sub;
+
+  // Answer key
+  var ak = document.getElementById('answer-key');
+  ak.innerHTML = '<div class="ak-title">✅ Classificação correta:</div>';
+  ['past','present','future'].forEach(function(z) {
+    var row = document.createElement('div');
+    row.className = 'ak-row';
+    var lbl = document.createElement('span');
+    lbl.className = 'ak-label ' + z;
+    lbl.textContent = { past:'⏮️ Passado', present:'▶️ Presente', future:'⏭️ Futuro' }[z];
+    row.appendChild(lbl);
+    verbs.filter(function(v){ return v.correct === z; }).forEach(function(v) {
+      var chip = document.createElement('span');
+      chip.className = 'ak-chip ' + z;
+      chip.textContent = v.text + (placement[v.id] !== v.correct ? ' ✗' : ' ✓');
+      row.appendChild(chip);
+    });
+    ak.appendChild(row);
+  });
+}
+
+function resetAll() { init(); }
+init();
+</script>
+</body>
+</html>

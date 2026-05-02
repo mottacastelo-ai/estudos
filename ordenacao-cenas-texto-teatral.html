@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordene as Cenas – O Vento e o Sol</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F5F0FF; --card:#fff; --primary:#7B68EE; --primary-dark:#5A4AD1;
+    --primary-light:#E8E5FF; --accent:#FFE66D; --accent-dark:#F4C430;
+    --green:#20bf6b; --green-light:#D5F5E3; --red:#E74C3C; --red-light:#FADBD8;
+    --text:#2D3436; --muted:#636E72; --border:#DDE3EE;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:640px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary-dark); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+  .instr { background:var(--primary-light); border:2px solid var(--primary); border-radius:14px; padding:13px 17px; margin-bottom:18px; font-size:13px; font-weight:700; color:var(--primary-dark); line-height:1.6; }
+  .instr strong { display:block; font-size:14px; margin-bottom:4px; }
+
+  /* Scene cards */
+  .scenes-list { display:flex; flex-direction:column; gap:9px; margin-bottom:18px; }
+  .scene-card {
+    background:var(--card); border:2px solid var(--border); border-radius:15px;
+    padding:14px 16px; display:flex; align-items:flex-start; gap:12px;
+    cursor:grab; transition:box-shadow .18s, border-color .18s, transform .18s;
+    user-select:none;
+  }
+  .scene-card:active { cursor:grabbing; transform:scale(1.02); box-shadow:0 8px 24px rgba(123,104,238,.2); }
+  .scene-card.dragging { opacity:.4; }
+  .scene-card.drag-over { border-color:var(--primary); background:var(--primary-light); }
+  .scene-card.correct-card { border-color:var(--green); background:var(--green-light); }
+  .scene-card.wrong-card { border-color:var(--red); background:var(--red-light); }
+  .scene-num {
+    width:34px; height:34px; border-radius:50%; background:var(--primary);
+    color:white; font-family:'Fredoka One',cursive; font-size:16px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .scene-content { flex:1; }
+  .scene-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
+  .scene-text { font-size:14px; font-weight:700; line-height:1.5; }
+  .scene-emoji { font-size:20px; flex-shrink:0; }
+  .drag-handle { font-size:18px; color:var(--muted); cursor:grab; flex-shrink:0; margin-top:6px; }
+
+  /* Tap to select mode (mobile-friendly alternative) */
+  .scene-card.selected { border-color:var(--primary); background:var(--primary-light); box-shadow:0 4px 16px rgba(123,104,238,.25); }
+
+  .btn-row { display:flex; gap:10px; margin-bottom:18px; }
+  .btn { flex:1; padding:13px; border:none; border-radius:13px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-check { background:var(--primary); color:white; }
+  .btn-check:hover { background:var(--primary-dark); transform:translateY(-2px); }
+  .btn-shuffle { background:var(--border); color:var(--muted); }
+  .btn-shuffle:hover { background:#c8d0e0; }
+
+  /* Result */
+  .result { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:28px; text-align:center; display:none; animation:popIn .4s ease; margin-top:4px; }
+  .result.show { display:block; }
+  @keyframes popIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:56px; margin-bottom:10px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:26px; color:var(--primary-dark); margin-bottom:8px; }
+  .r-sub { font-size:14px; color:var(--muted); font-weight:700; margin-bottom:16px; }
+  .correct-order { text-align:left; margin-bottom:20px; }
+  .correct-order-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:10px; }
+  .order-item { font-size:13px; font-weight:700; padding:8px 12px; border-radius:10px; margin-bottom:6px; background:var(--green-light); color:#1A7A45; border:1.5px solid var(--green); display:flex; align-items:center; gap:8px; }
+  .btn-restart { background:var(--primary); color:white; border:none; border-radius:13px; padding:13px 30px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-restart:hover { background:var(--primary-dark); transform:translateY(-2px); }
+
+  /* Move buttons for accessibility */
+  .move-btns { display:flex; flex-direction:column; gap:3px; flex-shrink:0; }
+  .move-btn { background:var(--primary-light); border:1.5px solid var(--primary); border-radius:8px; width:28px; height:24px; font-size:12px; cursor:pointer; color:var(--primary-dark); font-weight:900; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+  .move-btn:hover { background:var(--primary); color:white; }
+  .move-btn:disabled { opacity:.3; cursor:default; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🎭 Texto Teatral</div>
+    <h1>Ordene as Cenas</h1>
+    <p class="subtitle">Coloque os eventos da peça na ordem correta</p>
+  </div>
+
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Use os botões ↑ e ↓ para mover cada cena para a posição correta. Quando achar que a ordem está certa, clique em "Verificar ordem".
+  </div>
+
+  <div class="scenes-list" id="scenes-list"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkOrder()">✅ Verificar ordem</button>
+    <button class="btn btn-shuffle" onclick="shuffleAndRender()">🔀 Embaralhar</button>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <div class="correct-order" id="correct-order"></div>
+    <button class="btn-restart" onclick="restartGame()">🔄 Tentar de novo</button>
+  </div>
+</div>
+<script>
+const correctOrder = [
+  { id:1, emoji:'🎬', label:'Cena 1', text:'O Vento e o Sol fazem uma aposta: quem conseguir arrancar a roupa do Menino é o mais forte.' },
+  { id:2, emoji:'💨', label:'Cena 2', text:'O Vento começa a soprar forte em direção ao Menino, que está no ponto de ônibus.' },
+  { id:3, emoji:'🧥', label:'Cena 3', text:'Quanto mais o Vento sopra, mais o Menino sente frio e se agasalha com o casaco.' },
+  { id:4, emoji:'😮‍💨', label:'Cena 4', text:'Exausto, o Vento desiste. Ele diz ao Sol: "Desisto... Vai lá, sua vez."' },
+  { id:5, emoji:'☀️', label:'Cena 5', text:'O Sol se aproxima lentamente. O calor aumenta e o Menino começa a se abanar.' },
+  { id:6, emoji:'👕', label:'Cena 6', text:'O Menino desabotoa e tira o casaco com o calor crescente. O Sol venceu!' },
+  { id:7, emoji:'🏆', label:'Cena 7', text:'O Vento reconhece a derrota: "Ok, você venceu! É mesmo mais forte do que eu."' },
+  { id:8, emoji:'🐦', label:'Cena 8', text:'Os pombos revelam a moral: é mais fácil vencer com inteligência do que com violência.' },
+];
+
+let current = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function shuffleAndRender() {
+  document.getElementById('result').className = 'result';
+  current = shuffle(correctOrder);
+  render();
+}
+
+function render() {
+  const list = document.getElementById('scenes-list');
+  list.innerHTML = '';
+  current.forEach(function(scene, idx) {
+    const card = document.createElement('div');
+    card.className = 'scene-card';
+    card.id = 'scene-' + idx;
+
+    const moveBtns = document.createElement('div');
+    moveBtns.className = 'move-btns';
+    const upBtn = document.createElement('button');
+    upBtn.className = 'move-btn';
+    upBtn.textContent = '↑';
+    upBtn.disabled = idx === 0;
+    upBtn.onclick = function() { moveScene(idx, -1); };
+    const downBtn = document.createElement('button');
+    downBtn.className = 'move-btn';
+    downBtn.textContent = '↓';
+    downBtn.disabled = idx === current.length - 1;
+    downBtn.onclick = function() { moveScene(idx, 1); };
+    moveBtns.appendChild(upBtn);
+    moveBtns.appendChild(downBtn);
+
+    const num = document.createElement('div');
+    num.className = 'scene-num';
+    num.textContent = idx + 1;
+
+    const content = document.createElement('div');
+    content.className = 'scene-content';
+    const lbl = document.createElement('div');
+    lbl.className = 'scene-label';
+    lbl.textContent = scene.label;
+    const txt = document.createElement('div');
+    txt.className = 'scene-text';
+    txt.textContent = scene.text;
+    content.appendChild(lbl);
+    content.appendChild(txt);
+
+    const emoji = document.createElement('div');
+    emoji.className = 'scene-emoji';
+    emoji.textContent = scene.emoji;
+
+    card.appendChild(moveBtns);
+    card.appendChild(num);
+    card.appendChild(content);
+    card.appendChild(emoji);
+    list.appendChild(card);
+  });
+}
+
+function moveScene(idx, dir) {
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= current.length) return;
+  const tmp = current[idx];
+  current[idx] = current[newIdx];
+  current[newIdx] = tmp;
+  render();
+}
+
+function checkOrder() {
+  let correct = 0;
+  const cards = document.querySelectorAll('.scene-card');
+  current.forEach(function(scene, idx) {
+    const card = cards[idx];
+    if (scene.id === correctOrder[idx].id) {
+      correct++;
+      card.className = 'scene-card correct-card';
+    } else {
+      card.className = 'scene-card wrong-card';
+    }
+  });
+
+  const rs = document.getElementById('result');
+  rs.className = 'result show';
+  const pct = correct / correctOrder.length;
+  let e, t, sub;
+  if (pct === 1) { e='🏆'; t='Ordem perfeita!'; sub='Você organizou todas as cenas corretamente!'; }
+  else if (pct >= .75) { e='🌟'; t='Quase perfeito!'; sub=correct+' de '+correctOrder.length+' cenas na posição certa.'; }
+  else if (pct >= .5) { e='💪'; t='Bom começo!'; sub=correct+' de '+correctOrder.length+' certas. Revise o texto e tente de novo.'; }
+  else { e='🔄'; t='Tente de novo!'; sub='Releia a peça com atenção à ordem dos acontecimentos.'; }
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+  document.getElementById('r-sub').textContent = sub;
+
+  const co = document.getElementById('correct-order');
+  co.innerHTML = '<div class="correct-order-title">✅ Ordem correta:</div>';
+  correctOrder.forEach(function(s, i) {
+    const item = document.createElement('div');
+    item.className = 'order-item';
+    item.innerHTML = '<strong>'+(i+1)+'.</strong> '+s.emoji+' '+s.text;
+    co.appendChild(item);
+  });
+}
+
+function restartGame() {
+  shuffleAndRender();
+}
+
+shuffleAndRender();
+</script>
+</body>
+</html>

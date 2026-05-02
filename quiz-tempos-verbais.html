@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Tempos Verbais</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F0F7FF; --card:#fff; --primary:#3B82F6; --primary-light:#DBEAFE;
+    --past:#8B5CF6; --past-light:#EDE9FE;
+    --present:#10B981; --present-light:#D1FAE5;
+    --future:#F59E0B; --future-light:#FEF3C7;
+    --green:#10B981; --green-light:#D1FAE5;
+    --red:#EF4444; --red-light:#FEE2E2;
+    --text:#1A1A2E; --muted:#6B7280; --border:#E5E7EB;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:640px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:24px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:32px; color:var(--primary); margin-bottom:6px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  /* Tempo badges */
+  .tempo-row { display:flex; gap:10px; justify-content:center; margin-bottom:22px; }
+  .tempo-badge { flex:1; padding:10px; border-radius:14px; text-align:center; font-weight:800; font-size:13px; max-width:140px; }
+  .tempo-badge.past { background:var(--past-light); color:var(--past); border:2px solid var(--past); }
+  .tempo-badge.present { background:var(--present-light); color:var(--present); border:2px solid var(--present); }
+  .tempo-badge.future { background:var(--future-light); color:var(--future); border:2px solid var(--future); }
+  .tempo-badge .t-icon { font-size:20px; display:block; margin-bottom:3px; }
+
+  .score-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .score-pill { display:flex; align-items:center; gap:6px; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:6px 14px; font-size:13px; font-weight:800; }
+  .score-pill span { color:var(--primary); font-size:15px; }
+  .prog-wrap { background:#E5E7EB; border-radius:20px; height:7px; margin-bottom:6px; overflow:hidden; }
+  .prog-bar { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--primary),var(--future)); transition:width .5s ease; }
+  .prog-lbl { text-align:right; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:16px; }
+
+  .q-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:24px; margin-bottom:14px; animation:slideIn .35s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .q-num { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:8px; }
+  .q-text { font-size:16px; font-weight:700; line-height:1.55; margin-bottom:18px; }
+  .q-text em { font-style:normal; font-weight:900; padding:1px 6px; border-radius:5px; }
+  .em-past { background:var(--past-light); color:var(--past); }
+  .em-present { background:var(--present-light); color:var(--present); }
+  .em-future { background:var(--future-light); color:var(--future); }
+  .em-neutral { background:var(--primary-light); color:var(--primary); }
+
+  .opts { display:flex; flex-direction:column; gap:9px; }
+  .opt { background:#F9FAFB; border:2px solid var(--border); border-radius:13px; padding:12px 15px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; transition:all .18s; display:flex; align-items:center; gap:10px; color:var(--text); }
+  .opt:hover:not(:disabled) { border-color:var(--primary); background:var(--primary-light); transform:translateX(4px); }
+  .opt .ol { width:28px; height:28px; border-radius:50%; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; flex-shrink:0; }
+  .opt.correct { border-color:var(--green); background:var(--green-light); }
+  .opt.correct .ol { background:var(--green); color:white; }
+  .opt.wrong { border-color:var(--red); background:var(--red-light); }
+  .opt.wrong .ol { background:var(--red); color:white; }
+  .opt:disabled { cursor:default; }
+
+  .feedback { border-radius:13px; padding:12px 16px; font-size:13px; font-weight:700; margin-top:12px; display:none; line-height:1.5; }
+  .feedback.show { display:block; }
+  .feedback.ok { background:var(--green-light); color:#065F46; border:2px solid var(--green); }
+  .feedback.nok { background:var(--red-light); color:#991B1B; border:2px solid var(--red); }
+  .btn-next { width:100%; background:var(--primary); color:white; border:none; border-radius:13px; padding:14px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; margin-top:12px; display:none; transition:all .18s; }
+  .btn-next:hover { background:#2563EB; transform:translateY(-2px); }
+  .btn-next.show { display:block; }
+
+  .result { background:var(--card); border:2px solid var(--border); border-radius:24px; padding:36px 24px; text-align:center; display:none; animation:popIn .4s ease; }
+  .result.show { display:block; }
+  @keyframes popIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:60px; margin-bottom:12px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:28px; color:var(--primary); margin-bottom:20px; }
+  .r-score { font-size:48px; font-weight:900; }
+  .r-score span { color:var(--primary); }
+  .r-sub { font-size:14px; color:var(--muted); font-weight:600; margin:8px 0 24px; }
+  .medal { display:inline-block; background:var(--future-light); border:2px solid var(--future); border-radius:16px; padding:8px 22px; font-size:14px; font-weight:800; margin-bottom:20px; color:#92400E; }
+  .btn-restart { background:var(--primary); color:white; border:none; border-radius:13px; padding:14px 32px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-restart:hover { background:#2563EB; transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">Português • Tempos Verbais</div>
+    <h1>Quiz de Verbos</h1>
+    <p class="subtitle">Presente, passado e futuro — usando exemplos da peça "O Vento e o Sol"</p>
+  </div>
+
+  <div class="tempo-row">
+    <div class="tempo-badge past"><span class="t-icon">⏮️</span>Passado</div>
+    <div class="tempo-badge present"><span class="t-icon">▶️</span>Presente</div>
+    <div class="tempo-badge future"><span class="t-icon">⏭️</span>Futuro</div>
+  </div>
+
+  <div id="quiz-area">
+    <div class="score-row">
+      <div class="score-pill">⭐ Pontos: <span id="score">0</span></div>
+      <div class="score-pill">🎯 Acertos: <span id="hits">0</span></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+    <div class="prog-lbl" id="prog-lbl">Questão 1 de 10</div>
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num">Questão 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-score"><span id="r-pts">0</span> pts</div>
+    <div class="r-sub" id="r-sub"></div>
+    <div class="medal" id="r-medal"></div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var questions = [
+  {
+    text: 'Na frase <em class="em-neutral">"Ok, você venceu!"</em>, o verbo <em class="em-past">venceu</em> está no tempo:',
+    opts: ['Presente','Passado','Futuro','Não tem tempo verbal'],
+    correct: 1,
+    exp: 'VENCEU está no passado — indica uma ação que JÁ ACONTECEU. O Sol já havia vencido a aposta.'
+  },
+  {
+    text: 'Na rubrica <em class="em-neutral">"Menino tira o casaco"</em>, o verbo <em class="em-present">tira</em> indica que a ação acontece:',
+    opts: ['No passado — já aconteceu','No presente — acontece agora','No futuro — ainda vai acontecer','É impossível saber'],
+    correct: 1,
+    exp: 'TIRA está no presente — descreve o que o Menino faz naquele exato momento da peça.'
+  },
+  {
+    text: 'Na frase <em class="em-neutral">"O Vento soprará mais forte"</em>, o verbo <em class="em-future">soprará</em> indica:',
+    opts: ['Algo que já aconteceu','Algo que acontece agora','Algo que ainda vai acontecer','Uma ordem para o Vento'],
+    correct: 2,
+    exp: 'SOPRARÁ está no futuro — indica uma ação que AINDA VAI acontecer, que está por vir.'
+  },
+  {
+    text: 'Na rubrica <em class="em-neutral">"Afastado, o Sol observa a cena"</em>, o verbo <em class="em-present">observa</em> está no:',
+    opts: ['Passado','Presente','Futuro','Nenhum tempo verbal'],
+    correct: 1,
+    exp: 'OBSERVA está no presente — as rubricas usam principalmente o presente para descrever as ações no momento em que ocorrem.'
+  },
+  {
+    text: 'Na fala <em class="em-neutral">"O Vento e o Sol fizeram uma aposta"</em>, o verbo <em class="em-past">fizeram</em> está no:',
+    opts: ['Presente','Passado','Futuro','Imperativo'],
+    correct: 1,
+    exp: 'FIZERAM está no passado — o Pombo 2 conta algo que JÁ ACONTECEU: a aposta já foi feita antes da fala.'
+  },
+  {
+    text: 'Qual alternativa traz um verbo no <em class="em-future">futuro</em>?',
+    opts: ['"Vento soprou muito forte"','"Sol se aproxima devagar"','"Ganhará quem arrancar a roupa"','"Menino vestiu o casaco"'],
+    correct: 2,
+    exp: 'GANHARÁ está no futuro — indica quem ainda vai ganhar a aposta, uma ação que ainda não aconteceu.'
+  },
+  {
+    text: 'Os verbos das rubricas de "O Vento e o Sol" estão, em sua maioria, em qual tempo verbal?',
+    opts: ['Passado — porque a história já aconteceu','Presente — para dar sensação de que acontece agora','Futuro — porque é uma peça teatral','Nenhum tempo específico'],
+    correct: 1,
+    exp: 'As rubricas usam o PRESENTE para criar a sensação de que as ações estão acontecendo naquele momento, ao vivo no palco.'
+  },
+  {
+    text: 'Qual frase reescreve <em class="em-neutral">"Menino tira o casaco"</em> corretamente no <em class="em-past">passado</em>?',
+    opts: ['"Menino tirará o casaco"','"Menino tira o casaco"','"Menino tirou o casaco"','"Menino vai tirar o casaco"'],
+    correct: 2,
+    exp: 'TIROU é a forma do passado. TIRARÁ é futuro. TIRA é presente. "Vai tirar" também é futuro (futuro perifrástico).'
+  },
+  {
+    text: 'Na fala <em class="em-neutral">"Desisto... Vai lá: sua vez"</em>, o verbo <em class="em-present">desisto</em> está no:',
+    opts: ['Passado — o Vento já desistiu antes','Presente — o Vento desiste agora, naquele momento','Futuro — o Vento vai desistir','Não é um verbo'],
+    correct: 1,
+    exp: 'DESISTO está no presente — o Vento anuncia sua desistência no momento exato em que fala. É uma ação que acontece agora.'
+  },
+  {
+    text: 'Qual é a diferença entre <em class="em-neutral">"Sol venceu"</em>, <em class="em-neutral">"Sol vence"</em> e <em class="em-neutral">"Sol vencerá"</em>?',
+    opts: [
+      'São a mesma coisa — só mudam a escrita',
+      'Indicam tempos diferentes: passado, presente e futuro',
+      'Só "venceu" é um verbo — os outros são adjetivos',
+      'Não existe diferença de sentido entre eles'
+    ],
+    correct: 1,
+    exp: 'Os três são o mesmo verbo VENCER em tempos diferentes. VENCEU = passado (já aconteceu). VENCE = presente (acontece agora). VENCERÁ = futuro (ainda vai acontecer).'
+  }
+];
+
+var cur=0, score=0, hits=0, answered=false;
+
+function loadQ() {
+  answered = false;
+  var q = questions[cur];
+  document.getElementById('q-num').textContent = 'Questão ' + (cur+1);
+  document.getElementById('q-text').innerHTML = q.text;
+  document.getElementById('prog-lbl').textContent = 'Questão ' + (cur+1) + ' de ' + questions.length;
+  document.getElementById('prog').style.width = ((cur/questions.length)*100) + '%';
+  var opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  var letters = ['A','B','C','D'];
+  q.opts.forEach(function(o, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<span class="ol">' + letters[i] + '</span>' + o;
+    btn.onclick = (function(idx){ return function(){ selectOpt(idx); }; })(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('btn-next').className = 'btn-next';
+  document.getElementById('q-card').style.animation = 'none';
+  requestAnimationFrame(function(){ document.getElementById('q-card').style.animation = 'slideIn .35s ease'; });
+}
+
+function selectOpt(idx) {
+  if (answered) return;
+  answered = true;
+  var q = questions[cur];
+  var btns = document.querySelectorAll('.opt');
+  btns.forEach(function(b){ b.disabled = true; });
+  var fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.textContent = '✅ ' + q.exp;
+    score += 10; hits++;
+    document.getElementById('score').textContent = score;
+    document.getElementById('hits').textContent = hits;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback nok show';
+    fb.textContent = '❌ A correta era ' + ['A','B','C','D'][q.correct] + '. ' + q.exp;
+  }
+  if (cur < questions.length - 1) {
+    document.getElementById('btn-next').className = 'btn-next show';
+  } else {
+    setTimeout(showResult, 1600);
+  }
+}
+
+function nextQ() { cur++; loadQ(); }
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  var rs = document.getElementById('result');
+  rs.className = 'result show';
+  var pct = Math.round((hits/questions.length)*100);
+  document.getElementById('r-pts').textContent = score;
+  document.getElementById('r-sub').textContent = 'Você acertou ' + hits + ' de ' + questions.length + ' (' + pct + '%)';
+  var e,t,m;
+  if (hits===questions.length){e='🏆';t='Perfeito!';m='🥇 Mestre dos verbos!';}
+  else if (hits>=8){e='🌟';t='Excelente!';m='🥈 Quase perfeito!';}
+  else if (hits>=6){e='😊';t='Muito bem!';m='🥉 Continue assim!';}
+  else{e='🔄';t='Revise e tente de novo!';m='📚 Pratique mais!';}
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+  document.getElementById('r-medal').textContent = m;
+}
+
+function restart() {
+  cur=0; score=0; hits=0; answered=false;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('hits').textContent = 0;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('result').className = 'result';
+  loadQ();
+}
+
+loadQ();
+</script>
+</body>
+</html>

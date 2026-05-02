@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crie seu Diálogo – Texto Teatral</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FFF8EC; --card:#fff; --primary:#F97316; --primary-dark:#EA6C0A;
+    --primary-light:#FFEDD5; --accent:#FFE66D; --accent-dark:#F4C430;
+    --green:#20bf6b; --green-light:#D5F5E3;
+    --purple:#7B68EE; --purple-light:#E8E5FF;
+    --text:#2D3436; --muted:#636E72; --border:#E5D5C0;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:660px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary-dark); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  /* Screens */
+  .screen { display:none; }
+  .screen.active { display:block; }
+
+  /* Setup screen */
+  .setup-card { background:var(--card); border:2px solid var(--border); border-radius:18px; padding:22px; margin-bottom:14px; }
+  .setup-title { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:12px; }
+  .scenario-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+  .scenario-btn { padding:14px 12px; border:2px solid var(--border); border-radius:14px; background:#FAFAFA; cursor:pointer; text-align:center; transition:all .18s; font-family:'Nunito',sans-serif; color:var(--text); }
+  .scenario-btn:hover { border-color:var(--primary); transform:translateY(-2px); }
+  .scenario-btn.sel { border-color:var(--primary); background:var(--primary-light); }
+  .scenario-icon { font-size:26px; margin-bottom:6px; }
+  .scenario-name { font-size:13px; font-weight:800; margin-bottom:3px; }
+  .scenario-desc { font-size:11px; color:var(--muted); font-weight:600; line-height:1.4; }
+  .char-select { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
+  .char-btn { padding:8px 16px; border:2px solid var(--border); border-radius:20px; background:#FAFAFA; font-family:'Nunito',sans-serif; font-size:13px; font-weight:800; cursor:pointer; transition:all .15s; color:var(--text); }
+  .char-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .char-btn.sel { background:var(--primary); border-color:var(--primary); color:white; }
+  .char-hint { font-size:11px; color:var(--muted); font-weight:600; margin-top:6px; }
+  .btn-start-write { width:100%; padding:14px; background:var(--primary); border:none; border-radius:13px; font-family:'Nunito',sans-serif; font-size:16px; font-weight:800; color:white; cursor:pointer; transition:all .18s; margin-top:16px; }
+  .btn-start-write:hover { background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 6px 18px rgba(249,115,22,.35); }
+  .btn-start-write:disabled { opacity:.35; cursor:default; transform:none; box-shadow:none; }
+
+  /* Reference card */
+  .ref-card { background:var(--purple-light); border:2px solid var(--purple); border-radius:14px; padding:14px 18px; margin-bottom:16px; }
+  .ref-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--purple); margin-bottom:10px; }
+  .ref-item { font-size:13px; font-weight:700; margin-bottom:6px; color:var(--text); }
+  .ref-item strong { color:var(--purple); }
+
+  /* Write screen */
+  .context-banner { background:var(--primary-light); border:2px solid var(--primary); border-radius:14px; padding:14px 18px; margin-bottom:16px; }
+  .context-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--primary-dark); margin-bottom:6px; }
+  .context-text { font-size:14px; font-weight:700; color:var(--primary-dark); line-height:1.5; }
+
+  /* Dialogue builder */
+  .dialogue-builder { background:var(--card); border:2px solid var(--border); border-radius:18px; padding:20px; margin-bottom:14px; }
+  .dialogue-title { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:14px; }
+  .line-entry { display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; }
+  .char-label { background:var(--primary); color:white; font-weight:900; font-size:12px; padding:6px 12px; border-radius:10px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+  .line-input { flex:1; border:2px solid var(--border); border-radius:11px; padding:10px 13px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; color:var(--text); outline:none; transition:border-color .2s; resize:none; min-height:52px; }
+  .line-input:focus { border-color:var(--primary); }
+  .del-btn { background:none; border:none; color:#CCC; font-size:18px; cursor:pointer; padding:6px; transition:color .15s; flex-shrink:0; margin-top:2px; }
+  .del-btn:hover { color:var(--primary); }
+  .add-line-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .add-char-btn { padding:7px 14px; border:2px dashed var(--border); border-radius:10px; background:transparent; font-family:'Nunito',sans-serif; font-size:12px; font-weight:800; cursor:pointer; color:var(--muted); transition:all .15s; }
+  .add-char-btn:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+
+  /* Rubric builder */
+  .rubric-builder { background:var(--card); border:2px solid var(--border); border-radius:18px; padding:20px; margin-bottom:14px; }
+  .rubric-input { width:100%; border:2px solid var(--border); border-radius:11px; padding:10px 13px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; color:var(--text); outline:none; transition:border-color .2s; resize:none; min-height:70px; }
+  .rubric-input:focus { border-color:var(--purple); }
+  .rubric-example { font-size:12px; color:var(--muted); font-weight:600; margin-top:6px; font-style:italic; }
+
+  /* Preview */
+  .preview-card { background:#1A1A2E; border-radius:18px; padding:22px; margin-bottom:14px; }
+  .preview-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); margin-bottom:14px; }
+  .preview-content { font-family:'Nunito',sans-serif; font-size:14px; color:rgba(255,255,255,.9); line-height:1.8; }
+  .preview-char { color:#FFE66D; font-weight:900; }
+  .preview-rubric { color:rgba(255,255,255,.55); font-style:italic; }
+  .preview-empty { color:rgba(255,255,255,.3); font-style:italic; font-size:13px; }
+
+  .btn-row { display:flex; gap:10px; }
+  .btn { flex:1; padding:13px; border:none; border-radius:13px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-preview { background:var(--purple); color:white; }
+  .btn-preview:hover { background:#5A4AD1; transform:translateY(-2px); }
+  .btn-back-setup { background:var(--border); color:var(--muted); }
+  .btn-back-setup:hover { background:#c8d0e0; }
+
+  /* Checklist screen */
+  .checklist { background:var(--card); border:2px solid var(--border); border-radius:18px; padding:20px; margin-bottom:14px; }
+  .checklist-title { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:14px; }
+  .check-item { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .check-item:last-child { border-bottom:none; }
+  .check-box { width:22px; height:22px; border:2px solid var(--border); border-radius:6px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all .15s; margin-top:1px; }
+  .check-box.checked { background:var(--green); border-color:var(--green); color:white; }
+  .check-text { font-size:14px; font-weight:700; line-height:1.5; }
+  .check-sub { font-size:12px; color:var(--muted); font-weight:600; margin-top:2px; }
+  .score-display { background:var(--green-light); border:2px solid var(--green); border-radius:14px; padding:14px 18px; text-align:center; margin-bottom:16px; display:none; }
+  .score-display.show { display:block; }
+  .score-big { font-family:'Fredoka One',cursive; font-size:32px; color:var(--green); }
+  .score-lbl { font-size:13px; font-weight:700; color:#1A7A45; }
+  .btn-finish { width:100%; padding:14px; background:var(--primary); border:none; border-radius:13px; font-family:'Nunito',sans-serif; font-size:16px; font-weight:800; color:white; cursor:pointer; transition:all .18s; }
+  .btn-finish:hover { background:var(--primary-dark); transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🎭 Texto Teatral • Criar</div>
+    <h1>Escreva seu Diálogo!</h1>
+    <p class="subtitle">Crie um texto teatral usando o que aprendeu sobre a peça</p>
+  </div>
+
+  <!-- SETUP SCREEN -->
+  <div class="screen active" id="screen-setup">
+    <div class="setup-card">
+      <div class="setup-title">Escolha o cenário da sua cena</div>
+      <div class="scenario-grid">
+        <button class="scenario-btn sel" id="sc-1" onclick="selectScenario(1, this)">
+          <div class="scenario-icon">🌬️☀️</div>
+          <div class="scenario-name">A revanche</div>
+          <div class="scenario-desc">Vento e Sol fazem uma nova aposta — desta vez quem faz o Menino correr!</div>
+        </button>
+        <button class="scenario-btn" id="sc-2" onclick="selectScenario(2, this)">
+          <div class="scenario-icon">🐦🌧️</div>
+          <div class="scenario-name">Dia de chuva</div>
+          <div class="scenario-desc">Os Pombos comentam um dia de tempestade — Vento vs. Chuva</div>
+        </button>
+        <button class="scenario-btn" id="sc-3" onclick="selectScenario(3, this)">
+          <div class="scenario-icon">🏆😮‍💨</div>
+          <div class="scenario-name">Após a derrota</div>
+          <div class="scenario-desc">O Vento conversa com os Pombos sobre o que aprendeu com a derrota</div>
+        </button>
+        <button class="scenario-btn" id="sc-4" onclick="selectScenario(4, this)">
+          <div class="scenario-icon">✏️</div>
+          <div class="scenario-name">Cenário livre</div>
+          <div class="scenario-desc">Crie seu próprio cenário com as personagens que quiser!</div>
+        </button>
+      </div>
+
+      <div class="setup-title">Personagens do seu diálogo (escolha 2 a 4)</div>
+      <div class="char-select" id="char-select">
+        <button class="char-btn sel" onclick="togChar('SOL', this)">☀️ Sol</button>
+        <button class="char-btn sel" onclick="togChar('VENTO', this)">🌬️ Vento</button>
+        <button class="char-btn" onclick="togChar('POMBO 1', this)">🐦 Pombo 1</button>
+        <button class="char-btn" onclick="togChar('POMBO 2', this)">🐦 Pombo 2</button>
+        <button class="char-btn" onclick="togChar('MENINO', this)">👦 Menino</button>
+      </div>
+      <div class="char-hint" id="char-hint">2 personagens selecionados</div>
+
+      <button class="btn-start-write" id="btn-start-write" onclick="startWrite()">✏️ Começar a escrever!</button>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-title">📋 Lembrete — elementos do texto teatral</div>
+      <div class="ref-item"><strong>Rubrica:</strong> descreve o cenário, as ações e os sentimentos das personagens</div>
+      <div class="ref-item"><strong>NOME DA PERSONAGEM:</strong> aparece antes de cada fala, em destaque</div>
+      <div class="ref-item"><strong>(para a plateia):</strong> indica que a personagem fala para o público</div>
+      <div class="ref-item"><strong>CAI O PANO. FIM.</strong> indica o final da peça</div>
+    </div>
+  </div>
+
+  <!-- WRITE SCREEN -->
+  <div class="screen" id="screen-write">
+    <div class="context-banner">
+      <div class="context-label">Seu cenário</div>
+      <div class="context-text" id="context-text"></div>
+    </div>
+
+    <div class="rubric-builder">
+      <div class="dialogue-title">📍 Rubrica inicial — descreva onde acontece e o que as personagens estão fazendo</div>
+      <textarea class="rubric-input" id="rubric-text" placeholder="Ex: Vento e Sol estão no céu, observando o Menino que acabou de sair da escola. Sol sorri satisfeito enquanto Vento cruza os braços..."></textarea>
+      <div class="rubric-example">Dica: Descreva o lugar, o que cada personagem está fazendo e como está se sentindo.</div>
+    </div>
+
+    <div class="dialogue-builder">
+      <div class="dialogue-title">💬 Falas das personagens</div>
+      <div id="lines-container"></div>
+      <div class="add-line-row" id="add-line-row"></div>
+    </div>
+
+    <div class="preview-card">
+      <div class="preview-title">👁 Prévia do seu texto teatral</div>
+      <div class="preview-content" id="preview-content"><span class="preview-empty">Seu texto aparecerá aqui conforme você escreve...</span></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-preview" onclick="goToChecklist()">✅ Revisar e avaliar</button>
+      <button class="btn btn-back-setup" onclick="goToSetup()">← Voltar</button>
+    </div>
+  </div>
+
+  <!-- CHECKLIST SCREEN -->
+  <div class="screen" id="screen-checklist">
+    <div class="preview-card" style="margin-bottom:16px">
+      <div class="preview-title">📄 Seu texto teatral</div>
+      <div class="preview-content" id="final-preview"></div>
+    </div>
+
+    <div class="checklist">
+      <div class="checklist-title">✅ Avalie o seu diálogo</div>
+      <div id="checklist-items"></div>
+    </div>
+
+    <div class="score-display" id="score-display">
+      <div class="score-big" id="score-val">0/6</div>
+      <div class="score-lbl" id="score-lbl"></div>
+    </div>
+
+    <div class="btn-row" style="margin-bottom:12px">
+      <button class="btn btn-preview" onclick="calcScore()">📊 Calcular pontuação</button>
+      <button class="btn btn-back-setup" onclick="goToWrite()">← Editar</button>
+    </div>
+    <button class="btn-finish" onclick="goToSetup()">🔄 Criar um novo diálogo</button>
+  </div>
+</div>
+
+<script>
+let selectedScenario = 1;
+let selectedChars = ['SOL', 'VENTO'];
+let lines = [];
+let checks = [];
+
+const scenarios = {
+  1: { name:'A revanche', desc:'Vento e Sol se encontram novamente. O Vento quer uma nova aposta para mostrar que também pode vencer com inteligência.' },
+  2: { name:'Dia de chuva', desc:'Os Pombos observam uma tempestade e comentam sobre a briga entre o Vento e a Chuva.' },
+  3: { name:'Após a derrota', desc:'O Vento, ainda frustrado, conversa com os Pombos sobre o que aprendeu com a derrota para o Sol.' },
+  4: { name:'Cenário livre', desc:'Você decide! Crie seu próprio cenário com as personagens escolhidas.' },
+};
+
+const checklistItems = [
+  { text:'Tem uma rubrica inicial', sub:'Descrevendo o cenário e a posição das personagens', id:'c1' },
+  { text:'Os nomes das personagens aparecem antes das falas', sub:'Ex: SOL: Olá, amigo Vento!', id:'c2' },
+  { text:'As personagens têm pelo menos 2 falas cada', sub:'O diálogo está desenvolvido, não apenas começa e termina', id:'c3' },
+  { text:'O diálogo tem começo, meio e fim', sub:'Existe uma situação inicial, um desenvolvimento e uma conclusão', id:'c4' },
+  { text:'As falas combinam com a personalidade das personagens', sub:'Ex: o Vento é impulsivo, o Sol é calmo e paciente', id:'c5' },
+  { text:'Há uma mensagem ou moral na história', sub:'O diálogo termina com algum aprendizado ou reflexão', id:'c6' },
+];
+
+function selectScenario(n, btn) {
+  selectedScenario = n;
+  document.querySelectorAll('.scenario-btn').forEach(function(b) { b.classList.remove('sel'); });
+  btn.classList.add('sel');
+}
+
+function togChar(name, btn) {
+  const idx = selectedChars.indexOf(name);
+  if (idx >= 0) {
+    if (selectedChars.length <= 2) return; // minimum 2
+    selectedChars.splice(idx, 1);
+    btn.classList.remove('sel');
+  } else {
+    if (selectedChars.length >= 4) return; // maximum 4
+    selectedChars.push(name);
+    btn.classList.add('sel');
+  }
+  document.getElementById('char-hint').textContent = selectedChars.length + ' personagem' + (selectedChars.length > 1 ? 's' : '') + ' selecionada' + (selectedChars.length > 1 ? 's' : '');
+}
+
+function startWrite() {
+  lines = [];
+  // Add initial lines for each character
+  selectedChars.forEach(function(ch) { addLine(ch); });
+  document.getElementById('context-text').textContent = scenarios[selectedScenario].desc;
+  renderLines();
+  renderAddButtons();
+  showScreen('write');
+}
+
+function addLine(char) {
+  lines.push({ char: char, text: '' });
+}
+
+function renderLines() {
+  const container = document.getElementById('lines-container');
+  container.innerHTML = '';
+  lines.forEach(function(line, idx) {
+    const entry = document.createElement('div');
+    entry.className = 'line-entry';
+    const lbl = document.createElement('div');
+    lbl.className = 'char-label';
+    lbl.textContent = line.char + ':';
+    const inp = document.createElement('textarea');
+    inp.className = 'line-input';
+    inp.placeholder = 'Escreva a fala de ' + line.char + '...';
+    inp.value = line.text;
+    inp.rows = 2;
+    inp.oninput = function() { lines[idx].text = this.value; updatePreview(); };
+    const del = document.createElement('button');
+    del.className = 'del-btn';
+    del.textContent = '✕';
+    del.onclick = function() { lines.splice(idx, 1); renderLines(); updatePreview(); };
+    entry.appendChild(lbl); entry.appendChild(inp); entry.appendChild(del);
+    container.appendChild(entry);
+  });
+  updatePreview();
+}
+
+function renderAddButtons() {
+  const row = document.getElementById('add-line-row');
+  row.innerHTML = '';
+  selectedChars.forEach(function(ch) {
+    const btn = document.createElement('button');
+    btn.className = 'add-char-btn';
+    btn.textContent = '+ ' + ch;
+    btn.onclick = function() { addLine(ch); renderLines(); };
+    row.appendChild(btn);
+  });
+}
+
+function updatePreview() {
+  const rubric = document.getElementById('rubric-text').value.trim();
+  const pc = document.getElementById('preview-content');
+  let html = '';
+  if (rubric) html += '<span class="preview-rubric">' + rubric + '</span><br><br>';
+  lines.forEach(function(line) {
+    if (line.text.trim()) {
+      html += '<span class="preview-char">' + line.char + ':</span> ' + line.text + '<br>';
+    }
+  });
+  if (!html) { pc.innerHTML = '<span class="preview-empty">Seu texto aparecerá aqui conforme você escreve...</span>'; return; }
+  pc.innerHTML = html;
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'rubric-text') updatePreview();
+});
+
+function goToChecklist() {
+  const rubric = document.getElementById('rubric-text').value.trim();
+  let html = '';
+  if (rubric) html += '<span class="preview-rubric">' + rubric + '</span><br><br>';
+  lines.forEach(function(line) {
+    if (line.text.trim()) html += '<span class="preview-char">' + line.char + ':</span> ' + line.text + '<br>';
+  });
+  document.getElementById('final-preview').innerHTML = html || '<span class="preview-empty">Nenhum texto ainda.</span>';
+
+  // Render checklist
+  checks = {};
+  const cl = document.getElementById('checklist-items');
+  cl.innerHTML = '';
+  checklistItems.forEach(function(item) {
+    checks[item.id] = false;
+    const div = document.createElement('div');
+    div.className = 'check-item';
+    const box = document.createElement('div');
+    box.className = 'check-box';
+    box.id = 'box-' + item.id;
+    box.onclick = function() {
+      checks[item.id] = !checks[item.id];
+      box.className = 'check-box' + (checks[item.id] ? ' checked' : '');
+      box.textContent = checks[item.id] ? '✓' : '';
+      document.getElementById('score-display').className = 'score-display';
+    };
+    const textDiv = document.createElement('div');
+    textDiv.innerHTML = '<div class="check-text">' + item.text + '</div><div class="check-sub">' + item.sub + '</div>';
+    div.appendChild(box); div.appendChild(textDiv);
+    cl.appendChild(div);
+  });
+  document.getElementById('score-display').className = 'score-display';
+  showScreen('checklist');
+}
+
+function calcScore() {
+  const total = checklistItems.length;
+  const correct = Object.values(checks).filter(Boolean).length;
+  const pct = correct / total;
+  const display = document.getElementById('score-display');
+  display.className = 'score-display show';
+  document.getElementById('score-val').textContent = correct + '/' + total;
+  let lbl;
+  if (pct === 1) lbl = '🏆 Texto teatral perfeito! Você dominou todos os elementos!';
+  else if (pct >= .83) lbl = '🌟 Excelente! Quase perfeito — revise os itens não marcados.';
+  else if (pct >= .66) lbl = '😊 Bom trabalho! Você pode melhorar alguns elementos.';
+  else lbl = '📚 Continue escrevendo! Revise a lista e reescreva.';
+  document.getElementById('score-lbl').textContent = lbl;
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goToSetup() { showScreen('setup'); }
+function goToWrite() { renderLines(); renderAddButtons(); showScreen('write'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete a Lacuna – Preposições</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F0F7FF;
+    --card: #FFFFFF;
+    --primary: #4B7BEC;
+    --primary-light: #D6E4FF;
+    --secondary: #45AAF2;
+    --accent: #FED330;
+    --accent-dark: #F7B731;
+    --green: #26de81;
+    --green-dark: #20bf6b;
+    --green-light: #D5F5E3;
+    --red: #FC5C65;
+    --red-light: #FFE0E1;
+    --text: #2D3436;
+    --text-muted: #636E72;
+    --border: #DDE3EE;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 24px 16px;
+    color: var(--text);
+  }
+  .container { max-width: 640px; margin: 0 auto; }
+
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--text);
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .header h1 { font-family: 'Fredoka One', cursive; font-size: 34px; color: var(--primary); margin-bottom: 6px; }
+  .header p { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+
+  .word-bank {
+    background: var(--card);
+    border: 2px dashed var(--primary);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .word-bank-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 10px; }
+  .words { display: flex; flex-wrap: wrap; gap: 8px; }
+  .word-chip {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 14px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--primary);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .word-chip:hover { background: var(--primary); color: white; }
+  .word-chip.used { opacity: 0.35; cursor: default; text-decoration: line-through; }
+
+  .section-label {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text-muted); margin: 20px 0 10px;
+  }
+
+  .sentence-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.7;
+    transition: border-color 0.2s;
+  }
+  .sentence-card.correct { border-color: var(--green-dark); background: var(--green-light); }
+  .sentence-card.wrong { border-color: var(--red); background: var(--red-light); }
+
+  .hint {
+    font-size: 12px; font-weight: 700;
+    color: var(--text-muted);
+    background: #F1F3F8;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: auto;
+  }
+
+  .blank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
+    border-bottom: 3px solid var(--primary);
+    padding: 2px 8px;
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--primary);
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .blank:hover { background: var(--primary-light); }
+  .blank.filled { color: var(--primary); border-color: var(--primary); }
+  .blank.correct-blank { color: var(--green-dark); border-color: var(--green-dark); }
+  .blank.wrong-blank { color: var(--red); border-color: var(--red); }
+  .blank-empty::after { content: '___'; color: #BCC2CC; }
+
+  .feedback-inline {
+    font-size: 12px; font-weight: 700;
+    margin-left: 4px;
+  }
+  .feedback-inline.ok { color: var(--green-dark); }
+  .feedback-inline.nok { color: var(--red); }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-check { background: var(--primary); color: white; }
+  .btn-check:hover { background: #3867d6; transform: translateY(-2px); }
+  .btn-reset { background: var(--border); color: var(--text-muted); }
+  .btn-reset:hover { background: #c8d0e0; }
+
+  .score-bar {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid var(--border);
+    margin-top: 16px;
+    display: none;
+    animation: popIn 0.3s ease;
+  }
+  .score-bar.show { display: flex; }
+  @keyframes popIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }
+  .score-big { font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--primary); }
+  .score-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+  .medal-chip {
+    background: var(--accent);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  /* Selected word indicator */
+  .selected-word-indicator {
+    background: var(--primary);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    text-align: center;
+  }
+  .selected-word-indicator.show { display: block; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-badge">Português • Preposições</div>
+    <h1>Complete a Lacuna</h1>
+    <p>Clique em uma palavra do banco, depois clique na lacuna para preencher.</p>
+  </div>
+
+  <div class="word-bank">
+    <div class="word-bank-title">📦 Banco de palavras — use cada uma onde fizer sentido</div>
+    <div class="words" id="word-bank"></div>
+  </div>
+
+  <div class="selected-word-indicator" id="selected-indicator"></div>
+
+  <div class="section-label">Grupo A — Complete com a preposição correta</div>
+  <div id="sentences-a"></div>
+
+  <div class="section-label">Grupo B — Locuções adjetivas</div>
+  <div id="sentences-b"></div>
+
+  <div class="section-label">Grupo C — Qual é o sentido?</div>
+  <div id="sentences-c"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✅ Verificar respostas</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+
+  <div class="score-bar" id="score-bar">
+    <div>
+      <div class="score-big" id="score-val">0/12</div>
+      <div class="score-label">respostas corretas</div>
+    </div>
+    <div class="medal-chip" id="medal-chip">📚</div>
+  </div>
+</div>
+
+<script>
+const allWords = ["de","em","com","sem","para","sobre","após","até","por","na","do","a"];
+
+const groups = {
+  a: [
+    { before: "Festa", after: "roça (lugar)", answer: "na", hint: "lugar" },
+    { before: "Festa", after: "comida (falta)", answer: "sem", hint: "falta" },
+    { before: "Festa", after: "morango (tipo)", answer: "do", hint: "tipo/material" },
+    { before: "Festa", after: "barracas (conteúdo)", answer: "com", hint: "conteúdo" },
+    { before: "Viagem", after: "Alagoas (destino)", answer: "para", hint: "destino" },
+    { before: "Não há pasto", after: "capim", answer: "sem", hint: "ausência" },
+  ],
+  b: [
+    { before: "Pão", after: "queijo", answer: "de", hint: "material" },
+    { before: "Boneca", after: "barro", answer: "de", hint: "material" },
+    { before: "Bolo", after: "chocolate", answer: "de", hint: "tipo" },
+    { before: "Panela", after: "pano", answer: "com", hint: "? pano" },
+  ],
+  c: [
+    { before: "A preposição", after: "liga dois termos da frase", answer: "de", hint: "define função", full: true, sentence: 'A preposição ___ ligação liga dois termos da frase.', answer: "de" },
+    { before: "Boneco", after: "madeira indica o material", answer: "de", hint: "material" },
+  ]
+};
+
+// Flatten all sentences
+const sentences = [
+  ...groups.a.map((s,i) => ({...s, group:'a', id:`a${i}`})),
+  ...groups.b.map((s,i) => ({...s, group:'b', id:`b${i}`})),
+  ...groups.c.map((s,i) => ({...s, group:'c', id:`c${i}`})),
+];
+
+let selectedWord = null;
+let answers = {};
+
+function init() {
+  // Build word bank
+  const wb = document.getElementById('word-bank');
+  wb.innerHTML = '';
+  allWords.forEach(w => {
+    const chip = document.createElement('button');
+    chip.className = 'word-chip';
+    chip.textContent = w;
+    chip.id = 'chip-' + w;
+    chip.onclick = () => selectWord(w, chip);
+    wb.appendChild(chip);
+  });
+
+  renderGroup('a', groups.a, 'sentences-a');
+  renderGroup('b', groups.b, 'sentences-b');
+  renderGroup('c', groups.c, 'sentences-c');
+}
+
+function renderGroup(gKey, arr, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  arr.forEach((s, i) => {
+    const id = gKey + i;
+    const card = document.createElement('div');
+    card.className = 'sentence-card';
+    card.id = 'card-' + id;
+
+    const blankEl = document.createElement('span');
+    blankEl.className = 'blank blank-empty';
+    blankEl.id = 'blank-' + id;
+    blankEl.onclick = () => fillBlank(id);
+
+    const hint = document.createElement('span');
+    hint.className = 'hint';
+    hint.textContent = s.hint;
+
+    card.innerHTML = '';
+    const beforeSpan = document.createElement('span');
+    beforeSpan.textContent = s.before + ' ';
+    card.appendChild(beforeSpan);
+    card.appendChild(blankEl);
+    const afterSpan = document.createElement('span');
+    afterSpan.textContent = ' ' + s.after;
+    card.appendChild(afterSpan);
+    card.appendChild(hint);
+
+    const fb = document.createElement('span');
+    fb.className = 'feedback-inline';
+    fb.id = 'fb-' + id;
+    card.appendChild(fb);
+
+    container.appendChild(card);
+  });
+}
+
+function selectWord(word, chip) {
+  // Deselect previous
+  document.querySelectorAll('.word-chip').forEach(c => c.style.outline = '');
+  selectedWord = word;
+  chip.style.outline = '3px solid #4B7BEC';
+  chip.style.outlineOffset = '2px';
+  const ind = document.getElementById('selected-indicator');
+  ind.textContent = `Palavra selecionada: "${word}" — agora clique na lacuna`;
+  ind.className = 'selected-word-indicator show';
+}
+
+function fillBlank(id) {
+  if (!selectedWord) return;
+  answers[id] = selectedWord;
+  const blank = document.getElementById('blank-' + id);
+  blank.textContent = selectedWord;
+  blank.className = 'blank filled';
+  // Clear feedback
+  const fb = document.getElementById('fb-' + id);
+  if (fb) fb.textContent = '';
+  document.getElementById('card-' + id).className = 'sentence-card';
+  // Deselect
+  selectedWord = null;
+  document.querySelectorAll('.word-chip').forEach(c => { c.style.outline = ''; });
+  document.getElementById('selected-indicator').className = 'selected-word-indicator';
+}
+
+function checkAll() {
+  let correct = 0;
+  const total = sentences.length;
+
+  sentences.forEach(s => {
+    const userAnswer = answers[s.id] || '';
+    const card = document.getElementById('card-' + s.id);
+    const blank = document.getElementById('blank-' + s.id);
+    const fb = document.getElementById('fb-' + s.id);
+
+    if (userAnswer.toLowerCase() === s.answer.toLowerCase()) {
+      correct++;
+      card.className = 'sentence-card correct';
+      blank.className = 'blank correct-blank';
+      if (fb) { fb.className = 'feedback-inline ok'; fb.textContent = '✓ correto!'; }
+    } else {
+      card.className = 'sentence-card wrong';
+      blank.className = 'blank wrong-blank';
+      if (fb) { fb.className = 'feedback-inline nok'; fb.textContent = `✗ era: "${s.answer}"`; }
+    }
+  });
+
+  const bar = document.getElementById('score-bar');
+  bar.className = 'score-bar show';
+  document.getElementById('score-val').textContent = `${correct}/${total}`;
+
+  const pct = correct / total;
+  let medal;
+  if (pct === 1) medal = '🏆 Perfeito!';
+  else if (pct >= 0.8) medal = '🌟 Muito bem!';
+  else if (pct >= 0.6) medal = '😊 Bom trabalho!';
+  else medal = '📚 Revise e tente de novo!';
+  document.getElementById('medal-chip').textContent = medal;
+}
+
+function resetAll() {
+  answers = {};
+  selectedWord = null;
+  document.getElementById('score-bar').className = 'score-bar';
+  document.getElementById('selected-indicator').className = 'selected-word-indicator';
+  document.querySelectorAll('.word-chip').forEach(c => { c.style.outline = ''; c.className = 'word-chip'; });
+  init();
+}
+
+init();
+</script>
+</body>
+</html>
