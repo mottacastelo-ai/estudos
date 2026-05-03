@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Entonação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F0F4FF;--card:#fff;--primary:#3B82F6;--primary-dark:#1D4ED8;
+    --primary-light:#DBEAFE;--accent:#8B5CF6;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --text:#1A1A2E;--muted:#6B7280;--border:#BFDBFE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:640px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:22px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:30px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .wave-row{display:flex;gap:10px;margin-bottom:18px;}
+  .wave-card{flex:1;border-radius:13px;padding:10px;text-align:center;border:2px solid;}
+  .wave-card.alegria{background:#FEF3C7;border-color:#F59E0B;}
+  .wave-card.raiva{background:#FEE2E2;border-color:#EF4444;}
+  .wave-card.tristeza{background:#DBEAFE;border-color:#3B82F6;}
+  .wave-card .wi{font-size:20px;display:block;margin-bottom:3px;}
+  .wave-card .wn{font-size:11px;font-weight:800;display:block;}
+  .wave-card.alegria .wn{color:#92400E;}
+  .wave-card.raiva .wn{color:#991B1B;}
+  .wave-card.tristeza .wn{color:#1E40AF;}
+  .wave-card .wd{font-size:10px;color:var(--muted);font-weight:600;}
+  .score-row{display:flex;justify-content:space-between;margin-bottom:14px;}
+  .score-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:800;}
+  .score-pill span{color:var(--primary);font-size:15px;}
+  .prog-wrap{background:#BFDBFE;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),var(--accent));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:16px;}
+  .q-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:24px;margin-bottom:14px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .q-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:8px;}
+  .q-text{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:8px;}
+  .q-box{background:#F0F4FF;border-left:4px solid var(--primary);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14px;font-weight:700;color:#1E40AF;margin-bottom:16px;line-height:1.6;}
+  .opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{background:#FAFAFA;border:2px solid var(--border);border-radius:13px;padding:12px 15px;font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px;color:var(--text);}
+  .opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-light);transform:translateX(4px);}
+  .opt .ol{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+  .opt.correct{border-color:var(--green);background:var(--green-light);}
+  .opt.correct .ol{background:var(--green);color:white;}
+  .opt.wrong{border-color:var(--red);background:var(--red-light);}
+  .opt.wrong .ol{background:var(--red);color:white;}
+  .opt:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-top:12px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:14px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:24px;padding:32px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:60px;margin-bottom:12px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:16px;}
+  .r-score{font-size:44px;font-weight:900;color:var(--primary);}
+  .r-sub{font-size:14px;color:var(--muted);font-weight:600;margin:8px 0 20px;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:13px 32px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🎵 Entonação</div>
+    <h1>Quiz — Entonação</h1>
+    <p class="subtitle">A variação do tom de voz na fala e no teatro</p>
+  </div>
+  <div class="wave-row">
+    <div class="wave-card alegria"><span class="wi">〰️</span><span class="wn">Alegria</span><span class="wd">voz animada↑</span></div>
+    <div class="wave-card raiva"><span class="wi">⚡</span><span class="wn">Indignação</span><span class="wd">voz forte↓</span></div>
+    <div class="wave-card tristeza"><span class="wi">➖</span><span class="wn">Tristeza</span><span class="wd">voz baixa→</span></div>
+  </div>
+  <div class="score-row">
+    <div class="score-pill">⭐ Pontos: <span id="score">0</span></div>
+    <div class="score-pill">🎯 Acertos: <span id="hits">0</span></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Questão 1 de 10</div>
+  <div id="quiz-area">
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-box" id="q-box" style="display:none"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-score" id="r-score"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var questions=[
+  {
+    text:'O que é entonação?',
+    box:'',correct:2,
+    opts:['A forma como escrevemos as palavras no texto','A pontuação usada no final das frases','A variação do tom de voz ao falar, que expressa emoção e intenção','O volume máximo que a voz pode alcançar'],
+    exp:'Entonação é a variação do tom de voz ao falar — ela transmite a emoção e a intenção do falante. É um recurso da ORALIDADE, não da escrita.'
+  },
+  {
+    text:'Bia diz "Galinha Garnisé!" de três maneiras diferentes. O que muda em cada uma?',
+    box:'',correct:1,
+    opts:['As palavras — ela troca algumas por sinônimos','O tom de voz — a entonação muda a emoção transmitida','A língua — ela fala em diferentes dialetos','O tempo verbal — ela alterna passado e presente'],
+    exp:'As palavras são as mesmas! O que muda é o TOM DE VOZ — a entonação. Com ela, a mesma frase pode soar curiosa, indignada ou neutra.'
+  },
+  {
+    text:'Qual entonação combina com a fala do Galo?',
+    box:'"Galinha Garnisé, coisíssima nenhuma, ouviram? Eu sou um majestoso, maravilhoso, fantástico Galo de Cericecó!"',
+    correct:0,
+    opts:['Voz forte, enfática e indignada — ele está com raiva e orgulho','Voz baixa e triste — ele está arrependido','Voz neutra e calma — ele está informando algo','Voz suave e alegre — ele está contente'],
+    exp:'O Galo está INDIGNADO e ORGULHOSO. A entonação certa é voz forte, com ênfase nas palavras importantes, mostrando sua grandiosidade e indignação por ser chamado de galinha.'
+  },
+  {
+    text:'Quando representamos peças teatrais ou lemos em voz alta, a variação do tom de voz é chamada de:',
+    box:'',correct:3,
+    opts:['Variação linguística','Pontuação expressiva','Dicção','Entonação'],
+    exp:'Entonação é o termo correto para a variação do tom de voz ao representar ou ler em voz alta. É o que diferencia uma leitura mecânica de uma leitura expressiva e envolvente.'
+  },
+  {
+    text:'Qual dos fatores NÃO influencia a entonação?',
+    box:'',correct:2,
+    opts:['O volume da voz','A velocidade com que falamos','A ortografia das palavras escritas','As pausas que fazemos ao falar'],
+    exp:'A ortografia é um recurso da escrita — não influencia a fala. Volume, velocidade e pausas são ferramentas da entonação: controlamos cada um para expressar diferentes emoções.'
+  },
+  {
+    text:'Zé fala sobre chegar à Serrinha. Qual entonação combina com sua situação?',
+    box:'"E falta muito pra gente chegar lá na Serrinha de Cericecó?"',
+    correct:1,
+    opts:['Voz alegre e animada — ele está empolgado com a viagem','Voz ansiosa e tensa — ele está preocupado com Das Graças','Voz calma e neutra — ele está apenas informando','Voz grave e autoritária — ele está dando uma ordem'],
+    exp:'Zé está ANSIOSO — Das Graças está prestes a ter um bebê e eles ainda não chegaram. A entonação ideal é ansiosa e tensa, com voz levemente trêmula e ascendente na pergunta.'
+  },
+  {
+    text:'No teatro de fantoches, por que a entonação é especialmente importante?',
+    box:'',correct:0,
+    opts:['Porque os bonecos não têm expressão facial — a voz é o principal recurso expressivo','Porque o público está longe e precisa ouvir bem','Porque os personagens falam em outra língua','Porque os fantoches só aparecem de costas para o público'],
+    exp:'No teatro de fantoches, os bonecos têm expressão limitada — a VOZ é o principal instrumento expressivo. A entonação é o que dá personalidade e emoção a cada personagem.'
+  },
+  {
+    text:'Qual entonação um ator usaria para dizer "Exausto, Vento desiste" ao narrar a rubrica?',
+    box:'',correct:2,
+    opts:['Voz alta e animada — é um momento de vitória','Voz irritada — o Vento está com raiva','Voz cansada e resignada — o Vento está exausto e rendido','Voz alegre e rápida — é um momento de alívio'],
+    exp:'A rubrica diz "exausto" — a entonação deve refletir isso: voz cansada, mais lenta, caindo no final. É a rendição do Vento, um momento de derrota que precisa soar assim.'
+  },
+  {
+    text:'O Arauto se despede com "Até mais ver, xente!". Qual entonação combina?',
+    box:'',correct:3,
+    opts:['Voz grave e séria — ele está entregando uma notícia importante','Voz triste e baixa — ele está com saudade','Voz trêmula e ansiosa — ele está com medo','Voz animada e ascendente — é uma despedida calorosa e alegre'],
+    exp:'A despedida do Arauto é calorosa e festiva. A entonação certa é voz animada, com tom ascendente no final — como se ele estivesse sorrindo enquanto fala.'
+  },
+  {
+    text:'Por que ler em voz alta com entonação correta ajuda a compreender melhor um texto teatral?',
+    box:'',correct:1,
+    opts:['Porque torna a leitura mais rápida e eficiente','Porque a entonação revela as emoções das personagens, tornando o texto mais vivo e compreensível','Porque substitui a necessidade de entender as palavras difíceis','Porque é uma exigência da gramática portuguesa'],
+    exp:'A entonação não é decoração — ela revela a EMOÇÃO das personagens. Ao entonar corretamente, o leitor entende quem está com raiva, quem está triste, quem está surpreso — o texto ganha vida.'
+  },
+];
+var cur=0,score=0,hits=0,answered=false;
+function loadQ(){
+  answered=false;
+  var q=questions[cur];
+  document.getElementById('q-num').textContent='Questão '+(cur+1);
+  document.getElementById('q-text').textContent=q.text;
+  var qb=document.getElementById('q-box');
+  if(q.box){qb.style.display='block';qb.textContent=q.box;}else{qb.style.display='none';}
+  document.getElementById('prog').style.width=((cur/questions.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Questão '+(cur+1)+' de '+questions.length;
+  var opts=document.getElementById('opts');
+  opts.innerHTML='';
+  var letters=['A','B','C','D'];
+  q.opts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="ol">'+letters[i]+'</span>'+o;
+    btn.onclick=(function(idx){return function(){selectOpt(idx);};})(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('q-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('q-card').style.animation='slideIn .35s ease';});
+}
+function selectOpt(idx){
+  if(answered)return;
+  answered=true;
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  if(idx===q.correct){
+    btns[idx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent='✅ '+q.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.textContent='❌ A correta era '+['A','B','C','D'][q.correct]+'. '+q.exp;
+  }
+  if(cur<questions.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextQ(){cur++;loadQ();}
+function showResult(){
+  document.getElementById('quiz-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  var pct=Math.round((hits/questions.length)*100);
+  document.getElementById('r-score').textContent=score+' pts';
+  document.getElementById('r-sub').textContent='Você acertou '+hits+' de '+questions.length+' ('+pct+'%)';
+  var e,t;
+  if(hits===questions.length){e='🏆';t='Mestre da entonação!';}
+  else if(hits>=8){e='🌟';t='Excelente!';}
+  else if(hits>=6){e='😊';t='Muito bem!';}
+  else{e='🔄';t='Revise e tente de novo!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+}
+function restart(){
+  cur=0;score=0;hits=0;answered=false;
+  document.getElementById('score').textContent=0;
+  document.getElementById('hits').textContent=0;
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ensaiador de Falas – Entonação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F0FF;--card:#fff;
+    --primary:#8B5CF6;--primary-dark:#6D28D9;--primary-light:#EDE9FE;
+    --alto:#EF4444;--alto-light:#FEE2E2;
+    --medio:#F59E0B;--medio-light:#FEF3C7;
+    --baixo:#6B7280;--baixo-light:#F3F4F6;
+    --rapido:#EC4899;--rapido-light:#FCE7F3;
+    --devagar:#3B82F6;--devagar-light:#DBEAFE;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --text:#1A1A2E;--muted:#6B7280;--border:#DDD6FE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--primary-light);border:2px solid var(--primary);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#4C1D95;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  /* Legend */
+  .legend{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+  .leg{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:800;border:1.5px solid;}
+  .leg.alto{background:var(--alto-light);color:var(--alto);border-color:var(--alto);}
+  .leg.medio{background:var(--medio-light);color:#92400E;border-color:var(--medio);}
+  .leg.baixo{background:var(--baixo-light);color:var(--baixo);border-color:var(--baixo);}
+  .leg.rapido{background:var(--rapido-light);color:#9D174D;border-color:var(--rapido);}
+  .leg.devagar{background:var(--devagar-light);color:#1E40AF;border-color:var(--devagar);}
+  /* Progress */
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .sp{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .sp .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .sp .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .prog-wrap{background:#DDD6FE;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),var(--rapido));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  /* Card */
+  .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:22px;margin-bottom:12px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px;}
+  .ctx{background:#F8F5FF;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:700;color:#4C1D95;margin-bottom:12px;border:1.5px solid var(--border);}
+  .char-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;}
+  /* Fala interativa */
+  .fala-wrap{background:#FAFAFA;border-radius:14px;border:2px solid var(--border);padding:16px;margin-bottom:16px;}
+  .fala-intro{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;}
+  .fala-words{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .fala-word{font-size:17px;font-weight:800;cursor:pointer;}
+  .fala-word.clickable{padding:3px 10px;border-radius:8px;border:2px solid transparent;transition:all .15s;}
+  .fala-word.clickable:hover{border-color:var(--primary);background:var(--primary-light);}
+  .fala-word.sel-alto{background:var(--alto-light);color:var(--alto);border:2px solid var(--alto);}
+  .fala-word.sel-medio{background:var(--medio-light);color:#92400E;border:2px solid var(--medio);}
+  .fala-word.sel-baixo{background:var(--baixo-light);color:var(--baixo);border:2px solid var(--baixo);}
+  .fala-word.sel-rapido{background:var(--rapido-light);color:#9D174D;border:2px solid var(--rapido);}
+  .fala-word.sel-devagar{background:var(--devagar-light);color:#1E40AF;border:2px solid var(--devagar);}
+  .fala-word.res-ok::after{content:'✓';font-size:10px;vertical-align:super;}
+  .fala-word.res-nok{text-decoration:line-through;opacity:.5;}
+  /* Controls */
+  .ctrl-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;}
+  .ctrl-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .ctrl-btn{padding:8px 14px;border-radius:20px;border:2px solid;font-family:'Baloo 2',cursive;font-size:12px;font-weight:800;cursor:pointer;transition:all .15s;}
+  .ctrl-btn.alto{background:var(--alto-light);color:var(--alto);border-color:var(--alto);}
+  .ctrl-btn.medio{background:var(--medio-light);color:#92400E;border-color:var(--medio);}
+  .ctrl-btn.baixo{background:var(--baixo-light);color:var(--baixo);border-color:var(--baixo);}
+  .ctrl-btn.rapido{background:var(--rapido-light);color:#9D174D;border-color:var(--rapido);}
+  .ctrl-btn.devagar{background:var(--devagar-light);color:#1E40AF;border-color:var(--devagar);}
+  .ctrl-btn.active-ctrl{outline:3px solid #1A1A2E;outline-offset:2px;}
+  .active-ind{font-size:12px;font-weight:800;color:var(--primary);margin-bottom:14px;min-height:18px;}
+  /* Suggestion */
+  .sugg{background:var(--primary-light);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:700;color:#4C1D95;margin-bottom:12px;display:none;}
+  .sugg.show{display:block;}
+  /* Buttons */
+  .btn-row{display:flex;gap:8px;}
+  .btn{flex:1;padding:11px;border:none;border-radius:13px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-check{background:var(--primary);color:white;}
+  .btn-check:hover{background:var(--primary-dark);}
+  .btn-hint{background:var(--border);color:#4C1D95;}
+  .btn-hint:hover{background:var(--primary-light);}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);}
+  .btn-next.show{display:block;}
+  .feedback{border-radius:13px;padding:11px 15px;font-size:13px;font-weight:700;margin-top:10px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:56px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:24px;color:var(--primary-dark);margin-bottom:12px;}
+  .r-sub{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:16px;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:12px 26px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🎭 Ensaiador de Falas</div>
+    <h1>Como entonar cada parte?</h1>
+    <p class="subtitle">Clique em uma ferramenta e depois nas palavras que devem receber aquela entonação</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    1. Escolha uma ferramenta de voz (volume alto, médio, baixo, rápido ou devagar). 2. Clique nas palavras da fala que devem receber essa entonação. 3. Clique em "Verificar" para comparar com a sugestão de um diretor de teatro.
+  </div>
+  <div class="legend">
+    <div class="leg alto">🔊 ALTO — ênfase</div>
+    <div class="leg medio">📣 MÉDIO — normal</div>
+    <div class="leg baixo">🔈 BAIXO — suave</div>
+    <div class="leg rapido">⚡ RÁPIDO — urgência</div>
+    <div class="leg devagar">🐢 DEVAGAR — peso</div>
+  </div>
+  <div class="score-row">
+    <div class="sp"><div class="big" id="cnt-done" style="color:var(--primary)">0</div><div class="lbl">Ensaiados</div></div>
+    <div class="sp"><div class="big" id="cnt-total" style="color:var(--muted)">6</div><div class="lbl">Total</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Fala 1 de 6</div>
+  <div id="game-area">
+    <div class="ch-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Fala 1</div>
+      <div class="ctx" id="ctx"></div>
+      <div class="char-lbl" id="char-lbl"></div>
+      <div class="fala-wrap">
+        <div class="fala-intro">Clique nas palavras para marcar a entonação:</div>
+        <div class="fala-words" id="fala-words"></div>
+      </div>
+      <div class="ctrl-label">Ferramentas de voz:</div>
+      <div class="ctrl-row" id="ctrl-row"></div>
+      <div class="active-ind" id="active-ind">← Escolha uma ferramenta acima</div>
+      <div class="sugg" id="sugg"></div>
+      <div class="btn-row">
+        <button class="btn btn-check" onclick="checkFala()">✅ Verificar</button>
+        <button class="btn btn-hint" onclick="showHint()">💡 Dica</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextFala()">Próxima fala →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji">🎭</div>
+    <div class="r-title">Ensaio concluído!</div>
+    <div class="r-sub">Você praticou como marcar a entonação das falas.<br>No teatro real, a voz é o instrumento — pratique em voz alta!</div>
+    <button class="btn-restart" onclick="restart()">🔄 Ensaiar de novo</button>
+  </div>
+</div>
+<script>
+var falas=[
+  {
+    ctx:'🐓 O Galo está FURIOSO — foi chamado de galinha! Cada palavra de orgulho deve soar com força.',
+    char:'GALO fala:',
+    words:['Galinha','Garnisé,','coisíssima','nenhuma,','ouviram?','Eu','sou','um','MAJESTOSO,','MARAVILHOSO,','FANTÁSTICO','Galo','de','Cericecó!'],
+    suggestion:{
+      'Galinha':'alto','Garnisé,':'alto','coisíssima':'alto','nenhuma,':'alto','ouviram?':'medio',
+      'Eu':'medio','sou':'medio','um':'medio','MAJESTOSO,':'alto','MARAVILHOSO,':'alto',
+      'FANTÁSTICO':'alto','Galo':'alto','de':'medio','Cericecó!':'alto'
+    },
+    hint:'O Galo está indignado e orgulhoso — palavras de orgulho (MAJESTOSO, MARAVILHOSO, FANTÁSTICO, Cericecó!) pedem volume ALTO. "ouviram?" pode ser médio, chamando atenção.',
+    exp:'As palavras de orgulho do Galo devem ser ditas em voz ALTA e enfática. Palavras neutras ficam em volume médio. "Cocoricó!" (se presente) seria o pico máximo de volume.'
+  },
+  {
+    ctx:'💨 O Vento está EXAUSTO — tentou tudo e não conseguiu. Ele se rende lentamente.',
+    char:'VENTO fala:',
+    words:['Desisto...','Vai','lá:','sua','vez.'],
+    suggestion:{
+      'Desisto...':'devagar','Vai':'baixo','lá:':'baixo','sua':'baixo','vez.':'baixo'
+    },
+    hint:'"Desisto..." é o momento de rendição — deve ser dito DEVAGAR e em voz BAIXA. O restante da fala também é baixo, como alguém que não tem mais energia.',
+    exp:'"Desisto..." deve soar pesado e lento — a rendição do Vento. O restante é entregue em voz baixa, quase sussurrada, mostrando o esgotamento total.'
+  },
+  {
+    ctx:'🎺 O Arauto confirma que estão no caminho certo — momento de alívio e festa!',
+    char:'ARAUTO fala:',
+    words:['Estão','no','caminho','CERTO','da','Serrinha','de','Cericecó!','Até','mais','ver,','xente!'],
+    suggestion:{
+      'Estão':'medio','no':'medio','caminho':'medio','CERTO':'alto','da':'medio',
+      'Serrinha':'medio','de':'medio','Cericecó!':'alto','Até':'medio','mais':'medio','ver,':'medio','xente!':'alto'
+    },
+    hint:'"CERTO" e "Cericecó!" são os pontos de emoção — volume ALTO. "xente!" é a despedida calorosa — também alto. O restante é médio, informativo mas animado.',
+    exp:'As palavras de destaque (CERTO, Cericecó!, xente!) pedem volume alto. O restante da fala é médio — informativo e animado. A entonação geral sobe no final.'
+  },
+  {
+    ctx:'🧑 Zé está PREOCUPADO — Das Graças está prestes a ter o bebê e eles ainda não chegaram.',
+    char:'ZÉ fala:',
+    words:['E','falta','muito','pra','gente','chegar','lá','na','Serrinha','de','Cericecó?'],
+    suggestion:{
+      'E':'medio','falta':'rapido','muito':'rapido','pra':'rapido','gente':'rapido',
+      'chegar':'rapido','lá':'medio','na':'medio','Serrinha':'medio','de':'medio','Cericecó?':'alto'
+    },
+    hint:'A ansiedade de Zé se expressa na velocidade — "falta muito pra gente chegar" deve ser RÁPIDO, mostrando urgência. "Cericecó?" sobe em ALTO no final da pergunta ansiosa.',
+    exp:'A urgência e ansiedade de Zé aparecem na velocidade rápida do meio da frase. A pergunta final sobe em volume alto, mostrando a preocupação genuína com a situação.'
+  },
+  {
+    ctx:'☀️ O Sol faz sua demonstração — ele aquece devagar e com firmeza, sem pressa.',
+    char:'SOL fala:',
+    words:['Observe,','Vento.','Não','é','preciso','força...','é','preciso','calma.'],
+    suggestion:{
+      'Observe,':'medio','Vento.':'medio','Não':'medio','é':'medio','preciso':'medio',
+      'força...':'baixo','é':'medio','preciso':'medio','calma.':'devagar'
+    },
+    hint:'O Sol é calmo e seguro — sua voz é equilibrada (médio). "força..." pode ser levemente baixo, contrastando com "calma." que deve ser DEVAGAR — a lição da fábula.',
+    exp:'O Sol demonstra com calma e serenidade. "calma." no final deve ser dito devagar, com peso — é a moral da fábula sendo revelada. Sem gritos, sem urgência.'
+  },
+  {
+    ctx:'🐦 Os Pombos entregam a moral da história para a plateia — momento reflexivo e sério.',
+    char:'POMBO 1 fala:',
+    words:['É','mais','fácil','conseguir','o','que','se','quer','usando','a','inteligência...'],
+    suggestion:{
+      'É':'devagar','mais':'devagar','fácil':'devagar','conseguir':'devagar','o':'devagar',
+      'que':'devagar','se':'devagar','quer':'devagar','usando':'devagar','a':'devagar','inteligência...':'devagar'
+    },
+    hint:'A moral da história deve ser dita DEVAGAR — cada palavra merece atenção. Não é urgência, é sabedoria. A plateia precisa absorver o que está sendo dito.',
+    exp:'A moral é o momento mais importante da peça — deve ser entregue DEVAGAR, com clareza, para que cada palavra chegue ao público. Velocidade lenta = sabedoria sendo compartilhada.'
+  },
+];
+var cur=0,done=0,selectedCtrl=null,wordMarks={},checked=false;
+var ctrls=[
+  {key:'alto',icon:'🔊',label:'ALTO'},
+  {key:'medio',icon:'📣',label:'MÉDIO'},
+  {key:'baixo',icon:'🔈',label:'BAIXO'},
+  {key:'rapido',icon:'⚡',label:'RÁPIDO'},
+  {key:'devagar',icon:'🐢',label:'DEVAGAR'},
+];
+function loadFala(){
+  checked=false;selectedCtrl=null;wordMarks={};
+  var f=falas[cur];
+  document.getElementById('ch-num').textContent='Fala '+(cur+1);
+  document.getElementById('prog').style.width=((cur/falas.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Fala '+(cur+1)+' de '+falas.length;
+  document.getElementById('ctx').textContent=f.ctx;
+  document.getElementById('char-lbl').textContent=f.char;
+  document.getElementById('active-ind').textContent='← Escolha uma ferramenta acima';
+  document.getElementById('sugg').className='sugg';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  // Words
+  var fw=document.getElementById('fala-words');
+  fw.innerHTML='';
+  f.words.forEach(function(w,i){
+    var span=document.createElement('span');
+    span.className='fala-word clickable';
+    span.textContent=w;
+    span.id='word-'+i;
+    span.onclick=(function(idx,word){return function(){markWord(idx,word);};})(i,w);
+    fw.appendChild(span);
+  });
+  // Controls
+  var cr=document.getElementById('ctrl-row');
+  cr.innerHTML='';
+  ctrls.forEach(function(c){
+    var btn=document.createElement('button');
+    btn.className='ctrl-btn '+c.key;
+    btn.id='ctrl-'+c.key;
+    btn.textContent=c.icon+' '+c.label;
+    btn.onclick=(function(k,lbl){return function(){selectCtrl(k,lbl);};})(c.key,c.icon+' '+c.label);
+    cr.appendChild(btn);
+  });
+}
+function selectCtrl(key,label){
+  if(checked)return;
+  selectedCtrl=key;
+  document.querySelectorAll('.ctrl-btn').forEach(function(b){b.classList.remove('active-ctrl');});
+  document.getElementById('ctrl-'+key).classList.add('active-ctrl');
+  document.getElementById('active-ind').textContent='Ferramenta ativa: '+label+' — clique nas palavras';
+}
+function markWord(idx,word){
+  if(checked||!selectedCtrl)return;
+  wordMarks[idx]=selectedCtrl;
+  var span=document.getElementById('word-'+idx);
+  span.className='fala-word clickable sel-'+selectedCtrl;
+}
+function showHint(){
+  var f=falas[cur];
+  var sugg=document.getElementById('sugg');
+  sugg.textContent='💡 '+f.hint;
+  sugg.className='sugg show';
+}
+function checkFala(){
+  checked=true;
+  var f=falas[cur];
+  var ok=0,total=f.words.length;
+  f.words.forEach(function(w,i){
+    var suggested=f.suggestion[w]||'medio';
+    var marked=wordMarks[i]||null;
+    var span=document.getElementById('word-'+i);
+    span.onclick=null;
+    if(marked===suggested){
+      ok++;
+      span.className='fala-word sel-'+suggested+' res-ok';
+    }else if(marked&&marked!==suggested){
+      span.className='fala-word sel-'+marked+' res-nok';
+    }else{
+      // Not marked — show suggestion
+      span.className='fala-word sel-'+suggested;
+      span.style.opacity='.6';
+    }
+  });
+  var fb=document.getElementById('feedback');
+  var pct=ok/total;
+  if(pct>=.7){
+    fb.className='feedback ok show';
+    fb.textContent='✅ Muito bem! '+ok+' de '+total+' palavras com entonação adequada. '+f.exp;
+    done++;
+  }else{
+    fb.className='feedback nok show';
+    fb.textContent='❌ '+ok+' de '+total+' palavras certas. As cores mostram a sugestão do diretor. '+f.exp;
+  }
+  document.getElementById('cnt-done').textContent=done;
+  if(cur<falas.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1200);}
+}
+function nextFala(){cur++;loadFala();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  document.getElementById('result').className='result show';
+}
+function restart(){
+  cur=0;done=0;selectedCtrl=null;wordMarks={};checked=false;
+  document.getElementById('cnt-done').textContent=0;
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadFala();
+}
+loadFala();
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rubrica ao Vivo – Entonação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF9F0;--card:#fff;
+    --primary:#F97316;--primary-dark:#C2410C;--primary-light:#FEF0E6;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --text:#1A1A2E;--muted:#6B7280;--border:#FED7AA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--primary-light);border:2px solid var(--primary);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#7C2D12;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .sp{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .sp .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .sp .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .prog-wrap{background:var(--border);border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),#EF4444);transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:22px;margin-bottom:12px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:12px;}
+  /* Rubrica */
+  .rubrica-box{background:#1A1A2E;border-radius:14px;padding:16px;margin-bottom:16px;}
+  .rubrica-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:8px;}
+  .rubrica-text{font-size:15px;font-weight:700;color:#FCD34D;font-style:italic;line-height:1.6;}
+  /* Fala */
+  .fala-box{background:#F8FAFC;border:2px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px;}
+  .fala-char{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--primary);margin-bottom:6px;}
+  .fala-text{font-size:17px;font-weight:800;line-height:1.5;}
+  /* Question */
+  .question{font-size:14px;font-weight:800;color:var(--muted);margin-bottom:12px;text-align:center;}
+  /* Options */
+  .opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{background:#FAFAFA;border:2px solid var(--border);border-radius:13px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:flex-start;gap:12px;color:var(--text);}
+  .opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-light);transform:translateX(4px);}
+  .opt .oi{font-size:22px;flex-shrink:0;}
+  .opt .ot{flex:1;}
+  .opt .ot strong{display:block;font-size:14px;font-weight:900;}
+  .opt .ot span{font-size:12px;color:var(--muted);font-weight:600;}
+  .opt.correct{border-color:var(--green);background:var(--green-light);}
+  .opt.correct .ot strong{color:#065F46;}
+  .opt.wrong{border-color:var(--red);background:var(--red-light);}
+  .opt.wrong .ot strong{color:#991B1B;}
+  .opt:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-top:12px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:56px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:24px;color:var(--primary-dark);margin-bottom:12px;}
+  .r-stats{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}
+  .rs{background:#F9FAFB;border:2px solid var(--border);border-radius:14px;padding:12px 18px;min-width:90px;text-align:center;}
+  .rs .rb{font-family:'Fredoka One',cursive;font-size:26px;}
+  .rs .rl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:12px 26px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🎬 Rubrica ao Vivo</div>
+    <h1>A rubrica indica — a voz expressa!</h1>
+    <p class="subtitle">Leia a rubrica e escolha como o personagem deve falar a fala seguinte</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    A rubrica (em itálico) descreve o estado emocional do personagem. Leia-a com atenção e escolha qual entonação o ator deve usar na fala logo depois. A rubrica é o guia do ator!
+  </div>
+  <div class="score-row">
+    <div class="sp"><div class="big" id="score" style="color:var(--primary)">0</div><div class="lbl">Pontos</div></div>
+    <div class="sp"><div class="big" id="hits" style="color:var(--green)">0</div><div class="lbl">Acertos</div></div>
+    <div class="sp"><div class="big" id="erros" style="color:var(--red)">0</div><div class="lbl">Erros</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Rubrica 1 de 8</div>
+  <div id="game-area">
+    <div class="ch-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Rubrica 1</div>
+      <div class="rubrica-box">
+        <div class="rubrica-label">📜 Rubrica (instrução de cena)</div>
+        <div class="rubrica-text" id="rubrica-text"></div>
+      </div>
+      <div class="fala-box">
+        <div class="fala-char" id="fala-char"></div>
+        <div class="fala-text" id="fala-text"></div>
+      </div>
+      <div class="question">Como o ator deve dizer essa fala?</div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima rubrica →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-er" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var questions=[
+  {
+    rubrica:'(Surge o Galo, danado da vida.)',
+    char:'GALO —',fala:'"Galinha Garnisé, coisíssima nenhuma, ouviram?"',
+    correct:0,
+    opts:[
+      {i:'😤',t:'Com raiva e indignação — voz alta e tensa',d:'O Galo está furioso e orgulhoso'},
+      {i:'😴',t:'Com calma e serenidade — voz baixa e plana',d:'Como se fosse uma informação neutra'},
+      {i:'😢',t:'Com tristeza — voz baixa e lenta',d:'Como se o Galo estivesse arrependido'},
+      {i:'😄',t:'Com alegria — voz aguda e animada',d:'Como se fosse uma boa notícia'},
+    ],
+    exp:'A rubrica "danado da vida" indica que o Galo entrou em cena furioso. A voz deve ser alta, intensa e indignada — ele está furiíssimo por ter sido chamado de galinha.'
+  },
+  {
+    rubrica:'(O Vento sopra com toda a força, bufando e se esforçando muito.)',
+    char:'VENTO —',fala:'"Você VAI tirar esse casaco! Vou soprar mais forte!"',
+    correct:2,
+    opts:[
+      {i:'😢',t:'Com tristeza — voz fraca e lenta',d:'Como se o Vento já tivesse desistido'},
+      {i:'😄',t:'Com alegria — voz leve e animada',d:'Como se fosse uma brincadeira'},
+      {i:'💪',t:'Com esforço e determinação — voz intensa e forçada',d:'Mostrando que o Vento está se esforçando ao máximo'},
+      {i:'😐',t:'Com neutralidade — voz calma e equilibrada',d:'Como se fosse uma conversa normal'},
+    ],
+    exp:'A rubrica indica que o Vento está se esforçando muito. A voz deve soar tensa, forçada, mostrando o esforço físico — como alguém fazendo força enquanto fala.'
+  },
+  {
+    rubrica:'(O Sol sorri e, calmamente, começa a brilhar com suavidade.)',
+    char:'SOL —',fala:'"Observe, Vento. Não é preciso força... é preciso calma."',
+    correct:1,
+    opts:[
+      {i:'😤',t:'Com arrogância — voz alta e dominante',d:'Como se o Sol estivesse se gabando'},
+      {i:'☀️',t:'Com calma e confiança — voz suave e pausada',d:'Mostrando sabedoria e serenidade'},
+      {i:'😰',t:'Com ansiedade — voz tensa e rápida',d:'Como se o Sol estivesse com medo de perder'},
+      {i:'😂',t:'Com ironia e humor — voz brincalhona',d:'Como se o Sol estivesse zombando do Vento'},
+    ],
+    exp:'A rubrica diz "calmamente" e "suavidade" — o Sol é sereno e sábio. A voz deve ser pausada, suave, transmitindo confiança sem arrogância. É a calma da sabedoria.'
+  },
+  {
+    rubrica:'(Exausto, Vento para de soprar e se rende.)',
+    char:'VENTO —',fala:'"Desisto... Vai lá: sua vez."',
+    correct:3,
+    opts:[
+      {i:'😤',t:'Com raiva — voz alta e agressiva',d:'Como se o Vento estivesse com raiva de perder'},
+      {i:'😄',t:'Com alegria — voz leve e animada',d:'Como se o Vento estivesse feliz em desistir'},
+      {i:'😲',t:'Com surpresa — voz aguda e rápida',d:'Como se o Vento não esperasse perder'},
+      {i:'😩',t:'Com cansaço e rendição — voz pesada e lenta',d:'"Desisto..." soa como um peso enorme'},
+    ],
+    exp:'A rubrica diz "Exausto" e "se rende" — o Vento não tem mais energia. A voz deve soar pesada, lenta, caindo no final. "Desisto..." é o ponto mais pesado da fala.'
+  },
+  {
+    rubrica:'(Das Graças, animada, lembra-se do boi amarelim que viram no caminho.)',
+    char:'DAS GRAÇAS —',fala:'"É sim, Zé! Todo amarelim, com chifres cheios de fita assim!"',
+    correct:0,
+    opts:[
+      {i:'😄',t:'Com animação — voz vibrante e entusiasmada',d:'Ela se lembra do boi com alegria'},
+      {i:'😢',t:'Com tristeza — voz baixa e pesada',d:'Como se a lembrança fosse triste'},
+      {i:'😰',t:'Com medo — voz trêmula e contida',d:'Como se o boi tivesse assustado Das Graças'},
+      {i:'😐',t:'Com neutralidade — voz plana e informativa',d:'Como se fosse apenas uma informação'},
+    ],
+    exp:'A rubrica diz "animada" — Das Graças está entusiasmada com a memória do boi. A voz deve ser vibrante, subindo no final de "assim!" com muita energia.'
+  },
+  {
+    rubrica:'(Zé, preocupado, para e olha ao redor sem saber se estão no caminho certo.)',
+    char:'ZÉ —',fala:'"Seu moço, este é o caminho da Serrinha, é?"',
+    correct:2,
+    opts:[
+      {i:'😄',t:'Com alegria e confiança — voz leve e segura',d:'Como se Zé tivesse certeza do caminho'},
+      {i:'😤',t:'Com impaciência — voz dura e autoritária',d:'Como se Zé estivesse bravo com o atraso'},
+      {i:'😰',t:'Com preocupação — voz ansiosa, subindo na pergunta',d:'Ele não tem certeza e está preocupado'},
+      {i:'😐',t:'Com neutralidade — voz calma e plana',d:'Como uma pergunta sem importância'},
+    ],
+    exp:'A rubrica diz "preocupado" — Zé está ansioso e inseguro. A pergunta deve soar genuinamente ansiosa, com a voz subindo no final, mostrando que ele realmente precisa saber.'
+  },
+  {
+    rubrica:'(O Arauto entra festivo, soprando sua trompa e sorrindo para o casal.)',
+    char:'ARAUTO —',fala:'"Estão no caminho certo da Serrinha de Cericecó! Até mais ver, xente!"',
+    correct:1,
+    opts:[
+      {i:'😐',t:'Com seriedade — voz grave e formal',d:'Como um mensageiro oficial e sério'},
+      {i:'🎉',t:'Com alegria e festa — voz animada e calorosa',d:'O Arauto é festivo e entusiasmado'},
+      {i:'😰',t:'Com urgência — voz tensa e rápida',d:'Como se fosse uma notícia alarmante'},
+      {i:'😢',t:'Com tristeza — voz baixa e lenta',d:'Como se a notícia fosse ruim'},
+    ],
+    exp:'A rubrica diz "festivo" e "sorrindo" — o Arauto é caloroso e alegre. A voz deve ser animada, subindo no final de "xente!" com calor humano e entusiasmo genuíno.'
+  },
+  {
+    rubrica:'(Os Pombos se olham e, pensativos, dirigem-se ao público com ar de sabedoria.)',
+    char:'POMBO 1 —',fala:'"É mais fácil conseguir o que se quer usando só a inteligência..."',
+    correct:3,
+    opts:[
+      {i:'😄',t:'Com alegria — voz animada e rápida',d:'Como se fosse uma boa notícia festiva'},
+      {i:'😤',t:'Com seriedade autoritária — voz alta e impositiva',d:'Como se estivesse dando uma ordem'},
+      {i:'😲',t:'Com surpresa — voz aguda e impactante',d:'Como se a moral fosse uma revelação chocante'},
+      {i:'🦉',t:'Com reflexão e sabedoria — voz pausada e clara',d:'Cada palavra merece atenção do público'},
+    ],
+    exp:'A rubrica diz "pensativos" e "ar de sabedoria" — a moral deve ser entregue com pausas, clareza e seriedade reflexiva. Cada palavra importa. É o ensinamento final da peça.'
+  },
+];
+var cur=0,score=0,hits=0,erros=0,answered=false;
+function loadQ(){
+  answered=false;
+  var q=questions[cur];
+  document.getElementById('ch-num').textContent='Rubrica '+(cur+1);
+  document.getElementById('prog').style.width=((cur/questions.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Rubrica '+(cur+1)+' de '+questions.length;
+  document.getElementById('rubrica-text').textContent=q.rubrica;
+  document.getElementById('fala-char').textContent=q.char;
+  document.getElementById('fala-text').textContent=q.fala;
+  var opts=document.getElementById('opts');
+  opts.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="oi">'+o.i+'</span><div class="ot"><strong>'+o.t+'</strong><span>'+o.d+'</span></div>';
+    btn.onclick=(function(idx){return function(){selectOpt(idx);};})(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('ch-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('ch-card').style.animation='slideIn .35s ease';});
+}
+function selectOpt(idx){
+  if(answered)return;
+  answered=true;
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  if(idx===q.correct){
+    btns[idx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent='✅ '+q.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.textContent='❌ '+q.exp;
+    erros++;document.getElementById('erros').textContent=erros;
+  }
+  if(cur<questions.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextQ(){cur++;loadQ();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  document.getElementById('r-ac').textContent=hits;
+  document.getElementById('r-er').textContent=erros;
+  var pct=hits/questions.length;
+  var e,t;
+  if(pct===1){e='🏆';t='Diretor de teatro perfeito!';}
+  else if(pct>=.75){e='🌟';t='Excelente!';}
+  else if(pct>=.5){e='😊';t='Muito bem!';}
+  else{e:'🔄';t='Continue praticando!';}
+  document.getElementById('r-emoji').textContent=e||'🔄';
+  document.getElementById('r-title').textContent=t||'Continue praticando!';
+}
+function restart(){
+  cur=0;score=0;hits=0;erros=0;answered=false;
+  ['score','hits','erros'].forEach(function(id){document.getElementById(id).textContent=0;});
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>

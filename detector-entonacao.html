@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detector de Entonação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF8F0;--card:#fff;
+    --alegria:#F59E0B;--alegria-light:#FEF3C7;
+    --indig:#EF4444;--indig-light:#FEE2E2;
+    --tristeza:#6366F1;--tristeza-light:#EEF2FF;
+    --ansioso:#10B981;--ansioso-light:#D1FAE5;
+    --neutro:#6B7280;--neutro-light:#F3F4F6;
+    --surpresa:#EC4899;--surpresa-light:#FCE7F3;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --text:#1A1A2E;--muted:#6B7280;--border:#FDE68A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:#F59E0B;color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:#92400E;margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--alegria-light);border:2px solid var(--alegria);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#78350F;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .sp{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .sp .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .sp .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .prog-wrap{background:#FDE68A;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--alegria),var(--indig));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:22px;margin-bottom:12px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#F59E0B;margin-bottom:10px;}
+  .context-banner{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;background:#F8FAFC;border:2px solid #E2E8F0;}
+  .fala-box{font-size:18px;font-weight:800;text-align:center;padding:18px;background:#FFFBF0;border-radius:13px;border:2px solid var(--alegria);margin-bottom:18px;line-height:1.5;}
+  .char-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#92400E;margin-bottom:6px;text-align:center;}
+  .ask{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;text-align:center;}
+  .ent-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+  .ent-btn{padding:13px 10px;border:2px solid #E2E8F0;border-radius:14px;background:#FAFAFA;font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;cursor:pointer;text-align:center;transition:all .18s;color:var(--text);}
+  .ent-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);}
+  .ent-btn .ei{font-size:22px;display:block;margin-bottom:4px;}
+  .ent-btn .en{font-weight:900;display:block;margin-bottom:2px;}
+  .ent-btn .ed{font-size:11px;color:var(--muted);font-weight:600;}
+  .ent-btn.alegria:hover:not(:disabled){border-color:var(--alegria);background:var(--alegria-light);}
+  .ent-btn.indig:hover:not(:disabled){border-color:var(--indig);background:var(--indig-light);}
+  .ent-btn.tristeza:hover:not(:disabled){border-color:var(--tristeza);background:var(--tristeza-light);}
+  .ent-btn.ansioso:hover:not(:disabled){border-color:var(--ansioso);background:var(--ansioso-light);}
+  .ent-btn.neutro:hover:not(:disabled){border-color:var(--neutro);background:var(--neutro-light);}
+  .ent-btn.surpresa:hover:not(:disabled){border-color:var(--surpresa);background:var(--surpresa-light);}
+  .ent-btn.correct{border-color:var(--green);background:var(--green-light);color:#065F46;}
+  .ent-btn.wrong{border-color:var(--red);background:var(--red-light);color:#991B1B;}
+  .ent-btn:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:11px 15px;font-size:13px;font-weight:700;margin-top:4px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .btn-next{width:100%;background:#F59E0B;color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px;display:none;transition:all .18s;}
+  .btn-next:hover{background:#D97706;transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:56px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:26px;color:#92400E;margin-bottom:14px;}
+  .r-stats{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}
+  .rs{background:#F9FAFB;border:2px solid #E2E8F0;border-radius:14px;padding:12px 18px;min-width:90px;text-align:center;}
+  .rs .rb{font-family:'Fredoka One',cursive;font-size:26px;}
+  .rs .rl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .btn-restart{background:#F59E0B;color:white;border:none;border-radius:13px;padding:13px 28px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:#D97706;transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🎵 Detector de Entonação</div>
+    <h1>Qual entonação combina?</h1>
+    <p class="subtitle">Leia a fala e o contexto — escolha a entonação certa para o personagem</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Leia a fala e o contexto do personagem. Escolha qual entonação o ator deveria usar ao representar. Pense na emoção do personagem naquele momento!
+  </div>
+  <div class="score-row">
+    <div class="sp"><div class="big" id="score" style="color:#F59E0B">0</div><div class="lbl">Pontos</div></div>
+    <div class="sp"><div class="big" id="hits" style="color:var(--green)">0</div><div class="lbl">Acertos</div></div>
+    <div class="sp"><div class="big" id="erros" style="color:var(--red)">0</div><div class="lbl">Erros</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Cena 1 de 10</div>
+  <div id="game-area">
+    <div class="ch-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Cena 1</div>
+      <div class="context-banner" id="ctx-banner"></div>
+      <div class="char-label" id="char-label"></div>
+      <div class="fala-box" id="fala-box"></div>
+      <div class="ask">Qual entonação o ator deve usar?</div>
+      <div class="ent-grid" id="ent-grid"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima cena →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-er" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var challenges=[
+  {
+    context:'🐓 O Galo acaba de ser chamado de "galinha garnisé" — ele está furioso e orgulhoso.',
+    char:'GALO fala:',
+    fala:'"Galinha Garnisé, coisíssima nenhuma, ouviram? Eu sou um majestoso, maravilhoso, fantástico Galo de Cericecó!"',
+    correct:'indig',
+    opts:[
+      {key:'alegria',icon:'😄',label:'Alegria',desc:'voz animada e aguda'},
+      {key:'indig',icon:'😤',label:'Indignação',desc:'voz forte e enfática'},
+      {key:'tristeza',icon:'😢',label:'Tristeza',desc:'voz baixa e lenta'},
+      {key:'neutro',icon:'😐',label:'Neutro',desc:'voz calma e plana'},
+    ],
+    exp:'O Galo está INDIGNADO e ORGULHOSO — voz forte, enfática, com destaque nas palavras "majestoso", "maravilhoso" e "fantástico". Ele não aceita o insulto!'
+  },
+  {
+    context:'💨 O Vento tentou tudo mas não conseguiu arrancar a roupa do Menino. Ele está exausto e derrotado.',
+    char:'VENTO fala:',
+    fala:'"Desisto... Vai lá: sua vez."',
+    correct:'tristeza',
+    opts:[
+      {key:'alegria',icon:'😄',label:'Alegria',desc:'voz animada e aguda'},
+      {key:'tristeza',icon:'😢',label:'Tristeza/Cansaço',desc:'voz baixa e pesada'},
+      {key:'indig',icon:'😤',label:'Raiva',desc:'voz forte e tensa'},
+      {key:'surpresa',icon:'😲',label:'Surpresa',desc:'voz aguda e rápida'},
+    ],
+    exp:'O Vento está EXAUSTO e DERROTADO — voz baixa, lenta, caindo no final. "Desisto..." deve soar com muito peso, como uma rendição.'
+  },
+  {
+    context:'🐦 Os Pombos observam a cena da aposta e ficam surpresos com o que veem.',
+    char:'POMBO 1 fala:',
+    fala:'"Xiii... Agora complicou."',
+    correct:'surpresa',
+    opts:[
+      {key:'surpresa',icon:'😲',label:'Surpresa',desc:'voz aguda e pausada'},
+      {key:'alegria',icon:'😄',label:'Alegria',desc:'voz animada e aguda'},
+      {key:'neutro',icon:'😐',label:'Neutro',desc:'voz calma e plana'},
+      {key:'tristeza',icon:'😢',label:'Tristeza',desc:'voz baixa e lenta'},
+    ],
+    exp:'O Pombo está SURPRESO — "Xiii..." deve soar como um espanto contido, voz que sobe levemente no "complicou". É reação de quem não esperava o que viu.'
+  },
+  {
+    context:'☀️ O Sol venceu a aposta. Ele é calmo e seguro — não é arrogante, apenas confiante.',
+    char:'SOL fala:',
+    fala:'"Ok, você venceu! É mesmo mais forte do que eu."',
+    correct:'neutro',
+    opts:[
+      {key:'indig',icon:'😤',label:'Indignação',desc:'voz forte e tensa'},
+      {key:'alegria',icon:'😄',label:'Euforia',desc:'voz muito animada'},
+      {key:'neutro',icon:'😐',label:'Calma e confiança',desc:'voz serena e equilibrada'},
+      {key:'tristeza',icon:'😢',label:'Tristeza',desc:'voz baixa e pesada'},
+    ],
+    exp:'O Vento aceita a derrota com calma e maturidade — não está feliz nem triste. A entonação é SERENA e EQUILIBRADA, sem emoção exagerada.'
+  },
+  {
+    context:'🧑 Zé está preocupado — Das Graças está prestes a ter um bebê e eles ainda não chegaram.',
+    char:'ZÉ fala:',
+    fala:'"E falta muito pra gente chegar lá na Serrinha de Cericecó?"',
+    correct:'ansioso',
+    opts:[
+      {key:'alegria',icon:'😄',label:'Alegria',desc:'voz animada e aguda'},
+      {key:'ansioso',icon:'😰',label:'Ansiedade',desc:'voz tensa e levemente trêmula'},
+      {key:'indig',icon:'😤',label:'Raiva',desc:'voz forte e enfática'},
+      {key:'neutro',icon:'😐',label:'Neutro',desc:'voz calma e plana'},
+    ],
+    exp:'Zé está ANSIOSO — a voz deve soar tensa, com urgência, e a entonação da pergunta deve subir no final mostrando preocupação genuína.'
+  },
+  {
+    context:'🎺 O Arauto encontrou Zé e Das Graças e confirma que eles estão no caminho certo.',
+    char:'ARAUTO fala:',
+    fala:'"Estão no caminho certo da Serrinha de Cericecó! Até mais ver, xente!"',
+    correct:'alegria',
+    opts:[
+      {key:'tristeza',icon:'😢',label:'Tristeza',desc:'voz baixa e lenta'},
+      {key:'indig',icon:'😤',label:'Indignação',desc:'voz forte e tensa'},
+      {key:'alegria',icon:'😄',label:'Alegria',desc:'voz animada e calorosa'},
+      {key:'ansioso',icon:'😰',label:'Ansiedade',desc:'voz tensa e trêmula'},
+    ],
+    exp:'O Arauto é festivo e caloroso — a boa notícia deve ser dita com voz ALEGRE e ANIMADA, subindo no final de "xente!" como uma despedida entusiasmada.'
+  },
+  {
+    context:'🐦 Os Pombos fazem seu comentário final para a plateia — é a moral da história.',
+    char:'POMBO 1 (para a plateia) fala:',
+    fala:'"É mais fácil conseguir o que se quer usando só a inteligência..."',
+    correct:'neutro',
+    opts:[
+      {key:'alegria',icon:'😄',label:'Alegria',desc:'voz muito animada'},
+      {key:'indig',icon:'😤',label:'Indignação',desc:'voz forte e tensa'},
+      {key:'neutro',icon:'😐',label:'Reflexivo e sério',desc:'voz pausada e clara'},
+      {key:'surpresa',icon:'😲',label:'Surpresa',desc:'voz aguda e rápida'},
+    ],
+    exp:'Os Pombos entregam a moral com seriedade reflexiva — voz pausada, clara, um pouco mais lenta. É um momento de sabedoria, não de euforia ou raiva.'
+  },
+  {
+    context:'👩 Das Graças corrige Zé com certeza — ela tem certeza que era um boi amarelim.',
+    char:'DAS GRAÇAS fala:',
+    fala:'"É sim, Zé, todo amarelim, com chifres cheios de fita assim!"',
+    correct:'alegria',
+    opts:[
+      {key:'tristeza',icon:'😢',label:'Tristeza',desc:'voz baixa e pesada'},
+      {key:'alegria',icon:'😄',label:'Animação',desc:'voz vibrante e confirmatória'},
+      {key:'ansioso',icon:'😰',label:'Ansiedade',desc:'voz tensa e trêmula'},
+      {key:'neutro',icon:'😐',label:'Neutro',desc:'voz calma e plana'},
+    ],
+    exp:'Das Graças confirma com entusiasmo e vivacidade — ela se lembra bem do boi e está animada descrevendo. Voz VIBRANTE e CONFIRMATÓRIA, subindo em "assim!"'
+  },
+  {
+    context:'🐓 O Galo encerra sua fala com seu grito característico — é seu momento de glória.',
+    char:'GALO fala:',
+    fala:'"E tenho dito: cocoricó!"',
+    correct:'indig',
+    opts:[
+      {key:'tristeza',icon:'😢',label:'Tristeza',desc:'voz baixa e pesada'},
+      {key:'neutro',icon:'😐',label:'Neutro',desc:'voz calma e plana'},
+      {key:'indig',icon:'😤',label:'Orgulho e ênfase',desc:'voz forte com força no final'},
+      {key:'ansioso',icon:'😰',label:'Ansiedade',desc:'voz tensa e trêmula'},
+    ],
+    exp:'"Cocoricó!" é o grito triunfal do Galo — voz FORTE, com toda a ênfase no final. É seu momento de proclamar quem ele é, com máximo orgulho e volume.'
+  },
+  {
+    context:'💨 O Vento questiona o Arauto sobre o que deve fazer — ele ainda quer vencer a aposta.',
+    char:'VENTO fala:',
+    fala:'"Desisto... Vai lá: sua vez."',
+    correct:'tristeza',
+    opts:[
+      {key:'indig',icon:'😤',label:'Raiva',desc:'voz forte e tensa'},
+      {key:'alegria',icon:'😄',label:'Alegria',desc:'voz animada e leve'},
+      {key:'tristeza',icon:'😢',label:'Cansaço e rendição',desc:'voz pesada e lenta'},
+      {key:'surpresa',icon:'😲',label:'Surpresa',desc:'voz aguda e rápida'},
+    ],
+    exp:'O Vento está EXAUSTO e DERROTADO — a rendição deve soar pesada e lenta, voz caindo, como alguém que gastou toda a energia e não tem mais forças para continuar.'
+  },
+];
+var cur=0,score=0,hits=0,erros=0,answered=false;
+function loadQ(){
+  answered=false;
+  var ch=challenges[cur];
+  document.getElementById('ch-num').textContent='Cena '+(cur+1);
+  document.getElementById('prog').style.width=((cur/challenges.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Cena '+(cur+1)+' de '+challenges.length;
+  document.getElementById('ctx-banner').textContent=ch.context;
+  document.getElementById('char-label').textContent=ch.char;
+  document.getElementById('fala-box').textContent=ch.fala;
+  var grid=document.getElementById('ent-grid');
+  grid.innerHTML='';
+  ch.opts.forEach(function(opt){
+    var btn=document.createElement('button');
+    btn.className='ent-btn '+opt.key;
+    btn.innerHTML='<span class="ei">'+opt.icon+'</span><span class="en">'+opt.label+'</span><span class="ed">'+opt.desc+'</span>';
+    btn.onclick=(function(k){return function(){selectEnt(k);};})(opt.key);
+    grid.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('ch-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('ch-card').style.animation='slideIn .35s ease';});
+}
+function selectEnt(key){
+  if(answered)return;
+  answered=true;
+  var ch=challenges[cur];
+  var btns=document.querySelectorAll('.ent-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  var correctIdx=-1,chosenIdx=-1;
+  ch.opts.forEach(function(opt,i){
+    if(opt.key===ch.correct)correctIdx=i;
+    if(opt.key===key)chosenIdx=i;
+  });
+  if(key===ch.correct){
+    btns[chosenIdx].classList.add('correct');
+    fb.className='feedback ok show';fb.textContent='✅ '+ch.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[chosenIdx].classList.add('wrong');
+    if(correctIdx>=0)btns[correctIdx].classList.add('correct');
+    fb.className='feedback nok show';fb.textContent='❌ '+ch.exp;
+    erros++;document.getElementById('erros').textContent=erros;
+  }
+  if(cur<challenges.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextQ(){cur++;loadQ();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  document.getElementById('r-ac').textContent=hits;
+  document.getElementById('r-er').textContent=erros;
+  var pct=hits/challenges.length;
+  var e,t;
+  if(pct===1){e='🏆';t='Ator perfeito!';}
+  else if(pct>=.8){e='🌟';t='Excelente!';}
+  else if(pct>=.6){e='😊';t='Muito bem!';}
+  else{e='🔄';t='Continue praticando!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+}
+function restart(){
+  cur=0;score=0;hits=0;erros=0;answered=false;
+  ['score','hits','erros'].forEach(function(id){document.getElementById(id).textContent=0;});
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>
