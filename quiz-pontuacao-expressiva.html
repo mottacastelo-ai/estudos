@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Pontuação Expressiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F0F4FF;--card:#fff;
+    --inter:#3B82F6;--inter-light:#DBEAFE;
+    --excl:#EF4444;--excl-light:#FEE2E2;
+    --ponto:#6B7280;--ponto-light:#F3F4F6;
+    --green:#10B981;--green-light:#D1FAE5;
+    --text:#1A1A2E;--muted:#6B7280;--border:#E5E7EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:640px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:22px;}
+  .badge{display:inline-block;background:var(--inter);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:30px;color:#1E40AF;margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .ref-row{display:flex;gap:8px;margin-bottom:18px;}
+  .ref-card{flex:1;border-radius:13px;padding:10px;text-align:center;border:2px solid;}
+  .ref-card.inter{background:var(--inter-light);border-color:var(--inter);}
+  .ref-card.excl{background:var(--excl-light);border-color:var(--excl);}
+  .ref-card.ponto{background:var(--ponto-light);border-color:var(--ponto);}
+  .ref-icon{font-size:22px;font-family:'Fredoka One',cursive;font-weight:900;display:block;margin-bottom:3px;}
+  .ref-card.inter .ref-icon{color:var(--inter);}
+  .ref-card.excl .ref-icon{color:var(--excl);}
+  .ref-card.ponto .ref-icon{color:var(--ponto);}
+  .ref-name{font-size:11px;font-weight:800;display:block;}
+  .ref-desc{font-size:10px;color:var(--muted);font-weight:600;}
+  .score-row{display:flex;justify-content:space-between;margin-bottom:14px;}
+  .score-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:800;}
+  .score-pill span{color:var(--inter);font-size:15px;}
+  .prog-wrap{background:#E5E7EB;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--inter),var(--excl));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:16px;}
+  .q-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:24px;margin-bottom:14px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .q-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--inter);margin-bottom:8px;}
+  .q-text{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:8px;}
+  .q-quote{background:#F8FAFF;border-left:4px solid var(--inter);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14px;font-weight:700;color:#1E40AF;margin-bottom:16px;font-style:italic;line-height:1.6;}
+  .opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{background:#FAFAFA;border:2px solid var(--border);border-radius:13px;padding:12px 15px;font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px;color:var(--text);}
+  .opt:hover:not(:disabled){border-color:var(--inter);background:var(--inter-light);transform:translateX(4px);}
+  .opt .ol{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+  .opt.correct{border-color:var(--green);background:var(--green-light);}
+  .opt.correct .ol{background:var(--green);color:white;}
+  .opt.wrong{border-color:var(--excl);background:var(--excl-light);}
+  .opt.wrong .ol{background:var(--excl);color:white;}
+  .opt:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-top:12px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--excl-light);color:#991B1B;border:2px solid var(--excl);}
+  .btn-next{width:100%;background:var(--inter);color:white;border:none;border-radius:13px;padding:14px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;display:none;transition:all .18s;}
+  .btn-next:hover{background:#2563EB;transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:24px;padding:32px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:60px;margin-bottom:12px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:28px;color:#1E40AF;margin-bottom:16px;}
+  .r-score{font-size:44px;font-weight:900;color:var(--inter);}
+  .r-sub{font-size:14px;color:var(--muted);font-weight:600;margin:8px 0 20px;}
+  .btn-restart{background:var(--inter);color:white;border:none;border-radius:13px;padding:13px 32px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:#2563EB;transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">? ! . Pontuação Expressiva</div>
+    <h1>Quiz de Pontuação</h1>
+    <p class="subtitle">Interrogação, exclamação e ponto final — cada um com seu papel</p>
+  </div>
+  <div class="ref-row">
+    <div class="ref-card inter"><span class="ref-icon">?</span><span class="ref-name">Interrogação</span><span class="ref-desc">pergunta e dúvida</span></div>
+    <div class="ref-card excl"><span class="ref-icon">!</span><span class="ref-name">Exclamação</span><span class="ref-desc">emoção e ênfase</span></div>
+    <div class="ref-card ponto"><span class="ref-icon">.</span><span class="ref-name">Ponto Final</span><span class="ref-desc">declaração neutra</span></div>
+  </div>
+  <div class="score-row">
+    <div class="score-pill">⭐ Pontos: <span id="score">0</span></div>
+    <div class="score-pill">🎯 Acertos: <span id="hits">0</span></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Questão 1 de 10</div>
+  <div id="quiz-area">
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-quote" id="q-quote" style="display:none"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-score" id="r-score"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var questions=[
+  {
+    text:'Na fala de Das Graças, qual sinal de pontuação aparece e por quê?',
+    quote:'DAS GRAÇAS – Mas eu acho que era uma vaca, não era, Zé?',
+    correct:0,
+    opts:['Interrogação — ela está em dúvida e pede confirmação de Zé','Exclamação — ela está com raiva de Zé','Ponto final — ela está declarando algo com certeza','Reticências — ela não sabe o que dizer'],
+    exp:'Das Graças usa o ponto de interrogação porque está em dúvida — ela acha que era vaca, mas não tem certeza e pede confirmação a Zé.'
+  },
+  {
+    text:'Zé responde com exclamação. O que isso nos diz sobre seu estado de espírito?',
+    quote:'ZÉ – Não era vaca nada, muié, era boi!',
+    correct:1,
+    opts:['Ele está triste e desanimado','Ele está firme, certo e enfático — não aceita a dúvida','Ele está com medo do boi','Ele está fazendo uma pergunta'],
+    exp:'A exclamação mostra que Zé está seguro e enfático — ele corrige Das Graças com firmeza e emoção, sem deixar espaço para dúvida.'
+  },
+  {
+    text:'O Galo reage com indignação ao ser chamado de galinha garnisé. Qual sinal combina com sua fala?',
+    quote:'GALO – Galinha Garnisé, coisíssima nenhuma, ouviram? Eu sou um majestoso, maravilhoso, fantástico Galo de Cericecó. E tenho dito: cocoricó!',
+    correct:2,
+    opts:['Ponto final — o Galo é calmo e formal','Interrogação — ele está em dúvida sobre sua identidade','Exclamação — o Galo está indignado e quer enfatizar sua grandiosidade','Reticências — ele hesita antes de falar'],
+    exp:'A exclamação é o sinal ideal — o Galo está indignado e orgulhoso. Ele enfatiza cada palavra para defender sua identidade com muita emoção.'
+  },
+  {
+    text:'Qual sinal de pontuação indica uma pergunta direta?',
+    quote:'',
+    correct:0,
+    opts:['Ponto de interrogação (?)','Ponto de exclamação (!)','Ponto final (.)','Vírgula (,)'],
+    exp:'O ponto de interrogação (?) indica sempre uma pergunta, uma dúvida ou um pedido de confirmação.'
+  },
+  {
+    text:'Em qual das falas a pontuação expressa uma DECLARAÇÃO neutra, sem emoção especial?',
+    quote:'',
+    correct:2,
+    opts:['Cocoricó!','Falta muito para chegar?','O Arauto foi embora.','Que susto!'],
+    exp:'"O Arauto foi embora." usa o ponto final — é uma declaração neutra que simplesmente informa um fato, sem emoção especial.'
+  },
+  {
+    text:'Leia as duas versões da mesma fala e identifique a diferença:',
+    quote:'Versão 1: "Seu moço, este é o caminho da Serrinha, é?"\nVersão 2: "Seu moço, este é o caminho da Serrinha, é."',
+    correct:0,
+    opts:['Na versão 1, Zé está perguntando e incerto. Na versão 2, seria uma afirmação calma','As duas versões têm o mesmo sentido — a pontuação não muda nada','Na versão 1, Zé está com raiva. Na versão 2, está alegre','Na versão 2, Zé está perguntando com mais emoção'],
+    exp:'A pontuação muda tudo! Com "?" Zé está pedindo confirmação, com incerteza. Com "." seria uma afirmação calma — o que mudaria completamente o sentido da cena.'
+  },
+  {
+    text:'O ponto de exclamação pode expressar vários sentimentos. Qual das opções NÃO é um uso adequado do "!"?',
+    quote:'',
+    correct:3,
+    opts:['Surpresa: "Que susto!"','Ordem: "Pare agora!"','Entusiasmo: "Que viagem incrível!"','Pergunta neutra: "Você foi ao mercado!"'],
+    exp:'"Você foi ao mercado!" com exclamação seria estranho — é uma pergunta neutra, que pede o ponto de interrogação (?). A exclamação é para emoção, não para perguntas simples.'
+  },
+  {
+    text:'Na tira do Menino Maluquinho (página 75), os dois primeiros balões expressam animação e entusiasmo. Qual sinal é mais adequado?',
+    quote:'',
+    correct:1,
+    opts:['Ponto final — ele fala com calma','Ponto de exclamação — ele está animado e entusiasmado','Ponto de interrogação — ele está com dúvida','Reticências — ele hesita'],
+    exp:'Ponto de exclamação! O Menino Maluquinho está empolgado e entusiasmado com sua descoberta — a exclamação é o sinal que expressa essa emoção forte.'
+  },
+  {
+    text:'Qual sinal deve ser usado no final da fala de Zé para indicar que ele está em dúvida?',
+    quote:'ZÉ – Galo, nós já passamos, num é, Das Graças ___',
+    correct:2,
+    opts:['Ponto final (.) — ele está declarando algo','Ponto de exclamação (!) — ele está com raiva','Ponto de interrogação (?) — ele está pedindo confirmação','Sem pontuação'],
+    exp:'O ponto de interrogação (?) é o correto — Zé está pedindo confirmação a Das Graças, portanto é uma pergunta. "Num é?" é uma forma regional de "não é?".'
+  },
+  {
+    text:'Por que a pontuação é chamada de "expressiva"?',
+    quote:'',
+    correct:1,
+    opts:['Porque é muito complicada e difícil de usar','Porque ela expressa a emoção e a intenção de quem fala ou escreve','Porque só aparece em textos literários expressivos','Porque foi inventada para deixar o texto mais bonito'],
+    exp:'A pontuação é "expressiva" porque vai além de marcar pausas — ela transmite a emoção, a intenção e o estado de espírito de quem escreve ou fala.'
+  },
+];
+var cur=0,score=0,hits=0,answered=false;
+function loadQ(){
+  answered=false;
+  var q=questions[cur];
+  document.getElementById('q-num').textContent='Questão '+(cur+1);
+  document.getElementById('q-text').textContent=q.text;
+  var qt=document.getElementById('q-quote');
+  if(q.quote){qt.style.display='block';qt.textContent=q.quote;}else{qt.style.display='none';}
+  document.getElementById('prog').style.width=((cur/questions.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Questão '+(cur+1)+' de '+questions.length;
+  var opts=document.getElementById('opts');
+  opts.innerHTML='';
+  var letters=['A','B','C','D'];
+  q.opts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="ol">'+letters[i]+'</span>'+o;
+    btn.onclick=(function(idx){return function(){selectOpt(idx);};})(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('q-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('q-card').style.animation='slideIn .35s ease';});
+}
+function selectOpt(idx){
+  if(answered)return;
+  answered=true;
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  if(idx===q.correct){
+    btns[idx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent='✅ '+q.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.textContent='❌ A correta era '+['A','B','C','D'][q.correct]+'. '+q.exp;
+  }
+  if(cur<questions.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextQ(){cur++;loadQ();}
+function showResult(){
+  document.getElementById('quiz-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  var pct=Math.round((hits/questions.length)*100);
+  document.getElementById('r-score').textContent=score+' pts';
+  document.getElementById('r-sub').textContent='Você acertou '+hits+' de '+questions.length+' ('+pct+'%)';
+  var e,t;
+  if(hits===questions.length){e='🏆';t='Perfeito!';}
+  else if(hits>=8){e='🌟';t='Excelente!';}
+  else if(hits>=6){e='😊';t='Muito bem!';}
+  else{e='🔄';t='Revise e tente de novo!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+}
+function restart(){
+  cur=0;score=0;hits=0;answered=false;
+  document.getElementById('score').textContent=0;
+  document.getElementById('hits').textContent=0;
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>

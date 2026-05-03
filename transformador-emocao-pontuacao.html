@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformador de Emoções – Pontuação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F0FFF4;--card:#fff;
+    --primary:#059669;--primary-dark:#047857;--primary-light:#D1FAE5;
+    --inter:#3B82F6;--inter-light:#DBEAFE;
+    --excl:#EF4444;--excl-light:#FEE2E2;
+    --ponto:#6B7280;--ponto-light:#F3F4F6;
+    --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--primary-light);border:2px solid var(--primary);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#065F46;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  .prog-wrap{background:#A7F3D0;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),var(--inter));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:22px;margin-bottom:12px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:12px;}
+  /* Original frase */
+  .orig-box{border-radius:13px;padding:14px;margin-bottom:14px;}
+  .orig-box.inter{background:var(--inter-light);border:2px solid var(--inter);}
+  .orig-box.excl{background:var(--excl-light);border:2px solid var(--excl);}
+  .orig-box.ponto{background:var(--ponto-light);border:2px solid var(--ponto);}
+  .orig-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+  .orig-box.inter .orig-label{color:var(--inter);}
+  .orig-box.excl .orig-label{color:var(--excl);}
+  .orig-box.ponto .orig-label{color:var(--ponto);}
+  .orig-text{font-size:17px;font-weight:800;line-height:1.4;}
+  /* Target */
+  .target-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;}
+  .target-badge{padding:8px 14px;border-radius:20px;font-family:'Fredoka One',cursive;font-size:18px;font-weight:900;flex-shrink:0;}
+  .target-badge.inter{background:var(--inter-light);color:var(--inter);border:1.5px solid var(--inter);}
+  .target-badge.excl{background:var(--excl-light);color:var(--excl);border:1.5px solid var(--excl);}
+  .target-badge.ponto{background:var(--ponto-light);color:var(--ponto);border:1.5px solid var(--ponto);}
+  .target-ask{font-size:13px;font-weight:700;color:var(--muted);}
+  .write-area{width:100%;border:2px solid var(--border);border-radius:13px;padding:11px 14px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;color:var(--text);outline:none;transition:border-color .2s;resize:none;min-height:70px;margin-bottom:10px;}
+  .write-area:focus{border-color:var(--primary);}
+  .effect-area{width:100%;border:2px solid var(--border);border-radius:13px;padding:11px 14px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;color:var(--text);outline:none;transition:border-color .2s;resize:none;min-height:52px;margin-bottom:10px;}
+  .effect-area:focus{border-color:var(--inter);}
+  .effect-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;}
+  .btn-see{background:var(--primary);border:none;border-radius:11px;padding:10px 20px;font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;color:white;cursor:pointer;transition:all .18s;}
+  .btn-see:hover{background:var(--primary-dark);}
+  .btn-see:disabled{opacity:.4;cursor:default;}
+  .ex-box{background:var(--primary-light);border:2px solid var(--primary);border-radius:13px;padding:12px 16px;display:none;margin-top:10px;}
+  .ex-box.show{display:block;}
+  .ex-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--primary-dark);margin-bottom:8px;}
+  .ex-item{font-size:13px;font-weight:700;color:#065F46;margin-bottom:6px;padding-left:12px;border-left:3px solid var(--primary);line-height:1.5;}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .sp{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .sp .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .sp .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:56px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:24px;color:var(--primary-dark);margin-bottom:12px;}
+  .r-sub{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:20px;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:13px 28px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">✍️ Transformador de Emoções</div>
+    <h1>Muda o sinal, muda tudo!</h1>
+    <p class="subtitle">Reescreva a frase com outro sinal e explique o que mudou</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Você verá uma frase com um sinal de pontuação. Reescreva a mesma frase trocando pelo sinal indicado. Depois explique com suas palavras o que mudou na emoção ou intenção. Clique em "Ver exemplos" para conferir.
+  </div>
+  <div class="score-row">
+    <div class="sp"><div class="big" id="cnt-done" style="color:var(--primary)">0</div><div class="lbl">Feitos</div></div>
+    <div class="sp"><div class="big" id="cnt-total" style="color:var(--muted)">7</div><div class="lbl">Total</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Desafio 1 de 7</div>
+  <div id="game-area">
+    <div class="ch-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Desafio 1</div>
+      <div class="orig-box" id="orig-box">
+        <div class="orig-label" id="orig-label"></div>
+        <div class="orig-text" id="orig-text"></div>
+      </div>
+      <div class="target-row">
+        <div class="target-badge" id="target-badge"></div>
+        <div class="target-ask" id="target-ask"></div>
+      </div>
+      <textarea class="write-area" id="write-area" placeholder="Reescreva a frase aqui..."></textarea>
+      <div class="effect-label">💭 O que muda na emoção ou intenção?</div>
+      <textarea class="effect-area" id="effect-area" placeholder="Escreva aqui o que mudou..."></textarea>
+      <button class="btn-see" id="btn-see" onclick="seeExamples()">👁 Ver exemplos</button>
+      <div class="ex-box" id="ex-box">
+        <div class="ex-title">✅ Exemplos de resposta:</div>
+        <div id="ex-list"></div>
+      </div>
+      <button class="btn-next" id="btn-next" onclick="nextChallenge()">Próximo →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji">🎭</div>
+    <div class="r-title">Missão cumprida!</div>
+    <div class="r-sub">Você praticou transformar emoções mudando a pontuação.<br>Lembre: o sinal muda o sentido — mesmo com as mesmas palavras!</div>
+    <button class="btn-restart" onclick="restart()">🔄 Praticar de novo</button>
+  </div>
+</div>
+<script>
+var challenges=[
+  {
+    orig:{style:'inter',label:'? Interrogação — dúvida',text:'Mas eu acho que era uma vaca, não era, Zé?'},
+    targetSignal:'!',targetClass:'excl',targetLabel:'!',
+    ask:'Reescreva com EXCLAMAÇÃO — como seria se Das Graças tivesse certeza e estivesse brava?',
+    examples:[
+      'Frase: "Mas eu acho que era uma vaca, não era, Zé!" — Efeito: Das Graças estaria afirmando com raiva ou ênfase, não pedindo confirmação.',
+      'Frase: "Era uma vaca, Zé!" — Efeito: mais direta e emocional — ela está com certeza e emoção forte.',
+    ]
+  },
+  {
+    orig:{style:'excl',label:'! Exclamação — ênfase e firmeza',text:'Não era vaca nada, muié, era boi!'},
+    targetSignal:'.',targetClass:'ponto',targetLabel:'.',
+    ask:'Reescreva com PONTO FINAL — como seria se Zé estivesse calmo e neutro?',
+    examples:[
+      'Frase: "Não era vaca nada, muié, era boi." — Efeito: perde a força e a ênfase de Zé. Parece que ele está apenas informando, sem emoção.',
+      'Frase: "Era um boi." — Efeito: muito mais frio — como se não importasse tanto.',
+    ]
+  },
+  {
+    orig:{style:'excl',label:'! Exclamação — orgulho e grandiosidade',text:'Eu sou um majestoso, maravilhoso, fantástico Galo de Cericecó!'},
+    targetSignal:'.',targetClass:'ponto',targetLabel:'.',
+    ask:'Reescreva com PONTO FINAL — o que acontece com o Galo?',
+    examples:[
+      'Frase: "Eu sou um majestoso, maravilhoso, fantástico Galo de Cericecó." — Efeito: o Galo perde todo o drama e o orgulho. Vira só uma declaração sem graça.',
+      'O ponto final apaga a personalidade exagerada do Galo — ele ficaria parecendo qualquer galo comum.',
+    ]
+  },
+  {
+    orig:{style:'ponto',label:'. Ponto final — narração neutra',text:'O Arauto foi embora.'},
+    targetSignal:'!',targetClass:'excl',targetLabel:'!',
+    ask:'Reescreva com EXCLAMAÇÃO — que emoção isso sugere?',
+    examples:[
+      'Frase: "O Arauto foi embora!" — Efeito: agora parece que a saída do Arauto foi surpreendente, dramática ou importante.',
+      'Pode sugerir alívio, susto ou indignação — dependendo do contexto. A exclamação carrega emoção onde antes havia neutralidade.',
+    ]
+  },
+  {
+    orig:{style:'excl',label:'! Exclamação — entusiasmo',text:'Que viagem incrível!'},
+    targetSignal:'?',targetClass:'inter',targetLabel:'?',
+    ask:'Reescreva com INTERROGAÇÃO — o que muda na intenção?',
+    examples:[
+      'Frase: "Que viagem incrível?" — Efeito: vira uma pergunta irônica ou de dúvida — como se a pessoa não estivesse convencida de que foi tão incrível.',
+      'Pode soar como desconfiança ou ironia — o oposto do entusiasmo original.',
+    ]
+  },
+  {
+    orig:{style:'inter',label:'? Interrogação — ansiedade',text:'E falta muito pra gente chegar?'},
+    targetSignal:'!',targetClass:'excl',targetLabel:'!',
+    ask:'Reescreva com EXCLAMAÇÃO — como seria se fosse uma reclamação?',
+    examples:[
+      'Frase: "E falta muito pra gente chegar!" — Efeito: vira uma reclamação ou protesto — Zé não está mais perguntando, está desabafando.',
+      'A exclamação transforma a ansiedade em impaciência declarada.',
+    ]
+  },
+  {
+    orig:{style:'ponto',label:'. Ponto final — declaração serena',text:'Nem muito, nem pouco, um muito pouco só.'},
+    targetSignal:'!',targetClass:'excl',targetLabel:'!',
+    ask:'Reescreva com EXCLAMAÇÃO — como muda o tom da Voz?',
+    examples:[
+      'Frase: "Nem muito, nem pouco, um muito pouco só!" — Efeito: a Voz perde a serenidade e vira animada ou enfática — como se a notícia de que falta pouco fosse uma boa surpresa.',
+      'A exclamação traz emoção onde antes havia paz — muda completamente a personalidade da fala.',
+    ]
+  },
+];
+var cur=0,done=0;
+function loadChallenge(){
+  var ch=challenges[cur];
+  document.getElementById('ch-num').textContent='Desafio '+(cur+1);
+  document.getElementById('prog').style.width=((cur/challenges.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Desafio '+(cur+1)+' de '+challenges.length;
+  var ob=document.getElementById('orig-box');
+  ob.className='orig-box '+ch.orig.style;
+  document.getElementById('orig-label').className='orig-label';
+  document.getElementById('orig-label').textContent=ch.orig.label;
+  document.getElementById('orig-text').textContent=ch.orig.text;
+  var tb=document.getElementById('target-badge');
+  tb.className='target-badge '+ch.targetClass;
+  tb.textContent=ch.targetSignal;
+  document.getElementById('target-ask').textContent=ch.ask;
+  document.getElementById('write-area').value='';
+  document.getElementById('write-area').disabled=false;
+  document.getElementById('effect-area').value='';
+  document.getElementById('effect-area').disabled=false;
+  document.getElementById('btn-see').disabled=false;
+  document.getElementById('ex-box').className='ex-box';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('ch-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('ch-card').style.animation='slideIn .35s ease';});
+}
+function seeExamples(){
+  var ch=challenges[cur];
+  var list=document.getElementById('ex-list');
+  list.innerHTML='';
+  ch.examples.forEach(function(e){
+    var d=document.createElement('div');
+    d.className='ex-item';
+    d.textContent=e;
+    list.appendChild(d);
+  });
+  document.getElementById('ex-box').className='ex-box show';
+  document.getElementById('btn-see').disabled=true;
+  document.getElementById('write-area').disabled=true;
+  document.getElementById('effect-area').disabled=true;
+  done++;
+  document.getElementById('cnt-done').textContent=done;
+  if(cur<challenges.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,600);}
+}
+function nextChallenge(){cur++;loadChallenge();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  document.getElementById('result').className='result show';
+}
+function restart(){
+  cur=0;done=0;
+  document.getElementById('cnt-done').textContent=0;
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadChallenge();
+}
+loadChallenge();
+</script>
+</body>
+</html>

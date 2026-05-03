@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escolha o Sinal – Pontuação Expressiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF8F0;--card:#fff;
+    --inter:#3B82F6;--inter-light:#DBEAFE;
+    --excl:#EF4444;--excl-light:#FEE2E2;
+    --ponto:#6B7280;--ponto-light:#F3F4F6;
+    --green:#10B981;--green-light:#D1FAE5;
+    --text:#1A1A2E;--muted:#6B7280;--border:#E5E7EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:#E07B39;color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:#C4612A;margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:#FEE9D6;border:2px solid #E07B39;border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#7C2D12;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .score-pill{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .score-pill .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .score-pill .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .prog-wrap{background:#E5E7EB;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--inter),var(--excl));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:24px;margin-bottom:14px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#E07B39;margin-bottom:10px;}
+  .emotion-banner{border-radius:13px;padding:10px 16px;margin-bottom:14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;}
+  .emotion-banner.ctx-inter{background:var(--inter-light);color:#1E40AF;border:1.5px solid var(--inter);}
+  .emotion-banner.ctx-excl{background:var(--excl-light);color:#991B1B;border:1.5px solid var(--excl);}
+  .emotion-banner.ctx-ponto{background:var(--ponto-light);color:#374151;border:1.5px solid var(--ponto);}
+  .em-icon{font-size:20px;flex-shrink:0;}
+  .frase-display{font-size:22px;font-weight:800;text-align:center;margin-bottom:20px;padding:16px;background:#F8FAFC;border-radius:13px;border:2px solid var(--border);line-height:1.4;}
+  .blank-slot{display:inline-block;min-width:44px;text-align:center;border-bottom:3px solid #E07B39;font-family:'Fredoka One',cursive;font-size:26px;color:#E07B39;padding:0 6px;vertical-align:bottom;}
+  .signal-btns{display:flex;gap:12px;justify-content:center;margin-bottom:14px;}
+  .signal-btn{width:80px;height:80px;border-radius:18px;border:3px solid var(--border);background:var(--card);font-family:'Fredoka One',cursive;font-size:36px;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;color:var(--text);}
+  .signal-btn.inter-btn:hover:not(:disabled){border-color:var(--inter);background:var(--inter-light);color:var(--inter);transform:translateY(-4px);}
+  .signal-btn.excl-btn:hover:not(:disabled){border-color:var(--excl);background:var(--excl-light);color:var(--excl);transform:translateY(-4px);}
+  .signal-btn.ponto-btn:hover:not(:disabled){border-color:var(--ponto);background:var(--ponto-light);color:var(--ponto);transform:translateY(-4px);}
+  .signal-btn.correct{border-color:var(--green);background:var(--green-light);color:var(--green);}
+  .signal-btn.wrong{border-color:var(--excl);background:var(--excl-light);color:var(--excl);}
+  .signal-btn:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-top:4px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--excl-light);color:#991B1B;border:2px solid var(--excl);}
+  .btn-next{width:100%;background:#E07B39;color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;display:none;transition:all .18s;}
+  .btn-next:hover{background:#C4612A;transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:30px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:60px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:26px;color:#C4612A;margin-bottom:14px;}
+  .r-stats{display:flex;gap:10px;justify-content:center;margin-bottom:20px;}
+  .rs{background:#F9FAFB;border:2px solid var(--border);border-radius:14px;padding:12px 18px;min-width:90px;text-align:center;}
+  .rs .rb{font-family:'Fredoka One',cursive;font-size:26px;}
+  .rs .rl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .btn-restart{background:#E07B39;color:white;border:none;border-radius:13px;padding:13px 30px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:#C4612A;transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">? ! . Escolha o Sinal</div>
+    <h1>Qual sinal completa a frase?</h1>
+    <p class="subtitle">Leia a frase e o contexto — depois clique no sinal correto</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Leia a frase e preste atenção no contexto — há emoção? É uma pergunta? É uma declaração simples? Depois clique em <strong>?</strong>, <strong>!</strong> ou <strong>.</strong>
+  </div>
+  <div class="score-row">
+    <div class="score-pill"><div class="big" id="score" style="color:#E07B39">0</div><div class="lbl">Pontos</div></div>
+    <div class="score-pill"><div class="big" id="hits" style="color:var(--green)">0</div><div class="lbl">Acertos</div></div>
+    <div class="score-pill"><div class="big" id="erros" style="color:var(--excl)">0</div><div class="lbl">Erros</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Frase 1 de 12</div>
+  <div id="game-area">
+    <div class="ch-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Frase 1</div>
+      <div class="emotion-banner" id="em-banner"><span class="em-icon" id="em-icon"></span><span id="em-text"></span></div>
+      <div class="frase-display" id="frase-display"></div>
+      <div class="signal-btns" id="signal-btns"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-er" style="color:var(--excl)">0</div><div class="rl">Erros</div></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var challenges=[
+  {frase:'DAS GRAÇAS – Mas eu acho que era uma vaca, não era, Zé',correct:'?',ctx:'inter',icon:'🤔',context:'Das Graças está com dúvida e pede confirmação de Zé.',exp:'Interrogação! Das Graças não tem certeza — ela pergunta a Zé para confirmar o que viu.'},
+  {frase:'ZÉ – Não era vaca nada, muié, era boi',correct:'!',ctx:'excl',icon:'😤',context:'Zé corrige Das Graças com firmeza e emoção.',exp:'Exclamação! Zé está enfático e seguro — ele afirma com emoção que era boi, não vaca.'},
+  {frase:'O Arauto foi embora',correct:'.',ctx:'ponto',icon:'📖',context:'O narrador descreve o que aconteceu em cena, sem emoção especial.',exp:'Ponto final! É uma narração neutra — o texto simplesmente informa que o Arauto saiu.'},
+  {frase:'GALO – Galinha Garnisé, coisíssima nenhuma, ouviram',correct:'?',ctx:'inter',icon:'🐓',context:'O Galo questiona a plateia indignado — quer saber se ouviram o absurdo.',exp:'Interrogação! "Ouviram?" é uma pergunta retórica do Galo — ele quer a atenção da plateia.'},
+  {frase:'E tenho dito: cocoricó',correct:'!',ctx:'excl',icon:'💪',context:'O Galo encerra sua fala com orgulho e dramaticidade.',exp:'Exclamação! O Galo está indignado e orgulhoso — "cocoricó!" é seu grito de identidade e ênfase.'},
+  {frase:'ZÉ – E falta muito pra gente chegar lá na Serrinha de Cericecó',correct:'?',ctx:'inter',icon:'😰',context:'Zé está ansioso e pergunta sobre a distância que falta percorrer.',exp:'Interrogação! Zé quer saber quanto falta — é uma pergunta direta sobre a distância.'},
+  {frase:'VOZ – Nem muito, nem pouco, um muito pouco só',correct:'.',ctx:'ponto',icon:'🗣️',context:'A Voz responde com calma e serenidade sobre a distância que falta.',exp:'Ponto final! A Voz declara a informação com calma — é uma afirmação tranquila, sem emoção especial.'},
+  {frase:'GALO – Eu sou um majestoso, maravilhoso, fantástico Galo de Cericecó',correct:'!',ctx:'excl',icon:'👑',context:'O Galo se apresenta com muito orgulho e exagero.',exp:'Exclamação! O Galo está se autoproclamando grandioso — precisa da exclamação para mostrar seu orgulho e ênfase.'},
+  {frase:'DAS GRAÇAS – É sim, Zé, todo amarelim, com chifres cheios de fita assim',correct:'!',ctx:'excl',icon:'🐂',context:'Das Graças confirma animada a descrição do boi.',exp:'Exclamação! Das Graças confirma com entusiasmo — ela está animada descrevendo o boi colorido.'},
+  {frase:'ZÉ – Galo, nós já passamos, num é, Das Graças',correct:'?',ctx:'inter',icon:'🤷',context:'Zé quer confirmar com Das Graças se já passaram pelo galo antes.',exp:'Interrogação! Zé está pedindo confirmação a Das Graças — "num é?" é uma pergunta regional.'},
+  {frase:'ARAUTO – Até mais ver, xente',correct:'!',ctx:'excl',icon:'👋',context:'O Arauto se despede de forma animada e calorosa.',exp:'Exclamação! A despedida do Arauto é calorosa e entusiasmada — combina com seu jeito alegre e festivo.'},
+  {frase:'Os manipuladores sempre caminham junto com os bonecos',correct:'.',ctx:'ponto',icon:'📝',context:'Essa é uma rubrica — uma instrução técnica do texto teatral.',exp:'Ponto final! As rubricas são instruções neutras — descrevem como a peça deve ser encenada, sem emoção.'},
+];
+var cur=0,score=0,hits=0,erros=0,answered=false;
+function loadQ(){
+  answered=false;
+  var ch=challenges[cur];
+  document.getElementById('ch-num').textContent='Frase '+(cur+1);
+  document.getElementById('prog').style.width=((cur/challenges.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Frase '+(cur+1)+' de '+challenges.length;
+  var banner=document.getElementById('em-banner');
+  banner.className='emotion-banner ctx-'+ch.ctx;
+  document.getElementById('em-icon').textContent=ch.icon;
+  document.getElementById('em-text').textContent=ch.context;
+  document.getElementById('frase-display').innerHTML=ch.frase+' <span class="blank-slot">_</span>';
+  var btns=document.getElementById('signal-btns');
+  btns.innerHTML='';
+  [['?','inter-btn'],['!','excl-btn'],['.','ponto-btn']].forEach(function(pair){
+    var btn=document.createElement('button');
+    btn.className='signal-btn '+pair[1];
+    btn.textContent=pair[0];
+    btn.onclick=(function(s){return function(){selectSignal(s);};})(pair[0]);
+    btns.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('ch-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('ch-card').style.animation='slideIn .35s ease';});
+}
+function selectSignal(sig){
+  if(answered)return;
+  answered=true;
+  var ch=challenges[cur];
+  var btns=document.querySelectorAll('.signal-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var sigs=['?','!','.'];
+  var correctIdx=sigs.indexOf(ch.correct);
+  var chosenIdx=sigs.indexOf(sig);
+  var fb=document.getElementById('feedback');
+  document.getElementById('frase-display').innerHTML=ch.frase+' <span class="blank-slot" style="color:'+(sig===ch.correct?'var(--green)':'var(--excl)')+'">'+sig+'</span>';
+  if(sig===ch.correct){
+    btns[chosenIdx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent='✅ '+ch.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[chosenIdx].classList.add('wrong');
+    btns[correctIdx].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.textContent='❌ O sinal correto é "'+ch.correct+'". '+ch.exp;
+    erros++;
+    document.getElementById('erros').textContent=erros;
+  }
+  cur++;
+  if(cur<challenges.length){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1500);}
+}
+function nextQ(){loadQ();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  document.getElementById('r-ac').textContent=hits;
+  document.getElementById('r-er').textContent=erros;
+  var pct=hits/challenges.length;
+  var e,t;
+  if(pct===1){e='🏆';t='Pontuação perfeita!';}
+  else if(pct>=.83){e='🌟';t='Excelente!';}
+  else if(pct>=.66){e='😊';t='Muito bem!';}
+  else{e='🔄';t='Continue praticando!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+}
+function restart(){
+  cur=0;score=0;hits=0;erros=0;answered=false;
+  document.getElementById('score').textContent=0;
+  document.getElementById('hits').textContent=0;
+  document.getElementById('erros').textContent=0;
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>

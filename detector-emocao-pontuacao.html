@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detector de Emoção – Pontuação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF0F5;--card:#fff;
+    --primary:#D946EF;--primary-dark:#A21CAF;--primary-light:#FAE8FF;
+    --inter:#3B82F6;--inter-light:#DBEAFE;
+    --excl:#EF4444;--excl-light:#FEE2E2;
+    --ponto:#6B7280;--ponto-light:#F3F4F6;
+    --green:#10B981;--green-light:#D1FAE5;
+    --text:#1A1A2E;--muted:#6B7280;--border:#E5E7EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--primary-light);border:2px solid var(--primary);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#7E22CE;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .sp{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .sp .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .sp .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .prog-wrap{background:#E5E7EB;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),var(--excl));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:22px;margin-bottom:12px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px;}
+  .frase-big{font-size:20px;font-weight:800;text-align:center;padding:18px;background:#F9FAFB;border-radius:14px;border:2px solid var(--border);margin-bottom:6px;line-height:1.4;}
+  .signal-tag{display:inline-block;font-family:'Fredoka One',cursive;font-size:28px;padding:4px 14px;border-radius:10px;margin-bottom:14px;width:100%;text-align:center;}
+  .signal-tag.inter{background:var(--inter-light);color:var(--inter);}
+  .signal-tag.excl{background:var(--excl-light);color:var(--excl);}
+  .signal-tag.ponto{background:var(--ponto-light);color:var(--ponto);}
+  .ask{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:12px;text-align:center;}
+  .emotion-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+  .em-btn{padding:12px 10px;border:2px solid var(--border);border-radius:14px;background:#FAFAFA;font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;cursor:pointer;text-align:center;transition:all .18s;color:var(--text);}
+  .em-btn:hover:not(:disabled){border-color:var(--primary);background:var(--primary-light);transform:translateY(-2px);}
+  .em-btn .em-emoji{font-size:22px;display:block;margin-bottom:4px;}
+  .em-btn.correct{border-color:var(--green);background:var(--green-light);color:#065F46;}
+  .em-btn.wrong{border-color:var(--excl);background:var(--excl-light);color:#991B1B;}
+  .em-btn:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:11px 15px;font-size:13px;font-weight:700;margin-top:4px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--excl-light);color:#991B1B;border:2px solid var(--excl);}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:56px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:26px;color:var(--primary-dark);margin-bottom:14px;}
+  .r-stats{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}
+  .rs{background:#F9FAFB;border:2px solid var(--border);border-radius:14px;padding:12px 16px;min-width:90px;text-align:center;}
+  .rs .rb{font-family:'Fredoka One',cursive;font-size:26px;}
+  .rs .rl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:13px 28px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">😤😲😊 Detector de Emoção</div>
+    <h1>Que emoção é essa?</h1>
+    <p class="subtitle">Leia a frase e identifique a emoção que a pontuação expressa</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Cada frase já tem sua pontuação. Identifique qual emoção ou intenção aquele sinal expressa naquele contexto. Atenção — a mesma pontuação pode expressar emoções diferentes!
+  </div>
+  <div class="score-row">
+    <div class="sp"><div class="big" id="score" style="color:var(--primary)">0</div><div class="lbl">Pontos</div></div>
+    <div class="sp"><div class="big" id="hits" style="color:var(--green)">0</div><div class="lbl">Acertos</div></div>
+    <div class="sp"><div class="big" id="erros" style="color:var(--excl)">0</div><div class="lbl">Erros</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Desafio 1 de 10</div>
+  <div id="game-area">
+    <div class="ch-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Desafio 1</div>
+      <div class="frase-big" id="frase-big"></div>
+      <div class="signal-tag" id="signal-tag"></div>
+      <div class="ask">Que emoção ou intenção o sinal exprime aqui?</div>
+      <div class="emotion-grid" id="emotion-grid"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próximo →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-er" style="color:var(--excl)">0</div><div class="rl">Erros</div></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var challenges=[
+  {
+    frase:'"Não era vaca nada, muié, era boi!"',
+    signal:'!',signalClass:'excl',
+    correct:0,
+    opts:[{e:'😤',t:'Firmeza e ênfase'},{e:'😂',t:'Alegria e humor'},{e:'😴',t:'Declaração neutra'},{e:'🤔',t:'Dúvida e hesitação'}],
+    exp:'A exclamação aqui expressa firmeza e ênfase — Zé está seguro e quer deixar claro que era boi, não vaca. Ele não aceita a dúvida de Das Graças.'
+  },
+  {
+    frase:'"Mas eu acho que era uma vaca, não era, Zé?"',
+    signal:'?',signalClass:'inter',
+    correct:2,
+    opts:[{e:'😤',t:'Raiva e indignação'},{e:'😲',t:'Surpresa'},{e:'🤔',t:'Dúvida e pedido de confirmação'},{e:'😄',t:'Alegria'}],
+    exp:'A interrogação expressa dúvida e pedido de confirmação — Das Graças não tem certeza do que viu e pede que Zé confirme.'
+  },
+  {
+    frase:'"Galinha Garnisé, coisíssima nenhuma, ouviram?"',
+    signal:'?',signalClass:'inter',
+    correct:3,
+    opts:[{e:'🤔',t:'Dúvida genuína'},{e:'😴',t:'Informação neutra'},{e:'😄',t:'Alegria'},{e:'😡',t:'Indignação — pergunta retórica'}],
+    exp:'O Galo não está em dúvida — ele está indignado! "Ouviram?" é uma pergunta retórica para chamar atenção da plateia. A interrogação aqui tem carga emocional forte.'
+  },
+  {
+    frase:'"E tenho dito: cocoricó!"',
+    signal:'!',signalClass:'excl',
+    correct:1,
+    opts:[{e:'😤',t:'Raiva e tristeza'},{e:'👑',t:'Orgulho e grandiosidade'},{e:'😰',t:'Medo'},{e:'😴',t:'Declaração simples'}],
+    exp:'A exclamação expressa orgulho e grandiosidade — é o grito de triunfo do Galo. Ele afirma sua identidade com pompa e dramaticidade.'
+  },
+  {
+    frase:'"O Arauto foi embora."',
+    signal:'.',signalClass:'ponto',
+    correct:2,
+    opts:[{e:'😲',t:'Surpresa'},{e:'😤',t:'Raiva'},{e:'📖',t:'Narração neutra'},{e:'🤔',t:'Dúvida'}],
+    exp:'O ponto final indica narração neutra — é uma rubrica do texto teatral que simplesmente informa que o Arauto saiu. Sem emoção especial.'
+  },
+  {
+    frase:'"Que susto!"',
+    signal:'!',signalClass:'excl',
+    correct:0,
+    opts:[{e:'😱',t:'Surpresa e susto'},{e:'😄',t:'Alegria'},{e:'😤',t:'Raiva'},{e:'📖',t:'Informação neutra'}],
+    exp:'A exclamação expressa surpresa e susto — exatamente o que a frase diz. A exclamação reforça o impacto emocional do momento.'
+  },
+  {
+    frase:'"E falta muito pra gente chegar lá na Serrinha de Cericecó?"',
+    signal:'?',signalClass:'inter',
+    correct:1,
+    opts:[{e:'😡',t:'Raiva'},{e:'😰',t:'Ansiedade — pergunta de quem está impaciente'},{e:'😄',t:'Alegria'},{e:'📖',t:'Informação'}],
+    exp:'A interrogação aqui carrega ansiedade — Zé está impaciente e preocupado com Das Graças. É uma pergunta com tensão emocional.'
+  },
+  {
+    frase:'"Parem com isso!"',
+    signal:'!',signalClass:'excl',
+    correct:2,
+    opts:[{e:'😢',t:'Tristeza'},{e:'🤔',t:'Dúvida'},{e:'⚡',t:'Ordem e autoridade'},{e:'😄',t:'Alegria'}],
+    exp:'A exclamação expressa uma ordem — quando alguém manda parar algo com autoridade. A exclamação é muito usada em frases imperativas.'
+  },
+  {
+    frase:'"Nem muito, nem pouco, um muito pouco só."',
+    signal:'.',signalClass:'ponto',
+    correct:3,
+    opts:[{e:'😄',t:'Alegria'},{e:'😤',t:'Indignação'},{e:'🤔',t:'Dúvida'},{e:'😌',t:'Calma e serenidade'}],
+    exp:'O ponto final expressa calma e serenidade — a Voz responde com tranquilidade, sem emoção forte. É uma declaração serena sobre a distância.'
+  },
+  {
+    frase:'"Que viagem incrível!"',
+    signal:'!',signalClass:'excl',
+    correct:0,
+    opts:[{e:'🤩',t:'Entusiasmo e admiração'},{e:'😤',t:'Raiva'},{e:'😴',t:'Declaração neutra'},{e:'😰',t:'Medo'}],
+    exp:'A exclamação expressa entusiasmo e admiração — é um dos usos mais comuns do ponto de exclamação. Mostra que a pessoa está impressionada e animada.'
+  },
+];
+var cur=0,score=0,hits=0,erros=0,answered=false;
+function loadQ(){
+  answered=false;
+  var ch=challenges[cur];
+  document.getElementById('ch-num').textContent='Desafio '+(cur+1);
+  document.getElementById('prog').style.width=((cur/challenges.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Desafio '+(cur+1)+' de '+challenges.length;
+  document.getElementById('frase-big').textContent=ch.frase;
+  var st=document.getElementById('signal-tag');
+  st.className='signal-tag '+ch.signalClass;
+  st.textContent=ch.signal;
+  var grid=document.getElementById('emotion-grid');
+  grid.innerHTML='';
+  ch.opts.forEach(function(opt,i){
+    var btn=document.createElement('button');
+    btn.className='em-btn';
+    btn.innerHTML='<span class="em-emoji">'+opt.e+'</span>'+opt.t;
+    btn.onclick=(function(idx){return function(){selectEmotion(idx);};})(i);
+    grid.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('ch-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('ch-card').style.animation='slideIn .35s ease';});
+}
+function selectEmotion(idx){
+  if(answered)return;
+  answered=true;
+  var ch=challenges[cur];
+  var btns=document.querySelectorAll('.em-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  if(idx===ch.correct){
+    btns[idx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent='✅ '+ch.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[idx].classList.add('wrong');
+    btns[ch.correct].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.textContent='❌ '+ch.exp;
+    erros++;
+    document.getElementById('erros').textContent=erros;
+  }
+  if(cur<challenges.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextQ(){cur++;loadQ();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  document.getElementById('r-ac').textContent=hits;
+  document.getElementById('r-er').textContent=erros;
+  var pct=hits/challenges.length;
+  var e,t;
+  if(pct===1){e='🏆';t='Detector perfeito!';}
+  else if(pct>=.8){e='🌟';t='Excelente!';}
+  else if(pct>=.6){e='😊';t='Muito bem!';}
+  else{e='🔄';t='Continue praticando!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+}
+function restart(){
+  cur=0;score=0;hits=0;erros=0;answered=false;
+  ['score','hits','erros'].forEach(function(id){document.getElementById(id).textContent=0;});
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>
