@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reescritor de Falas – Variação Linguística</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F0FF;--card:#fff;
+    --primary:#7C3AED;--primary-dark:#5B21B6;--primary-light:#EDE9FE;
+    --sertao:#E07B39;--sertao-light:#FEE9D6;
+    --formal:#3B82F6;--formal-light:#DBEAFE;
+    --green:#10B981;--green-light:#D1FAE5;
+    --text:#1A1A2E;--muted:#6B7280;--border:#DDD6FE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:22px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--primary-light);border:2px solid var(--primary);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#4C1D95;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  .prog-wrap{background:#DDD6FE;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),var(--sertao));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:24px;margin-bottom:14px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:12px;}
+  .original-box{border-radius:13px;padding:14px 16px;margin-bottom:16px;}
+  .original-box.sertao{background:var(--sertao-light);border:2px solid var(--sertao);}
+  .original-box.formal{background:var(--formal-light);border:2px solid var(--formal);}
+  .orig-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+  .orig-label.sertao{color:#C4612A;}
+  .orig-label.formal{color:#1E40AF;}
+  .orig-text{font-size:16px;font-weight:800;line-height:1.5;}
+  .target-label{font-size:13px;font-weight:800;color:var(--muted);margin-bottom:8px;}
+  .target-label strong{color:var(--primary-dark);}
+  .hints{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+  .hint-chip{font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;background:var(--primary-light);color:var(--primary-dark);border:1.5px solid var(--primary);}
+  .write-area{width:100%;border:2px solid var(--border);border-radius:13px;padding:12px 15px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;color:var(--text);outline:none;transition:border-color .2s;resize:none;min-height:80px;}
+  .write-area:focus{border-color:var(--primary);}
+  .write-area.checked{background:#F9FAFB;cursor:default;}
+  .examples-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:12px;margin-bottom:6px;display:none;}
+  .examples-label.show{display:block;}
+  .example-list{display:none;flex-direction:column;gap:6px;}
+  .example-list.show{display:flex;}
+  .example-item{background:var(--green-light);border:1.5px solid var(--green);border-radius:10px;padding:9px 13px;font-size:13px;font-weight:700;color:#065F46;}
+  .btn-check-single{background:var(--primary);border:none;border-radius:11px;padding:10px 20px;font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;color:white;cursor:pointer;transition:all .18s;margin-top:10px;}
+  .btn-check-single:hover{background:var(--primary-dark);}
+  .btn-check-single:disabled{opacity:.4;cursor:default;}
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .score-pill{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .score-pill .big{font-family:'Fredoka One',cursive;font-size:18px;}
+  .score-pill .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:30px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:56px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:26px;color:var(--primary-dark);margin-bottom:14px;}
+  .r-sub{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:20px;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:13px 30px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">✍️ Reescritor de Falas</div>
+    <h1>Mesmo sentido, outro jeito</h1>
+    <p class="subtitle">Reescreva as falas mudando o registro — sem mudar o significado</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Você verá uma fala da peça em estilo regional (do sertão) ou formal. Reescreva-a no registro oposto. Depois clique em "Ver exemplos" para comparar com respostas possíveis. Não há uma única resposta certa!
+  </div>
+  <div class="score-row">
+    <div class="score-pill"><div class="big" id="cnt-done" style="color:var(--primary)">0</div><div class="lbl">Feitos</div></div>
+    <div class="score-pill"><div class="big" id="cnt-total" style="color:var(--muted)">6</div><div class="lbl">Total</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Desafio 1 de 6</div>
+  <div id="game-area">
+    <div class="ch-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Desafio 1</div>
+      <div class="original-box" id="orig-box">
+        <div class="orig-label" id="orig-label"></div>
+        <div class="orig-text" id="orig-text"></div>
+      </div>
+      <div class="target-label" id="target-label"></div>
+      <div class="hints" id="hints"></div>
+      <textarea class="write-area" id="write-area" placeholder="Escreva aqui sua versão..."></textarea>
+      <button class="btn-check-single" id="btn-see" onclick="seeExamples()">👁 Ver exemplos de resposta</button>
+      <div class="examples-label" id="ex-label">✅ Algumas respostas possíveis:</div>
+      <div class="example-list" id="ex-list"></div>
+      <button class="btn-next" id="btn-next" onclick="nextChallenge()">Próximo →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji">🎭</div>
+    <div class="r-title">Missão cumprida!</div>
+    <div class="r-sub">Você praticou reescrever falas em registros diferentes.<br>Lembre: mesma língua, jeitos diferentes — todos válidos!</div>
+    <button class="btn-restart" onclick="restart()">🔄 Praticar de novo</button>
+  </div>
+</div>
+<script>
+var challenges=[
+  {
+    original:{style:'sertao',label:'🤠 Fala do sertão (Zé)',text:'Seu moço, este é o caminho da Serrinha, é?'},
+    target:'📚 Reescreva de forma mais formal:',
+    hints:['Troque "seu moço" por "senhor"','Use "não é?" no final','Escreva o nome completo da cidade'],
+    examples:['Senhor, este é o caminho para a Serrinha de Cericecó, não é?','Com licença, senhor. Este é o caminho da Serrinha de Cericecó?','Desculpe-me, senhor. Poderia me dizer se este é o caminho para Serrinha de Cericecó?'],
+  },
+  {
+    original:{style:'formal',label:'📚 Fala formal (versão reescrita)',text:'Moço, por favor, este é o caminho da Serrinha de Cericecó?'},
+    target:'🤠 Reescreva no estilo regional/informal do sertão:',
+    hints:['Use "seu moço" ou "oxente"','Use "é?" ou "num é?" para confirmar','Pode abreviar e deixar mais natural'],
+    examples:['Seu moço, este é o caminho da Serrinha, é?','Ei, moço! Este aqui é o caminho da Serrinha de Cericecó, num é?','Oxente, moço! Por aqui vai pra Serrinha de Cericecó?'],
+  },
+  {
+    original:{style:'sertao',label:'🤠 Fala do sertão (Das Graças)',text:'Não era vaca nada, muié, era boi!'},
+    target:'📚 Reescreva de forma mais formal/padrão:',
+    hints:['Troque "muié" por "mulher"','Mantenha a ênfase — ela está corrigindo','Pode manter "nada" para enfatizar'],
+    examples:['Não era vaca nada, mulher, era boi!','Não era vaca, mulher. Era boi!','Definitivamente não era vaca, mulher — era um boi!'],
+  },
+  {
+    original:{style:'sertao',label:'🤠 Fala do sertão (Arauto)',text:'Até mais ver, xente!'},
+    target:'📚 Reescreva de forma mais formal:',
+    hints:['Troque "xente" por "pessoal" ou "senhores"','Use uma despedida mais formal'],
+    examples:['Até logo, pessoal!','Até mais ver, senhores!','Até a próxima, pessoal. Boa viagem!','Até logo. Boa sorte a todos!'],
+  },
+  {
+    original:{style:'formal',label:'📚 Fala formal',text:'Senhor, se já passaram por tudo isso, estão no caminho correto da Serrinha de Cericecó. Até logo, pessoal!'},
+    target:'🤠 Reescreva no estilo informal/regional:',
+    hints:['Use "xente" no lugar de "pessoal"','Deixe mais descontraído e curto','Use expressões regionais nordestinas'],
+    examples:['É galo mesmo, dona! Se já passaram por tudo isso, estão no caminho certo da Serrinha! Até mais ver, xente!','Oxente! Se já viram tudo isso, estão certinhos no caminho da Serrinha de Cericecó! Até mais, xente!'],
+  },
+  {
+    original:{style:'sertao',label:'🤠 Fala regional (Das Graças)',text:'É sim, Zé, todo amarelim, com chifres cheios de fita assim!'},
+    target:'📚 Reescreva usando o português padrão:',
+    hints:['Troque "amarelim" por "amarelinho"','Mantenha a descrição do boi','Pode manter o entusiasmo'],
+    examples:['É sim, Zé! Todo amarelinho, com os chifres cheios de fita assim!','Sim, Zé! Era todo amarelinho, com chifres enfeitados de fita!','É verdade, Zé! O boi era todo amarelinho, com os chifres decorados com fitas!'],
+  },
+];
+var cur=0,done=0;
+function loadChallenge(){
+  var ch=challenges[cur];
+  document.getElementById('ch-num').textContent='Desafio '+(cur+1);
+  document.getElementById('prog').style.width=((cur/challenges.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Desafio '+(cur+1)+' de '+challenges.length;
+  var ob=document.getElementById('orig-box');
+  ob.className='original-box '+ch.original.style;
+  document.getElementById('orig-label').className='orig-label '+ch.original.style;
+  document.getElementById('orig-label').textContent=ch.original.label;
+  document.getElementById('orig-text').textContent=ch.original.text;
+  document.getElementById('target-label').innerHTML=ch.target+' <strong>(use suas próprias palavras!)</strong>';
+  var hintsEl=document.getElementById('hints');
+  hintsEl.innerHTML='';
+  ch.hints.forEach(function(h){
+    var chip=document.createElement('span');
+    chip.className='hint-chip';
+    chip.textContent='💡 '+h;
+    hintsEl.appendChild(chip);
+  });
+  var wa=document.getElementById('write-area');
+  wa.value='';
+  wa.disabled=false;
+  wa.className='write-area';
+  document.getElementById('btn-see').disabled=false;
+  document.getElementById('ex-label').className='examples-label';
+  document.getElementById('ex-list').className='example-list';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('ch-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('ch-card').style.animation='slideIn .35s ease';});
+}
+function seeExamples(){
+  var ch=challenges[cur];
+  document.getElementById('ex-label').className='examples-label show';
+  var exList=document.getElementById('ex-list');
+  exList.innerHTML='';
+  ch.examples.forEach(function(e){
+    var item=document.createElement('div');
+    item.className='example-item';
+    item.textContent=e;
+    exList.appendChild(item);
+  });
+  exList.className='example-list show';
+  document.getElementById('btn-see').disabled=true;
+  document.getElementById('write-area').disabled=true;
+  document.getElementById('write-area').className='write-area checked';
+  done++;
+  document.getElementById('cnt-done').textContent=done;
+  if(cur<challenges.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,800);}
+}
+function nextChallenge(){cur++;loadChallenge();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  document.getElementById('result').className='result show';
+}
+function restart(){
+  cur=0;done=0;
+  document.getElementById('cnt-done').textContent=0;
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadChallenge();
+}
+loadChallenge();
+</script>
+</body>
+</html>

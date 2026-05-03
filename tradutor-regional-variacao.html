@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tradutor Regional – Variação Linguística</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF9F0;--card:#fff;
+    --sertao:#E07B39;--sertao-light:#FEE9D6;
+    --formal:#3B82F6;--formal-light:#DBEAFE;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --text:#1A1A2E;--muted:#6B7280;--border:#E5E7EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:680px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:22px;}
+  .badge{display:inline-block;background:var(--sertao);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:30px;color:#C4612A;margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--sertao-light);border:2px solid var(--sertao);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#7C2D12;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  .legend{display:flex;gap:10px;margin-bottom:18px;}
+  .leg{flex:1;border-radius:14px;padding:12px;text-align:center;border:2px solid;}
+  .leg.sertao{background:var(--sertao-light);border-color:var(--sertao);}
+  .leg.formal{background:var(--formal-light);border-color:var(--formal);}
+  .leg-icon{font-size:22px;display:block;margin-bottom:4px;}
+  .leg-title{font-family:'Fredoka One',cursive;font-size:14px;display:block;}
+  .leg.sertao .leg-title{color:#C4612A;}
+  .leg.formal .leg-title{color:#1E40AF;}
+  .leg-sub{font-size:11px;font-weight:700;color:var(--muted);}
+  .score-row{display:flex;gap:10px;margin-bottom:16px;}
+  .score-pill{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:9px;text-align:center;}
+  .score-pill .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .score-pill .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  /* Sentence cards */
+  .sent-section{margin-bottom:20px;}
+  .section-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;}
+  .sent-card{background:var(--card);border:2px solid var(--border);border-radius:15px;padding:15px 17px;margin-bottom:10px;transition:border-color .2s;}
+  .sent-card.correct{border-color:var(--green);background:#F0FDF9;}
+  .sent-card.wrong{border-color:var(--red);background:#FFF5F5;}
+  .sent-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .sent-num{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+  .sent-quote{font-size:15px;font-weight:800;font-style:italic;color:#7C2D12;background:var(--sertao-light);border-radius:10px;padding:8px 12px;flex:1;}
+  .sent-quote span{color:var(--sertao);font-weight:900;}
+  /* Select options */
+  .select-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .select-btn{padding:7px 15px;border:2px solid var(--border);border-radius:20px;background:var(--card);font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);transition:all .15s;}
+  .select-btn:hover:not(:disabled){border-color:var(--formal);background:var(--formal-light);color:#1E40AF;}
+  .select-btn.selected{border-color:var(--formal);background:var(--formal-light);color:#1E40AF;}
+  .select-btn.correct-sel{border-color:var(--green);background:var(--green-light);color:#065F46;}
+  .select-btn.wrong-sel{border-color:var(--red);background:var(--red-light);color:#991B1B;}
+  .select-btn:disabled{cursor:default;}
+  .sent-fb{font-size:12px;font-weight:700;margin-top:8px;display:none;}
+  .sent-fb.show{display:block;}
+  .sent-fb.ok{color:var(--green);}
+  .sent-fb.nok{color:var(--red);}
+  .btn-row{display:flex;gap:10px;margin-top:18px;}
+  .btn{flex:1;padding:13px;border:none;border-radius:13px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-check{background:var(--sertao);color:white;}
+  .btn-check:hover{background:#C4612A;transform:translateY(-2px);}
+  .btn-reset{background:var(--border);color:var(--muted);}
+  .btn-reset:hover{background:#D1D5DB;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:26px;text-align:center;margin-top:16px;display:none;animation:pop .3s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:52px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:26px;color:#C4612A;margin-bottom:6px;}
+  .r-sub{font-size:13px;color:var(--muted);font-weight:700;}
+  .btn-again{background:var(--sertao);color:white;border:none;border-radius:13px;padding:12px 28px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;margin-top:14px;}
+  .btn-again:hover{background:#C4612A;transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🗺️ Tradutor Regional</div>
+    <h1>Sertão ↔ Padrão</h1>
+    <p class="subtitle">Encontre o equivalente padrão da expressão regional destacada</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Cada frase da peça tem uma palavra ou expressão regional em destaque. Escolha qual é o equivalente na forma padrão do português. Lembre: nenhuma forma é errada — são variantes!
+  </div>
+  <div class="legend">
+    <div class="leg sertao"><span class="leg-icon">🤠</span><span class="leg-title">Falar Regional</span><span class="leg-sub">jeito do sertão</span></div>
+    <div class="leg formal"><span class="leg-icon">📚</span><span class="leg-title">Forma Padrão</span><span class="leg-sub">português padrão</span></div>
+  </div>
+  <div class="score-row">
+    <div class="score-pill"><div class="big" id="cnt-correct" style="color:var(--green)">0</div><div class="lbl">Acertos</div></div>
+    <div class="score-pill"><div class="big" id="cnt-wrong" style="color:var(--red)">0</div><div class="lbl">Erros</div></div>
+    <div class="score-pill"><div class="big" id="cnt-remain" style="color:var(--sertao)">8</div><div class="lbl">Restantes</div></div>
+  </div>
+  <div id="sentences-container"></div>
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✅ Verificar</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <button class="btn-again" onclick="resetAll()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var data=[
+  {
+    quote:'ZÉ – Não era vaca nada, <span>muié</span>, era boi!',
+    highlight:'muié',
+    correct:'mulher',
+    opts:['moça','menina','mulher','mãe'],
+    exp:'"Muié" é a forma regional de "mulher" no sertão nordestino.'
+  },
+  {
+    quote:'DAS GRAÇAS – É sim, Zé, todo <span>amarelim</span>, com chifres cheios de fita assim!',
+    highlight:'amarelim',
+    correct:'amarelinho',
+    opts:['amarelado','amarelinho','amarelão','amarelar'],
+    exp:'"Amarelim" é o diminutivo regional de "amarelo". A forma padrão seria "amarelinho".'
+  },
+  {
+    quote:'ZÉ – Seu moço, este é o caminho da Serrinha, <span>é?</span>',
+    highlight:'é?',
+    correct:'não é?',
+    opts:['certo?','né?','não é?','sim?'],
+    exp:'"É?" no final é uma forma regional de confirmar algo, equivalente a "não é?" ou "certo?" na forma padrão.'
+  },
+  {
+    quote:'ARAUTO – Até mais ver, <span>xente</span>!',
+    highlight:'xente',
+    correct:'gente',
+    opts:['pessoal','amigos','gente','turma'],
+    exp:'"Xente" é uma variante regional de "gente" — muito característica do falar nordestino.'
+  },
+  {
+    quote:'ZÉ – <span>Nós estamos</span> muito aflitos pra chegar na nossa casa na Serrinha.',
+    highlight:'Nós estamos',
+    correct:'A gente está',
+    opts:['A gente está','Eu estou','Eles estão','Você está'],
+    exp:'"Nós estamos" é a forma padrão. "A gente está" é a forma informal equivalente usada no cotidiano.'
+  },
+  {
+    quote:'ARAUTO – Se já passaram por um <span>alecrim</span>, falta passar por um boi amarelim!',
+    highlight:'alecrim',
+    correct:'pé de alecrim',
+    opts:['planta de alecrim','pé de alecrim','erva alecrim','arbusto alecrim'],
+    exp:'Na peça o Arauto falou "pé de alecrim" — a expressão completa. "Pé de" é como se chama uma planta individual no sertão.'
+  },
+  {
+    quote:'DAS GRAÇAS – Eu acho que era uma vaca, não era, Zé? ZÉ – Não era vaca nada, muié, era <span>boi!</span>',
+    highlight:'boi',
+    correct:'touro',
+    opts:['vaca','touro','animal','bovino'],
+    exp:'Zé corrige: não era vaca, era boi. Na forma mais formal, macho bovino adulto pode ser chamado de "touro" ou simplesmente "boi".'
+  },
+  {
+    quote:'ZÉ – E falta muito pra gente chegar lá na Serrinha de <span>Cericecó</span>?',
+    highlight:'Cericecó',
+    correct:'Cericecó',
+    opts:['Sericó','Cericecó','Cerecó','Siricó'],
+    exp:'Cericecó é o nome correto do lugar na peça — não é variação linguística, é o nome próprio da localidade.'
+  },
+];
+var answers={};
+var checked=false;
+function render(){
+  var container=document.getElementById('sentences-container');
+  container.innerHTML='';
+  data.forEach(function(s,idx){
+    var card=document.createElement('div');
+    card.className='sent-card';
+    card.id='card-'+idx;
+    var top=document.createElement('div');
+    top.className='sent-top';
+    var num=document.createElement('div');
+    num.className='sent-num';
+    num.textContent='Frase '+(idx+1);
+    var quote=document.createElement('div');
+    quote.className='sent-quote';
+    quote.innerHTML=s.quote;
+    top.appendChild(num);
+    top.appendChild(quote);
+    card.appendChild(top);
+    var row=document.createElement('div');
+    row.className='select-row';
+    s.opts.forEach(function(opt){
+      var btn=document.createElement('button');
+      btn.className='select-btn'+(answers[idx]===opt?' selected':'');
+      btn.textContent=opt;
+      btn.id='opt-'+idx+'-'+opt.replace(/\s/g,'-');
+      btn.onclick=(function(i,o,b){return function(){selectOpt(i,o,b);};})(idx,opt,btn);
+      row.appendChild(btn);
+    });
+    card.appendChild(row);
+    var fb=document.createElement('div');
+    fb.className='sent-fb';
+    fb.id='sfb-'+idx;
+    card.appendChild(fb);
+    container.appendChild(card);
+  });
+  updateCounters();
+}
+function selectOpt(idx,opt,btn){
+  if(checked)return;
+  answers[idx]=opt;
+  var card=document.getElementById('card-'+idx);
+  card.querySelectorAll('.select-btn').forEach(function(b){b.classList.remove('selected');});
+  btn.classList.add('selected');
+  updateCounters();
+}
+function updateCounters(){
+  var answered=Object.keys(answers).length;
+  document.getElementById('cnt-remain').textContent=data.length-answered;
+}
+function checkAll(){
+  checked=true;
+  var correct=0,wrong=0;
+  data.forEach(function(s,idx){
+    var user=answers[idx]||'';
+    var card=document.getElementById('card-'+idx);
+    var fb=document.getElementById('sfb-'+idx);
+    var btns=card.querySelectorAll('.select-btn');
+    btns.forEach(function(b){b.disabled=true;});
+    if(user===s.correct){
+      correct++;
+      card.className='sent-card correct';
+      card.querySelectorAll('.select-btn').forEach(function(b){if(b.textContent===user)b.classList.add('correct-sel');});
+      fb.className='sent-fb ok show';
+      fb.textContent='✅ '+s.exp;
+    }else{
+      wrong++;
+      card.className='sent-card wrong';
+      card.querySelectorAll('.select-btn').forEach(function(b){
+        if(b.textContent===user)b.classList.add('wrong-sel');
+        if(b.textContent===s.correct)b.classList.add('correct-sel');
+      });
+      fb.className='sent-fb nok show';
+      fb.textContent='❌ O equivalente era "'+s.correct+'". '+s.exp;
+    }
+  });
+  document.getElementById('cnt-correct').textContent=correct;
+  document.getElementById('cnt-wrong').textContent=wrong;
+  document.getElementById('cnt-remain').textContent=0;
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  var pct=correct/data.length;
+  var e,t,sub;
+  if(pct===1){e='🏆';t='Tradutor perfeito!';sub='Você conhece muito bem as variações!';}
+  else if(pct>=.75){e='🌟';t='Muito bem!';sub=correct+' de '+data.length+' corretos!';}
+  else if(pct>=.5){e='😊';t='Bom trabalho!';sub=correct+' de '+data.length+'. Revise e tente!';}
+  else{e='🔄';t='Continue praticando!';sub=correct+' de '+data.length+'. Releia a peça!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+  document.getElementById('r-sub').textContent=sub;
+}
+function resetAll(){answers={};checked=false;document.getElementById('result').className='result';render();}
+render();
+</script>
+</body>
+</html>

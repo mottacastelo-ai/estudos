@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Variação Linguística</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FFF8F0;--card:#fff;--primary:#E07B39;--primary-light:#FEE9D6;
+    --primary-dark:#C4612A;--green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;--text:#1A1A2E;--muted:#6B7280;--border:#E5E7EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:640px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:22px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:30px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .context-card{background:var(--primary-light);border:2px solid var(--primary);border-radius:16px;padding:14px 18px;margin-bottom:18px;font-size:13px;font-weight:700;color:var(--primary-dark);line-height:1.6;}
+  .context-card strong{display:block;font-size:14px;margin-bottom:6px;}
+  .score-row{display:flex;justify-content:space-between;margin-bottom:14px;}
+  .score-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:800;}
+  .score-pill span{color:var(--primary);font-size:15px;}
+  .prog-wrap{background:#E5E7EB;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),#F59E0B);transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:16px;}
+  .q-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:24px;margin-bottom:14px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .q-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:8px;}
+  .q-text{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:8px;}
+  .q-quote{background:#FFF3E8;border-left:4px solid var(--primary);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14px;font-weight:700;color:var(--primary-dark);margin-bottom:16px;font-style:italic;}
+  .opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{background:#FAFAFA;border:2px solid var(--border);border-radius:13px;padding:12px 15px;font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px;color:var(--text);}
+  .opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-light);transform:translateX(4px);}
+  .opt .ol{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+  .opt.correct{border-color:var(--green);background:var(--green-light);}
+  .opt.correct .ol{background:var(--green);color:white;}
+  .opt.wrong{border-color:var(--red);background:var(--red-light);}
+  .opt.wrong .ol{background:var(--red);color:white;}
+  .opt:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-top:12px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:14px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:24px;padding:32px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:60px;margin-bottom:12px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:16px;}
+  .r-score{font-size:44px;font-weight:900;color:var(--primary);}
+  .r-sub{font-size:14px;color:var(--muted);font-weight:600;margin:8px 0 20px;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:13px 32px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🎭 Variação Linguística</div>
+    <h1>Quiz — Folia dos Três Bois</h1>
+    <p class="subtitle">Interpretação e variação linguística da peça</p>
+  </div>
+  <div class="context-card">
+    <strong>📖 Contexto da peça</strong>
+    Zé e Das Graças são bonecos (mamulengos) que viajam pelo sertão para chegar à Serrinha de Cericecó. Das Graças está prestes a ter um bebê. No caminho, encontram o Arauto e o Galo.
+  </div>
+  <div class="score-row">
+    <div class="score-pill">⭐ Pontos: <span id="score">0</span></div>
+    <div class="score-pill">🎯 Acertos: <span id="hits">0</span></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Questão 1 de 10</div>
+  <div id="quiz-area">
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-quote" id="q-quote" style="display:none"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-score" id="r-score"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var questions=[
+  {text:'Na peça "Folia dos Três Bois", o que Zé e Das Graças querem saber ao encontrar o Arauto?',quote:'',correct:1,opts:['Se havia um boi amarelo no caminho','Se aquele era o caminho para a Serrinha de Cericecó','Se o Galo era mesmo um galo','Quanto tempo faltava para o bebê nascer'],exp:'Zé pergunta ao Arauto se aquele era o caminho da Serrinha de Cericecó — o destino do casal.'},
+  {text:'Na fala de Zé, a palavra "muié" é:',quote:'ZÉ – Não era vaca nada, muié, era boi!',correct:1,opts:['Um erro de português','Uma variante regional da palavra "mulher"','Uma palavra inventada pelo autor','Um nome próprio'],exp:'"Muié" é uma variante regional da palavra "mulher" — muito usada no sertão nordestino. Não é erro, é uma forma legítima de falar.'},
+  {text:'Das Graças fala "amarelim" para descrever o boi. Qual é a outra forma de escrever esse diminutivo?',quote:'DAS GRAÇAS – É sim, Zé, todo amarelim, com chifres cheios de fita assim!',correct:2,opts:['Amarelar','Amarelado','Amarelinho','Amarelete'],exp:'"Amarelim" e "amarelinho" são duas formas do diminutivo de "amarelo". A forma em -im é típica do falar nordestino.'},
+  {text:'Para chegar à Serrinha de Cericecó, Zé e Das Graças precisavam passar por quantos marcos no caminho?',quote:'',correct:1,opts:['Dois — um alecrim e uma ema','Quatro — um alecrim, um boi amarelim, uma ema e um galo','Três — um boi, uma ema e um galo','Um — apenas o Galo de Cericecó'],exp:'O Arauto indicou que precisavam passar por quatro marcos: um pé de alecrim, um boi amarelim, uma ema e um galo.'},
+  {text:'No final do texto, em vez do nome de uma personagem, aparece a palavra VOZ antes de uma fala. Por que isso acontece?',quote:'',correct:0,opts:['Porque a personagem que fala não aparece fisicamente em cena','Porque o autor esqueceu o nome da personagem','Porque VOZ é o nome de uma personagem nova','Porque a fala é do narrador da peça'],exp:'A "VOZ" representa uma personagem que fala sem aparecer em cena — recurso teatral para criar suspense ou mistério.'},
+  {text:'O Galo reage com indignação ao ser chamado de "galinha garnisé". Qual palavra melhor descreve a reação dele?',quote:'GALO – Galinha Garnisé, coisíssima nenhuma, ouviram? Eu sou um majestoso, maravilhoso, fantástico Galo de Cericecó!',correct:2,opts:['Tristeza','Medo','Braveza e orgulho','Alegria'],exp:'O Galo reage com braveza e orgulho, defendendo sua identidade e se descrevendo com três adjetivos exagerados: majestoso, maravilhoso e fantástico.'},
+  {text:'A variação linguística ocorre porque:',quote:'',correct:3,opts:['Algumas pessoas não aprenderam a falar direito','Apenas pessoas sem estudo falam diferente','Existe só um jeito certo de falar português','A língua muda conforme a região, a idade, a profissão e a situação'],exp:'A língua varia naturalmente conforme onde vivemos, nossa geração, profissão e o contexto — formal ou informal. Todas as variantes são válidas.'},
+  {text:'Compare as duas versões da fala de Zé. O que mudou?',quote:'Original: "Seu moço, este é o caminho da Serrinha, é?"\nReescrita: "Moço, por favor, este é o caminho da Serrinha de Cericecó?"',correct:1,opts:['O significado da frase mudou completamente','O jeito de falar ficou mais formal e completo','A frase original estava errada e foi corrigida','Não há diferença entre as duas versões'],exp:'A frase reescrita ficou mais formal — perdeu o "seu" regional, ganhou "por favor" e o nome completo da cidade. O significado é o mesmo, mas o registro mudou.'},
+  {text:'Qual das expressões abaixo é um exemplo de variação linguística regional do sertão nordestino?',quote:'',correct:2,opts:['"Estou com pressa"','"Até logo, pessoal!"','"Até mais ver, xente!"','"Obrigado pela informação"'],exp:'"Xente" é uma variante regional de "gente" — muito característica do falar nordestino. Assim como "muié" e "amarelim", é uma marca cultural da região.'},
+  {text:'Respeitar a variação linguística significa:',quote:'',correct:0,opts:['Entender que todos os jeitos de falar têm valor e contexto próprio','Aceitar que só existe um português correto','Corrigir quem fala diferente de nós','Não aprender a forma padrão da língua'],exp:'Respeitar a variação linguística é reconhecer que cada forma de falar carrega história, cultura e identidade — nenhuma é superior a outra.'},
+];
+var cur=0,score=0,hits=0,answered=false;
+function loadQ(){
+  answered=false;
+  var q=questions[cur];
+  document.getElementById('q-num').textContent='Questão '+(cur+1);
+  document.getElementById('q-text').textContent=q.text;
+  var qt=document.getElementById('q-quote');
+  if(q.quote){qt.style.display='block';qt.textContent=q.quote;}else{qt.style.display='none';}
+  document.getElementById('prog').style.width=((cur/questions.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Questão '+(cur+1)+' de '+questions.length;
+  var opts=document.getElementById('opts');
+  opts.innerHTML='';
+  var letters=['A','B','C','D'];
+  q.opts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="ol">'+letters[i]+'</span>'+o;
+    btn.onclick=(function(idx){return function(){selectOpt(idx);};})(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('q-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('q-card').style.animation='slideIn .35s ease';});
+}
+function selectOpt(idx){
+  if(answered)return;
+  answered=true;
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  if(idx===q.correct){
+    btns[idx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent='✅ '+q.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.textContent='❌ A correta era '+['A','B','C','D'][q.correct]+'. '+q.exp;
+  }
+  if(cur<questions.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextQ(){cur++;loadQ();}
+function showResult(){
+  document.getElementById('quiz-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  var pct=Math.round((hits/questions.length)*100);
+  document.getElementById('r-score').textContent=score+' pts';
+  document.getElementById('r-sub').textContent='Você acertou '+hits+' de '+questions.length+' ('+pct+'%)';
+  var e,t;
+  if(hits===questions.length){e='🏆';t='Perfeito!';}
+  else if(hits>=8){e='🌟';t='Excelente!';}
+  else if(hits>=6){e='😊';t='Muito bem!';}
+  else{e='🔄';t='Revise e tente de novo!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+}
+function restart(){
+  cur=0;score=0;hits=0;answered=false;
+  document.getElementById('score').textContent=0;
+  document.getElementById('hits').textContent=0;
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>

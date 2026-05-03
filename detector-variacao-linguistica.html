@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detector de Variação Linguística</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F0F4FF;--card:#fff;
+    --regional:#E07B39;--regional-light:#FEE9D6;
+    --geracional:#8B5CF6;--geracional-light:#EDE9FE;
+    --situacional:#10B981;--situacional-light:#D1FAE5;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --text:#1A1A2E;--muted:#6B7280;--border:#E5E7EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:#3B82F6;color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:#1E40AF;margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .ref{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+  .ref-item{flex:1;min-width:120px;border-radius:13px;padding:10px;text-align:center;border:2px solid;}
+  .ref-item.regional{background:var(--regional-light);border-color:var(--regional);}
+  .ref-item.geracional{background:var(--geracional-light);border-color:var(--geracional);}
+  .ref-item.situacional{background:var(--situacional-light);border-color:var(--situacional);}
+  .ref-icon{font-size:18px;display:block;margin-bottom:3px;}
+  .ref-name{font-size:12px;font-weight:900;display:block;margin-bottom:2px;}
+  .ref-item.regional .ref-name{color:#C4612A;}
+  .ref-item.geracional .ref-name{color:#5B21B6;}
+  .ref-item.situacional .ref-name{color:#065F46;}
+  .ref-desc{font-size:10px;font-weight:700;color:var(--muted);}
+  .prog-wrap{background:#E5E7EB;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--regional),var(--geracional));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  .q-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:22px;margin-bottom:14px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .q-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#3B82F6;margin-bottom:10px;}
+  .q-scenario{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;}
+  .q-frase{background:#F8FAFC;border-radius:12px;padding:12px 16px;font-size:16px;font-weight:800;margin-bottom:6px;line-height:1.5;}
+  .q-frase .hl{background:#FEF3C7;color:#92400E;padding:1px 6px;border-radius:5px;font-weight:900;}
+  .q-ask{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  .type-btns{display:flex;gap:10px;flex-wrap:wrap;}
+  .type-btn{flex:1;min-width:100px;padding:12px 8px;border:2px solid var(--border);border-radius:14px;background:var(--card);font-family:'Baloo 2',cursive;font-size:12px;font-weight:800;cursor:pointer;text-align:center;transition:all .18s;color:var(--text);}
+  .type-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);}
+  .type-btn.regional:hover:not(:disabled){border-color:var(--regional);background:var(--regional-light);color:#C4612A;}
+  .type-btn.geracional:hover:not(:disabled){border-color:var(--geracional);background:var(--geracional-light);color:#5B21B6;}
+  .type-btn.situacional:hover:not(:disabled){border-color:var(--situacional);background:var(--situacional-light);color:#065F46;}
+  .type-btn.correct{border-color:var(--green);background:var(--green-light);color:#065F46;}
+  .type-btn.wrong{border-color:var(--red);background:var(--red-light);color:#991B1B;}
+  .type-btn:disabled{cursor:default;}
+  .type-icon{font-size:20px;display:block;margin-bottom:4px;}
+  .feedback{border-radius:13px;padding:11px 15px;font-size:13px;font-weight:700;margin-top:12px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .score-pill{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .score-pill .big{font-family:'Fredoka One',cursive;font-size:18px;}
+  .score-pill .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .btn-next{width:100%;background:#3B82F6;color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;display:none;transition:all .18s;}
+  .btn-next:hover{background:#2563EB;transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;text-align:center;display:none;animation:pop .3s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:56px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:26px;color:#1E40AF;margin-bottom:16px;}
+  .r-stats{display:flex;gap:10px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
+  .rs{background:#F9FAFB;border:2px solid var(--border);border-radius:14px;padding:12px 18px;min-width:90px;text-align:center;}
+  .rs .rb{font-family:'Fredoka One',cursive;font-size:26px;}
+  .rs .rl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .btn-restart{background:#3B82F6;color:white;border:none;border-radius:13px;padding:13px 30px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:#2563EB;transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🔍 Detector de Variação</div>
+    <h1>Que tipo de variação é essa?</h1>
+    <p class="subtitle">Identifique se a variação é regional, geracional ou situacional</p>
+  </div>
+  <div class="ref">
+    <div class="ref-item regional"><span class="ref-icon">📍</span><span class="ref-name">Regional</span><span class="ref-desc">muda conforme o lugar</span></div>
+    <div class="ref-item geracional"><span class="ref-icon">👵→👧</span><span class="ref-name">Geracional</span><span class="ref-desc">muda conforme a idade</span></div>
+    <div class="ref-item situacional"><span class="ref-icon">👔↔️😊</span><span class="ref-name">Situacional</span><span class="ref-desc">formal vs informal</span></div>
+  </div>
+  <div class="score-row">
+    <div class="score-pill"><div class="big" id="score" style="color:#3B82F6">0</div><div class="lbl">Pontos</div></div>
+    <div class="score-pill"><div class="big" id="hits" style="color:var(--green)">0</div><div class="lbl">Acertos</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Situação 1 de 9</div>
+  <div id="game-area">
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num">Situação 1</div>
+      <div class="q-scenario" id="q-scenario"></div>
+      <div class="q-frase" id="q-frase"></div>
+      <div class="q-ask">Que tipo de variação linguística está em destaque?</div>
+      <div class="type-btns" id="type-btns"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-er" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var questions=[
+  {
+    scenario:'Zé e Das Graças são personagens do sertão nordestino. Veja a fala de Zé:',
+    frase:'ZÉ – Não era vaca nada, <span class="hl">muié</span>, era boi!',
+    correct:'regional',
+    exp:'"Muié" é uma variante REGIONAL — é a forma como a palavra "mulher" é pronunciada no sertão nordestino. Não é erro, é identidade cultural.'
+  },
+  {
+    scenario:'Compare a forma como duas gerações da mesma família falam:',
+    frase:'Avó: "Que <span class="hl">mocinho</span> bonito!" — Neta: "Ele é muito <span class="hl">gato</span>!"',
+    correct:'geracional',
+    exp:'Esta é uma variação GERACIONAL — cada geração cria suas próprias palavras e expressões. "Mocinho" é da geração mais velha; "gato" (para bonito) é da geração jovem.'
+  },
+  {
+    scenario:'Zé fala com o Arauto de forma informal. O livro mostra a mesma fala reescrita:',
+    frase:'Informal: "<span class="hl">Seu moço, este é o caminho da Serrinha, é?</span>"\nFormal: "Senhor, este é o caminho para a Serrinha de Cericecó?"',
+    correct:'situacional',
+    exp:'Esta é uma variação SITUACIONAL — a mesma informação dita de forma mais informal (jeito do sertão) e depois de forma mais formal. Nenhuma está errada, apenas usam registros diferentes.'
+  },
+  {
+    scenario:'O Arauto encerra a cena com uma expressão típica:',
+    frase:'ARAUTO – Até mais ver, <span class="hl">xente</span>!',
+    correct:'regional',
+    exp:'"Xente" é uma variação REGIONAL de "gente" — característica do falar nordestino. O som do X no lugar do G é típico da região.'
+  },
+  {
+    scenario:'Compare como pessoas de idades diferentes pedem silêncio:',
+    frase:'Geração mais velha: "<span class="hl">Faça silêncio, por gentileza.</span>" — Jovens hoje: "<span class="hl">Para com isso, cara!</span>"',
+    correct:'geracional',
+    exp:'Esta é uma variação GERACIONAL — o jeito de pedir silêncio muda conforme a geração. A forma mais velha é mais formal e educada; a jovem é mais direta e informal.'
+  },
+  {
+    scenario:'Um estudante escreve uma redação para o professor e depois manda mensagem para um amigo sobre o mesmo assunto:',
+    frase:'Redação: "<span class="hl">Não concordo com essa ideia.</span>" — Mensagem: "<span class="hl">Cara, isso tá errado demais!</span>"',
+    correct:'situacional',
+    exp:'Esta é uma variação SITUACIONAL — o mesmo pensamento expresso de forma formal (redação escolar) e informal (mensagem para amigo). O contexto determina o registro.'
+  },
+  {
+    scenario:'Das Graças descreve o boi que viram pelo caminho:',
+    frase:'DAS GRAÇAS – É sim, Zé, todo <span class="hl">amarelim</span>, com chifres cheios de fita assim!',
+    correct:'regional',
+    exp:'"Amarelim" é uma variação REGIONAL — é o diminutivo nordestino de "amarelo". A forma padrão seria "amarelinho". O sufixo -im no lugar de -inho é típico do sertão.'
+  },
+  {
+    scenario:'Dois amigos conversam sobre a mesma coisa de jeitos diferentes:',
+    frase:'Amigo mais velho: "Vou ao cinema esta tarde." — Amigo jovem: "<span class="hl">Vou no cinema hoje à tardinha.</span>"',
+    correct:'geracional',
+    exp:'Esta é uma variação GERACIONAL — "vou no cinema" (com preposição "em") é mais usado por gerações mais jovens, enquanto "vou ao cinema" (com "a") é a forma mais tradicional.'
+  },
+  {
+    scenario:'O Arauto confirma para Zé e Das Graças que estão no caminho certo:',
+    frase:'ARAUTO – É galo mesmo, dona. Se já passaram por tudo isso, estão no caminho certo da Serrinha de Cericecó! Até mais ver, <span class="hl">xente</span>!',
+    correct:'regional',
+    exp:'Novamente "xente" — variação REGIONAL nordestina de "gente". Também "dona" no lugar de "senhora" é uma forma regional e informal de tratamento.'
+  },
+];
+var cur=0,score=0,hits=0,erros=0,answered=false;
+var types=[
+  {key:'regional',label:'Regional',icon:'📍',cls:'regional'},
+  {key:'geracional',label:'Geracional',icon:'👵→👧',cls:'geracional'},
+  {key:'situacional',label:'Situacional',icon:'👔↔️😊',cls:'situacional'},
+];
+function loadQ(){
+  answered=false;
+  var q=questions[cur];
+  document.getElementById('q-num').textContent='Situação '+(cur+1);
+  document.getElementById('q-scenario').textContent=q.scenario;
+  document.getElementById('q-frase').innerHTML=q.frase;
+  document.getElementById('prog').style.width=((cur/questions.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Situação '+(cur+1)+' de '+questions.length;
+  var btns=document.getElementById('type-btns');
+  btns.innerHTML='';
+  types.forEach(function(t){
+    var btn=document.createElement('button');
+    btn.className='type-btn '+t.cls;
+    btn.innerHTML='<span class="type-icon">'+t.icon+'</span>'+t.label;
+    btn.onclick=(function(key){return function(){selectType(key);};})(t.key);
+    btns.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('q-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('q-card').style.animation='slideIn .35s ease';});
+}
+function selectType(type){
+  if(answered)return;
+  answered=true;
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.type-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  var correctIdx=types.findIndex(function(t){return t.key===q.correct;});
+  var chosenIdx=types.findIndex(function(t){return t.key===type;});
+  if(type===q.correct){
+    btns[chosenIdx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent='✅ '+q.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[chosenIdx].classList.add('wrong');
+    btns[correctIdx].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.textContent='❌ É uma variação '+q.correct.toUpperCase()+'. '+q.exp;
+    erros++;
+  }
+  if(cur<questions.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextQ(){cur++;loadQ();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  document.getElementById('r-ac').textContent=hits;
+  document.getElementById('r-er').textContent=erros;
+  var pct=hits/questions.length;
+  var e,t;
+  if(pct===1){e='🏆';t='Detector perfeito!';}
+  else if(pct>=.77){e='🌟';t='Muito bem!';}
+  else if(pct>=.55){e='😊';t='Bom trabalho!';}
+  else{e='🔄';t='Continue praticando!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+}
+function restart(){
+  cur=0;score=0;hits=0;erros=0;answered=false;
+  document.getElementById('score').textContent=0;
+  document.getElementById('hits').textContent=0;
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>
