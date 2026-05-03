@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organizador de Texto Instrucional</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F0FF;--card:#fff;
+    --primary:#7C3AED;--primary-dark:#5B21B6;--primary-light:#EDE9FE;
+    --titulo:#F59E0B;--titulo-light:#FEF3C7;
+    --materiais:#3B82F6;--materiais-light:#DBEAFE;
+    --passos:#10B981;--passos-light:#D1FAE5;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --text:#1A1A2E;--muted:#6B7280;--border:#DDD6FE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:700px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--primary-light);border:2px solid var(--primary);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#4C1D95;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  /* Score */
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .sp{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .sp .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .sp .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  /* Pieces bank */
+  .bank{background:var(--card);border:2px dashed var(--primary);border-radius:16px;padding:14px;margin-bottom:18px;}
+  .bank-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--primary);margin-bottom:10px;}
+  .pieces{display:flex;flex-wrap:wrap;gap:8px;min-height:40px;}
+  .piece{padding:8px 14px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;user-select:none;border:2px solid transparent;}
+  .piece:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12);}
+  .piece.selected{outline:3px solid var(--primary);outline-offset:2px;transform:scale(1.05);}
+  .piece.titulo-p{background:var(--titulo-light);color:#92400E;border-color:var(--titulo);}
+  .piece.materiais-p{background:var(--materiais-light);color:#1E40AF;border-color:var(--materiais);}
+  .piece.passos-p{background:var(--passos-light);color:#065F46;border-color:var(--passos);}
+  .piece.result-ok::after{content:' ✓';}
+  .piece.result-nok{opacity:.6;text-decoration:line-through;}
+  /* Zones */
+  .zones{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+  .zone{border-radius:16px;padding:14px;border:2px solid;min-height:80px;}
+  .zone.titulo-z{background:var(--titulo-light);border-color:var(--titulo);}
+  .zone.materiais-z{background:var(--materiais-light);border-color:var(--materiais);}
+  .zone.passos-z{background:var(--passos-light);border-color:var(--passos);}
+  .zone-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .zone-icon{font-size:18px;}
+  .zone-title{font-size:13px;font-weight:900;}
+  .zone.titulo-z .zone-title{color:#92400E;}
+  .zone.materiais-z .zone-title{color:#1E40AF;}
+  .zone.passos-z .zone-title{color:#065F46;}
+  .zone-desc{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;}
+  .zone-pieces{display:flex;flex-wrap:wrap;gap:7px;min-height:36px;}
+  .zone-piece{padding:7px 13px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;user-select:none;border:2px solid transparent;}
+  .zone-piece:hover{opacity:.7;}
+  .zone.titulo-z .zone-piece{background:#F59E0B;color:white;border-color:var(--titulo);}
+  .zone.materiais-z .zone-piece{background:#3B82F6;color:white;border-color:var(--materiais);}
+  .zone.passos-z .zone-piece{background:#10B981;color:white;border-color:var(--passos);}
+  .zone-piece.result-ok::after{content:' ✓';}
+  .zone-piece.result-nok{background:#EF4444 !important;text-decoration:line-through;}
+  .zone-placeholder{font-size:12px;color:var(--muted);font-weight:600;text-align:center;padding:10px;width:100%;}
+  .sel-ind{background:var(--primary);color:white;border-radius:12px;padding:8px 14px;font-size:13px;font-weight:800;margin-bottom:14px;display:none;text-align:center;}
+  .sel-ind.show{display:block;}
+  /* Buttons */
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:13px;border:none;border-radius:13px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-check{background:var(--primary);color:white;}
+  .btn-check:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-reset{background:var(--border);color:var(--muted);}
+  .btn-reset:hover{background:#C4B5FD;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:26px;text-align:center;margin-top:16px;display:none;animation:pop .3s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:52px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:24px;color:var(--primary-dark);margin-bottom:6px;}
+  .r-sub{font-size:13px;color:var(--muted);font-weight:700;}
+  .btn-again{background:var(--primary);color:white;border:none;border-radius:13px;padding:12px 26px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;margin-top:14px;}
+  .btn-again:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">📋 Organizador</div>
+    <h1>Monte o Texto Instrucional</h1>
+    <p class="subtitle">Clique em cada peça e coloque na parte correta do texto</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Clique em uma peça do banco (ela fica destacada) e depois clique na zona correta: 📌 Título, 📋 Lista de materiais ou 🔢 Passo a passo.
+  </div>
+  <div class="score-row">
+    <div class="sp"><div class="big" id="cnt-ok" style="color:var(--green)">0</div><div class="lbl">Corretos</div></div>
+    <div class="sp"><div class="big" id="cnt-remain" style="color:var(--primary)">12</div><div class="lbl">Restantes</div></div>
+  </div>
+  <div class="bank">
+    <div class="bank-title">🎯 Banco de peças — clique para selecionar</div>
+    <div class="pieces" id="bank-pieces"></div>
+  </div>
+  <div class="sel-ind" id="sel-ind"></div>
+  <div class="zones">
+    <div class="zone titulo-z" onclick="placeToZone('titulo')">
+      <div class="zone-header"><span class="zone-icon">📌</span><span class="zone-title">TÍTULO</span></div>
+      <div class="zone-desc">O que vai ser ensinado</div>
+      <div class="zone-pieces" id="zone-titulo"><div class="zone-placeholder" id="ph-titulo">← Clique aqui para colocar</div></div>
+    </div>
+    <div class="zone materiais-z" onclick="placeToZone('materiais')">
+      <div class="zone-header"><span class="zone-icon">📋</span><span class="zone-title">LISTA DE MATERIAIS</span></div>
+      <div class="zone-desc">O que o leitor vai precisar • escrito com marcadores</div>
+      <div class="zone-pieces" id="zone-materiais"><div class="zone-placeholder" id="ph-materiais">← Clique aqui para colocar</div></div>
+    </div>
+    <div class="zone passos-z" onclick="placeToZone('passos')">
+      <div class="zone-header"><span class="zone-icon">🔢</span><span class="zone-title">PASSO A PASSO</span></div>
+      <div class="zone-desc">Como fazer • numerado • começa com verbo no imperativo</div>
+      <div class="zone-pieces" id="zone-passos"><div class="zone-placeholder" id="ph-passos">← Clique aqui para colocar</div></div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✅ Verificar</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <button class="btn-again" onclick="resetAll()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var pieces=[
+  {id:'p1',text:'Dedoche — Como fazer',correct:'titulo',cls:'titulo-p'},
+  {id:'p2',text:'• Folhas coloridas',correct:'materiais',cls:'materiais-p'},
+  {id:'p3',text:'1. Desenhe o molde no papel.',correct:'passos',cls:'passos-p'},
+  {id:'p4',text:'• Tesoura',correct:'materiais',cls:'materiais-p'},
+  {id:'p5',text:'2. Recorte com cuidado.',correct:'passos',cls:'passos-p'},
+  {id:'p6',text:'• Cola',correct:'materiais',cls:'materiais-p'},
+  {id:'p7',text:'3. Coloque ao redor do dedo.',correct:'passos',cls:'passos-p'},
+  {id:'p8',text:'• Caneta ou hidrocor',correct:'materiais',cls:'materiais-p'},
+  {id:'p9',text:'4. Cole as bordas para fechar.',correct:'passos',cls:'passos-p'},
+  {id:'p10',text:'• Fita adesiva',correct:'materiais',cls:'materiais-p'},
+  {id:'p11',text:'5. Desenhe o rosto do boneco.',correct:'passos',cls:'passos-p'},
+  {id:'p12',text:'• Régua',correct:'materiais',cls:'materiais-p'},
+];
+var placement={};
+var selected=null;
+var checked=false;
+function init(){
+  placement={};selected=null;checked=false;
+  pieces.forEach(function(p){placement[p.id]=null;});
+  document.getElementById('result').className='result';
+  render();
+}
+function render(){
+  var bank=document.getElementById('bank-pieces');
+  bank.innerHTML='';
+  pieces.forEach(function(p){
+    if(placement[p.id]!==null)return;
+    var el=document.createElement('div');
+    el.className='piece '+p.cls+(selected===p.id?' selected':'');
+    el.textContent=p.text;
+    el.onclick=(function(pid){return function(e){e.stopPropagation();selectPiece(pid);};})(p.id);
+    bank.appendChild(el);
+  });
+  ['titulo','materiais','passos'].forEach(function(zone){
+    var zoneEl=document.getElementById('zone-'+zone);
+    Array.from(zoneEl.querySelectorAll('.zone-piece')).forEach(function(c){c.remove();});
+    var ph=document.getElementById('ph-'+zone);
+    var placed=pieces.filter(function(p){return placement[p.id]===zone;});
+    ph.style.display=placed.length>0?'none':'block';
+    placed.forEach(function(p){
+      var el=document.createElement('div');
+      el.className='zone-piece';
+      el.textContent=p.text;
+      el.onclick=(function(pid){return function(e){e.stopPropagation();returnToBank(pid);};})(p.id);
+      zoneEl.appendChild(el);
+    });
+  });
+  var remain=pieces.filter(function(p){return placement[p.id]===null;}).length;
+  document.getElementById('cnt-remain').textContent=remain;
+}
+function selectPiece(pid){
+  if(checked)return;
+  selected=(selected===pid)?null:pid;
+  var ind=document.getElementById('sel-ind');
+  if(selected){
+    var p=pieces.find(function(x){return x.id===pid;});
+    ind.textContent='"'+p.text+'" selecionado — clique na zona correta';
+    ind.className='sel-ind show';
+  }else{ind.className='sel-ind';}
+  render();
+}
+function placeToZone(zone){
+  if(checked||!selected)return;
+  placement[selected]=zone;
+  selected=null;
+  document.getElementById('sel-ind').className='sel-ind';
+  render();
+}
+function returnToBank(pid){
+  if(checked)return;
+  placement[pid]=null;
+  render();
+}
+function checkAll(){
+  if(pieces.some(function(p){return placement[p.id]===null;})){alert('Coloque todas as peças antes de verificar!');return;}
+  checked=true;
+  var ok=0;
+  ['titulo','materiais','passos'].forEach(function(zone){
+    var zoneEl=document.getElementById('zone-'+zone);
+    zoneEl.querySelectorAll('.zone-piece').forEach(function(el){
+      var p=pieces.find(function(x){return x.text===el.textContent;});
+      if(p&&p.correct===zone){ok++;el.classList.add('result-ok');}
+      else{el.classList.add('result-nok');}
+    });
+  });
+  document.getElementById('cnt-ok').textContent=ok;
+  var pct=ok/pieces.length;
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  var e,t,sub;
+  if(pct===1){e='🏆';t='Texto perfeitamente organizado!';sub='Você dominou a estrutura do texto instrucional!';}
+  else if(pct>=.75){e='🌟';t='Muito bem!';sub=ok+' de '+pieces.length+' peças no lugar certo!';}
+  else if(pct>=.5){e='😊';t='Bom trabalho!';sub=ok+' de '+pieces.length+'. Revise a estrutura!';}
+  else{e='🔄';t='Continue praticando!';sub=ok+' de '+pieces.length+'. Lembre: Título → Materiais → Passos!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+  document.getElementById('r-sub').textContent=sub;
+}
+function resetAll(){init();}
+init();
+</script>
+</body>
+</html>

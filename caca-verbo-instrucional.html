@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caça ao Verbo Instrucional</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F0FFF4;--card:#fff;
+    --primary:#059669;--primary-dark:#047857;--primary-light:#D1FAE5;
+    --verb:#34D399;--verb-light:#ECFDF5;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --yellow:#F59E0B;--yellow-light:#FEF3C7;
+    --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:660px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .instr{background:var(--primary-light);border:2px solid var(--primary);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#065F46;line-height:1.6;}
+  .instr strong{display:block;font-size:14px;margin-bottom:4px;}
+  .score-row{display:flex;gap:10px;margin-bottom:14px;}
+  .sp{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
+  .sp .big{font-family:'Fredoka One',cursive;font-size:20px;}
+  .sp .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .prog-wrap{background:#D1FAE5;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),var(--verb));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+  /* Challenge */
+  .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:22px;margin-bottom:14px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px;}
+  .ch-title{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:12px;}
+  .text-box{background:#F8FFF8;border:2px solid var(--border);border-radius:14px;padding:16px;font-size:16px;font-weight:700;line-height:2.2;margin-bottom:14px;}
+  /* Clickable words */
+  .word{cursor:pointer;padding:2px 4px;border-radius:5px;transition:all .15s;display:inline-block;}
+  .word:hover{background:var(--yellow-light);color:#92400E;}
+  .word.marked{background:var(--primary);color:white;border-radius:6px;padding:2px 8px;}
+  .word.res-correct-verb{background:var(--green);color:white;border-radius:6px;padding:2px 8px;}
+  .word.res-missed-verb{background:var(--red);color:white;border-radius:6px;padding:2px 8px;text-decoration:underline;}
+  .word.res-false-positive{background:var(--red-light);color:var(--red);border-radius:6px;padding:2px 8px;text-decoration:line-through;}
+  .word.res-correct-nonverb{background:transparent;color:var(--text);}
+  .hint{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;}
+  .hint span{background:var(--yellow-light);color:#92400E;padding:2px 8px;border-radius:6px;font-weight:900;}
+  .feedback{border-radius:13px;padding:11px 15px;font-size:13px;font-weight:700;margin-top:4px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .btn-check{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;margin-top:10px;}
+  .btn-check:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-check:disabled{opacity:.4;cursor:default;transform:none;}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:56px;margin-bottom:10px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:24px;color:var(--primary-dark);margin-bottom:12px;}
+  .r-sub{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:16px;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:12px 26px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">⚡ Caça ao Verbo</div>
+    <h1>Encontre os verbos de instrução!</h1>
+    <p class="subtitle">Clique em todas as palavras que são verbos no imperativo</p>
+  </div>
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Leia cada trecho de texto instrucional e clique em todas as palavras que são <strong>verbos no imperativo</strong> — aqueles que dão uma ordem direta ao leitor. Cuidado: nem toda palavra é um verbo!
+  </div>
+  <div class="score-row">
+    <div class="sp"><div class="big" id="score" style="color:var(--primary)">0</div><div class="lbl">Pontos</div></div>
+    <div class="sp"><div class="big" id="hits" style="color:var(--green)">0</div><div class="lbl">Verbos encontrados</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Trecho 1 de 6</div>
+  <div id="game-area">
+    <div class="ch-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Trecho 1</div>
+      <div class="ch-title" id="ch-title"></div>
+      <div class="hint">Dica: os verbos de instrução são <span>ordens diretas ao leitor</span>. Geralmente estão no início do passo.</div>
+      <div class="text-box" id="text-box"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-check" id="btn-check" onclick="checkVerbs()">✅ Verificar verbos marcados</button>
+      <button class="btn-next" id="btn-next" onclick="nextChallenge()">Próximo trecho →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var challenges=[
+  {
+    title:'Passo a passo — Dedoche (Como fazer)',
+    // words: array of {text, isVerb}
+    words:[
+      {t:'Desenhe',v:true},{t:'o',v:false},{t:'molde',v:false},{t:'da',v:false},{t:'roupa',v:false},{t:'no',v:false},{t:'papel',v:false},{t:'colorido.',v:false},
+      {t:'Recorte',v:true},{t:'o',v:false},{t:'molde',v:false},{t:'com',v:false},{t:'cuidado.',v:false},
+      {t:'Coloque',v:true},{t:'o',v:false},{t:'molde',v:false},{t:'ao',v:false},{t:'redor',v:false},{t:'do',v:false},{t:'dedo.',v:false},
+    ],
+    exp:'Os verbos de instrução são DESENHE, RECORTE e COLOQUE — todos no imperativo, iniciando cada passo e dizendo ao leitor o que fazer.'
+  },
+  {
+    title:'Lista de materiais e passo a passo — Dedoche (continuação)',
+    words:[
+      {t:'Cole',v:true},{t:'as',v:false},{t:'bordas',v:false},{t:'para',v:false},{t:'fechar',v:false},{t:'o',v:false},{t:'corpinho.',v:false},
+      {t:'Enquanto',v:false},{t:'seca,',v:false},{t:'desenhe',v:true},{t:'o',v:false},{t:'rosto',v:false},{t:'do',v:false},{t:'boneco.',v:false},
+      {t:'Cole',v:true},{t:'a',v:false},{t:'cabeça',v:false},{t:'no',v:false},{t:'corpinho.',v:false},
+    ],
+    exp:'Os verbos de instrução são COLE (duas vezes) e DESENHE — todos no imperativo. "Seca" não é verbo de instrução — descreve o que acontece com a cola.'
+  },
+  {
+    title:'Receita de bolo de chocolate (trecho)',
+    words:[
+      {t:'Misture',v:true},{t:'os',v:false},{t:'ovos',v:false},{t:'com',v:false},{t:'o',v:false},{t:'açúcar',v:false},{t:'e',v:false},{t:'o',v:false},{t:'óleo.',v:false},
+      {t:'Acrescente',v:true},{t:'a',v:false},{t:'farinha',v:false},{t:'e',v:false},{t:'o',v:false},{t:'chocolate',v:false},{t:'em',v:false},{t:'pó.',v:false},
+      {t:'Bata',v:true},{t:'bem',v:false},{t:'até',v:false},{t:'obter',v:false},{t:'uma',v:false},{t:'massa',v:false},{t:'homogênea.',v:false},
+    ],
+    exp:'Os verbos de instrução são MISTURE, ACRESCENTE e BATA — todos no imperativo. "Obter" aparece como infinitivo, explicando o objetivo, não como instrução direta.'
+  },
+  {
+    title:'Manual de uso — Liquidificador (trecho)',
+    words:[
+      {t:'Coloque',v:true},{t:'os',v:false},{t:'ingredientes',v:false},{t:'no',v:false},{t:'copo.',v:false},
+      {t:'Encaixe',v:true},{t:'o',v:false},{t:'copo',v:false},{t:'na',v:false},{t:'base',v:false},{t:'do',v:false},{t:'aparelho.',v:false},
+      {t:'Ligue',v:true},{t:'o',v:false},{t:'aparelho',v:false},{t:'na',v:false},{t:'tomada.',v:false},
+      {t:'Selecione',v:true},{t:'a',v:false},{t:'velocidade',v:false},{t:'desejada.',v:false},
+    ],
+    exp:'Todos os verbos iniciais de cada passo são instruções: COLOQUE, ENCAIXE, LIGUE e SELECIONE. Cada um inicia um passo e diz exatamente o que fazer com o aparelho.'
+  },
+  {
+    title:'Modo de usar — Shampoo (trecho)',
+    words:[
+      {t:'Molhe',v:true},{t:'os',v:false},{t:'cabelos',v:false},{t:'com',v:false},{t:'água.',v:false},
+      {t:'Aplique',v:true},{t:'o',v:false},{t:'shampoo',v:false},{t:'e',v:false},{t:'massageie',v:true},{t:'bem',v:false},{t:'o',v:false},{t:'couro',v:false},{t:'cabeludo.',v:false},
+      {t:'Enxágue',v:true},{t:'completamente',v:false},{t:'com',v:false},{t:'água.',v:false},{t:'Repita',v:true},{t:'se',v:false},{t:'necessário.',v:false},
+    ],
+    exp:'Os verbos de instrução são MOLHE, APLIQUE, MASSAGEIE, ENXÁGUE e REPITA. "Massageie" pode estar dentro do mesmo passo que "Aplique" — ambos são instruções ao leitor.'
+  },
+  {
+    title:'Como jogar — Jogo de tabuleiro (trecho)',
+    words:[
+      {t:'Separe',v:true},{t:'as',v:false},{t:'peças',v:false},{t:'por',v:false},{t:'cor.',v:false},
+      {t:'Coloque',v:true},{t:'os',v:false},{t:'pinos',v:false},{t:'na',v:false},{t:'casa',v:false},{t:'de',v:false},{t:'saída.',v:false},
+      {t:'Cada',v:false},{t:'jogador',v:false},{t:'deve',v:false},{t:'lançar',v:false},{t:'o',v:false},{t:'dado',v:false},{t:'e',v:false},{t:'avançar',v:false},{t:'as',v:false},{t:'casas',v:false},{t:'indicadas.',v:false},
+      {t:'Vence',v:false},{t:'quem',v:false},{t:'chegar',v:false},{t:'primeiro',v:false},{t:'ao',v:false},{t:'final.',v:false},
+    ],
+    exp:'Os verbos de instrução são SEPARE e COLOQUE — no imperativo direto ao leitor. "Deve lançar", "avançar", "Vence" e "chegar" não são imperativos diretos — descrevem regras do jogo.'
+  },
+];
+var cur=0,score=0,hits=0,marked={},checked=false;
+function loadChallenge(){
+  checked=false;marked={};
+  var ch=challenges[cur];
+  document.getElementById('ch-num').textContent='Trecho '+(cur+1);
+  document.getElementById('ch-title').textContent=ch.title;
+  document.getElementById('prog').style.width=((cur/challenges.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Trecho '+(cur+1)+' de '+challenges.length;
+  var box=document.getElementById('text-box');
+  box.innerHTML='';
+  ch.words.forEach(function(w,i){
+    var span=document.createElement('span');
+    span.className='word';
+    span.textContent=w.t+' ';
+    span.onclick=(function(idx){return function(){toggleWord(idx);};})(i);
+    box.appendChild(span);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-check').disabled=false;
+  document.getElementById('btn-check').style.display='block';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('ch-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('ch-card').style.animation='slideIn .35s ease';});
+}
+function toggleWord(idx){
+  if(checked)return;
+  marked[idx]=!marked[idx];
+  var words=document.querySelectorAll('.word');
+  words[idx].className='word'+(marked[idx]?' marked':'');
+}
+function checkVerbs(){
+  checked=true;
+  var ch=challenges[cur];
+  var correct=0,total_verbs=ch.words.filter(function(w){return w.v;}).length;
+  var words=document.querySelectorAll('.word');
+  ch.words.forEach(function(w,i){
+    var isMarked=marked[i]===true;
+    if(w.v&&isMarked){correct++;words[i].className='word res-correct-verb';}
+    else if(w.v&&!isMarked){words[i].className='word res-missed-verb';}
+    else if(!w.v&&isMarked){words[i].className='word res-false-positive';}
+    else{words[i].className='word res-correct-nonverb';}
+  });
+  var fb=document.getElementById('feedback');
+  var pct=correct/total_verbs;
+  if(pct===1){
+    fb.className='feedback ok show';
+    fb.textContent='✅ Perfeito! Você encontrou todos os '+total_verbs+' verbos de instrução! '+ch.exp;
+    score+=10;hits+=total_verbs;
+  }else{
+    fb.className='feedback nok show';
+    fb.textContent='❌ Você acertou '+correct+' de '+total_verbs+' verbos. Os perdidos estão em vermelho sublinhado. '+ch.exp;
+    score+=Math.round((correct/total_verbs)*10);
+    hits+=correct;
+  }
+  document.getElementById('score').textContent=score;
+  document.getElementById('hits').textContent=hits;
+  document.getElementById('btn-check').style.display='none';
+  if(cur<challenges.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextChallenge(){cur++;loadChallenge();}
+function showResult(){
+  document.getElementById('game-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  var e,t,sub;
+  var pct=score/(challenges.length*10);
+  if(pct>=.9){e='🏆';t='Caçador de verbos perfeito!';sub='Você identificou quase todos os verbos de instrução!';}
+  else if(pct>=.7){e='🌟';t='Muito bem!';sub='Você tem bom olho para verbos no imperativo!';}
+  else if(pct>=.5){e='😊';t='Bom trabalho!';sub='Continue praticando — os verbos de instrução ficam mais fáceis com o tempo!';}
+  else{e='🔄';t='Continue praticando!';sub='Lembre: os verbos de instrução estão no INÍCIO do passo e dão uma ordem direta!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+  document.getElementById('r-sub').textContent=sub;
+}
+function restart(){
+  cur=0;score=0;hits=0;marked={};checked=false;
+  document.getElementById('score').textContent=0;
+  document.getElementById('hits').textContent=0;
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadChallenge();
+}
+loadChallenge();
+</script>
+</body>
+</html>

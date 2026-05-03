@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criador de Texto Instrucional</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFBF0;--card:#fff;
+    --primary:#F59E0B;--primary-dark:#D97706;--primary-light:#FEF3C7;
+    --titulo:#F59E0B;--titulo-light:#FEF3C7;
+    --materiais:#3B82F6;--materiais-light:#DBEAFE;
+    --passos:#10B981;--passos-light:#D1FAE5;
+    --green:#10B981;--green-light:#D1FAE5;
+    --text:#1A1A2E;--muted:#6B7280;--border:#FDE68A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:680px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:20px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  /* Screens */
+  .screen{display:none;}
+  .screen.active{display:block;}
+  /* Setup */
+  .setup-card{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:22px;margin-bottom:14px;}
+  .setup-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px;}
+  .topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .topic-btn{padding:14px;border:2px solid var(--border);border-radius:14px;background:#FAFAFA;cursor:pointer;text-align:center;transition:all .18s;font-family:'Baloo 2',cursive;color:var(--text);}
+  .topic-btn:hover{border-color:var(--primary);transform:translateY(-2px);}
+  .topic-btn.sel{border-color:var(--primary);background:var(--primary-light);}
+  .topic-icon{font-size:26px;display:block;margin-bottom:6px;}
+  .topic-name{font-size:13px;font-weight:900;display:block;}
+  .btn-start{width:100%;padding:14px;background:var(--primary);border:none;border-radius:13px;font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;color:white;cursor:pointer;transition:all .18s;margin-top:14px;}
+  .btn-start:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  /* Write screen */
+  .section-card{border-radius:16px;padding:18px;margin-bottom:14px;border:2px solid;}
+  .section-card.titulo{background:var(--titulo-light);border-color:var(--titulo);}
+  .section-card.materiais{background:var(--materiais-light);border-color:var(--materiais);}
+  .section-card.passos{background:var(--passos-light);border-color:var(--passos);}
+  .section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .section-icon{font-size:22px;}
+  .section-title{font-size:14px;font-weight:900;}
+  .section-card.titulo .section-title{color:#92400E;}
+  .section-card.materiais .section-title{color:#1E40AF;}
+  .section-card.passos .section-title{color:#065F46;}
+  .section-desc{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:12px;}
+  /* Titulo input */
+  .titulo-input{width:100%;border:2px solid var(--titulo);border-radius:11px;padding:10px 14px;font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;color:var(--text);outline:none;background:white;}
+  /* Materiais */
+  .material-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .bullet{font-size:18px;color:var(--materiais);flex-shrink:0;}
+  .mat-input{flex:1;border:2px solid var(--materiais);border-radius:11px;padding:9px 12px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;color:var(--text);outline:none;background:white;}
+  .del-btn{background:none;border:none;color:#CBD5E1;font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;}
+  .del-btn:hover{color:var(--materiais);}
+  .add-mat-btn{background:var(--materiais-light);border:2px dashed var(--materiais);border-radius:11px;padding:8px 16px;font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;cursor:pointer;color:#1E40AF;transition:all .15s;width:100%;margin-top:4px;}
+  .add-mat-btn:hover{background:var(--materiais);color:white;}
+  /* Passos */
+  .passo-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;}
+  .passo-num{width:28px;height:28px;border-radius:50%;background:var(--passos);color:white;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px;}
+  .passo-col{flex:1;}
+  .verb-row{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;}
+  .verb-chip{font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;background:var(--passos-light);color:#065F46;border:1.5px solid var(--passos);cursor:pointer;transition:all .15s;}
+  .verb-chip:hover{background:var(--passos);color:white;}
+  .passo-input{width:100%;border:2px solid var(--passos);border-radius:11px;padding:9px 12px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;color:var(--text);outline:none;background:white;resize:none;min-height:52px;}
+  .del-passo{background:none;border:none;color:#CBD5E1;font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;margin-top:4px;}
+  .del-passo:hover{color:var(--passos);}
+  .add-passo-btn{background:var(--passos-light);border:2px dashed var(--passos);border-radius:11px;padding:8px 16px;font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;cursor:pointer;color:#065F46;transition:all .15s;width:100%;margin-top:4px;}
+  .add-passo-btn:hover{background:var(--passos);color:white;}
+  /* Preview */
+  .preview-card{background:#1A1A2E;border-radius:18px;padding:22px;margin-bottom:14px;}
+  .preview-title-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:14px;}
+  .preview-content{font-family:'Baloo 2',cursive;font-size:14px;color:rgba(255,255,255,.9);line-height:1.8;}
+  .preview-titulo{font-family:'Fredoka One',cursive;font-size:20px;color:#FCD34D;margin-bottom:12px;}
+  .preview-section-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+  .preview-section-label.mat{color:#60A5FA;}
+  .preview-section-label.pas{color:#34D399;}
+  .preview-item{color:rgba(255,255,255,.85);margin-bottom:4px;}
+  .preview-verb{color:#34D399;font-weight:900;}
+  .preview-empty{color:rgba(255,255,255,.3);font-style:italic;font-size:13px;}
+  /* Checklist */
+  .checklist-card{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .check-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px;}
+  .check-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #F3F4F6;}
+  .check-item:last-child{border-bottom:none;}
+  .check-box{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;margin-top:1px;}
+  .check-box.checked{background:var(--green);border-color:var(--green);color:white;}
+  .check-label{font-size:14px;font-weight:700;line-height:1.5;}
+  .score-display{background:var(--green-light);border:2px solid var(--green);border-radius:14px;padding:14px;text-align:center;display:none;margin-bottom:14px;}
+  .score-display.show{display:block;}
+  .score-big{font-family:'Fredoka One',cursive;font-size:32px;color:var(--green);}
+  .score-lbl{font-size:13px;font-weight:700;color:#065F46;}
+  /* Buttons */
+  .btn-row{display:flex;gap:10px;margin-bottom:14px;}
+  .btn{flex:1;padding:13px;border:none;border-radius:13px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-preview{background:var(--passos);color:white;}
+  .btn-preview:hover{background:#047857;transform:translateY(-2px);}
+  .btn-back{background:var(--border);color:var(--muted);}
+  .btn-back:hover{background:#D1FAE5;}
+  .btn-calc{background:var(--primary);color:white;}
+  .btn-calc:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-new{width:100%;padding:14px;background:var(--primary);border:none;border-radius:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;color:white;cursor:pointer;transition:all .18s;}
+  .btn-new:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">✍️ Criador de Texto Instrucional</div>
+    <h1>Escreva seu próprio texto!</h1>
+    <p class="subtitle">Título + Lista de materiais + Passo a passo com verbos no imperativo</p>
+  </div>
+
+  <!-- SETUP -->
+  <div class="screen active" id="screen-setup">
+    <div class="setup-card">
+      <div class="setup-title">Escolha o tema do seu texto instrucional</div>
+      <div class="topic-grid">
+        <button class="topic-btn sel" id="t-1" onclick="selectTopic(1,this)"><span class="topic-icon">🎭</span><span class="topic-name">Dedoche ou fantoche</span></button>
+        <button class="topic-btn" id="t-2" onclick="selectTopic(2,this)"><span class="topic-icon">🍰</span><span class="topic-name">Receita de comida</span></button>
+        <button class="topic-btn" id="t-3" onclick="selectTopic(3,this)"><span class="topic-icon">🎲</span><span class="topic-name">Como jogar um jogo</span></button>
+        <button class="topic-btn" id="t-4" onclick="selectTopic(4,this)"><span class="topic-icon">✏️</span><span class="topic-name">Tema livre</span></button>
+      </div>
+      <div class="setup-title" style="margin-top:8px">Verbos sugeridos para seu tema</div>
+      <div id="verb-suggestions" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      <button class="btn-start" onclick="startWrite()">✏️ Começar a escrever!</button>
+    </div>
+  </div>
+
+  <!-- WRITE -->
+  <div class="screen" id="screen-write">
+    <div class="section-card titulo">
+      <div class="section-header"><span class="section-icon">📌</span><span class="section-title">TÍTULO — o que vai ser ensinado</span></div>
+      <input class="titulo-input" id="titulo-input" placeholder="Ex: Dedoche — Como fazer" oninput="updatePreview()">
+    </div>
+    <div class="section-card materiais">
+      <div class="section-header"><span class="section-icon">📋</span><span class="section-title">LISTA DE MATERIAIS</span></div>
+      <div class="section-desc">Liste tudo que o leitor vai precisar. Cada item em uma linha com •</div>
+      <div id="materiais-list"></div>
+      <button class="add-mat-btn" onclick="addMaterial()">+ Adicionar material</button>
+    </div>
+    <div class="section-card passos">
+      <div class="section-header"><span class="section-icon">🔢</span><span class="section-title">PASSO A PASSO</span></div>
+      <div class="section-desc">Cada passo deve começar com um verbo no imperativo. Use as sugestões abaixo!</div>
+      <div id="passos-list"></div>
+      <button class="add-passo-btn" onclick="addPasso()">+ Adicionar passo</button>
+    </div>
+    <div class="preview-card">
+      <div class="preview-title-label">👁 Prévia do seu texto instrucional</div>
+      <div id="preview-content"><span class="preview-empty">Seu texto aparecerá aqui...</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-preview" onclick="goToChecklist()">✅ Avaliar meu texto</button>
+      <button class="btn btn-back" onclick="goToSetup()">← Voltar</button>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="screen" id="screen-checklist">
+    <div class="preview-card" style="margin-bottom:16px">
+      <div class="preview-title-label">📄 Seu texto instrucional</div>
+      <div id="final-preview"></div>
+    </div>
+    <div class="checklist-card">
+      <div class="check-title">✅ Avalie seu texto instrucional</div>
+      <div id="check-items"></div>
+    </div>
+    <div class="score-display" id="score-display">
+      <div class="score-big" id="score-val">0/6</div>
+      <div class="score-lbl" id="score-lbl"></div>
+    </div>
+    <div class="btn-row" style="margin-bottom:10px">
+      <button class="btn btn-calc" onclick="calcScore()">📊 Calcular pontuação</button>
+      <button class="btn btn-back" onclick="goToWrite()">← Editar</button>
+    </div>
+    <button class="btn-new" onclick="goToSetup()">🔄 Criar um novo texto</button>
+  </div>
+</div>
+
+<script>
+var topics={
+  1:{name:'Dedoche ou fantoche',verbs:['Desenhe','Recorte','Cole','Coloque','Molde','Encaixe','Decore','Pinte']},
+  2:{name:'Receita',verbs:['Misture','Adicione','Bata','Asse','Cozinhe','Tempere','Corte','Sirva']},
+  3:{name:'Jogo',verbs:['Separe','Coloque','Embaralhe','Distribua','Lance','Avance','Vire','Passe']},
+  4:{name:'Tema livre',verbs:['Faça','Coloque','Adicione','Retire','Verifique','Aperte','Ligue','Repita']},
+};
+var selectedTopic=1;
+var materiais=[];
+var passos=[];
+var checks={};
+
+function selectTopic(n,btn){
+  selectedTopic=n;
+  document.querySelectorAll('.topic-btn').forEach(function(b){b.classList.remove('sel');});
+  btn.classList.add('sel');
+  renderVerbSuggestions();
+}
+
+function renderVerbSuggestions(){
+  var vs=document.getElementById('verb-suggestions');
+  vs.innerHTML='';
+  topics[selectedTopic].verbs.forEach(function(v){
+    var chip=document.createElement('span');
+    chip.style.cssText='font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;background:#D1FAE5;color:#065F46;border:1.5px solid #10B981;';
+    chip.textContent=v;
+    vs.appendChild(chip);
+  });
+}
+
+function startWrite(){
+  materiais=['','',''];
+  passos=['',''];
+  renderMateriais();
+  renderPassos();
+  updatePreview();
+  showScreen('write');
+}
+
+function addMaterial(){materiais.push('');renderMateriais();updatePreview();}
+function addPasso(){passos.push('');renderPassos();updatePreview();}
+
+function renderMateriais(){
+  var list=document.getElementById('materiais-list');
+  list.innerHTML='';
+  materiais.forEach(function(m,i){
+    var row=document.createElement('div');
+    row.className='material-row';
+    var bullet=document.createElement('span');
+    bullet.className='bullet';bullet.textContent='•';
+    var inp=document.createElement('input');
+    inp.className='mat-input';inp.type='text';inp.value=m;
+    inp.placeholder='Ex: Folhas coloridas';
+    inp.oninput=(function(idx){return function(){materiais[idx]=this.value;updatePreview();};})(i);
+    var del=document.createElement('button');
+    del.className='del-btn';del.textContent='✕';
+    del.onclick=(function(idx){return function(){if(materiais.length>1){materiais.splice(idx,1);renderMateriais();updatePreview();}};})(i);
+    row.appendChild(bullet);row.appendChild(inp);row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+function renderPassos(){
+  var list=document.getElementById('passos-list');
+  list.innerHTML='';
+  var verbSugs=topics[selectedTopic].verbs;
+  passos.forEach(function(p,i){
+    var row=document.createElement('div');
+    row.className='passo-row';
+    var num=document.createElement('div');
+    num.className='passo-num';num.textContent=i+1;
+    var col=document.createElement('div');
+    col.className='passo-col';
+    var vrow=document.createElement('div');
+    vrow.className='verb-row';
+    verbSugs.slice(0,6).forEach(function(v){
+      var chip=document.createElement('button');
+      chip.className='verb-chip';chip.textContent=v;
+      chip.onclick=(function(verb,idx){return function(){
+        var ta=document.getElementById('passo-ta-'+idx);
+        if(!ta.value||ta.value===''||ta.value.split(' ')[0]===verb){ta.value=verb+' ';}
+        else{var words=ta.value.split(' ');words[0]=verb;ta.value=words.join(' ');}
+        passos[idx]=ta.value;updatePreview();
+      };})(v,i);
+      vrow.appendChild(chip);
+    });
+    var ta=document.createElement('textarea');
+    ta.className='passo-input';ta.id='passo-ta-'+i;ta.value=p;
+    ta.placeholder='Ex: Desenhe o molde no papel colorido.';ta.rows=2;
+    ta.oninput=(function(idx){return function(){passos[idx]=this.value;updatePreview();};})(i);
+    col.appendChild(vrow);col.appendChild(ta);
+    var del=document.createElement('button');
+    del.className='del-passo';del.textContent='✕';
+    del.onclick=(function(idx){return function(){if(passos.length>1){passos.splice(idx,1);renderPassos();updatePreview();}};})(i);
+    row.appendChild(num);row.appendChild(col);row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+function updatePreview(){
+  var titulo=document.getElementById('titulo-input').value.trim();
+  var pc=document.getElementById('preview-content');
+  var html='';
+  if(titulo){html+='<div class="preview-titulo">'+titulo+'</div>';}
+  var mats=materiais.filter(function(m){return m.trim();});
+  if(mats.length>0){
+    html+='<div class="preview-section-label mat">📋 VOCÊ VAI PRECISAR DE:</div>';
+    mats.forEach(function(m){html+='<div class="preview-item">• '+m+'</div>';});
+    html+='<br>';
+  }
+  var pss=passos.filter(function(p){return p.trim();});
+  if(pss.length>0){
+    html+='<div class="preview-section-label pas">🔢 PASSO A PASSO:</div>';
+    pss.forEach(function(p,i){
+      var words=p.trim().split(' ');
+      var verb='<span class="preview-verb">'+words[0]+'</span>';
+      var rest=words.slice(1).join(' ');
+      html+='<div class="preview-item">'+(i+1)+'. '+verb+(rest?' '+rest:'')+'</div>';
+    });
+  }
+  if(!html){pc.innerHTML='<span class="preview-empty">Seu texto aparecerá aqui...</span>';}
+  else{pc.innerHTML=html;}
+}
+
+function goToChecklist(){
+  var titulo=document.getElementById('titulo-input').value.trim();
+  var pc=document.getElementById('final-preview');
+  var html='';
+  if(titulo){html+='<div class="preview-titulo">'+titulo+'</div>';}
+  var mats=materiais.filter(function(m){return m.trim();});
+  if(mats.length>0){
+    html+='<div class="preview-section-label mat">📋 VOCÊ VAI PRECISAR DE:</div>';
+    mats.forEach(function(m){html+='<div class="preview-item">• '+m+'</div>';});html+='<br>';
+  }
+  var pss=passos.filter(function(p){return p.trim();});
+  if(pss.length>0){
+    html+='<div class="preview-section-label pas">🔢 PASSO A PASSO:</div>';
+    pss.forEach(function(p,i){
+      var words=p.trim().split(' ');
+      var verb='<span class="preview-verb">'+words[0]+'</span>';
+      var rest=words.slice(1).join(' ');
+      html+='<div class="preview-item">'+(i+1)+'. '+verb+(rest?' '+rest:'')+'</div>';
+    });
+  }
+  pc.innerHTML=html||'<span class="preview-empty">Nenhum texto ainda.</span>';
+  var checkItems=[
+    {id:'c1',label:'O texto tem um título que indica o que vai ser ensinado'},
+    {id:'c2',label:'A lista de materiais está completa (com marcadores •)'},
+    {id:'c3',label:'O passo a passo está numerado e em ordem'},
+    {id:'c4',label:'Cada passo começa com um verbo no imperativo'},
+    {id:'c5',label:'As instruções são claras — o leitor conseguiria seguir'},
+    {id:'c6',label:'O texto tem título + lista de materiais + passo a passo'},
+  ];
+  checks={};
+  var cl=document.getElementById('check-items');
+  cl.innerHTML='';
+  checkItems.forEach(function(item){
+    checks[item.id]=false;
+    var div=document.createElement('div');
+    div.className='check-item';
+    var box=document.createElement('div');
+    box.className='check-box';box.id='box-'+item.id;
+    box.onclick=function(){
+      checks[item.id]=!checks[item.id];
+      box.className='check-box'+(checks[item.id]?' checked':'');
+      box.textContent=checks[item.id]?'✓':'';
+      document.getElementById('score-display').className='score-display';
+    };
+    var lbl=document.createElement('div');
+    lbl.className='check-label';lbl.textContent=item.label;
+    div.appendChild(box);div.appendChild(lbl);
+    cl.appendChild(div);
+  });
+  document.getElementById('score-display').className='score-display';
+  showScreen('checklist');
+}
+
+function calcScore(){
+  var total=6;
+  var correct=Object.values(checks).filter(Boolean).length;
+  var pct=correct/total;
+  var display=document.getElementById('score-display');
+  display.className='score-display show';
+  document.getElementById('score-val').textContent=correct+'/'+total;
+  var lbl;
+  if(pct===1)lbl='🏆 Texto instrucional perfeito!';
+  else if(pct>=.83)lbl='🌟 Excelente! Quase perfeito.';
+  else if(pct>=.66)lbl='😊 Bom trabalho! Revise os itens não marcados.';
+  else lbl='📚 Continue escrevendo e revise a estrutura!';
+  document.getElementById('score-lbl').textContent=lbl;
+}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('screen-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goToSetup(){showScreen('setup');}
+function goToWrite(){renderMateriais();renderPassos();updatePreview();showScreen('write');}
+renderVerbSuggestions();
+</script>
+</body>
+</html>

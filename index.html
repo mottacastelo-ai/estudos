@@ -307,7 +307,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
     <span class="d-icon">📝</span>
     <span class="d-name">Português</span>
-    <span class="d-count">29</span>
+    <span class="d-count">33</span>
   </button>
   <div class="theme-sub" id="sub-port">
     <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
@@ -316,6 +316,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('port','letral')">🏄 Letra ℓ e U</button>
     <button class="theme-link" onclick="showTheme('port','variacao')">🗺️ Variação Linguística</button>
     <button class="theme-link" onclick="showTheme('port','pontuacao')">? ! . Pontuação</button>
+    <button class="theme-link" onclick="showTheme('port','instrucional')">📋 Texto Instrucional</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
@@ -348,8 +349,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
       <div class="home-stats">
         <div class="hstat"><span>2</span>disciplinas</div>
-        <div class="hstat"><span>7</span>temas</div>
-        <div class="hstat"><span>33</span>atividades</div>
+        <div class="hstat"><span>8</span>temas</div>
+        <div class="hstat"><span>37</span>atividades</div>
       </div>
     </div>
     <div class="home-body">
@@ -360,9 +361,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Português</div>
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#F3F0FF;color:#5B21B6">6 temas</span>
-            <span class="chip" style="background:#ECFDF5;color:#065F46">29 atividades</span>
-            <span class="chip" style="background:#FEF3C7;color:#92400E">6 HQs</span>
+            <span class="chip" style="background:#F3F0FF;color:#5B21B6">7 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">33 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">7 HQs</span>
           </div>
         </button>
         <button class="disc-home-card mat" onclick="showDisc('mat')">
@@ -408,6 +409,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn" onclick="showTheme('port','letral')">🏄 Letra ℓ e U</button>
         <button class="theme-tab-btn" onclick="showTheme('port','variacao')">🗺️ Variação Linguística</button>
         <button class="theme-tab-btn" onclick="showTheme('port','pontuacao')">? ! . Pontuação</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','instrucional')">📋 Texto Instrucional</button>
       </div>
 
       <!-- TEMA: TEXTO TEATRAL -->
@@ -732,6 +734,55 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">? ! . Escolha o Sinal</span><span class="sched-act port">😤 Detector de Emoção</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✍️ Transformador de Emoções</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: TEXTO INSTRUCIONAL -->
+      <div class="theme-content" id="theme-port-instrucional">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">📋</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a HQ com o Verbão Imperativo verde e aprenda a estrutura do texto instrucional!</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-texto-instrucional.png" alt="HQ Texto Instrucional — Textos que Ensinam a Fazer">
+          <div class="hq-caption"><span>📖</span><span>Textos que Ensinam a Fazer — 4 páginas · Personagens: Prepo, Bia, Prof. Teatrão e Verbão Imperativo</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="quiz-texto-instrucional.html" target="_blank">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre a função, estrutura, partes e verbos do texto instrucional.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="organizador-texto-instrucional.html" target="_blank">
+            <div class="act-icon">🗂️</div><div class="act-title">Organizador</div>
+            <div class="act-desc">12 peças do texto do dedoche embaralhadas. Coloque cada uma na zona certa: título, materiais ou passos.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="caca-verbo-instrucional.html" target="_blank">
+            <div class="act-icon">⚡</div><div class="act-title">Caça ao Verbo</div>
+            <div class="act-desc">6 trechos de textos reais (dedoche, receita, manual, shampoo...). Clique em todos os verbos no imperativo.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Identificar</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="criador-texto-instrucional.html" target="_blank">
+            <div class="act-icon">✍️</div><div class="act-title">Criador de Texto</div>
+            <div class="act-desc">Escolha o tema, escreva o título, liste os materiais e crie o passo a passo com verbos sugeridos. Avaliação com checklist.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🗂️ Organizador</span><span class="sched-act port">⚡ Caça ao Verbo</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✍️ Criar seu texto instrucional</span></div></div>
         </div>
       </div>
 

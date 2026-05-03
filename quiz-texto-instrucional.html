@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Texto Instrucional</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F0FFF4;--card:#fff;--primary:#059669;--primary-dark:#047857;
+    --primary-light:#D1FAE5;--accent:#34D399;
+    --green:#10B981;--green-light:#D1FAE5;
+    --red:#EF4444;--red-light:#FEE2E2;
+    --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
+  .container{max-width:640px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:22px;}
+  .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+  h1{font-family:'Fredoka One',cursive;font-size:30px;color:var(--primary-dark);margin-bottom:4px;}
+  .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
+  .ref{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+  .ref-chip{flex:1;min-width:100px;background:var(--primary-light);border:1.5px solid var(--primary);border-radius:12px;padding:8px;text-align:center;font-size:12px;font-weight:800;color:var(--primary-dark);}
+  .ref-chip .ri{font-size:16px;display:block;margin-bottom:2px;}
+  .score-row{display:flex;justify-content:space-between;margin-bottom:14px;}
+  .score-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:800;}
+  .score-pill span{color:var(--primary);font-size:15px;}
+  .prog-wrap{background:#D1FAE5;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),var(--accent));transition:width .5s ease;}
+  .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:16px;}
+  .q-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:24px;margin-bottom:14px;animation:slideIn .35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .q-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:8px;}
+  .q-text{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:8px;}
+  .q-box{background:#F0FFF4;border-left:4px solid var(--primary);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14px;font-weight:700;color:var(--primary-dark);margin-bottom:16px;line-height:1.6;}
+  .opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{background:#FAFAFA;border:2px solid var(--border);border-radius:13px;padding:12px 15px;font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px;color:var(--text);}
+  .opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-light);transform:translateX(4px);}
+  .opt .ol{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+  .opt.correct{border-color:var(--green);background:var(--green-light);}
+  .opt.correct .ol{background:var(--green);color:white;}
+  .opt.wrong{border-color:var(--red);background:var(--red-light);}
+  .opt.wrong .ol{background:var(--red);color:white;}
+  .opt:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-top:12px;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
+  .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:14px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
+  .result{background:var(--card);border:2px solid var(--border);border-radius:24px;padding:32px;text-align:center;display:none;animation:pop .4s ease;}
+  .result.show{display:block;}
+  @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  .r-emoji{font-size:60px;margin-bottom:12px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:16px;}
+  .r-score{font-size:44px;font-weight:900;color:var(--primary);}
+  .r-sub{font-size:14px;color:var(--muted);font-weight:600;margin:8px 0 20px;}
+  .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:13px 32px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;}
+  .btn-restart:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">📋 Texto Instrucional</div>
+    <h1>Quiz — Gênero Instrucional</h1>
+    <p class="subtitle">Estrutura, função e verbos do texto instrucional</p>
+  </div>
+  <div class="ref">
+    <div class="ref-chip"><span class="ri">📌</span>Título</div>
+    <div class="ref-chip"><span class="ri">📋</span>Lista de materiais</div>
+    <div class="ref-chip"><span class="ri">🔢</span>Passo a passo</div>
+    <div class="ref-chip"><span class="ri">⚡</span>Verbos no imperativo</div>
+  </div>
+  <div class="score-row">
+    <div class="score-pill">⭐ Pontos: <span id="score">0</span></div>
+    <div class="score-pill">🎯 Acertos: <span id="hits">0</span></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Questão 1 de 10</div>
+  <div id="quiz-area">
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-box" id="q-box" style="display:none"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-score" id="r-score"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+var questions=[
+  {
+    text:'Qual é a função principal do texto instrucional?',
+    box:'',
+    correct:1,
+    opts:['Contar uma história com começo, meio e fim','Ensinar o leitor a fazer ou usar algo, passo a passo','Convencer o leitor sobre um ponto de vista','Descrever como algo é ou como parece'],
+    exp:'O texto instrucional tem uma função clara: ensinar o leitor a FAZER ou USAR algo. Ele orienta com passos e instruções práticas.'
+  },
+  {
+    text:'Qual das alternativas NÃO é um exemplo de texto instrucional?',
+    box:'',
+    correct:3,
+    opts:['Receita de bolo','Manual de montagem de móvel','Bula de remédio','Conto infantil "A Bela e a Fera"'],
+    exp:'O conto é um texto narrativo — ele conta uma história. Receita, manual e bula são todos textos instrucionais: ensinam a fazer ou usar algo.'
+  },
+  {
+    text:'Em um texto instrucional completo, qual é a ordem correta das partes?',
+    box:'',
+    correct:2,
+    opts:['Passo a passo → Lista de materiais → Título','Lista de materiais → Título → Passo a passo','Título → Lista de materiais → Passo a passo','Título → Passo a passo → Lista de materiais'],
+    exp:'A ordem correta é: TÍTULO (o que vai ser ensinado) → LISTA DE MATERIAIS (o que precisar) → PASSO A PASSO (como fazer). Essa sequência ajuda o leitor a se preparar antes de começar.'
+  },
+  {
+    text:'Por que os passos de um texto instrucional são numerados?',
+    box:'',
+    correct:0,
+    opts:['Porque a ordem importa — cada passo depende do anterior para funcionar','Para deixar o texto mais bonito e organizado visualmente','Porque é uma regra gramatical obrigatória','Para indicar o nível de dificuldade de cada passo'],
+    exp:'Os passos são numerados porque a ORDEM IMPORTA. Em um texto instrucional, você precisa seguir a sequência — pular ou inverter um passo pode comprometer o resultado final.'
+  },
+  {
+    text:'Qual forma verbal é mais usada nos passos do texto instrucional?',
+    box:'Passo 3: "Coloque o molde ao redor do seu dedo para ver se é suficiente."',
+    correct:2,
+    opts:['Passado — para descrever o que já foi feito','Futuro — para antecipar o que vai acontecer','Imperativo — para dar ordens diretas ao leitor','Presente — para descrever o que está acontecendo'],
+    exp:'O imperativo é a forma verbal dos textos instrucionais. Ele fala DIRETAMENTE com o leitor, dando ordens claras: "Coloque", "Faça", "Recorte". O leitor sente que a instrução é para ele.'
+  },
+  {
+    text:'Qual das opções abaixo é um passo instrucional bem escrito?',
+    box:'',
+    correct:1,
+    opts:['O molde foi colocado ao redor do dedo.','Coloque o molde ao redor do dedo para verificar o tamanho.','O molde ao redor do dedo com cuidado.','Seria bom colocar o molde ao redor do dedo.'],
+    exp:'"Coloque" está no imperativo e diz diretamente ao leitor o que fazer. As outras opções usam voz passiva, omitem o verbo ou fazem uma sugestão vaga — não funcionam como instrução.'
+  },
+  {
+    text:'A lista de materiais de um texto instrucional é escrita de que forma?',
+    box:'',
+    correct:0,
+    opts:['Em lista com marcadores (•), indicando cada item necessário','Em parágrafos corridos, descrevendo cada material','Em forma de tabela com duas colunas','Com verbos no imperativo, como os passos'],
+    exp:'A lista de materiais usa marcadores (•) para listar cada item de forma clara e direta. Isso ajuda o leitor a reunir tudo antes de começar a seguir os passos.'
+  },
+  {
+    text:'Leia o trecho abaixo. Que parte do texto instrucional ele representa?',
+    box:'• Folhas coloridas\n• Caneta ou hidrocor\n• Régua\n• Cola\n• Fita adesiva\n• Tesoura',
+    correct:2,
+    opts:['Título do texto','Passo a passo de como fazer','Lista de materiais necessários','Conclusão do texto instrucional'],
+    exp:'É a lista de materiais — escrita com marcadores (•), sem verbos de ação, apenas listando os itens que o leitor vai precisar reunir antes de começar.'
+  },
+  {
+    text:'Qual é a diferença entre um texto instrucional e um texto narrativo?',
+    box:'',
+    correct:3,
+    opts:['O instrucional é mais longo que o narrativo','O narrativo usa verbos e o instrucional não','O instrucional tem personagens e o narrativo não','O narrativo CONTA uma história; o instrucional ENSINA a fazer algo'],
+    exp:'O narrativo conta uma história com personagens, enredo e desfecho. O instrucional tem como único objetivo ensinar o leitor a fazer ou usar algo, com passos práticos e diretos.'
+  },
+  {
+    text:'Por que os verbos de instrução são importantes no passo a passo?',
+    box:'',
+    correct:1,
+    opts:['Para deixar o texto mais formal e sofisticado','Porque dizem exatamente o que o leitor deve fazer em cada etapa','Para indicar o tempo em que a ação acontece','Porque são mais fáceis de ler do que outros verbos'],
+    exp:'Os verbos de instrução (faça, recorte, cole, coloque) são o núcleo de cada passo. Sem eles, o leitor não sabe o que deve fazer. Eles transformam uma frase em uma instrução clara e direta.'
+  },
+];
+var cur=0,score=0,hits=0,answered=false;
+function loadQ(){
+  answered=false;
+  var q=questions[cur];
+  document.getElementById('q-num').textContent='Questão '+(cur+1);
+  document.getElementById('q-text').textContent=q.text;
+  var qb=document.getElementById('q-box');
+  if(q.box){qb.style.display='block';qb.textContent=q.box;}else{qb.style.display='none';}
+  document.getElementById('prog').style.width=((cur/questions.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent='Questão '+(cur+1)+' de '+questions.length;
+  var opts=document.getElementById('opts');
+  opts.innerHTML='';
+  var letters=['A','B','C','D'];
+  q.opts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="ol">'+letters[i]+'</span>'+o;
+    btn.onclick=(function(idx){return function(){selectOpt(idx);};})(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('q-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('q-card').style.animation='slideIn .35s ease';});
+}
+function selectOpt(idx){
+  if(answered)return;
+  answered=true;
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  if(idx===q.correct){
+    btns[idx].classList.add('correct');
+    fb.className='feedback ok show';
+    fb.textContent='✅ '+q.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
+  }else{
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className='feedback nok show';
+    fb.textContent='❌ A correta era '+['A','B','C','D'][q.correct]+'. '+q.exp;
+  }
+  if(cur<questions.length-1){document.getElementById('btn-next').className='btn-next show';}
+  else{setTimeout(showResult,1600);}
+}
+function nextQ(){cur++;loadQ();}
+function showResult(){
+  document.getElementById('quiz-area').style.display='none';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  var pct=Math.round((hits/questions.length)*100);
+  document.getElementById('r-score').textContent=score+' pts';
+  document.getElementById('r-sub').textContent='Você acertou '+hits+' de '+questions.length+' ('+pct+'%)';
+  var e,t;
+  if(hits===questions.length){e='🏆';t='Perfeito!';}
+  else if(hits>=8){e='🌟';t='Excelente!';}
+  else if(hits>=6){e='😊';t='Muito bem!';}
+  else{e='🔄';t='Revise e tente de novo!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
+}
+function restart(){
+  cur=0;score=0;hits=0;answered=false;
+  document.getElementById('score').textContent=0;
+  document.getElementById('hits').textContent=0;
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('result').className='result';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>
