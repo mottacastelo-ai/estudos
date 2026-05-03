@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fábrica de Palavras – Letra ℓ</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FFF7ED; --card:#fff;
+    --primary:#F97316; --primary-dark:#EA6C0A; --primary-light:#FFEDD5;
+    --surf:#3B82F6; --surf-light:#DBEAFE;
+    --cowboy:#F59E0B; --cowboy-light:#FEF3C7;
+    --green:#10B981; --green-light:#D1FAE5;
+    --red:#EF4444; --red-light:#FEE2E2;
+    --text:#1A1A2E; --muted:#6B7280; --border:#E5E7EB;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Baloo 2',cursive; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:660px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary-dark); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  .instr { background:var(--primary-light); border:2px solid var(--primary); border-radius:14px; padding:13px 17px; margin-bottom:18px; font-size:13px; font-weight:700; color:#7C2D12; line-height:1.6; }
+  .instr strong { display:block; font-size:14px; margin-bottom:4px; }
+
+  .prog-wrap { background:var(--border); border-radius:20px; height:7px; margin-bottom:6px; overflow:hidden; }
+  .prog-bar { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--primary),var(--cowboy)); transition:width .5s ease; }
+  .prog-lbl { text-align:right; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:16px; }
+
+  .challenge-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:26px; margin-bottom:14px; animation:slideIn .35s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .ch-num { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:12px; }
+
+  .word-display { font-family:'Fredoka One',cursive; font-size:42px; text-align:center; margin-bottom:8px; letter-spacing:2px; }
+  .word-display .blank { border-bottom:4px solid var(--primary); display:inline-block; min-width:36px; color:var(--primary); }
+
+  .syl-hint { text-align:center; font-size:13px; font-weight:700; color:var(--muted); margin-bottom:20px; }
+  .syl-hint span { background:var(--primary-light); color:var(--primary-dark); padding:2px 8px; border-radius:6px; }
+
+  .options { display:flex; gap:12px; justify-content:center; margin-bottom:16px; }
+  .opt-btn { padding:14px 32px; border:3px solid var(--border); border-radius:16px; background:var(--card); font-family:'Fredoka One',cursive; font-size:28px; cursor:pointer; transition:all .18s; color:var(--text); }
+  .opt-btn:hover:not(:disabled) { transform:scale(1.08); box-shadow:0 4px 16px rgba(0,0,0,.12); }
+  .opt-btn.cowboy-opt:hover:not(:disabled) { border-color:var(--cowboy); background:var(--cowboy-light); color:#92400E; }
+  .opt-btn.surf-opt:hover:not(:disabled) { border-color:var(--surf); background:var(--surf-light); color:#1E40AF; }
+  .opt-btn.correct { border-color:var(--green); background:var(--green-light); color:#065F46; }
+  .opt-btn.wrong { border-color:var(--red); background:var(--red-light); color:#991B1B; }
+  .opt-btn:disabled { cursor:default; }
+
+  .feedback { border-radius:13px; padding:12px 16px; font-size:13px; font-weight:700; margin-top:4px; display:none; line-height:1.5; }
+  .feedback.show { display:block; }
+  .feedback.ok { background:var(--green-light); color:#065F46; border:2px solid var(--green); }
+  .feedback.nok { background:var(--red-light); color:#991B1B; border:2px solid var(--red); }
+
+  .score-row { display:flex; justify-content:space-between; margin-bottom:16px; }
+  .score-pill { display:flex; align-items:center; gap:6px; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:6px 14px; font-size:13px; font-weight:800; }
+  .score-pill span { color:var(--primary); font-size:15px; }
+
+  .result { background:var(--card); border:2px solid var(--border); border-radius:24px; padding:32px; text-align:center; display:none; animation:pop .4s ease; }
+  .result.show { display:block; }
+  @keyframes pop { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:60px; margin-bottom:10px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:28px; color:var(--primary-dark); margin-bottom:16px; }
+  .r-stats { display:flex; gap:10px; justify-content:center; margin-bottom:20px; flex-wrap:wrap; }
+  .rs { background:#F9FAFB; border:2px solid var(--border); border-radius:14px; padding:12px 18px; min-width:100px; text-align:center; }
+  .rs .rb { font-family:'Fredoka One',cursive; font-size:28px; }
+  .rs .rl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+  .btn-restart { background:var(--primary); color:white; border:none; border-radius:13px; padding:13px 32px; font-family:'Baloo 2',cursive; font-size:15px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-restart:hover { background:var(--primary-dark); transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🏭 Fábrica de Palavras</div>
+    <h1>ℓ ou u no final?</h1>
+    <p class="subtitle">Complete cada palavra escolhendo a letra ou o som correto</p>
+  </div>
+
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Veja a palavra incompleta e a divisão silábica. Escolha <strong>ℓ</strong> se o som for de L (início de sílaba antes de vogal) ou <strong>u</strong> se o som for de U (final de sílaba). Lembre-se: na escrita usamos sempre <strong>ℓ</strong>, mas o som pode ser L ou U!
+  </div>
+
+  <div class="score-row">
+    <div class="score-pill">⭐ Acertos: <span id="score">0</span></div>
+    <div class="score-pill">🏄 Sequência: <span id="streak">0</span></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Palavra 1 de 12</div>
+
+  <div id="game-area">
+    <div class="challenge-card" id="ch-card">
+      <div class="ch-num" id="ch-num">Palavra 1</div>
+      <div class="word-display" id="word-display"></div>
+      <div class="syl-hint" id="syl-hint"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-er" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+      <div class="rs"><div class="rb" id="r-ms" style="color:var(--primary)">0</div><div class="rl">Maior seq.</div></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+// correct: 'l' = som de L (escrita com ℓ, início de sílaba), 'u' = som de U (escrita com ℓ, final de sílaba)
+var challenges = [
+  { before:'So', after:'', blank:'l', correct:'u', syl:'So<span>l</span>', explain:'SOL → SOU: o ℓ está no FINAL da sílaba, soa como U.' },
+  { before:'LI', after:'vro', blank:'', correct:'l', syl:'<span>LI</span>-vro', explain:'LI-vro: o ℓ está no INÍCIO da sílaba, antes da vogal I. Soa como L.' },
+  { before:'fáci', after:'', blank:'l', correct:'u', syl:'fá-ci<span>l</span>', explain:'FÁ-CIL → fáciu: o ℓ está no FINAL da sílaba, soa como U.' },
+  { before:'ca', after:'or', blank:'l', correct:'l', syl:'ca-<span>l</span>or', explain:'ca-LOR: o ℓ está no INÍCIO da sílaba, antes da vogal O. Soa como L.' },
+  { before:'tea-tra', after:'', blank:'l', correct:'u', syl:'tea-tra<span>l</span>', explain:'TEA-TRAL → teatrau: o ℓ está no FINAL da sílaba, soa como U.' },
+  { before:'i-', after:'u-mi-na-ção', blank:'l', correct:'l', syl:'i-<span>l</span>u-mi-na-ção', explain:'i-LU-mi-na-ção: o ℓ está no INÍCIO da sílaba, antes da vogal U. Soa como L.' },
+  { before:'FI', after:'tro', blank:'l', correct:'u', syl:'<span>FI</span>-tro', explain:'FIL-tro → fiu-tro: o ℓ está no FINAL da sílaba FIL, soa como U.' },
+  { before:'pa-pe', after:'', blank:'l', correct:'u', syl:'pa-pe<span>l</span>', explain:'pa-PEL → papeu: o ℓ está no FINAL da sílaba, soa como U.' },
+  { before:'PAL', after:'co', blank:'', correct:'l', syl:'<span>PAL</span>-co', explain:'PAL-co: o ℓ está no FINAL da sílaba PAL antes de consoante. O som entre vogal e consoante ainda é U.' },
+  { before:'e-', after:'e-fan-te', blank:'l', correct:'l', syl:'e-<span>l</span>e-fan-te', explain:'e-LE-fan-te: o ℓ está no INÍCIO da sílaba, antes da vogal E. Soa como L.' },
+  { before:'imóve', after:'', blank:'l', correct:'u', syl:'i-mó-ve<span>l</span>', explain:'i-MÓ-VEL → imóveu: o ℓ está no FINAL da sílaba, soa como U.' },
+  { before:'so', after:'to', blank:'l', correct:'u', syl:'<span>so</span>l-to', explain:'SOL-to → sou-to: o ℓ está no FINAL da sílaba SOL, soa como U.' },
+];
+
+var cur=0, score=0, erros=0, streak=0, maxStreak=0, answered=false;
+
+function loadChallenge() {
+  answered = false;
+  var ch = challenges[cur];
+  document.getElementById('ch-num').textContent = 'Palavra ' + (cur+1);
+  document.getElementById('prog').style.width = ((cur/challenges.length)*100)+'%';
+  document.getElementById('prog-lbl').textContent = 'Palavra '+(cur+1)+' de '+challenges.length;
+
+  // Word display
+  var wd = document.getElementById('word-display');
+  wd.innerHTML = ch.before + '<span class="blank">_</span>' + ch.after;
+
+  // Syllable hint
+  document.getElementById('syl-hint').innerHTML = 'Divisão: ' + ch.syl;
+
+  // Options
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  ['l','u'].forEach(function(opt) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn ' + (opt==='l' ? 'cowboy-opt' : 'surf-opt');
+    btn.innerHTML = opt === 'l' ? '🤠 &nbsp;ℓ&nbsp; (som de L)' : '🏄 &nbsp;u&nbsp; (som de U)';
+    btn.onclick = (function(o){ return function(){ selectOpt(o); }; })(opt);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('ch-card').style.animation = 'none';
+  requestAnimationFrame(function(){ document.getElementById('ch-card').style.animation = 'slideIn .35s ease'; });
+}
+
+function selectOpt(opt) {
+  if (answered) return;
+  answered = true;
+  var ch = challenges[cur];
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){ b.disabled = true; });
+  var fb = document.getElementById('feedback');
+
+  if (opt === ch.correct) {
+    btns[opt==='l'?0:1].classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.textContent = '✅ ' + ch.explain;
+    score++; streak++;
+    if (streak > maxStreak) maxStreak = streak;
+    document.getElementById('score').textContent = score;
+    document.getElementById('streak').textContent = streak;
+  } else {
+    btns[opt==='l'?0:1].classList.add('wrong');
+    btns[opt==='l'?1:0].classList.add('correct');
+    fb.className = 'feedback nok show';
+    fb.textContent = '❌ ' + ch.explain;
+    erros++; streak = 0;
+    document.getElementById('streak').textContent = 0;
+  }
+
+  // Fill the blank
+  var wd = document.getElementById('word-display');
+  wd.innerHTML = ch.before + '<span class="blank" style="color:'+(opt===ch.correct?'var(--green)':'var(--red)')+'">'+ch.blank+'</span>' + ch.after;
+
+  cur++;
+  if (cur < challenges.length) {
+    setTimeout(loadChallenge, 1400);
+  } else {
+    setTimeout(showResult, 1400);
+  }
+}
+
+function showResult() {
+  document.getElementById('game-area').style.display = 'none';
+  var rs = document.getElementById('result');
+  rs.className = 'result show';
+  document.getElementById('r-ac').textContent = score;
+  document.getElementById('r-er').textContent = erros;
+  document.getElementById('r-ms').textContent = maxStreak;
+  var pct = score/challenges.length;
+  var e,t;
+  if (pct===1)       { e='🏆'; t='Fábrica perfeita!'; }
+  else if (pct>=.75) { e='🌟'; t='Muito bem!'; }
+  else if (pct>=.5)  { e='😊'; t='Bom trabalho!'; }
+  else               { e='🔄'; t='Continue praticando!'; }
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+}
+
+function restart() {
+  cur=0; score=0; erros=0; streak=0; maxStreak=0; answered=false;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('streak').textContent = 0;
+  document.getElementById('game-area').style.display = 'block';
+  document.getElementById('result').className = 'result';
+  loadChallenge();
+}
+
+loadChallenge();
+</script>
+</body>
+</html>

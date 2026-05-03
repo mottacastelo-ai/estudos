@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo da Memória – Letra ℓ</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F5F3FF; --card:#fff;
+    --primary:#7C3AED; --primary-dark:#5B21B6; --primary-light:#EDE9FE;
+    --surf:#3B82F6; --surf-light:#DBEAFE;
+    --cowboy:#F59E0B; --cowboy-light:#FEF3C7;
+    --green:#10B981; --green-light:#D1FAE5;
+    --red:#EF4444; --red-light:#FEE2E2;
+    --text:#1A1A2E; --muted:#6B7280; --border:#DDD6FE;
+    --card-back:#7C3AED;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Baloo 2',cursive; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:680px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary-dark); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  .instr { background:var(--primary-light); border:2px solid var(--primary); border-radius:14px; padding:13px 17px; margin-bottom:18px; font-size:13px; font-weight:700; color:#4C1D95; line-height:1.6; }
+  .instr strong { display:block; font-size:14px; margin-bottom:4px; }
+
+  .hud { display:flex; gap:10px; margin-bottom:16px; }
+  .hud-pill { flex:1; background:var(--card); border:2px solid var(--border); border-radius:13px; padding:9px; text-align:center; }
+  .hud-pill .big { font-family:'Fredoka One',cursive; font-size:20px; }
+  .hud-pill .lbl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px; }
+  @media(max-width:480px){ .grid { grid-template-columns:repeat(3,1fr); } }
+
+  .mem-card {
+    aspect-ratio:1; border-radius:14px; cursor:pointer;
+    position:relative; perspective:600px;
+    transition:transform .15s;
+  }
+  .mem-card:hover:not(.flipped):not(.matched) { transform:scale(1.04); }
+  .mem-inner {
+    width:100%; height:100%; position:relative;
+    transform-style:preserve-3d; transition:transform .4s ease;
+    border-radius:14px;
+  }
+  .mem-card.flipped .mem-inner,
+  .mem-card.matched .mem-inner { transform:rotateY(180deg); }
+
+  .mem-front, .mem-back {
+    position:absolute; width:100%; height:100%;
+    border-radius:14px; backface-visibility:hidden;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; padding:8px; text-align:center;
+  }
+  .mem-front {
+    background:var(--card-back); color:white;
+    font-family:'Fredoka One',cursive; font-size:28px;
+    border:3px solid rgba(255,255,255,.2);
+  }
+  .mem-back {
+    transform:rotateY(180deg);
+    border:3px solid var(--border);
+  }
+  .mem-back.word-card { background:var(--card); font-size:17px; color:var(--text); border-color:var(--primary); }
+  .mem-back.sound-card { font-size:15px; font-weight:900; }
+  .mem-back.sound-cowboy { background:var(--cowboy-light); color:#92400E; border-color:var(--cowboy); }
+  .mem-back.sound-surf { background:var(--surf-light); color:#1E40AF; border-color:var(--surf); }
+
+  .mem-card.matched .mem-back { border-color:var(--green); box-shadow:0 0 0 3px var(--green); }
+  .mem-card.wrong-flash .mem-inner { animation:wrongFlash .4s ease; }
+  @keyframes wrongFlash { 0%,100%{transform:rotateY(180deg)} 50%{transform:rotateY(180deg) scale(.95);filter:brightness(.8)} }
+
+  .btn-restart { width:100%; padding:13px; background:var(--primary); border:none; border-radius:13px; font-family:'Baloo 2',cursive; font-size:15px; font-weight:800; color:white; cursor:pointer; transition:all .18s; }
+  .btn-restart:hover { background:var(--primary-dark); transform:translateY(-2px); }
+
+  .result { background:var(--card); border:2px solid var(--border); border-radius:24px; padding:32px; text-align:center; display:none; animation:pop .4s ease; margin-top:16px; }
+  .result.show { display:block; }
+  @keyframes pop { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:60px; margin-bottom:10px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:26px; color:var(--primary-dark); margin-bottom:16px; }
+  .r-stats { display:flex; gap:10px; justify-content:center; margin-bottom:20px; flex-wrap:wrap; }
+  .rs { background:#F9FAFB; border:2px solid var(--border); border-radius:14px; padding:12px 18px; min-width:90px; text-align:center; }
+  .rs .rb { font-family:'Fredoka One',cursive; font-size:26px; }
+  .rs .rl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🃏 Jogo da Memória</div>
+    <h1>Par de Sons</h1>
+    <p class="subtitle">Encontre o par: palavra + sua pronúncia com o ℓ</p>
+  </div>
+
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Vire duas cartas por vez. Pare a palavra com a forma como ela é pronunciada — com som de <strong>🤠 L</strong> ou <strong>🏄 U</strong>. Encontre todos os 8 pares!
+  </div>
+
+  <div class="hud">
+    <div class="hud-pill"><div class="big" id="h-pairs" style="color:var(--green)">0/8</div><div class="lbl">Pares</div></div>
+    <div class="hud-pill"><div class="big" id="h-moves" style="color:var(--primary)">0</div><div class="lbl">Tentativas</div></div>
+    <div class="hud-pill"><div class="big" id="h-erros" style="color:var(--red)">0</div><div class="lbl">Erros</div></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <button class="btn-restart" onclick="startGame()">🔀 Embaralhar e começar</button>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-pairs" style="color:var(--green)">8</div><div class="rl">Pares</div></div>
+      <div class="rs"><div class="rb" id="r-moves" style="color:var(--primary)">0</div><div class="rl">Tentativas</div></div>
+      <div class="rs"><div class="rb" id="r-erros" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+    </div>
+    <button class="btn-restart" onclick="startGame()">🔄 Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+var pairs = [
+  { id:'p1', word:'Sol',      sound:'Sou', type:'surf' },
+  { id:'p2', word:'livro',    sound:'LI-vro', type:'cowboy' },
+  { id:'p3', word:'fácil',    sound:'fáciu', type:'surf' },
+  { id:'p4', word:'calor',    sound:'ca-LOR', type:'cowboy' },
+  { id:'p5', word:'teatral',  sound:'teatrau', type:'surf' },
+  { id:'p6', word:'mochila',  sound:'mo-chi-LA', type:'cowboy' },
+  { id:'p7', word:'papel',    sound:'papeu', type:'surf' },
+  { id:'p8', word:'filtro',   sound:'FIU-tro', type:'surf' },
+];
+
+var flipped = [];
+var matched = 0;
+var moves = 0;
+var erros = 0;
+var locked = false;
+var cards = [];
+
+function shuffle(arr) { return [...arr].sort(()=>Math.random()-.5); }
+
+function startGame() {
+  flipped=[]; matched=0; moves=0; erros=0; locked=false;
+  document.getElementById('result').className='result';
+  document.getElementById('h-pairs').textContent='0/8';
+  document.getElementById('h-moves').textContent='0';
+  document.getElementById('h-erros').textContent='0';
+
+  // Build card data
+  cards = [];
+  pairs.forEach(function(p) {
+    cards.push({ id:p.id+'-w', pairId:p.id, type:'word', content:p.word, soundType:p.type });
+    cards.push({ id:p.id+'-s', pairId:p.id, type:'sound', content:p.sound, soundType:p.type });
+  });
+  cards = shuffle(cards);
+
+  var grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  cards.forEach(function(c) {
+    var card = document.createElement('div');
+    card.className = 'mem-card';
+    card.id = 'card-' + c.id;
+    card.innerHTML = '<div class="mem-inner">' +
+      '<div class="mem-front">ℓ</div>' +
+      '<div class="mem-back ' + (c.type==='word' ? 'word-card' : 'sound-'+c.soundType) + '">' +
+      (c.type==='sound' ? (c.soundType==='cowboy'?'🤠 ':'🏄 ') : '') +
+      c.content + '</div>' +
+      '</div>';
+    card.onclick = (function(data){ return function(){ flipCard(data, card); }; })(c);
+    grid.appendChild(card);
+  });
+}
+
+function flipCard(data, cardEl) {
+  if (locked) return;
+  if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+  cardEl.classList.add('flipped');
+  flipped.push({ data:data, el:cardEl });
+
+  if (flipped.length === 2) {
+    locked = true;
+    moves++;
+    document.getElementById('h-moves').textContent = moves;
+    setTimeout(checkMatch, 800);
+  }
+}
+
+function checkMatch() {
+  var a = flipped[0], b = flipped[1];
+  if (a.data.pairId === b.data.pairId && a.data.type !== b.data.type) {
+    a.el.classList.add('matched');
+    b.el.classList.add('matched');
+    matched++;
+    document.getElementById('h-pairs').textContent = matched+'/8';
+    if (matched === 8) setTimeout(showResult, 600);
+  } else {
+    a.el.classList.add('wrong-flash');
+    b.el.classList.add('wrong-flash');
+    erros++;
+    document.getElementById('h-erros').textContent = erros;
+    setTimeout(function(){
+      a.el.classList.remove('flipped','wrong-flash');
+      b.el.classList.remove('flipped','wrong-flash');
+    }, 400);
+  }
+  flipped = [];
+  locked = false;
+}
+
+function showResult() {
+  var rs = document.getElementById('result');
+  rs.className = 'result show';
+  document.getElementById('r-pairs').textContent = '8/8';
+  document.getElementById('r-moves').textContent = moves;
+  document.getElementById('r-erros').textContent = erros;
+  var e,t;
+  if (erros===0)       { e='🏆'; t='Memória perfeita!'; }
+  else if (erros<=4)   { e='🌟'; t='Excelente!'; }
+  else if (erros<=8)   { e='😊'; t='Muito bem!'; }
+  else                 { e='🔄'; t='Continue praticando!'; }
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+}
+
+startGame();
+</script>
+</body>
+</html>

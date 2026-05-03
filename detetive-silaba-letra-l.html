@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detetive da Sílaba – Letra ℓ</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F0FDF4; --card:#fff;
+    --primary:#10B981; --primary-dark:#059669; --primary-light:#D1FAE5;
+    --surf:#3B82F6; --surf-light:#DBEAFE;
+    --cowboy:#F59E0B; --cowboy-light:#FEF3C7;
+    --green:#10B981; --green-light:#D1FAE5;
+    --red:#EF4444; --red-light:#FEE2E2;
+    --text:#1A1A2E; --muted:#6B7280; --border:#A7F3D0;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Baloo 2',cursive; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:640px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--primary); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--primary-dark); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  .instr { background:var(--primary-light); border:2px solid var(--primary); border-radius:14px; padding:13px 17px; margin-bottom:18px; font-size:13px; font-weight:700; color:#065F46; line-height:1.6; }
+  .instr strong { display:block; font-size:14px; margin-bottom:4px; }
+
+  .score-row { display:flex; justify-content:space-between; margin-bottom:14px; }
+  .score-pill { display:flex; align-items:center; gap:6px; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:6px 14px; font-size:13px; font-weight:800; }
+  .score-pill span { color:var(--primary); font-size:15px; }
+
+  .prog-wrap { background:#D1FAE5; border-radius:20px; height:7px; margin-bottom:6px; overflow:hidden; }
+  .prog-bar { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--primary),var(--surf)); transition:width .5s ease; }
+  .prog-lbl { text-align:right; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:16px; }
+
+  .q-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:26px; margin-bottom:14px; animation:slideIn .35s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .q-num { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:12px; }
+
+  /* Syllable display */
+  .syl-display { display:flex; justify-content:center; align-items:center; gap:4px; margin-bottom:18px; flex-wrap:wrap; }
+  .syl-part { font-family:'Fredoka One',cursive; font-size:30px; padding:8px 12px; border-radius:12px; border:2px solid transparent; }
+  .syl-divider { font-size:20px; color:var(--muted); font-weight:900; }
+  .syl-part.highlight-l { background:var(--cowboy-light); border-color:var(--cowboy); color:#92400E; }
+  .syl-part.highlight-end { background:var(--surf-light); border-color:var(--surf); color:#1E40AF; }
+
+  .q-ask { font-size:15px; font-weight:700; text-align:center; color:var(--muted); margin-bottom:16px; }
+
+  .opts { display:flex; gap:12px; justify-content:center; }
+  .opt-btn { flex:1; max-width:220px; padding:14px 12px; border:3px solid var(--border); border-radius:16px; background:var(--card); font-family:'Baloo 2',cursive; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; text-align:center; color:var(--text); }
+  .opt-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.1); }
+  .opt-btn.cowboy-opt:hover:not(:disabled) { border-color:var(--cowboy); background:var(--cowboy-light); color:#92400E; }
+  .opt-btn.surf-opt:hover:not(:disabled) { border-color:var(--surf); background:var(--surf-light); color:#1E40AF; }
+  .opt-btn.correct { border-color:var(--green); background:var(--green-light); color:#065F46; }
+  .opt-btn.wrong { border-color:var(--red); background:var(--red-light); color:#991B1B; }
+  .opt-btn:disabled { cursor:default; }
+  .opt-icon { font-size:22px; display:block; margin-bottom:4px; }
+  .opt-title { font-size:14px; font-weight:900; display:block; margin-bottom:2px; }
+  .opt-sub { font-size:11px; font-weight:700; color:var(--muted); display:block; }
+
+  .feedback { border-radius:13px; padding:12px 16px; font-size:13px; font-weight:700; margin-top:12px; display:none; line-height:1.5; }
+  .feedback.show { display:block; }
+  .feedback.ok { background:var(--green-light); color:#065F46; border:2px solid var(--green); }
+  .feedback.nok { background:var(--red-light); color:#991B1B; border:2px solid var(--red); }
+
+  .btn-next { width:100%; background:var(--primary); color:white; border:none; border-radius:13px; padding:13px; font-family:'Baloo 2',cursive; font-size:15px; font-weight:800; cursor:pointer; margin-top:12px; display:none; transition:all .18s; }
+  .btn-next:hover { background:var(--primary-dark); transform:translateY(-2px); }
+  .btn-next.show { display:block; }
+
+  .result { background:var(--card); border:2px solid var(--border); border-radius:24px; padding:32px; text-align:center; display:none; animation:pop .4s ease; }
+  .result.show { display:block; }
+  @keyframes pop { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:60px; margin-bottom:10px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:26px; color:var(--primary-dark); margin-bottom:16px; }
+  .r-stats { display:flex; gap:10px; justify-content:center; margin-bottom:20px; flex-wrap:wrap; }
+  .rs { background:#F9FAFB; border:2px solid var(--border); border-radius:14px; padding:12px 18px; min-width:90px; text-align:center; }
+  .rs .rb { font-family:'Fredoka One',cursive; font-size:26px; }
+  .rs .rl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+  .btn-restart { background:var(--primary); color:white; border:none; border-radius:13px; padding:13px 32px; font-family:'Baloo 2',cursive; font-size:15px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-restart:hover { background:var(--primary-dark); transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🔎 Detetive da Sílaba</div>
+    <h1>Onde está o ℓ?</h1>
+    <p class="subtitle">Veja a divisão silábica e diga qual é o som do ℓ destacado</p>
+  </div>
+
+  <div class="instr">
+    <strong>Como jogar:</strong>
+    Cada desafio mostra a palavra dividida em sílabas com o <strong>ℓ destacado</strong>. Você precisa dizer se aquele ℓ tem som de <strong>🤠 L</strong> (início de sílaba, antes de vogal) ou som de <strong>🏄 U</strong> (final de sílaba).
+  </div>
+
+  <div class="score-row">
+    <div class="score-pill">⭐ Pontos: <span id="score">0</span></div>
+    <div class="score-pill">🎯 Acertos: <span id="hits">0</span></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="prog-lbl" id="prog-lbl">Desafio 1 de 10</div>
+
+  <div id="game-area">
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num">Desafio 1</div>
+      <div class="syl-display" id="syl-display"></div>
+      <div class="q-ask">Qual é o som do ℓ destacado?</div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próximo →</button>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-er" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+// syllables: array of {text, highlight: 'l'|'end'|null}
+var questions = [
+  {
+    syllables: [{text:'Sol', hl:'end'}],
+    correct: 'surf',
+    explain: 'SOL: o ℓ está no FINAL da sílaba → soa como U. Sol → Sou!'
+  },
+  {
+    syllables: [{text:'LI', hl:'l'},{div:true},{text:'vro', hl:null}],
+    correct: 'cowboy',
+    explain: 'LI-vro: o ℓ está no INÍCIO da sílaba, antes do I → soa como L.'
+  },
+  {
+    syllables: [{text:'fá', hl:null},{div:true},{text:'cil', hl:'end'}],
+    correct: 'surf',
+    explain: 'FÁ-CIL: o ℓ está no FINAL da sílaba → soa como U. Fácil → fáciu!'
+  },
+  {
+    syllables: [{text:'ca', hl:null},{div:true},{text:'LOR', hl:'l'}],
+    correct: 'cowboy',
+    explain: 'ca-LOR: o ℓ está no INÍCIO da sílaba, antes do O → soa como L.'
+  },
+  {
+    syllables: [{text:'tea', hl:null},{div:true},{text:'tral', hl:'end'}],
+    correct: 'surf',
+    explain: 'tea-TRAL: o ℓ está no FINAL da sílaba → soa como U. Teatral → teatrau!'
+  },
+  {
+    syllables: [{text:'i', hl:null},{div:true},{text:'LU', hl:'l'},{div:true},{text:'mi', hl:null},{div:true},{text:'na', hl:null},{div:true},{text:'ção', hl:null}],
+    correct: 'cowboy',
+    explain: 'i-LU-mi-na-ção: o ℓ está no INÍCIO da sílaba, antes do U → soa como L.'
+  },
+  {
+    syllables: [{text:'FIL', hl:'end'},{div:true},{text:'tro', hl:null}],
+    correct: 'surf',
+    explain: 'FIL-tro: o ℓ está no FINAL da sílaba FIL → soa como U. FIL-tro → FIU-tro!'
+  },
+  {
+    syllables: [{text:'pa', hl:null},{div:true},{text:'pel', hl:'end'}],
+    correct: 'surf',
+    explain: 'pa-PEL: o ℓ está no FINAL da sílaba → soa como U. Papel → papeu!'
+  },
+  {
+    syllables: [{text:'e', hl:null},{div:true},{text:'LE', hl:'l'},{div:true},{text:'fan', hl:null},{div:true},{text:'te', hl:null}],
+    correct: 'cowboy',
+    explain: 'e-LE-fan-te: o ℓ está no INÍCIO da sílaba, antes do E → soa como L.'
+  },
+  {
+    syllables: [{text:'SOL', hl:'end'},{div:true},{text:'to', hl:null}],
+    correct: 'surf',
+    explain: 'SOL-to: o ℓ está no FINAL da sílaba SOL → soa como U. SOL-to → SOU-to!'
+  }
+];
+
+var cur=0, score=0, hits=0, erros=0, answered=false;
+
+function renderSyl(syls) {
+  var disp = document.getElementById('syl-display');
+  disp.innerHTML = '';
+  syls.forEach(function(s) {
+    if (s.div) {
+      var div = document.createElement('span');
+      div.className = 'syl-divider';
+      div.textContent = '-';
+      disp.appendChild(div);
+    } else {
+      var part = document.createElement('span');
+      part.className = 'syl-part' + (s.hl==='l' ? ' highlight-l' : s.hl==='end' ? ' highlight-end' : '');
+      part.textContent = s.text;
+      disp.appendChild(part);
+    }
+  });
+}
+
+function loadQ() {
+  answered = false;
+  var q = questions[cur];
+  document.getElementById('q-num').textContent = 'Desafio ' + (cur+1);
+  document.getElementById('prog').style.width = ((cur/questions.length)*100) + '%';
+  document.getElementById('prog-lbl').textContent = 'Desafio '+(cur+1)+' de '+questions.length;
+  renderSyl(q.syllables);
+
+  var opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  ['cowboy','surf'].forEach(function(type) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn ' + type + '-opt';
+    if (type === 'cowboy') {
+      btn.innerHTML = '<span class="opt-icon">🤠</span><span class="opt-title">Som de L</span><span class="opt-sub">ℓ antes de vogal</span>';
+    } else {
+      btn.innerHTML = '<span class="opt-icon">🏄</span><span class="opt-title">Som de U</span><span class="opt-sub">ℓ no final da sílaba</span>';
+    }
+    btn.onclick = (function(t){ return function(){ selectOpt(t); }; })(type);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('btn-next').className = 'btn-next';
+  document.getElementById('q-card').style.animation = 'none';
+  requestAnimationFrame(function(){ document.getElementById('q-card').style.animation = 'slideIn .35s ease'; });
+}
+
+function selectOpt(type) {
+  if (answered) return;
+  answered = true;
+  var q = questions[cur];
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){ b.disabled = true; });
+  var fb = document.getElementById('feedback');
+  var correctIdx = q.correct === 'cowboy' ? 0 : 1;
+  var chosenIdx = type === 'cowboy' ? 0 : 1;
+
+  if (type === q.correct) {
+    btns[chosenIdx].classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.textContent = '✅ ' + q.explain;
+    score += 10; hits++;
+    document.getElementById('score').textContent = score;
+    document.getElementById('hits').textContent = hits;
+  } else {
+    btns[chosenIdx].classList.add('wrong');
+    btns[correctIdx].classList.add('correct');
+    fb.className = 'feedback nok show';
+    fb.textContent = '❌ ' + q.explain;
+    erros++;
+  }
+
+  if (cur < questions.length - 1) {
+    document.getElementById('btn-next').className = 'btn-next show';
+  } else {
+    setTimeout(showResult, 1600);
+  }
+}
+
+function nextQ() { cur++; loadQ(); }
+
+function showResult() {
+  document.getElementById('game-area').style.display = 'none';
+  var rs = document.getElementById('result');
+  rs.className = 'result show';
+  document.getElementById('r-ac').textContent = hits;
+  document.getElementById('r-er').textContent = erros;
+  var pct = hits/questions.length;
+  var e,t;
+  if (pct===1)       { e='🏆'; t='Detetive perfeito!'; }
+  else if (pct>=.8)  { e='🌟'; t='Excelente!'; }
+  else if (pct>=.6)  { e='😊'; t='Muito bem!'; }
+  else               { e='🔄'; t='Continue praticando!'; }
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+}
+
+function restart() {
+  cur=0; score=0; hits=0; erros=0; answered=false;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('hits').textContent = 0;
+  document.getElementById('game-area').style.display = 'block';
+  document.getElementById('result').className = 'result';
+  loadQ();
+}
+
+loadQ();
+</script>
+</body>
+</html>

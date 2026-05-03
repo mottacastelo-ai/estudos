@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sortidor de Sons – Letra ℓ</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F0F9FF; --card:#fff;
+    --cowboy:#F59E0B; --cowboy-light:#FEF3C7;
+    --surf:#3B82F6; --surf-light:#DBEAFE;
+    --green:#10B981; --green-light:#D1FAE5;
+    --red:#EF4444; --red-light:#FEE2E2;
+    --text:#1A1A2E; --muted:#6B7280; --border:#E5E7EB;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Baloo 2',cursive; background:var(--bg); min-height:100vh; padding:20px 16px; color:var(--text); }
+  .container { max-width:700px; margin:0 auto; }
+
+  .header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; background:var(--surf); color:white; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+  h1 { font-family:'Fredoka One',cursive; font-size:30px; color:var(--surf); margin-bottom:4px; }
+  .subtitle { font-size:13px; color:var(--muted); font-weight:600; }
+
+  .ref-row { display:flex; gap:12px; margin-bottom:20px; }
+  .ref-card { flex:1; border-radius:16px; padding:14px; text-align:center; border:2px solid; }
+  .ref-card.cowboy { background:var(--cowboy-light); border-color:var(--cowboy); }
+  .ref-card.surf { background:var(--surf-light); border-color:var(--surf); }
+  .ref-icon { font-size:28px; margin-bottom:4px; }
+  .ref-title { font-family:'Fredoka One',cursive; font-size:16px; margin-bottom:3px; }
+  .ref-card.cowboy .ref-title { color:#92400E; }
+  .ref-card.surf .ref-title { color:#1E40AF; }
+  .ref-desc { font-size:12px; font-weight:700; color:var(--muted); }
+
+  /* Word bank */
+  .word-bank { background:var(--card); border:2px dashed var(--border); border-radius:16px; padding:16px; margin-bottom:18px; }
+  .wb-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:12px; }
+  .word-pool { display:flex; flex-wrap:wrap; gap:8px; min-height:44px; }
+  .word-tag {
+    background:var(--card); border:2px solid var(--border); border-radius:20px;
+    padding:7px 16px; font-size:15px; font-weight:800; cursor:pointer;
+    transition:all .18s; user-select:none; color:var(--text);
+  }
+  .word-tag:hover { border-color:var(--surf); color:var(--surf); transform:translateY(-2px); }
+  .word-tag.selected { border-color:var(--surf); background:var(--surf-light); color:var(--surf); transform:scale(1.08); }
+
+  .sel-indicator { background:var(--surf); color:white; border-radius:12px; padding:8px 14px; font-size:13px; font-weight:800; margin-bottom:14px; display:none; text-align:center; }
+  .sel-indicator.show { display:block; }
+
+  /* Columns */
+  .columns { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+  .col-area { border-radius:16px; padding:14px; border:2px solid; min-height:200px; }
+  .col-area.cowboy { background:var(--cowboy-light); border-color:var(--cowboy); }
+  .col-area.surf { background:var(--surf-light); border-color:var(--surf); }
+  .col-header { text-align:center; margin-bottom:12px; }
+  .col-icon { font-size:24px; display:block; }
+  .col-title { font-family:'Fredoka One',cursive; font-size:15px; display:block; }
+  .col-area.cowboy .col-title { color:#92400E; }
+  .col-area.surf .col-title { color:#1E40AF; }
+  .col-rule { font-size:11px; font-weight:700; color:var(--muted); display:block; }
+  .col-words { display:flex; flex-wrap:wrap; gap:7px; min-height:80px; }
+  .col-word {
+    padding:6px 13px; border-radius:20px; font-size:14px; font-weight:800;
+    cursor:pointer; transition:all .15s; user-select:none;
+  }
+  .col-area.cowboy .col-word { background:rgba(245,158,11,.2); border:1.5px solid var(--cowboy); color:#92400E; }
+  .col-area.surf .col-word { background:rgba(59,130,246,.15); border:1.5px solid var(--surf); color:#1E40AF; }
+  .col-word:hover { opacity:.7; }
+  .col-word.result-ok::after { content:' ✓'; }
+  .col-word.result-nok { text-decoration:line-through; opacity:.6; }
+  .col-placeholder { font-size:12px; color:var(--muted); font-weight:600; text-align:center; padding:20px 8px; }
+
+  /* Counter */
+  .counter-row { display:flex; gap:10px; margin-bottom:14px; }
+  .counter-pill { flex:1; background:var(--card); border:2px solid var(--border); border-radius:12px; padding:8px; text-align:center; }
+  .counter-pill .big { font-family:'Fredoka One',cursive; font-size:20px; }
+  .counter-pill .lbl { font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+
+  .btn-row { display:flex; gap:10px; }
+  .btn { flex:1; padding:13px; border:none; border-radius:13px; font-family:'Baloo 2',cursive; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .btn-check { background:var(--surf); color:white; }
+  .btn-check:hover { background:#2563EB; transform:translateY(-2px); }
+  .btn-reset { background:var(--border); color:var(--muted); }
+  .btn-reset:hover { background:#D1D5DB; }
+
+  .result { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:26px; text-align:center; margin-top:16px; display:none; animation:pop .3s ease; }
+  .result.show { display:block; }
+  @keyframes pop { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .r-emoji { font-size:52px; margin-bottom:10px; }
+  .r-title { font-family:'Fredoka One',cursive; font-size:24px; color:var(--surf); margin-bottom:6px; }
+  .r-sub { font-size:13px; color:var(--muted); font-weight:700; }
+  .btn-again { background:var(--surf); color:white; border:none; border-radius:13px; padding:12px 28px; font-family:'Baloo 2',cursive; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; margin-top:14px; }
+  .btn-again:hover { background:#2563EB; transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🤠🏄 Sortidor de Sons</div>
+    <h1>Elinho Cowboy ou Surfista?</h1>
+    <p class="subtitle">Clique na palavra e depois na coluna certa</p>
+  </div>
+
+  <div class="ref-row">
+    <div class="ref-card cowboy">
+      <div class="ref-icon">🤠</div>
+      <div class="ref-title">Elinho Cowboy</div>
+      <div class="ref-desc">ℓ antes de vogal<br>= som de L<br>ex: LI-vro, ca-LOR</div>
+    </div>
+    <div class="ref-card surf">
+      <div class="ref-icon">🏄</div>
+      <div class="ref-title">Elinho Surfista</div>
+      <div class="ref-desc">ℓ no final da sílaba<br>= som de U<br>ex: Sol → Sou</div>
+    </div>
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-pill"><div class="big" id="cnt-cowboy" style="color:var(--cowboy)">0</div><div class="lbl">🤠 Cowboy</div></div>
+    <div class="counter-pill"><div class="big" id="cnt-surf" style="color:var(--surf)">0</div><div class="lbl">🏄 Surfista</div></div>
+    <div class="counter-pill"><div class="big" id="cnt-pool" style="color:var(--muted)">16</div><div class="lbl">No banco</div></div>
+  </div>
+
+  <div class="word-bank">
+    <div class="wb-title">🎯 Banco de palavras — clique para selecionar</div>
+    <div class="word-pool" id="word-pool"></div>
+  </div>
+
+  <div class="sel-indicator" id="sel-ind"></div>
+
+  <div class="columns">
+    <div class="col-area cowboy" onclick="placeWord('cowboy')">
+      <div class="col-header">
+        <span class="col-icon">🤠</span>
+        <span class="col-title">Som de L</span>
+        <span class="col-rule">ℓ antes de vogal</span>
+      </div>
+      <div class="col-words" id="zone-cowboy">
+        <div class="col-placeholder" id="ph-cowboy">← Clique aqui para colocar</div>
+      </div>
+    </div>
+    <div class="col-area surf" onclick="placeWord('surf')">
+      <div class="col-header">
+        <span class="col-icon">🏄</span>
+        <span class="col-title">Som de U</span>
+        <span class="col-rule">ℓ no final da sílaba</span>
+      </div>
+      <div class="col-words" id="zone-surf">
+        <div class="col-placeholder" id="ph-surf">← Clique aqui para colocar</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✅ Verificar</button>
+    <button class="btn btn-reset" onclick="resetAll()">🔄 Recomeçar</button>
+  </div>
+
+  <div class="result" id="result">
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-sub" id="r-sub"></div>
+    <button class="btn-again" onclick="resetAll()">🔄 Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+var words = [
+  { text:'livro',       correct:'cowboy', syl:'LI-vro' },
+  { text:'Sol',         correct:'surf',   syl:'Sol' },
+  { text:'mochila',     correct:'cowboy', syl:'mo-chi-LA' },
+  { text:'fácil',       correct:'surf',   syl:'FÁ-cil' },
+  { text:'calor',       correct:'cowboy', syl:'ca-LOR' },
+  { text:'teatral',     correct:'surf',   syl:'tea-TRAL' },
+  { text:'iluminação',  correct:'cowboy', syl:'i-LU-mi-na-ção' },
+  { text:'álbum',       correct:'surf',   syl:'ÁL-bum' },
+  { text:'filtro',      correct:'surf',   syl:'FIL-tro' },
+  { text:'palco',       correct:'cowboy', syl:'PAL-co' },
+  { text:'solto',       correct:'surf',   syl:'SOL-to' },
+  { text:'flor',        correct:'cowboy', syl:'FLOR' },
+  { text:'imóvel',      correct:'surf',   syl:'i-MÓ-vel' },
+  { text:'elefante',    correct:'cowboy', syl:'e-LE-fan-te' },
+  { text:'papel',       correct:'surf',   syl:'pa-PEL' },
+  { text:'planta',      correct:'cowboy', syl:'PLAN-ta' },
+];
+
+var placement = {};
+var selected = null;
+var checked = false;
+
+function init() {
+  placement = {}; selected = null; checked = false;
+  words.forEach(function(w){ placement[w.text] = null; });
+  document.getElementById('result').className = 'result';
+  render();
+}
+
+function render() {
+  // Pool
+  var pool = document.getElementById('word-pool');
+  pool.innerHTML = '';
+  words.forEach(function(w) {
+    if (placement[w.text] !== null) return;
+    var tag = document.createElement('button');
+    tag.className = 'word-tag' + (selected === w.text ? ' selected' : '');
+    tag.textContent = w.text;
+    tag.onclick = function(e) { e.stopPropagation(); selectWord(w.text); };
+    pool.appendChild(tag);
+  });
+
+  // Zones
+  ['cowboy','surf'].forEach(function(zone) {
+    var zoneEl = document.getElementById('zone-' + zone);
+    Array.from(zoneEl.querySelectorAll('.col-word')).forEach(function(c){ c.remove(); });
+    var ph = document.getElementById('ph-' + zone);
+    var placed = words.filter(function(w){ return placement[w.text] === zone; });
+    ph.style.display = placed.length > 0 ? 'none' : 'block';
+    placed.forEach(function(w) {
+      var tag = document.createElement('div');
+      tag.className = 'col-word';
+      tag.textContent = w.text;
+      tag.onclick = function(e) { e.stopPropagation(); returnToPool(w.text); };
+      zoneEl.appendChild(tag);
+    });
+  });
+
+  updateCounters();
+}
+
+function selectWord(text) {
+  if (checked) return;
+  selected = (selected === text) ? null : text;
+  var ind = document.getElementById('sel-ind');
+  if (selected) {
+    ind.textContent = '"' + selected + '" selecionado — clique na coluna Cowboy 🤠 ou Surfista 🏄';
+    ind.className = 'sel-indicator show';
+  } else {
+    ind.className = 'sel-indicator';
+  }
+  render();
+}
+
+function placeWord(zone) {
+  if (checked || !selected) return;
+  placement[selected] = zone;
+  selected = null;
+  document.getElementById('sel-ind').className = 'sel-indicator';
+  render();
+}
+
+function returnToPool(text) {
+  if (checked) return;
+  placement[text] = null;
+  if (selected === text) selected = null;
+  render();
+}
+
+function updateCounters() {
+  var c = words.filter(function(w){ return placement[w.text] === 'cowboy'; }).length;
+  var s = words.filter(function(w){ return placement[w.text] === 'surf'; }).length;
+  var p = words.filter(function(w){ return placement[w.text] === null; }).length;
+  document.getElementById('cnt-cowboy').textContent = c;
+  document.getElementById('cnt-surf').textContent = s;
+  document.getElementById('cnt-pool').textContent = p;
+}
+
+function checkAll() {
+  if (words.some(function(w){ return placement[w.text] === null; })) {
+    alert('Classifique todas as palavras antes de verificar!'); return;
+  }
+  checked = true;
+  var score = 0;
+
+  ['cowboy','surf'].forEach(function(zone) {
+    var zoneEl = document.getElementById('zone-' + zone);
+    zoneEl.querySelectorAll('.col-word').forEach(function(tag) {
+      var w = words.find(function(x){ return x.text === tag.textContent; });
+      if (w && w.correct === zone) { score++; tag.classList.add('result-ok'); }
+      else { tag.classList.add('result-nok'); }
+    });
+  });
+
+  var pct = score / words.length;
+  var rs = document.getElementById('result');
+  rs.className = 'result show';
+  var e,t,sub;
+  if (pct===1)       { e='🏆'; t='Sortidor perfeito!';    sub='Todas as '+words.length+' palavras no lugar certo!'; }
+  else if (pct>=.75) { e='🌟'; t='Muito bem!';             sub=score+' de '+words.length+' corretas!'; }
+  else if (pct>=.5)  { e='😊'; t='Bom trabalho!';          sub=score+' de '+words.length+'. Revise e tente!'; }
+  else               { e='🔄'; t='Continue praticando!';   sub=score+' de '+words.length+'. Releia a regra!'; }
+  document.getElementById('r-emoji').textContent = e;
+  document.getElementById('r-title').textContent = t;
+  document.getElementById('r-sub').textContent = sub;
+}
+
+function resetAll() { init(); }
+init();
+</script>
+</body>
+</html>
