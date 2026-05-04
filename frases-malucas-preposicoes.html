@@ -196,26 +196,16 @@
     </div>
   </div>
 
-    <!-- Self eval -->
-    <div class="self-eval" id="self-eval">
-      <div class="se-title">✅ Sua frase:</div>
-      <div class="se-frase" id="se-frase"></div>
-      <div class="se-hint" id="se-hint"></div>
-      <div class="se-title">A preposição foi usada corretamente?</div>
-      <div class="se-btns">
-        <button class="se-btn se-btn-yes" onclick="selfEval(true)">👍 Sim, usei certo!</button>
-        <button class="se-btn se-btn-no" onclick="selfEval(false)">👎 Não, errei</button>
-      </div>
-    </div>
-
-    <!-- Result screen -->
+  <!-- Result screen -->
   <div class="result-screen" id="result-screen">
-    <div class="result-emoji" id="result-emoji">🏆</div>
-    <div class="result-title" id="result-title">Incrível!</div>
-    <div class="result-count"><span id="result-count">0</span> frases criadas</div>
-    <div class="result-sub" id="result-sub"></div>
-    <div class="result-medal" id="result-medal">🥇</div>
     <div id="result-log" style="text-align:left; margin-bottom:24px;"></div>
+    <div id="score-section" style="display:none;">
+      <div class="result-emoji" id="result-emoji">🏆</div>
+      <div class="result-title" id="result-title">Incrível!</div>
+      <div class="result-count"><span id="result-count">0</span> frases corretas</div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="result-medal" id="result-medal">🥇</div>
+    </div>
     <button class="btn-restart" onclick="restartGame()">🔄 Jogar de novo</button>
   </div>
 </div>
@@ -307,23 +297,47 @@ function submitSentence() {
   clearInterval(timer);
   document.getElementById('sentence-input').disabled = true;
   document.getElementById('btn-submit').disabled = true;
-  // Mostrar autoavaliação
-  document.getElementById('se-frase').textContent = '"' + text + '"';
-  document.getElementById('se-hint').innerHTML =
-    '💡 Lembre: <strong>' + currentPrep.word + '</strong> ' + currentPrep.hint +
-    '.<br>Exemplo correto: use a preposição ligando dois termos com sentido.';
-  document.getElementById('self-eval').className = 'self-eval show';
-  // Guardar texto temporariamente
-  window._pendingText = text;
-}
-
-function selfEval(correct) {
-  const text = window._pendingText;
-  sentences.push({ prep: currentPrep.word, text, valid: correct });
-  document.getElementById('self-eval').className = 'self-eval';
+  sentences.push({ prep: currentPrep.word, hint: currentPrep.hint, text, valid: null });
   round++;
   updateLog();
-  setTimeout(nextRound, 400);
+  setTimeout(nextRound, 500);
+}
+
+function selfEval(idx, correct) {
+  sentences[idx].valid = correct;
+  const card = document.getElementById('eval-card-' + idx);
+  const btnYes = document.getElementById('eval-yes-' + idx);
+  const btnNo = document.getElementById('eval-no-' + idx);
+  btnYes.disabled = true;
+  btnNo.disabled = true;
+  if (correct) {
+    card.style.borderColor = '#20bf6b';
+    btnYes.style.opacity = '1';
+    btnNo.style.opacity = '0.3';
+  } else {
+    card.style.borderColor = '#e74c3c';
+    btnNo.style.opacity = '1';
+    btnYes.style.opacity = '0.3';
+  }
+  // Se todas avaliadas, mostrar placar
+  if (sentences.filter(s => s.valid !== null).length === sentences.filter(s => s.text !== '(pulado)' && s.text !== '(tempo esgotado — sem frase)').length) {
+    setTimeout(showScore, 400);
+  }
+}
+
+function showScore() {
+  const valid = sentences.filter(s => s.valid === true).length;
+  document.getElementById('result-count').textContent = valid;
+  let emoji, title, sub, medal;
+  if (valid === ROUNDS) { emoji='🏆'; title='Escritor maluco profissional!'; sub='Você criou uma frase para cada preposição. Impressionante!'; medal='🥇 Medalha de Ouro'; }
+  else if (valid >= 4) { emoji='🌟'; title='Muito criativo!'; sub=`${valid} de ${ROUNDS} frases válidas. Ótimo trabalho!`; medal='🥈 Medalha de Prata'; }
+  else if (valid >= 2) { emoji='😊'; title='Bom começo!'; sub=`${valid} de ${ROUNDS} frases. Tente de novo e supere!`; medal='🥉 Medalha de Bronze'; }
+  else { emoji='🔄'; title='Pratique mais!'; sub='Releia as preposições e tente criar frases mais criativas.'; medal='📚 Continue tentando!'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+  document.getElementById('result-medal').textContent = medal;
+  document.getElementById('score-section').style.display = 'block';
 }
 
 function skipPrep() {
@@ -355,28 +369,46 @@ function showResults() {
   document.getElementById('game-area').style.display = 'none';
   const rs = document.getElementById('result-screen');
   rs.className = 'result-screen show';
-  const valid = sentences.filter(s => s.valid).length;
-  document.getElementById('result-count').textContent = valid;
-
-  let emoji, title, sub, medal;
-  if (valid === ROUNDS) { emoji='🏆'; title='Escritor maluco profissional!'; sub='Você criou uma frase para cada preposição. Impressionante!'; medal='🥇 Medalha de Ouro'; }
-  else if (valid >= 4) { emoji='🌟'; title='Muito criativo!'; sub=`${valid} de ${ROUNDS} frases válidas. Ótimo trabalho!`; medal='🥈 Medalha de Prata'; }
-  else if (valid >= 2) { emoji='😊'; title='Bom começo!'; sub=`${valid} de ${ROUNDS} frases. Tente de novo e supere!`; medal='🥉 Medalha de Bronze'; }
-  else { emoji='🔄'; title='Pratique mais!'; sub='Releia as preposições e tente criar frases mais criativas.'; medal='📚 Continue tentando!'; }
-
-  document.getElementById('result-emoji').textContent = emoji;
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-sub').textContent = sub;
-  document.getElementById('result-medal').textContent = medal;
 
   const rl = document.getElementById('result-log');
-  rl.innerHTML = '<p style="font-size:13px;font-weight:800;color:#636E72;margin-bottom:10px">SUAS FRASES:</p>';
-  sentences.forEach(s => {
-    const div = document.createElement('div');
-    div.className = 'sentence-item' + (s.valid ? '' : ' invalid');
-    div.innerHTML = `<span class="item-badge">${s.prep}</span><span>${s.text}</span>`;
-    rl.appendChild(div);
+  rl.innerHTML = '<p style="font-size:13px;font-weight:800;color:#636E72;margin-bottom:12px">📋 AVALIE SUAS FRASES:</p>';
+
+  const realSentences = sentences.filter(s => s.text !== '(pulado)' && s.text !== '(tempo esgotado — sem frase)');
+
+  if (realSentences.length === 0) {
+    rl.innerHTML += '<p style="font-size:14px;font-weight:700;color:#636E72;">Nenhuma frase criada.</p>';
+    showScore();
+    return;
+  }
+
+  realSentences.forEach((s, i) => {
+    const idx = sentences.indexOf(s);
+    const card = document.createElement('div');
+    card.id = 'eval-card-' + idx;
+    card.style.cssText = 'background:#fff;border:2px solid #DDE3EE;border-radius:14px;padding:14px 16px;margin-bottom:12px;transition:border-color .2s;';
+    card.innerHTML = `
+      <div style="font-size:11px;font-weight:800;color:#636E72;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">
+        <span style="background:var(--primary-light);color:var(--primary-dark);padding:2px 10px;border-radius:20px;">${s.prep}</span>
+      </div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px;color:#2D3436;">"${s.text}"</div>
+      <div style="font-size:12px;font-weight:700;color:#636E72;background:#F0FFF4;border-radius:8px;padding:6px 10px;margin-bottom:10px;">
+        💡 <strong>${s.prep}</strong> ${s.hint}.
+      </div>
+      <div style="font-size:13px;font-weight:800;color:#2D3436;margin-bottom:8px;">Usei a preposição corretamente?</div>
+      <div style="display:flex;gap:8px;">
+        <button id="eval-yes-${idx}" onclick="selfEval(${idx}, true)"
+          style="flex:1;padding:10px;border:none;border-radius:11px;background:#20bf6b;color:white;font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;">
+          👍 Sim, usei certo!
+        </button>
+        <button id="eval-no-${idx}" onclick="selfEval(${idx}, false)"
+          style="flex:1;padding:10px;border:none;border-radius:11px;background:#e74c3c;color:white;font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;">
+          👎 Não, errei
+        </button>
+      </div>`;
+    rl.appendChild(card);
   });
+
+  document.getElementById('score-section').style.display = 'none';
 }
 
 function restartGame() {
