@@ -41,10 +41,10 @@
   .word-bank { background:var(--card); border:2px dashed var(--primary); border-radius:15px; padding:15px 18px; margin-bottom:16px; }
   .wb-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:10px; }
   .words { display:flex; flex-wrap:wrap; gap:7px; }
-  .word-chip { font-weight:800; font-size:13px; padding:5px 13px; border-radius:20px; border:1.5px solid; cursor:pointer; transition:all .15s; user-select:none; }
-  .word-chip.past-chip { background:var(--past-light); color:var(--past); border-color:var(--past); }
-  .word-chip.present-chip { background:var(--present-light); color:var(--present); border-color:var(--present); }
-  .word-chip.future-chip { background:var(--future-light); color:var(--future); border-color:var(--future); }
+  .word-chip { font-weight:800; font-size:13px; padding:5px 13px; border-radius:20px; border:1.5px solid var(--border); background:var(--primary-light); color:var(--primary); cursor:pointer; transition:all .15s; user-select:none; }
+  .word-chip.past-chip { background:var(--primary-light); color:var(--primary); border-color:var(--border); }
+  .word-chip.present-chip { background:var(--primary-light); color:var(--primary); border-color:var(--border); }
+  .word-chip.future-chip { background:var(--primary-light); color:var(--primary); border-color:var(--border); }
   .word-chip:hover { opacity:.75; }
   .word-chip.used { opacity:.3; cursor:default; text-decoration:line-through; }
 
@@ -143,11 +143,11 @@ var sentences = [
   { group:'a', before:'"Menino tira o casaco" — o verbo TIRA está no ', blank:'presente', after:'.', hint:'que tempo?' },
   { group:'a', before:'"O Vento soprará mais forte" — SOPRARÁ está no ', blank:'futuro', after:'.', hint:'que tempo?' },
   { group:'b', before:'A rubrica diz que Sol ', blank:'observa', after:' a cena (ação que acontece agora).', hint:'presente de observar' },
-  { group:'b', before:'Na fala do Pombo, o verbo indica algo que já ocorreu: eles ', blank:'venceu', after:' a aposta.', hint:'passado de vencer' },
-  { group:'b', before:'Ganha____ quem conseguir arrancar a roupa — ainda vai acontecer.', blank:'soprará', after:'', hint:'futuro de soprar' },
+  { group:'b', before:'Na fala do Pombo, o verbo indica algo que já ocorreu: ele ', blank:'venceu', after:' a aposta.', hint:'passado de vencer' },
+  { group:'b', before:'O Sol ', blank:'soprará', after:' mais forte amanhã — a ação ainda não aconteceu.', hint:'futuro de soprar' },
   { group:'c', before:'"Menino tira o casaco" no passado: "Menino ', blank:'tirou', after:' o casaco."', hint:'passado de tirar' },
-  { group:'c', before:'"Sol venceu" no presente: "Sol ', blank:'tira', after:' (vence agora)."', hint:'presente de tirar/vencer' },
-  { group:'c', before:'"Sol venceu" no futuro: "Sol ', blank:'tirará', after:' (vencerá)."', hint:'futuro de tirar/vencer' },
+  { group:'c', before:'"Sol vence a aposta" no passado: "Sol ', blank:'venceu', after:' a aposta."', hint:'passado de vencer' },
+  { group:'c', before:'"Menino tira o casaco" no futuro: "Menino ', blank:'tirará', after:' o casaco."', hint:'futuro de tirar' },
 ];
 
 var selected = null;

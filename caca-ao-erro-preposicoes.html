@@ -137,11 +137,11 @@
 const data = [
   { id:0, before:'Não há pasto ', word:'com', after:' capim.', isError:true, correct:'sem', options:['sem','de','para','em'], explanation:'A preposição correta é SEM, indicando ausência. COM indicaria que o pasto tem companhia de capim.' },
   { id:1, before:'Viagem ', word:'de', after:' Alagoas.', isError:true, correct:'para', options:['para','em','sem','com'], explanation:'PARA indica destino. DE indicaria origem — "viagem de Alagoas" seria vindo de lá.' },
-  { id:2, before:'Boneco ', word:'de', after:' madeira.', isError:false, explanation:'Frase correta! DE indica o material do qual o boneco é feito.' },
-  { id:3, before:'Festa ', word:'na', after:' roça.', isError:false, explanation:'Frase correta! NA (em + a) indica lugar.' },
+  { id:2, before:'Boneco ', word:'de', after:' madeira.', isError:false, options:['com','em','para','sem'], explanation:'Frase correta! DE indica o material do qual o boneco é feito.' },
+  { id:3, before:'Festa ', word:'na', after:' roça.', isError:false, options:['de','com','para','sem'], explanation:'Frase correta! NA (em + a) indica lugar.' },
   { id:4, before:'Não há moça ', word:'com', after:' beleza.', isError:true, correct:'sem', options:['sem','de','para','na'], explanation:'O verso original usa SEM, indicando ausência. COM mudaria o sentido para "moça que tem beleza".' },
   { id:5, before:'Pão ', word:'com', after:' queijo.', isError:true, correct:'de', options:['de','em','para','sobre'], explanation:'DE indica o tipo/material. Pão DE queijo é o tipo de pão. COM indicaria um pão acompanhado de queijo.' },
-  { id:6, before:'Festa ', word:'com', after:' barracas.', isError:false, explanation:'Frase correta! COM indica que a festa contém barracas.' },
+  { id:6, before:'Festa ', word:'com', after:' barracas.', isError:false, options:['de','sem','para','em'], explanation:'Frase correta! COM indica que a festa contém barracas.' },
   { id:7, before:'A palavra que liga dois termos chama-se ', word:'conjunção', after:'.', isError:true, correct:'preposição', options:['preposição','substantivo','adjetivo','advérbio'], explanation:'A palavra que liga dois termos estabelecendo uma relação entre eles é a PREPOSIÇÃO, não conjunção.' }
 ];
 
@@ -182,13 +182,13 @@ function renderSentences() {
     textDiv.appendChild(document.createTextNode(s.after));
     card.appendChild(textDiv);
 
-    if (s.isError) {
+    if (s.options) {
       const corrRow = document.createElement('div');
       corrRow.className = 'correction-row';
       corrRow.id = 'corrrow-' + s.id;
       const lbl = document.createElement('span');
       lbl.className = 'correction-label';
-      lbl.textContent = 'Qual é a certa?';
+      lbl.textContent = s.isError ? 'Qual é a certa?' : 'Qual seria a alternativa?';
       corrRow.appendChild(lbl);
       s.options.forEach(opt => {
         const btn = document.createElement('button');
@@ -219,14 +219,14 @@ function toggleMark(id) {
   if (!action.marked) {
     action.marked = true;
     wordEl.classList.add('marked');
-    if (s.isError) document.getElementById('corrrow-' + id).className = 'correction-row show';
+    if (s.options) document.getElementById('corrrow-' + s.id).className = 'correction-row show';
     marked++;
   } else {
     action.marked = false; action.correction = null;
     wordEl.classList.remove('marked');
-    if (s.isError) {
-      document.getElementById('corrrow-' + id).className = 'correction-row';
-      document.querySelectorAll(`[id^="corropt-${id}-"]`).forEach(b => b.className = 'correction-btn');
+    if (s.options) {
+      document.getElementById('corrrow-' + s.id).className = 'correction-row';
+      document.querySelectorAll(`[id^="corropt-${s.id}-"]`).forEach(b => b.className = 'correction-btn');
     }
     marked = Math.max(0, marked - 1);
   }
@@ -300,11 +300,23 @@ function checkResults() {
         wordEl.className = 'highlight-word result-correct-ok';
         fb.className = 'sentence-feedback ok show';
         fb.textContent = '✅ Correto! Esta frase não tinha erros. ' + s.explanation;
+        // esconder opções — não havia erro
+        const corrRow = document.getElementById('corrrow-' + s.id);
+        if (corrRow) corrRow.className = 'correction-row';
       } else {
         card.className = 'sentence-card wrong-card';
         wordEl.className = 'highlight-word result-false-alarm';
         fb.className = 'sentence-feedback nok show';
         fb.textContent = `❌ Esta frase estava correta! Não havia erro. ${s.explanation}`;
+        // mostrar opções desabilitadas para contexto
+        const corrRow = document.getElementById('corrrow-' + s.id);
+        if (corrRow) {
+          corrRow.className = 'correction-row show';
+          s.options.forEach(opt => {
+            const btn = document.getElementById(`corropt-${s.id}-${opt}`);
+            if (btn) { btn.disabled = true; btn.className = 'correction-btn'; }
+          });
+        }
       }
     }
   });

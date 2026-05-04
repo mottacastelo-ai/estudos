@@ -43,9 +43,9 @@
   .q-num { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:8px; }
   .q-text { font-size:16px; font-weight:700; line-height:1.55; margin-bottom:18px; }
   .q-text em { font-style:normal; font-weight:900; padding:1px 6px; border-radius:5px; }
-  .em-past { background:var(--past-light); color:var(--past); }
-  .em-present { background:var(--present-light); color:var(--present); }
-  .em-future { background:var(--future-light); color:var(--future); }
+  .em-neutral { background:var(--past-light); color:var(--past); }
+  .em-neutral { background:var(--present-light); color:var(--present); }
+  .em-neutral { background:var(--future-light); color:var(--future); }
   .em-neutral { background:var(--primary-light); color:var(--primary); }
 
   .opts { display:flex; flex-direction:column; gap:9px; }
@@ -121,37 +121,37 @@
 <script>
 var questions = [
   {
-    text: 'Na frase <em class="em-neutral">"Ok, você venceu!"</em>, o verbo <em class="em-past">venceu</em> está no tempo:',
+    text: 'Na frase <em class="em-neutral">"Ok, você venceu!"</em>, o verbo <em class="em-neutral">venceu</em> está no tempo:',
     opts: ['Presente','Passado','Futuro','Não tem tempo verbal'],
     correct: 1,
     exp: 'VENCEU está no passado — indica uma ação que JÁ ACONTECEU. O Sol já havia vencido a aposta.'
   },
   {
-    text: 'Na rubrica <em class="em-neutral">"Menino tira o casaco"</em>, o verbo <em class="em-present">tira</em> indica que a ação acontece:',
+    text: 'Na rubrica <em class="em-neutral">"Menino tira o casaco"</em>, o verbo <em class="em-neutral">tira</em> indica que a ação acontece:',
     opts: ['No passado — já aconteceu','No presente — acontece agora','No futuro — ainda vai acontecer','É impossível saber'],
     correct: 1,
     exp: 'TIRA está no presente — descreve o que o Menino faz naquele exato momento da peça.'
   },
   {
-    text: 'Na frase <em class="em-neutral">"O Vento soprará mais forte"</em>, o verbo <em class="em-future">soprará</em> indica:',
+    text: 'Na frase <em class="em-neutral">"O Vento soprará mais forte"</em>, o verbo <em class="em-neutral">soprará</em> indica:',
     opts: ['Algo que já aconteceu','Algo que acontece agora','Algo que ainda vai acontecer','Uma ordem para o Vento'],
     correct: 2,
     exp: 'SOPRARÁ está no futuro — indica uma ação que AINDA VAI acontecer, que está por vir.'
   },
   {
-    text: 'Na rubrica <em class="em-neutral">"Afastado, o Sol observa a cena"</em>, o verbo <em class="em-present">observa</em> está no:',
+    text: 'Na rubrica <em class="em-neutral">"Afastado, o Sol observa a cena"</em>, o verbo <em class="em-neutral">observa</em> está no:',
     opts: ['Passado','Presente','Futuro','Nenhum tempo verbal'],
     correct: 1,
     exp: 'OBSERVA está no presente — as rubricas usam principalmente o presente para descrever as ações no momento em que ocorrem.'
   },
   {
-    text: 'Na fala <em class="em-neutral">"O Vento e o Sol fizeram uma aposta"</em>, o verbo <em class="em-past">fizeram</em> está no:',
+    text: 'Na fala <em class="em-neutral">"O Vento e o Sol fizeram uma aposta"</em>, o verbo <em class="em-neutral">fizeram</em> está no:',
     opts: ['Presente','Passado','Futuro','Imperativo'],
     correct: 1,
     exp: 'FIZERAM está no passado — o Pombo 2 conta algo que JÁ ACONTECEU: a aposta já foi feita antes da fala.'
   },
   {
-    text: 'Qual alternativa traz um verbo no <em class="em-future">futuro</em>?',
+    text: 'Qual alternativa traz um verbo no <em class="em-neutral">futuro</em>?',
     opts: ['"Vento soprou muito forte"','"Sol se aproxima devagar"','"Ganhará quem arrancar a roupa"','"Menino vestiu o casaco"'],
     correct: 2,
     exp: 'GANHARÁ está no futuro — indica quem ainda vai ganhar a aposta, uma ação que ainda não aconteceu.'
@@ -163,13 +163,13 @@ var questions = [
     exp: 'As rubricas usam o PRESENTE para criar a sensação de que as ações estão acontecendo naquele momento, ao vivo no palco.'
   },
   {
-    text: 'Qual frase reescreve <em class="em-neutral">"Menino tira o casaco"</em> corretamente no <em class="em-past">passado</em>?',
+    text: 'Qual frase reescreve <em class="em-neutral">"Menino tira o casaco"</em> corretamente no <em class="em-neutral">passado</em>?',
     opts: ['"Menino tirará o casaco"','"Menino tira o casaco"','"Menino tirou o casaco"','"Menino vai tirar o casaco"'],
     correct: 2,
     exp: 'TIROU é a forma do passado. TIRARÁ é futuro. TIRA é presente. "Vai tirar" também é futuro (futuro perifrástico).'
   },
   {
-    text: 'Na fala <em class="em-neutral">"Desisto... Vai lá: sua vez"</em>, o verbo <em class="em-present">desisto</em> está no:',
+    text: 'Na fala <em class="em-neutral">"Desisto... Vai lá: sua vez"</em>, o verbo <em class="em-neutral">desisto</em> está no:',
     opts: ['Passado — o Vento já desistiu antes','Presente — o Vento desiste agora, naquele momento','Futuro — o Vento vai desistir','Não é um verbo'],
     correct: 1,
     exp: 'DESISTO está no presente — o Vento anuncia sua desistência no momento exato em que fala. É uma ação que acontece agora.'
