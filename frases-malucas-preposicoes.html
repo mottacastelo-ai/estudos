@@ -106,7 +106,18 @@
   .sentence-item.invalid { border-color: var(--red); background: #fff5f5; }
   .sentence-item.invalid .item-badge { background: #fadbd8; color: var(--red); }
 
-  /* Result screen */
+  /* Self eval */
+  .self-eval { background:var(--card); border:2px solid var(--primary); border-radius:14px; padding:14px 16px; margin-bottom:14px; display:none; animation:slideIn .3s ease; }
+  .self-eval.show { display:block; }
+  .se-title { font-size:13px; font-weight:800; color:var(--primary-dark); margin-bottom:6px; }
+  .se-hint { font-size:12px; font-weight:700; color:var(--muted); background:var(--primary-light); border-radius:8px; padding:6px 12px; margin-bottom:12px; line-height:1.5; }
+  .se-frase { font-size:14px; font-weight:800; color:var(--text); background:#F9FAFB; border-radius:8px; padding:8px 12px; margin-bottom:12px; border-left:3px solid var(--primary); }
+  .se-btns { display:flex; gap:10px; }
+  .se-btn { flex:1; padding:11px; border:none; border-radius:12px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+  .se-btn-yes { background:#20bf6b; color:white; }
+  .se-btn-yes:hover { background:#17a257; transform:translateY(-2px); }
+  .se-btn-no { background:#e74c3c; color:white; }
+  .se-btn-no:hover { background:#c0392b; transform:translateY(-2px); }
   .result-screen {
     display: none; background: var(--card);
     border: 2px solid var(--border); border-radius: 24px;
@@ -185,7 +196,19 @@
     </div>
   </div>
 
-  <!-- Result screen -->
+    <!-- Self eval -->
+    <div class="self-eval" id="self-eval">
+      <div class="se-title">✅ Sua frase:</div>
+      <div class="se-frase" id="se-frase"></div>
+      <div class="se-hint" id="se-hint"></div>
+      <div class="se-title">A preposição foi usada corretamente?</div>
+      <div class="se-btns">
+        <button class="se-btn se-btn-yes" onclick="selfEval(true)">👍 Sim, usei certo!</button>
+        <button class="se-btn se-btn-no" onclick="selfEval(false)">👎 Não, errei</button>
+      </div>
+    </div>
+
+    <!-- Result screen -->
   <div class="result-screen" id="result-screen">
     <div class="result-emoji" id="result-emoji">🏆</div>
     <div class="result-title" id="result-title">Incrível!</div>
@@ -271,6 +294,7 @@ function updateTimerDisplay() {
 }
 
 function timeExpired() {
+  document.getElementById('self-eval').className = 'self-eval';
   sentences.push({ prep: currentPrep.word, text: '(tempo esgotado — sem frase)', valid: false });
   round++;
   updateLog();
@@ -280,17 +304,30 @@ function timeExpired() {
 function submitSentence() {
   const text = document.getElementById('sentence-input').value.trim();
   if (!text) { document.getElementById('sentence-input').focus(); return; }
-  const hasPrep = text.toLowerCase().includes(currentPrep.word.toLowerCase());
-  sentences.push({ prep: currentPrep.word, text, valid: hasPrep });
   clearInterval(timer);
   document.getElementById('sentence-input').disabled = true;
   document.getElementById('btn-submit').disabled = true;
+  // Mostrar autoavaliação
+  document.getElementById('se-frase').textContent = '"' + text + '"';
+  document.getElementById('se-hint').innerHTML =
+    '💡 Lembre: <strong>' + currentPrep.word + '</strong> ' + currentPrep.hint +
+    '.<br>Exemplo correto: use a preposição ligando dois termos com sentido.';
+  document.getElementById('self-eval').className = 'self-eval show';
+  // Guardar texto temporariamente
+  window._pendingText = text;
+}
+
+function selfEval(correct) {
+  const text = window._pendingText;
+  sentences.push({ prep: currentPrep.word, text, valid: correct });
+  document.getElementById('self-eval').className = 'self-eval';
   round++;
   updateLog();
-  setTimeout(nextRound, 600);
+  setTimeout(nextRound, 400);
 }
 
 function skipPrep() {
+  document.getElementById('self-eval').className = 'self-eval';
   sentences.push({ prep: currentPrep.word, text: '(pulado)', valid: false });
   clearInterval(timer);
   round++;
