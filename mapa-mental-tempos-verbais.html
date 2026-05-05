@@ -191,7 +191,7 @@ var positions = {}, arrows = [], mode = 'connect', arrowFrom = null, dragging = 
 
 function calcPositions() {
   var W = stage.clientWidth;
-  var COLS = W < 520 ? 3 : 5;
+  var COLS = W < 520 ? 2 : 5;
   var ROWS = Math.ceil(SHUFFLE.length / COLS);
   var padX = 16, padY = 32;
   var colW = (W - padX*2) / COLS;
