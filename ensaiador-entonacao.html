@@ -9,328 +9,287 @@
   :root{
     --bg:#F5F0FF;--card:#fff;
     --primary:#8B5CF6;--primary-dark:#6D28D9;--primary-light:#EDE9FE;
-    --alto:#EF4444;--alto-light:#FEE2E2;
-    --medio:#F59E0B;--medio-light:#FEF3C7;
-    --baixo:#6B7280;--baixo-light:#F3F4F6;
-    --rapido:#EC4899;--rapido-light:#FCE7F3;
-    --devagar:#3B82F6;--devagar-light:#DBEAFE;
     --green:#10B981;--green-light:#D1FAE5;
     --red:#EF4444;--red-light:#FEE2E2;
     --text:#1A1A2E;--muted:#6B7280;--border:#DDD6FE;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:20px 16px;color:var(--text);}
-  .container{max-width:660px;margin:0 auto;}
+  .container{max-width:640px;margin:0 auto;}
   .header{text-align:center;margin-bottom:20px;}
   .badge{display:inline-block;background:var(--primary);color:white;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
   h1{font-family:'Fredoka One',cursive;font-size:28px;color:var(--primary-dark);margin-bottom:4px;}
   .subtitle{font-size:13px;color:var(--muted);font-weight:600;}
   .instr{background:var(--primary-light);border:2px solid var(--primary);border-radius:14px;padding:13px 17px;margin-bottom:18px;font-size:13px;font-weight:700;color:#4C1D95;line-height:1.6;}
   .instr strong{display:block;font-size:14px;margin-bottom:4px;}
-  /* Legend */
-  .legend{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
-  .leg{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:800;border:1.5px solid;}
-  .leg.alto{background:var(--alto-light);color:var(--alto);border-color:var(--alto);}
-  .leg.medio{background:var(--medio-light);color:#92400E;border-color:var(--medio);}
-  .leg.baixo{background:var(--baixo-light);color:var(--baixo);border-color:var(--baixo);}
-  .leg.rapido{background:var(--rapido-light);color:#9D174D;border-color:var(--rapido);}
-  .leg.devagar{background:var(--devagar-light);color:#1E40AF;border-color:var(--devagar);}
-  /* Progress */
   .score-row{display:flex;gap:10px;margin-bottom:14px;}
   .sp{flex:1;background:var(--card);border:2px solid var(--border);border-radius:13px;padding:8px;text-align:center;}
   .sp .big{font-family:'Fredoka One',cursive;font-size:20px;}
   .sp .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
   .prog-wrap{background:#DDD6FE;border-radius:20px;height:7px;margin-bottom:6px;overflow:hidden;}
-  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),var(--rapido));transition:width .5s ease;}
+  .prog-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--primary),#EC4899);transition:width .5s ease;}
   .prog-lbl{text-align:right;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:14px;}
-  /* Card */
   .ch-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:22px;margin-bottom:12px;animation:slideIn .35s ease;}
   @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   .ch-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px;}
   .ctx{background:#F8F5FF;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:700;color:#4C1D95;margin-bottom:12px;border:1.5px solid var(--border);}
-  .char-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;}
-  /* Fala interativa */
-  .fala-wrap{background:#FAFAFA;border-radius:14px;border:2px solid var(--border);padding:16px;margin-bottom:16px;}
-  .fala-intro{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;}
-  .fala-words{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-  .fala-word{font-size:17px;font-weight:800;cursor:pointer;}
-  .fala-word.clickable{padding:3px 10px;border-radius:8px;border:2px solid transparent;transition:all .15s;}
-  .fala-word.clickable:hover{border-color:var(--primary);background:var(--primary-light);}
-  .fala-word.sel-alto{background:var(--alto-light);color:var(--alto);border:2px solid var(--alto);}
-  .fala-word.sel-medio{background:var(--medio-light);color:#92400E;border:2px solid var(--medio);}
-  .fala-word.sel-baixo{background:var(--baixo-light);color:var(--baixo);border:2px solid var(--baixo);}
-  .fala-word.sel-rapido{background:var(--rapido-light);color:#9D174D;border:2px solid var(--rapido);}
-  .fala-word.sel-devagar{background:var(--devagar-light);color:#1E40AF;border:2px solid var(--devagar);}
-  .fala-word.res-ok::after{content:'✓';font-size:10px;vertical-align:super;}
-  .fala-word.res-nok{text-decoration:line-through;opacity:.5;}
-  /* Controls */
-  .ctrl-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;}
-  .ctrl-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-  .ctrl-btn{padding:8px 14px;border-radius:20px;border:2px solid;font-family:'Baloo 2',cursive;font-size:12px;font-weight:800;cursor:pointer;transition:all .15s;}
-  .ctrl-btn.alto{background:var(--alto-light);color:var(--alto);border-color:var(--alto);}
-  .ctrl-btn.medio{background:var(--medio-light);color:#92400E;border-color:var(--medio);}
-  .ctrl-btn.baixo{background:var(--baixo-light);color:var(--baixo);border-color:var(--baixo);}
-  .ctrl-btn.rapido{background:var(--rapido-light);color:#9D174D;border-color:var(--rapido);}
-  .ctrl-btn.devagar{background:var(--devagar-light);color:#1E40AF;border-color:var(--devagar);}
-  .ctrl-btn.active-ctrl{outline:3px solid #1A1A2E;outline-offset:2px;}
-  .active-ind{font-size:12px;font-weight:800;color:var(--primary);margin-bottom:14px;min-height:18px;}
-  /* Suggestion */
-  .sugg{background:var(--primary-light);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:700;color:#4C1D95;margin-bottom:12px;display:none;}
-  .sugg.show{display:block;}
-  /* Buttons */
-  .btn-row{display:flex;gap:8px;}
-  .btn{flex:1;padding:11px;border:none;border-radius:13px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
-  .btn-check{background:var(--primary);color:white;}
-  .btn-check:hover{background:var(--primary-dark);}
-  .btn-hint{background:var(--border);color:#4C1D95;}
-  .btn-hint:hover{background:var(--primary-light);}
-  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px;display:none;transition:all .18s;}
-  .btn-next:hover{background:var(--primary-dark);}
-  .btn-next.show{display:block;}
-  .feedback{border-radius:13px;padding:11px 15px;font-size:13px;font-weight:700;margin-top:10px;display:none;line-height:1.5;}
+  .char-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;}
+  .fala-box{font-size:18px;font-weight:800;background:#FAFAFA;border-radius:13px;border:2px solid var(--border);padding:16px;margin-bottom:20px;line-height:1.5;text-align:center;}
+  .ask{font-size:14px;font-weight:800;color:var(--muted);margin-bottom:12px;text-align:center;}
+  .ent-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+  .ent-btn{padding:14px 10px;border:2px solid var(--border);border-radius:14px;background:#FAFAFA;font-family:'Baloo 2',cursive;font-size:13px;font-weight:800;cursor:pointer;text-align:center;transition:all .18s;color:var(--text);}
+  .ent-btn:hover:not(:disabled){border-color:var(--primary);background:var(--primary-light);transform:translateY(-2px);}
+  .ent-btn .ei{font-size:24px;display:block;margin-bottom:5px;}
+  .ent-btn .en{font-weight:900;display:block;font-size:14px;margin-bottom:2px;}
+  .ent-btn .ed{font-size:11px;color:var(--muted);font-weight:600;}
+  .ent-btn.correct{border-color:var(--green);background:var(--green-light);color:#065F46;}
+  .ent-btn.wrong{border-color:var(--red);background:var(--red-light);color:#991B1B;}
+  .ent-btn:disabled{cursor:default;}
+  .feedback{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-top:4px;display:none;line-height:1.5;}
   .feedback.show{display:block;}
   .feedback.ok{background:var(--green-light);color:#065F46;border:2px solid var(--green);}
   .feedback.nok{background:var(--red-light);color:#991B1B;border:2px solid var(--red);}
+  .btn-next{width:100%;background:var(--primary);color:white;border:none;border-radius:13px;padding:13px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px;display:none;transition:all .18s;}
+  .btn-next:hover{background:var(--primary-dark);transform:translateY(-2px);}
+  .btn-next.show{display:block;}
   .result{background:var(--card);border:2px solid var(--border);border-radius:22px;padding:28px;text-align:center;display:none;animation:pop .4s ease;}
   .result.show{display:block;}
   @keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
   .r-emoji{font-size:56px;margin-bottom:10px;}
-  .r-title{font-family:'Fredoka One',cursive;font-size:24px;color:var(--primary-dark);margin-bottom:12px;}
-  .r-sub{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:16px;}
+  .r-title{font-family:'Fredoka One',cursive;font-size:26px;color:var(--primary-dark);margin-bottom:14px;}
+  .r-stats{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}
+  .rs{background:#F9FAFB;border:2px solid var(--border);border-radius:14px;padding:12px 18px;min-width:90px;text-align:center;}
+  .rs .rb{font-family:'Fredoka One',cursive;font-size:26px;}
+  .rs .rl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;}
   .btn-restart{background:var(--primary);color:white;border:none;border-radius:13px;padding:12px 26px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;}
-  .btn-restart:hover{background:var(--primary-dark);}
+  .btn-restart:hover{background:var(--primary-dark);transform:translateY(-2px);}
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
     <div class="badge">🎭 Ensaiador de Falas</div>
-    <h1>Como entonar cada parte?</h1>
-    <p class="subtitle">Clique em uma ferramenta e depois nas palavras que devem receber aquela entonação</p>
+    <h1>Como entoar essa fala?</h1>
+    <p class="subtitle">Leia o contexto e escolha a entonação certa para a fala inteira</p>
   </div>
   <div class="instr">
     <strong>Como jogar:</strong>
-    1. Escolha uma ferramenta de voz (volume alto, médio, baixo, rápido ou devagar). 2. Clique nas palavras da fala que devem receber essa entonação. 3. Clique em "Verificar" para comparar com a sugestão de um diretor de teatro.
-  </div>
-  <div class="legend">
-    <div class="leg alto">🔊 ALTO — ênfase</div>
-    <div class="leg medio">📣 MÉDIO — normal</div>
-    <div class="leg baixo">🔈 BAIXO — suave</div>
-    <div class="leg rapido">⚡ RÁPIDO — urgência</div>
-    <div class="leg devagar">🐢 DEVAGAR — peso</div>
+    Leia o contexto do personagem e a fala. Escolha qual entonação o ator deve usar para essa fala inteira. Pense na emoção e na situação do personagem!
   </div>
   <div class="score-row">
-    <div class="sp"><div class="big" id="cnt-done" style="color:var(--primary)">0</div><div class="lbl">Ensaiados</div></div>
-    <div class="sp"><div class="big" id="cnt-total" style="color:var(--muted)">6</div><div class="lbl">Total</div></div>
+    <div class="sp"><div class="big" id="score" style="color:var(--primary)">0</div><div class="lbl">Pontos</div></div>
+    <div class="sp"><div class="big" id="hits" style="color:var(--green)">0</div><div class="lbl">Acertos</div></div>
+    <div class="sp"><div class="big" id="erros" style="color:var(--red)">0</div><div class="lbl">Erros</div></div>
   </div>
   <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
-  <div class="prog-lbl" id="prog-lbl">Fala 1 de 6</div>
+  <div class="prog-lbl" id="prog-lbl">Fala 1 de 8</div>
   <div id="game-area">
     <div class="ch-card" id="ch-card">
       <div class="ch-num" id="ch-num">Fala 1</div>
       <div class="ctx" id="ctx"></div>
       <div class="char-lbl" id="char-lbl"></div>
-      <div class="fala-wrap">
-        <div class="fala-intro">Clique nas palavras para marcar a entonação:</div>
-        <div class="fala-words" id="fala-words"></div>
-      </div>
-      <div class="ctrl-label">Ferramentas de voz:</div>
-      <div class="ctrl-row" id="ctrl-row"></div>
-      <div class="active-ind" id="active-ind">← Escolha uma ferramenta acima</div>
-      <div class="sugg" id="sugg"></div>
-      <div class="btn-row">
-        <button class="btn btn-check" onclick="checkFala()">✅ Verificar</button>
-        <button class="btn btn-hint" onclick="showHint()">💡 Dica</button>
-      </div>
+      <div class="fala-box" id="fala-box"></div>
+      <div class="ask">Como o ator deve entoar essa fala?</div>
+      <div class="ent-grid" id="ent-grid"></div>
       <div class="feedback" id="feedback"></div>
-      <button class="btn-next" id="btn-next" onclick="nextFala()">Próxima fala →</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima fala →</button>
     </div>
   </div>
   <div class="result" id="result">
-    <div class="r-emoji">🎭</div>
-    <div class="r-title">Ensaio concluído!</div>
-    <div class="r-sub">Você praticou como marcar a entonação das falas.<br>No teatro real, a voz é o instrumento — pratique em voz alta!</div>
+    <div class="r-emoji" id="r-emoji">🏆</div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-stats">
+      <div class="rs"><div class="rb" id="r-ac" style="color:var(--green)">0</div><div class="rl">Acertos</div></div>
+      <div class="rs"><div class="rb" id="r-er" style="color:var(--red)">0</div><div class="rl">Erros</div></div>
+    </div>
     <button class="btn-restart" onclick="restart()">🔄 Ensaiar de novo</button>
   </div>
 </div>
 <script>
 var falas=[
   {
-    ctx:'🐓 O Galo está FURIOSO — foi chamado de galinha! Cada palavra de orgulho deve soar com força.',
+    ctx:'🐓 O Galo acabou de ser chamado de galinha — ele está furioso e cheio de orgulho.',
     char:'GALO fala:',
-    words:['Galinha','Garnisé,','coisíssima','nenhuma,','ouviram?','Eu','sou','um','MAJESTOSO,','MARAVILHOSO,','FANTÁSTICO','Galo','de','Cericecó!'],
-    suggestion:{
-      'Galinha':'alto','Garnisé,':'alto','coisíssima':'alto','nenhuma,':'alto','ouviram?':'medio',
-      'Eu':'medio','sou':'medio','um':'medio','MAJESTOSO,':'alto','MARAVILHOSO,':'alto',
-      'FANTÁSTICO':'alto','Galo':'alto','de':'medio','Cericecó!':'alto'
-    },
-    hint:'O Galo está indignado e orgulhoso — palavras de orgulho (MAJESTOSO, MARAVILHOSO, FANTÁSTICO, Cericecó!) pedem volume ALTO. "ouviram?" pode ser médio, chamando atenção.',
-    exp:'As palavras de orgulho do Galo devem ser ditas em voz ALTA e enfática. Palavras neutras ficam em volume médio. "Cocoricó!" (se presente) seria o pico máximo de volume.'
+    fala:'"Galinha Garnisé, coisíssima nenhuma, ouviram? Eu sou um majestoso, maravilhoso, fantástico Galo de Cericecó!"',
+    correct:'forte',
+    exp:'Voz FORTE e ENFÁTICA — o Galo está indignado e orgulhoso. Cada palavra de destaque deve soar com muita força e ênfase.',
+    opts:[
+      {key:'forte',ei:'💪',en:'Forte e enfática',ed:'voz alta, com ênfase'},
+      {key:'lenta',ei:'🐢',en:'Lenta e pesada',ed:'voz baixa e arrastada'},
+      {key:'alegre',ei:'😄',en:'Alegre e animada',ed:'voz leve e aguda'},
+      {key:'neutra',ei:'😐',en:'Neutra e calma',ed:'voz plana, sem emoção'},
+    ]
   },
   {
-    ctx:'💨 O Vento está EXAUSTO — tentou tudo e não conseguiu. Ele se rende lentamente.',
+    ctx:'💨 O Vento tentou tudo e não conseguiu. Ele está completamente exausto e se rende.',
     char:'VENTO fala:',
-    words:['Desisto...','Vai','lá:','sua','vez.'],
-    suggestion:{
-      'Desisto...':'devagar','Vai':'baixo','lá:':'baixo','sua':'baixo','vez.':'baixo'
-    },
-    hint:'"Desisto..." é o momento de rendição — deve ser dito DEVAGAR e em voz BAIXA. O restante da fala também é baixo, como alguém que não tem mais energia.',
-    exp:'"Desisto..." deve soar pesado e lento — a rendição do Vento. O restante é entregue em voz baixa, quase sussurrada, mostrando o esgotamento total.'
+    fala:'"Desisto... Vai lá: sua vez."',
+    correct:'lenta',
+    exp:'Voz LENTA e PESADA — o Vento está esgotado. "Desisto..." deve soar com muito peso, como alguém sem forças para continuar.',
+    opts:[
+      {key:'forte',ei:'💪',en:'Forte e enfática',ed:'voz alta, com ênfase'},
+      {key:'lenta',ei:'🐢',en:'Lenta e pesada',ed:'voz baixa e arrastada'},
+      {key:'alegre',ei:'😄',en:'Alegre e animada',ed:'voz leve e aguda'},
+      {key:'tensa',ei:'😰',en:'Tensa e urgente',ed:'voz rápida e ansiosa'},
+    ]
   },
   {
-    ctx:'🎺 O Arauto confirma que estão no caminho certo — momento de alívio e festa!',
-    char:'ARAUTO fala:',
-    words:['Estão','no','caminho','CERTO','da','Serrinha','de','Cericecó!','Até','mais','ver,','xente!'],
-    suggestion:{
-      'Estão':'medio','no':'medio','caminho':'medio','CERTO':'alto','da':'medio',
-      'Serrinha':'medio','de':'medio','Cericecó!':'alto','Até':'medio','mais':'medio','ver,':'medio','xente!':'alto'
-    },
-    hint:'"CERTO" e "Cericecó!" são os pontos de emoção — volume ALTO. "xente!" é a despedida calorosa — também alto. O restante é médio, informativo mas animado.',
-    exp:'As palavras de destaque (CERTO, Cericecó!, xente!) pedem volume alto. O restante da fala é médio — informativo e animado. A entonação geral sobe no final.'
-  },
-  {
-    ctx:'🧑 Zé está PREOCUPADO — Das Graças está prestes a ter o bebê e eles ainda não chegaram.',
-    char:'ZÉ fala:',
-    words:['E','falta','muito','pra','gente','chegar','lá','na','Serrinha','de','Cericecó?'],
-    suggestion:{
-      'E':'medio','falta':'rapido','muito':'rapido','pra':'rapido','gente':'rapido',
-      'chegar':'rapido','lá':'medio','na':'medio','Serrinha':'medio','de':'medio','Cericecó?':'alto'
-    },
-    hint:'A ansiedade de Zé se expressa na velocidade — "falta muito pra gente chegar" deve ser RÁPIDO, mostrando urgência. "Cericecó?" sobe em ALTO no final da pergunta ansiosa.',
-    exp:'A urgência e ansiedade de Zé aparecem na velocidade rápida do meio da frase. A pergunta final sobe em volume alto, mostrando a preocupação genuína com a situação.'
-  },
-  {
-    ctx:'☀️ O Sol faz sua demonstração — ele aquece devagar e com firmeza, sem pressa.',
+    ctx:'☀️ O Sol demonstra sua estratégia com calma e sabedoria — sem pressa, sem força.',
     char:'SOL fala:',
-    words:['Observe,','Vento.','Não','é','preciso','força...','é','preciso','calma.'],
-    suggestion:{
-      'Observe,':'medio','Vento.':'medio','Não':'medio','é':'medio','preciso':'medio',
-      'força...':'baixo','é':'medio','preciso':'medio','calma.':'devagar'
-    },
-    hint:'O Sol é calmo e seguro — sua voz é equilibrada (médio). "força..." pode ser levemente baixo, contrastando com "calma." que deve ser DEVAGAR — a lição da fábula.',
-    exp:'O Sol demonstra com calma e serenidade. "calma." no final deve ser dito devagar, com peso — é a moral da fábula sendo revelada. Sem gritos, sem urgência.'
+    fala:'"Observe, Vento. Não é preciso força... é preciso calma."',
+    correct:'neutra',
+    exp:'Voz CALMA e PAUSADA — o Sol é sereno e sábio. A fala deve soar tranquila e segura, especialmente o final: "é preciso calma."',
+    opts:[
+      {key:'forte',ei:'💪',en:'Forte e enfática',ed:'voz alta, com ênfase'},
+      {key:'neutra',ei:'😌',en:'Calma e pausada',ed:'voz serena e segura'},
+      {key:'alegre',ei:'😄',en:'Alegre e animada',ed:'voz leve e aguda'},
+      {key:'tensa',ei:'😰',en:'Tensa e urgente',ed:'voz rápida e ansiosa'},
+    ]
   },
   {
-    ctx:'🐦 Os Pombos entregam a moral da história para a plateia — momento reflexivo e sério.',
+    ctx:'🧑 Zé está ansioso — Das Graças está prestes a ter um bebê e eles ainda não chegaram.',
+    char:'ZÉ fala:',
+    fala:'"E falta muito pra gente chegar lá na Serrinha de Cericecó?"',
+    correct:'tensa',
+    exp:'Voz TENSA e URGENTE — Zé está ansioso e preocupado. A pergunta deve soar com urgência, subindo no final de "Cericecó?"',
+    opts:[
+      {key:'forte',ei:'💪',en:'Forte e enfática',ed:'voz alta, com ênfase'},
+      {key:'lenta',ei:'🐢',en:'Lenta e pesada',ed:'voz baixa e arrastada'},
+      {key:'alegre',ei:'😄',en:'Alegre e animada',ed:'voz leve e aguda'},
+      {key:'tensa',ei:'😰',en:'Tensa e urgente',ed:'voz rápida e ansiosa'},
+    ]
+  },
+  {
+    ctx:'🎺 O Arauto confirma que Zé e Das Graças estão no caminho certo — ele é festivo e caloroso.',
+    char:'ARAUTO fala:',
+    fala:'"Estão no caminho certo da Serrinha de Cericecó! Até mais ver, xente!"',
+    correct:'alegre',
+    exp:'Voz ALEGRE e ANIMADA — o Arauto é festivo e caloroso. A despedida "xente!" deve soar com entusiasmo e calor humano.',
+    opts:[
+      {key:'forte',ei:'💪',en:'Forte e enfática',ed:'voz alta, com ênfase'},
+      {key:'lenta',ei:'🐢',en:'Lenta e pesada',ed:'voz baixa e arrastada'},
+      {key:'alegre',ei:'😄',en:'Alegre e animada',ed:'voz leve e aguda'},
+      {key:'neutra',ei:'😌',en:'Calma e pausada',ed:'voz serena e segura'},
+    ]
+  },
+  {
+    ctx:'💨 O Vento perdeu a aposta. Ele aceita a derrota com maturidade, sem drama.',
+    char:'VENTO fala:',
+    fala:'"Ok, você venceu! É mesmo mais forte do que eu."',
+    correct:'neutra',
+    exp:'Voz CALMA e MADURA — o Vento aceita a derrota sem exagero. Não está triste nem feliz — apenas reconhece a realidade com equilíbrio.',
+    opts:[
+      {key:'forte',ei:'💪',en:'Forte e enfática',ed:'voz alta, com ênfase'},
+      {key:'lenta',ei:'🐢',en:'Lenta e pesada',ed:'voz baixa e arrastada'},
+      {key:'alegre',ei:'😄',en:'Alegre e animada',ed:'voz leve e aguda'},
+      {key:'neutra',ei:'😌',en:'Calma e madura',ed:'voz serena e equilibrada'},
+    ]
+  },
+  {
+    ctx:'🐦 Os Pombos entregam a moral da história para a plateia — é o momento mais importante da peça.',
     char:'POMBO 1 fala:',
-    words:['É','mais','fácil','conseguir','o','que','se','quer','usando','a','inteligência...'],
-    suggestion:{
-      'É':'devagar','mais':'devagar','fácil':'devagar','conseguir':'devagar','o':'devagar',
-      'que':'devagar','se':'devagar','quer':'devagar','usando':'devagar','a':'devagar','inteligência...':'devagar'
-    },
-    hint:'A moral da história deve ser dita DEVAGAR — cada palavra merece atenção. Não é urgência, é sabedoria. A plateia precisa absorver o que está sendo dito.',
-    exp:'A moral é o momento mais importante da peça — deve ser entregue DEVAGAR, com clareza, para que cada palavra chegue ao público. Velocidade lenta = sabedoria sendo compartilhada.'
+    fala:'"É mais fácil conseguir o que se quer usando só a inteligência..."',
+    correct:'lenta',
+    exp:'Voz LENTA e PAUSADA — a moral deve ser dita devagar, com clareza, para que cada palavra chegue ao público. Velocidade lenta = sabedoria sendo compartilhada.',
+    opts:[
+      {key:'forte',ei:'💪',en:'Forte e enfática',ed:'voz alta, com ênfase'},
+      {key:'lenta',ei:'🐢',en:'Lenta e pausada',ed:'voz devagar e clara'},
+      {key:'alegre',ei:'😄',en:'Alegre e animada',ed:'voz leve e aguda'},
+      {key:'tensa',ei:'😰',en:'Tensa e urgente',ed:'voz rápida e ansiosa'},
+    ]
+  },
+  {
+    ctx:'👩 Das Graças lembra do boi amarelim que viram no caminho — ela está animada e certa.',
+    char:'DAS GRAÇAS fala:',
+    fala:'"É sim, Zé! Todo amarelim, com chifres cheios de fita assim!"',
+    correct:'alegre',
+    exp:'Voz ALEGRE e ANIMADA — Das Graças confirma com entusiasmo. A fala deve soar vibrante, com energia subindo no final de "assim!"',
+    opts:[
+      {key:'forte',ei:'💪',en:'Forte e enfática',ed:'voz alta, com ênfase'},
+      {key:'lenta',ei:'🐢',en:'Lenta e pesada',ed:'voz baixa e arrastada'},
+      {key:'alegre',ei:'😄',en:'Alegre e animada',ed:'voz vibrante e animada'},
+      {key:'neutra',ei:'😌',en:'Calma e pausada',ed:'voz serena e segura'},
+    ]
   },
 ];
-var cur=0,done=0,selectedCtrl=null,wordMarks={},checked=false;
-var ctrls=[
-  {key:'alto',icon:'🔊',label:'ALTO'},
-  {key:'medio',icon:'📣',label:'MÉDIO'},
-  {key:'baixo',icon:'🔈',label:'BAIXO'},
-  {key:'rapido',icon:'⚡',label:'RÁPIDO'},
-  {key:'devagar',icon:'🐢',label:'DEVAGAR'},
-];
-function loadFala(){
-  checked=false;selectedCtrl=null;wordMarks={};
+var cur=0,score=0,hits=0,erros=0,answered=false;
+function loadQ(){
+  answered=false;
   var f=falas[cur];
   document.getElementById('ch-num').textContent='Fala '+(cur+1);
   document.getElementById('prog').style.width=((cur/falas.length)*100)+'%';
   document.getElementById('prog-lbl').textContent='Fala '+(cur+1)+' de '+falas.length;
   document.getElementById('ctx').textContent=f.ctx;
   document.getElementById('char-lbl').textContent=f.char;
-  document.getElementById('active-ind').textContent='← Escolha uma ferramenta acima';
-  document.getElementById('sugg').className='sugg';
+  document.getElementById('fala-box').textContent=f.fala;
+  var grid=document.getElementById('ent-grid');
+  grid.innerHTML='';
+  f.opts.forEach(function(opt){
+    var btn=document.createElement('button');
+    btn.className='ent-btn';
+    btn.innerHTML='<span class="ei">'+opt.ei+'</span><span class="en">'+opt.en+'</span><span class="ed">'+opt.ed+'</span>';
+    btn.onclick=(function(k){return function(){selectEnt(k);};})(opt.key);
+    grid.appendChild(btn);
+  });
   document.getElementById('feedback').className='feedback';
   document.getElementById('btn-next').className='btn-next';
-  // Words
-  var fw=document.getElementById('fala-words');
-  fw.innerHTML='';
-  f.words.forEach(function(w,i){
-    var span=document.createElement('span');
-    span.className='fala-word clickable';
-    span.textContent=w;
-    span.id='word-'+i;
-    span.onclick=(function(idx,word){return function(){markWord(idx,word);};})(i,w);
-    fw.appendChild(span);
-  });
-  // Controls
-  var cr=document.getElementById('ctrl-row');
-  cr.innerHTML='';
-  ctrls.forEach(function(c){
-    var btn=document.createElement('button');
-    btn.className='ctrl-btn '+c.key;
-    btn.id='ctrl-'+c.key;
-    btn.textContent=c.icon+' '+c.label;
-    btn.onclick=(function(k,lbl){return function(){selectCtrl(k,lbl);};})(c.key,c.icon+' '+c.label);
-    cr.appendChild(btn);
-  });
+  document.getElementById('ch-card').style.animation='none';
+  requestAnimationFrame(function(){document.getElementById('ch-card').style.animation='slideIn .35s ease';});
 }
-function selectCtrl(key,label){
-  if(checked)return;
-  selectedCtrl=key;
-  document.querySelectorAll('.ctrl-btn').forEach(function(b){b.classList.remove('active-ctrl');});
-  document.getElementById('ctrl-'+key).classList.add('active-ctrl');
-  document.getElementById('active-ind').textContent='Ferramenta ativa: '+label+' — clique nas palavras';
-}
-function markWord(idx,word){
-  if(checked||!selectedCtrl)return;
-  wordMarks[idx]=selectedCtrl;
-  var span=document.getElementById('word-'+idx);
-  span.className='fala-word clickable sel-'+selectedCtrl;
-}
-function showHint(){
+function selectEnt(key){
+  if(answered)return;
+  answered=true;
   var f=falas[cur];
-  var sugg=document.getElementById('sugg');
-  sugg.textContent='💡 '+f.hint;
-  sugg.className='sugg show';
-}
-function checkFala(){
-  checked=true;
-  var f=falas[cur];
-  var ok=0,total=f.words.length;
-  f.words.forEach(function(w,i){
-    var suggested=f.suggestion[w]||'medio';
-    var marked=wordMarks[i]||null;
-    var span=document.getElementById('word-'+i);
-    span.onclick=null;
-    if(marked===suggested){
-      ok++;
-      span.className='fala-word sel-'+suggested+' res-ok';
-    }else if(marked&&marked!==suggested){
-      span.className='fala-word sel-'+marked+' res-nok';
-    }else{
-      // Not marked — show suggestion
-      span.className='fala-word sel-'+suggested;
-      span.style.opacity='.6';
-    }
+  var btns=document.querySelectorAll('.ent-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var correctIdx=-1,chosenIdx=-1;
+  f.opts.forEach(function(opt,i){
+    if(opt.key===f.correct)correctIdx=i;
+    if(opt.key===key)chosenIdx=i;
   });
   var fb=document.getElementById('feedback');
-  var pct=ok/total;
-  if(pct>=.7){
+  if(key===f.correct){
+    btns[chosenIdx].classList.add('correct');
     fb.className='feedback ok show';
-    fb.textContent='✅ Muito bem! '+ok+' de '+total+' palavras com entonação adequada. '+f.exp;
-    done++;
+    fb.textContent='✅ '+f.exp;
+    score+=10;hits++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('hits').textContent=hits;
   }else{
+    btns[chosenIdx].classList.add('wrong');
+    if(correctIdx>=0)btns[correctIdx].classList.add('correct');
     fb.className='feedback nok show';
-    fb.textContent='❌ '+ok+' de '+total+' palavras certas. As cores mostram a sugestão do diretor. '+f.exp;
+    fb.textContent='❌ '+f.exp;
+    erros++;
+    document.getElementById('erros').textContent=erros;
   }
-  document.getElementById('cnt-done').textContent=done;
   if(cur<falas.length-1){document.getElementById('btn-next').className='btn-next show';}
-  else{setTimeout(showResult,1200);}
+  else{setTimeout(showResult,1600);}
 }
-function nextFala(){cur++;loadFala();}
+function nextQ(){cur++;loadQ();}
 function showResult(){
   document.getElementById('game-area').style.display='none';
-  document.getElementById('result').className='result show';
+  var rs=document.getElementById('result');
+  rs.className='result show';
+  document.getElementById('r-ac').textContent=hits;
+  document.getElementById('r-er').textContent=erros;
+  var pct=hits/falas.length;
+  var e,t;
+  if(pct===1){e='🏆';t='Ator perfeito!';}
+  else if(pct>=.75){e='🌟';t='Excelente!';}
+  else if(pct>=.5){e='😊';t='Muito bem!';}
+  else{e='🔄';t='Continue praticando!';}
+  document.getElementById('r-emoji').textContent=e;
+  document.getElementById('r-title').textContent=t;
 }
 function restart(){
-  cur=0;done=0;selectedCtrl=null;wordMarks={};checked=false;
-  document.getElementById('cnt-done').textContent=0;
+  cur=0;score=0;hits=0;erros=0;answered=false;
+  ['score','hits','erros'].forEach(function(id){document.getElementById(id).textContent=0;});
   document.getElementById('game-area').style.display='block';
   document.getElementById('result').className='result';
-  loadFala();
+  loadQ();
 }
-loadFala();
+loadQ();
 </script>
 </body>
 </html>

@@ -42,7 +42,7 @@
   @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   .q-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--inter);margin-bottom:8px;}
   .q-text{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:8px;}
-  .q-quote{background:#F8FAFF;border-left:4px solid var(--inter);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14px;font-weight:700;color:#1E40AF;margin-bottom:16px;font-style:italic;line-height:1.6;}
+  .q-quote{background:#F8FAFF;border-left:4px solid var(--inter);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14px;font-weight:700;color:#1E40AF;margin-bottom:16px;font-style:italic;line-height:1.6;white-space:pre-line;}
   .opts{display:flex;flex-direction:column;gap:9px;}
   .opt{background:#FAFAFA;border:2px solid var(--border);border-radius:13px;padding:12px 15px;font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px;color:var(--text);}
   .opt:hover:not(:disabled){border-color:var(--inter);background:var(--inter-light);transform:translateX(4px);}
@@ -145,7 +145,7 @@ var questions=[
   },
   {
     text:'Leia as duas versões da mesma fala e identifique a diferença:',
-    quote:'Versão 1: "Seu moço, este é o caminho da Serrinha, é?"\nVersão 2: "Seu moço, este é o caminho da Serrinha, é."',
+    quote:'Versão 1: "Seu moço, este é o caminho da Serrinha, é?"\n\nVersão 2: "Seu moço, este é o caminho da Serrinha, é."',
     correct:0,
     opts:['Na versão 1, Zé está perguntando e incerto. Na versão 2, seria uma afirmação calma','As duas versões têm o mesmo sentido — a pontuação não muda nada','Na versão 1, Zé está com raiva. Na versão 2, está alegre','Na versão 2, Zé está perguntando com mais emoção'],
     exp:'A pontuação muda tudo! Com "?" Zé está pedindo confirmação, com incerteza. Com "." seria uma afirmação calma — o que mudaria completamente o sentido da cena.'
