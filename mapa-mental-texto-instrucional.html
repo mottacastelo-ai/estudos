@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Texto Instrucional</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port-color: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --bg: #F4F2FF; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #E5E0FF;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 32px 20px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port-color); text-decoration: none; margin-bottom: 20px; transition: opacity .15s; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 22px 28px 20px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 34px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 18px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 3px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 14px 28px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #faf9ff; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--port-light); color: var(--port-color); }
+.toolbar button.active { background: var(--port-bg); border-color: var(--port-color); color: var(--port-color); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--port-color); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: 560px; background: var(--bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 24px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 14px; min-width: 80px; max-width: 140px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; word-break: break-word; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid #7C3AED; outline-offset: 2px; }
+.n-central, .n-purple, .n-coral, .n-teal, .n-amber { background: #EDE9FE; border: 2px solid #A78BFA; color: #4C1D95; }
+.n-central { border-color: #7C3AED; font-size: 13px; font-weight: 800; min-width: 130px; padding: 12px 18px; z-index: 11; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #5DCAA5; background: #E1F5EE; display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: #085041; margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: #f4f2ff; display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #9FE1CB; }
+.score-fill  { height: 8px; border-radius: 999px; background: #059669; transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: #065F46; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🗺️</div>
+      <div><h1>Mapa Mental</h1><p>Texto Instrucional</p></div>
+      <div class="hbadge">🏆 Síntese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar os balões e organizar o mapa.
+      Use <strong>+ Conectar</strong> para criar setas entre eles.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com uma estrutura possível.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect" class="active">+ Conectar</button>
+      <button id="btn-move">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexões</span>
+      <span id="hint-bar">Clique em dois balões para criar uma seta</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balão para conectar ✔</div>
+      <div id="stage">
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#7C3AED" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">UMA ESTRUTURA POSSÍVEL</div>
+      <svg id="gabarito-svg" viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#7C3AED" opacity="0.6"/>
+          </marker>
+        </defs>
+
+        <!-- central → 3 categorias -->
+        <line x1="350" y1="36" x2="90"  y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
+        <line x1="350" y1="36" x2="350" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
+        <line x1="350" y1="36" x2="610" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
+
+        <!-- Finalidade → filho -->
+        <line x1="90" y1="126" x2="90" y2="186" stroke="#AFA9EC" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+
+        <!-- Estrutura → filhos diretos: Título, Lista, Passo -->
+        <line x1="322" y1="126" x2="200" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="350" y1="126" x2="350" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="378" y1="126" x2="490" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+
+        <!-- Lista → Quantidade -->
+        <line x1="350" y1="214" x2="350" y2="274" stroke="#F0997B" stroke-width="1.1" opacity="0.5" marker-end="url(#ga)"/>
+        <!-- Passo → Etapas numeradas -->
+        <line x1="490" y1="214" x2="490" y2="274" stroke="#F0997B" stroke-width="1.1" opacity="0.5" marker-end="url(#ga)"/>
+
+        <!-- Linguagem → filhos -->
+        <line x1="596" y1="126" x2="560" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="622" y1="126" x2="650" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+
+        <!-- NÓ CENTRAL -->
+        <rect x="218" y="10" width="264" height="36" rx="18" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
+        <text x="350" y="33" text-anchor="middle" font-size="13" font-weight="800" fill="#2D1B69">Texto Instrucional</text>
+
+        <!-- FINALIDADE -->
+        <rect x="30" y="106" width="120" height="28" rx="14" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1.5"/>
+        <text x="90" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4C1D95">Finalidade</text>
+        <rect x="16" y="168" width="148" height="34" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
+        <text x="90" y="183" text-anchor="middle" font-size="9.5" fill="#4C1D95">Ensinar</text>
+        <text x="90" y="196" text-anchor="middle" font-size="9.5" fill="#4C1D95">a fazer algo</text>
+
+        <!-- ESTRUTURA -->
+        <rect x="282" y="106" width="136" height="28" rx="14" fill="#FAECE7" stroke="#F0997B" stroke-width="1.5"/>
+        <text x="350" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4A1B0C">Estrutura</text>
+
+        <!-- filhos Estrutura: Título -->
+        <rect x="138" y="168" width="124" height="34" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="200" y="183" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Título</text>
+        <text x="200" y="196" text-anchor="middle" font-size="9.5" fill="#4A1B0C"> </text>
+
+        <!-- filhos Estrutura: Lista de materiais -->
+        <rect x="278" y="168" width="144" height="34" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="350" y="183" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Lista de</text>
+        <text x="350" y="196" text-anchor="middle" font-size="9.5" fill="#4A1B0C">materiais</text>
+
+        <!-- neto: Quantidade de cada item -->
+        <rect x="262" y="268" width="176" height="34" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="350" y="283" text-anchor="middle" font-size="9" fill="#4A1B0C">Quantidade</text>
+        <text x="350" y="296" text-anchor="middle" font-size="9" fill="#4A1B0C">de cada item</text>
+
+        <!-- filhos Estrutura: Passo a passo -->
+        <rect x="422" y="168" width="136" height="34" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="490" y="183" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Passo</text>
+        <text x="490" y="196" text-anchor="middle" font-size="9.5" fill="#4A1B0C">a passo</text>
+
+        <!-- neto: Etapas numeradas -->
+        <rect x="422" y="268" width="136" height="34" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="490" y="283" text-anchor="middle" font-size="9" fill="#4A1B0C">Etapas</text>
+        <text x="490" y="296" text-anchor="middle" font-size="9" fill="#4A1B0C">numeradas</text>
+
+        <!-- LINGUAGEM -->
+        <rect x="542" y="106" width="136" height="28" rx="14" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1.5"/>
+        <text x="610" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#085041">Linguagem</text>
+
+        <!-- filhos Linguagem -->
+        <rect x="508" y="168" width="110" height="34" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="563" y="183" text-anchor="middle" font-size="9" fill="#085041">Verbos no</text>
+        <text x="563" y="196" text-anchor="middle" font-size="9" fill="#085041">imperativo</text>
+
+        <rect x="604" y="168" width="90" height="34" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="649" y="183" text-anchor="middle" font-size="9" fill="#085041">Ilustrações</text>
+        <text x="649" y="196" text-anchor="middle" font-size="9" fill="#085041"> </text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 12 conexões</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var NODES = [
+  { id:'central',    label:'Texto Instrucional',    cls:'n-central' },
+  { id:'finalidade', label:'Finalidade',             cls:'n-purple'  },
+  { id:'estrutura',  label:'Estrutura',              cls:'n-coral'   },
+  { id:'linguagem',  label:'Linguagem',              cls:'n-teal'    },
+  { id:'ensinar',    label:'Ensinar a fazer algo',   cls:'n-purple'  },
+  { id:'titulo',     label:'Título',                 cls:'n-coral'   },
+  { id:'lista',      label:'Lista de materiais',     cls:'n-coral'   },
+  { id:'quantidade', label:'Quantidade de cada item',cls:'n-coral'   },
+  { id:'passo',      label:'Passo a passo',          cls:'n-coral'   },
+  { id:'numeracao',  label:'Etapas numeradas',       cls:'n-coral'   },
+  { id:'imperativo', label:'Verbos no imperativo',   cls:'n-teal'    },
+  { id:'ilustracoes',label:'Ilustrações',            cls:'n-teal'    },
+];
+
+var GABARITO = [
+  ['central','finalidade'],['central','estrutura'],['central','linguagem'],
+  ['finalidade','ensinar'],
+  ['estrutura','titulo'],['estrutura','lista'],['estrutura','passo'],
+  ['lista','quantidade'],
+  ['passo','numeracao'],
+  ['linguagem','imperativo'],['linguagem','ilustracoes'],
+];
+
+var SHUFFLE = [
+  'lista','central','imperativo','finalidade','ilustracoes','estrutura',
+  'ensinar','linguagem','passo','titulo','quantidade','numeracao',
+];
+
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'connect', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
+
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 520 ? 2 : 4;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 16, padY = 32;
+  var colW = (W - padX*2) / COLS;
+  var rowH = Math.max(100, (stage.clientHeight - padY*2) / ROWS);
+  var minH = padY*2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i%COLS + 0.5) * colW,
+      y: padY + (Math.floor(i/COLS) + 0.5) * rowH
+    };
+  });
+}
+
+function renderNodes() {
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-'+n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls; el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
+    }
+    placeNode(n.id);
+  });
+}
+
+function placeNode(id) {
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  el.style.left = (Math.max(hw+4, Math.min(W-hw-4, p.x)) - hw) + 'px';
+  el.style.top  = (Math.max(hh+4, Math.min(H-hh-4, p.y)) - hh) + 'px';
+}
+
+function center(id) {
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
+}
+
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode === 'erase';
+  arrows.forEach(function(a, i) {
+    var f = center(a.from), t = center(a.to), dx = t.x-f.x, dy = t.y-f.y;
+    var len = Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl = document.getElementById('nd-'+a.to);
+    var rad = Math.min(toEl.offsetWidth, toEl.offsetHeight)/2+3;
+    var ex = t.x-(dx/len)*rad, ey = t.y-(dy/len)*rad;
+    var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
+    line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
+    line.setAttribute('stroke', isErase?'#DC2626':'#7C3AED');
+    line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents = 'stroke'; line.style.cursor = 'pointer';
+      (function(idx){ line.addEventListener('click', function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
+  });
+}
+
+function updateCount() { var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões'); }
+
+function setMode(m) {
+  mode = m;
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  document.getElementById('pending-msg').style.display = 'none';
+  ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {connect:'Clique em dois balões para criar uma seta',move:'Clique e arraste qualquer balão',erase:'Clique em uma seta para apagá-la'}[m];
+}
+
+function onNodeClick(e, id) {
+  if (mode !== 'connect') return;
+  if (!arrowFrom) { arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
+  else {
+    document.getElementById('nd-'+arrowFrom).classList.remove('selected');
+    document.getElementById('nd-'+id).classList.remove('selected');
+    if (arrowFrom !== id) {
+      var dup = arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom=null; document.getElementById('pending-msg').style.display='none';
+  }
+  e.stopPropagation();
+}
+
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+document.addEventListener('mousemove', function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup', function(){ dragging=null; });
+document.addEventListener('touchmove', function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
+document.addEventListener('touchend', function(){ dragging=null; });
+
+document.getElementById('btn-connect').addEventListener('click', function(){ setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click',    function(){ setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click',   function(){ setMode(mode==='erase'?'connect':'erase'); });
+document.getElementById('btn-reset').addEventListener('click', function(){
+  arrows=[]; calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); updateCount(); updateGabarito();
+});
+document.getElementById('btn-gabarito').addEventListener('click', function(){
+  gabVisible=!gabVisible;
+  document.getElementById('gabarito-panel').style.display=gabVisible?'block':'none';
+  document.getElementById('btn-gabarito').textContent=gabVisible?'Ocultar gabarito':'Ver gabarito';
+  if(gabVisible) updateGabarito();
+});
+
+function updateGabarito() {
+  if(!gabVisible) return;
+  var hits=0;
+  GABARITO.forEach(function(pair){ if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++; });
+  var total=GABARITO.length, pct=Math.round((hits/total)*100);
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-label').textContent=hits+' de '+total+' conexões ('+pct+'%)';
+}
+
+window.addEventListener('resize', function(){ calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load', function(){ calcPositions(); renderNodes(); setMode('connect'); });
+</script>
+</body>
+</html>
