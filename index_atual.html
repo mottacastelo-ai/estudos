@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudos – 5º Ano</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Variables ─────────────────────────────── */
+:root {
+  --sidebar-w: 240px;
+  --bg: #F4F2FF;
+  --sidebar-bg: #1A1035;
+  --sidebar-hover: rgba(255,255,255,.07);
+  --sidebar-active: rgba(167,139,250,.18);
+  --sidebar-active-bar: #A78BFA;
+  --card: #fff;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #E5E0FF;
+
+  --port-color: #7C3AED;
+  --port-light: #A78BFA;
+  --port-bg: #F3F0FF;
+  --mat-color: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ── Layout ────────────────────────────────────────── */
+.layout { display: flex; min-height: 100vh; }
+
+/* ── Sidebar ───────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  position: fixed; top: 0; left: 0; bottom: 0;
+  display: flex; flex-direction: column;
+  z-index: 200; overflow-y: auto;
+  transition: transform .3s ease;
+}
+.sidebar-brand {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sidebar-brand-title {
+  font-family: "Space Mono", monospace;
+  font-size: 13px; font-weight: 700; color: white;
+  line-height: 1.3; margin-bottom: 4px;
+}
+.sidebar-brand-sub { font-size: 11px; color: rgba(255,255,255,.4); font-weight: 600; }
+
+.sidebar-section-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(255,255,255,.3);
+  padding: 20px 20px 8px;
+}
+
+.disc-nav-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 20px; width: 100%;
+  background: transparent; border: none; cursor: pointer;
+  text-align: left; color: rgba(255,255,255,.6);
+  font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 700;
+  transition: background .15s, color .15s;
+  position: relative;
+}
+.disc-nav-btn:hover { background: var(--sidebar-hover); color: white; }
+.disc-nav-btn.active { background: var(--sidebar-active); color: white; }
+.disc-nav-btn.active::before {
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--sidebar-active-bar); border-radius: 0 2px 2px 0;
+}
+.disc-nav-btn .d-icon { font-size: 18px; flex-shrink: 0; }
+.disc-nav-btn .d-name { flex: 1; }
+.disc-nav-btn .d-count {
+  font-size: 10px; font-weight: 800;
+  background: rgba(255,255,255,.1);
+  padding: 2px 7px; border-radius: 20px;
+}
+.disc-nav-btn.soon { opacity: .4; cursor: default; }
+.disc-nav-btn.soon:hover { background: transparent; color: rgba(255,255,255,.6); }
+
+/* Theme sub-links */
+.theme-sub {
+  padding: 0 0 4px 48px;
+  display: none;
+}
+.theme-sub.open { display: block; }
+.theme-link {
+  display: block; padding: 5px 12px;
+  font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,.45);
+  background: none; border: none; cursor: pointer;
+  text-align: left; width: 100%;
+  font-family: "Baloo 2", cursive;
+  border-radius: 8px; transition: all .15s;
+}
+.theme-link:hover { color: white; background: rgba(255,255,255,.06); }
+.theme-link.active { color: var(--sidebar-active-bar); }
+
+.sidebar-footer {
+  margin-top: auto; padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  font-size: 11px; color: rgba(255,255,255,.25); font-weight: 600; line-height: 1.5;
+}
+
+/* Mobile hamburger */
+.hamburger {
+  display: none; position: fixed; top: 14px; left: 14px; z-index: 300;
+  background: var(--sidebar-bg); border: none; border-radius: 10px;
+  width: 40px; height: 40px; cursor: pointer;
+  align-items: center; justify-content: center; color: white; font-size: 18px;
+}
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); z-index: 150;
+}
+
+/* ── Main ──────────────────────────────────────────── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1; min-width: 0;
+}
+
+/* ── Screens ───────────────────────────────────────── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Home screen ───────────────────────────────────── */
+.home-hero {
+  background: linear-gradient(135deg, #2D1B69, #7C3AED 55%, #A78BFA);
+  padding: 56px 40px 52px; color: white;
+}
+.home-hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,.18); border: 1.5px solid rgba(255,255,255,.3);
+  font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  padding: 4px 16px; border-radius: 20px; margin-bottom: 16px;
+}
+.home-hero h1 { font-family: "Space Mono", monospace; font-size: 38px; margin-bottom: 10px; line-height: 1.1; }
+.home-hero p { font-size: 15px; font-weight: 600; opacity: .85; max-width: 480px; line-height: 1.6; margin-bottom: 28px; }
+.home-stats { display: flex; gap: 12px; flex-wrap: wrap; }
+.hstat { background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.25); border-radius: 14px; padding: 10px 20px; font-size: 13px; font-weight: 800; }
+.hstat span { display: block; font-family: "Space Mono", monospace; font-size: 26px; }
+
+.home-body { padding: 40px; max-width: 800px; }
+.home-section-title { font-family: "Space Mono", monospace; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px; }
+
+.disc-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 40px; }
+.disc-home-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 20px; padding: 22px; cursor: pointer;
+  transition: box-shadow .2s, transform .2s, border-color .2s;
+  text-align: left; width: 100%;
+  font-family: "Baloo 2", cursive;
+}
+.disc-home-card:hover { box-shadow: 0 8px 28px rgba(124,58,237,.15); transform: translateY(-3px); border-color: var(--port-light); }
+.disc-home-card.mat:hover { border-color: var(--mat-light); box-shadow: 0 8px 28px rgba(5,150,105,.15); }
+.disc-home-card.soon { opacity: .5; cursor: default; }
+.disc-home-card.soon:hover { box-shadow: none; transform: none; border-color: var(--border); }
+.dhc-icon { font-size: 36px; margin-bottom: 12px; }
+.dhc-name { font-family: "Space Mono", monospace; font-size: 17px; margin-bottom: 4px; }
+.dhc-desc { font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 12px; }
+.dhc-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip { font-size: 10px; font-weight: 800; padding: 2px 9px; border-radius: 20px; }
+
+/* ── Discipline screen ─────────────────────────────── */
+.disc-hero {
+  padding: 44px 40px 40px; color: white;
+}
+.disc-hero.port { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); }
+.disc-hero.mat  { background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399); }
+.disc-hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,.18); border: 1.5px solid rgba(255,255,255,.3);
+  font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  padding: 4px 16px; border-radius: 20px; margin-bottom: 14px;
+}
+.disc-hero h1 { font-family: "Space Mono", monospace; font-size: 30px; margin-bottom: 6px; }
+.disc-hero p { font-size: 14px; font-weight: 600; opacity: .85; max-width: 440px; line-height: 1.6; }
+
+.disc-body { padding: 40px; max-width: 820px; }
+
+/* Theme tabs */
+.theme-tabs { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+.theme-tab-btn {
+  padding: 9px 18px; border: 2px solid var(--border);
+  border-radius: 12px; background: var(--card);
+  font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800;
+  cursor: pointer; color: var(--muted); transition: all .18s;
+}
+.theme-tab-btn:hover { border-color: var(--port-color); color: var(--port-color); }
+.theme-tab-btn.active { background: var(--port-bg); border-color: var(--port-color); color: var(--port-color); }
+.theme-tab-btn.mat-tab:hover { border-color: var(--mat-color); color: var(--mat-color); }
+.theme-tab-btn.mat-tab.active { background: var(--mat-bg); border-color: var(--mat-color); color: var(--mat-color); }
+
+/* Theme content */
+.theme-content { display: none; }
+.theme-content.active { display: block; }
+
+/* Start banner */
+.start-banner { border-radius: 18px; padding: 18px 22px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 14px; }
+.start-banner.orange { background: linear-gradient(90deg, #FF6B35, #f9ca24); }
+.start-banner.blue   { background: linear-gradient(90deg, #1E40AF, #3B82F6); }
+.start-banner-icon { font-size: 30px; flex-shrink: 0; }
+.start-banner h3 { font-family: "Space Mono", monospace; font-size: 14px; color: white; margin-bottom: 4px; }
+.start-banner p { font-size: 12px; color: rgba(255,255,255,.88); font-weight: 600; line-height: 1.5; }
+
+/* HQ */
+.hq-card { background: var(--card); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 24px; }
+.hq-img { width: 100%; display: block; }
+.hq-caption { padding: 12px 18px; font-size: 12px; font-weight: 700; color: var(--muted); border-top: 2px solid var(--border); display: flex; align-items: center; gap: 8px; }
+
+/* Order tip */
+.order-card { background: var(--card); border: 2px solid var(--border); border-radius: 16px; padding: 18px 20px; margin-bottom: 20px; }
+.order-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 12px; }
+.order-steps { display: flex; flex-direction: column; gap: 7px; }
+.order-step { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; }
+.step-num { width: 22px; height: 22px; border-radius: 50%; color: white; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-num.port { background: var(--port-color); }
+.step-num.mat  { background: var(--mat-color); }
+
+/* Activity grid */
+.act-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 28px; }
+.act-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 18px; padding: 18px;
+  text-decoration: none; color: var(--text); display: block;
+  transition: box-shadow .2s, transform .2s, border-color .2s;
+  position: relative; overflow: hidden;
+}
+.act-card::after { content: "Abrir →"; position: absolute; bottom: 12px; right: 14px; font-size: 11px; font-weight: 800; opacity: 0; transition: opacity .2s; }
+.act-card.port::after { color: var(--port-color); }
+.act-card.mat::after  { color: var(--mat-color); }
+.act-card.port:hover { box-shadow: 0 6px 24px rgba(124,58,237,.15); transform: translateY(-3px); border-color: var(--port-light); }
+.act-card.mat:hover  { box-shadow: 0 6px 24px rgba(5,150,105,.15);  transform: translateY(-3px); border-color: var(--mat-light); }
+.act-card:hover::after { opacity: 1; }
+.act-icon { font-size: 26px; margin-bottom: 9px; }
+.act-title { font-family: "Space Mono", monospace; font-size: 14px; margin-bottom: 5px; }
+.act-desc { font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 10px; }
+.act-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { font-size: 10px; font-weight: 800; padding: 2px 9px; border-radius: 20px; }
+.tag-d  { background: var(--port-bg); color: #5B21B6; }
+.tag-dm { background: var(--mat-bg); color: #065F46; }
+.tag-p  { background: #ECFDF5; color: #065F46; }
+.tag-a  { background: #FFFBEB; color: #92400E; }
+.level { display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px; margin-top: 8px; }
+.lv1 { background: #EDE9FE; color: #4C1D95; }
+.lv2 { background: #FEF3C7; color: #92400E; }
+.lv3 { background: #ECFDF5; color: #065F46; }
+.lv4 { background: #EFF6FF; color: #1E40AF; }
+
+/* Section divider */
+.sdiv { border: none; border-top: 2px dashed var(--border); margin: 24px 0; }
+
+/* Schedule */
+.sched-title { font-family: "Space Mono", monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
+.sched { display: flex; flex-direction: column; gap: 7px; }
+.sched-row { background: var(--card); border: 2px solid var(--border); border-radius: 14px; padding: 11px 16px; display: flex; align-items: center; gap: 12px; }
+.sched-day { font-family: "Space Mono", monospace; font-size: 13px; min-width: 52px; }
+.sched-day.port { color: var(--port-color); }
+.sched-day.mat  { color: var(--mat-color); }
+.sched-acts { display: flex; flex-wrap: wrap; gap: 5px; }
+.sched-act { font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; }
+.sched-act.port { background: var(--port-bg); color: #5B21B6; }
+.sched-act.mat  { background: var(--mat-bg);  color: #065F46; }
+
+/* ── Responsive ────────────────────────────────────── */
+@media (max-width: 700px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .hamburger { display: flex; }
+  .overlay.open { display: block; }
+  .home-hero, .disc-hero { padding: 60px 20px 36px; }
+  .home-body, .disc-body { padding: 24px 16px; }
+  .home-hero h1 { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile hamburger -->
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="layout">
+
+<!-- ── SIDEBAR ─────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">🎓 Estudos<br>5º Ano</div>
+    <div class="sidebar-brand-sub">Portal de atividades</div>
+  </div>
+
+  <div class="sidebar-section-label">Disciplinas</div>
+
+  <button class="disc-nav-btn active" id="nav-home" onclick="showHome()">
+    <span class="d-icon">🏠</span>
+    <span class="d-name">Início</span>
+  </button>
+
+  <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
+    <span class="d-icon">📝</span>
+    <span class="d-name">Português</span>
+    <span class="d-count">43</span>
+  </button>
+  <div class="theme-sub" id="sub-port">
+    <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
+    <button class="theme-link" onclick="showTheme('port','teatral')">🎭 Texto Teatral</button>
+    <button class="theme-link" onclick="showTheme('port','verbais')">⏱ Tempos Verbais</button>
+    <button class="theme-link" onclick="showTheme('port','letral')">🏄 Letra ℓ e U</button>
+    <button class="theme-link" onclick="showTheme('port','variacao')">🗺️ Variação Linguística</button>
+    <button class="theme-link" onclick="showTheme('port','pontuacao')">? ! . Pontuação</button>
+    <button class="theme-link" onclick="showTheme('port','instrucional')">📋 Texto Instrucional</button>
+    <button class="theme-link" onclick="showTheme('port','entonacao')">🎵 Entonação</button>
+  </div>
+
+  <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
+    <span class="d-icon">🔢</span>
+    <span class="d-name">Matemática</span>
+    <span class="d-count">4</span>
+  </button>
+  <div class="theme-sub" id="sub-mat">
+    <button class="theme-link" onclick="showTheme('mat','tabuada')">✖️ Tabuada</button>
+  </div>
+
+  <div class="sidebar-section-label">Em breve</div>
+  <button class="disc-nav-btn soon"><span class="d-icon">🌍</span><span class="d-name">Geografia</span></button>
+  <button class="disc-nav-btn soon"><span class="d-icon">📜</span><span class="d-name">História</span></button>
+  <button class="disc-nav-btn soon"><span class="d-icon">🔬</span><span class="d-name">Ciências</span></button>
+
+  <div class="sidebar-footer">
+    Método ativo de aprendizagem<br>Roediger & Karpicke (2006)
+  </div>
+</aside>
+
+<!-- ── MAIN ─────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="home-hero">
+      <div class="home-hero-badge">📚 Portal de Estudos</div>
+      <h1>Estudos do 5º Ano</h1>
+      <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
+      <div class="home-stats">
+        <div class="hstat"><span>2</span>disciplinas</div>
+        <div class="hstat"><span>9</span>temas</div>
+        <div class="hstat"><span>47</span>atividades</div>
+      </div>
+    </div>
+    <div class="home-body">
+      <div class="home-section-title">Escolha uma disciplina</div>
+      <div class="disc-cards">
+        <button class="disc-home-card" onclick="showDisc('port')">
+          <div class="dhc-icon">📝</div>
+          <div class="dhc-name">Português</div>
+          <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
+          <div class="dhc-chips">
+            <span class="chip" style="background:#F3F0FF;color:#5B21B6">8 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">43 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">8 HQs</span>
+          </div>
+        </button>
+        <button class="disc-home-card mat" onclick="showDisc('mat')">
+          <div class="dhc-icon">🔢</div>
+          <div class="dhc-name">Matemática</div>
+          <div class="dhc-desc">Cálculo, raciocínio lógico e resolução de problemas</div>
+          <div class="dhc-chips">
+            <span class="chip" style="background:#F3F0FF;color:#5B21B6">1 tema</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">4 atividades</span>
+          </div>
+        </button>
+        <div class="disc-home-card soon">
+          <div class="dhc-icon">🌍</div>
+          <div class="dhc-name">Geografia</div>
+          <div class="dhc-desc">Espaço geográfico, regiões e sociedade</div>
+        </div>
+        <div class="disc-home-card soon">
+          <div class="dhc-icon">📜</div>
+          <div class="dhc-name">História</div>
+          <div class="dhc-desc">Fatos, períodos e contextos históricos</div>
+        </div>
+        <div class="disc-home-card soon">
+          <div class="dhc-icon">🔬</div>
+          <div class="dhc-name">Ciências</div>
+          <div class="dhc-desc">Natureza, corpo humano e meio ambiente</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTUGUÊS -->
+  <div class="screen" id="screen-port">
+    <div class="disc-hero port">
+      <div class="disc-hero-badge">📝 Português — 5º Ano</div>
+      <h1>PORTUGUÊS</h1>
+      <p>Gramática, interpretação e produção de texto</p>
+    </div>
+    <div class="disc-body">
+      <div class="theme-tabs">
+        <button class="theme-tab-btn active" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','teatral')">🎭 Texto Teatral</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','verbais')">⏱ Tempos Verbais</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','letral')">🏄 Letra ℓ e U</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','variacao')">🗺️ Variação Linguística</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','pontuacao')">? ! . Pontuação</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','instrucional')">📋 Texto Instrucional</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','entonacao')">🎵 Entonação</button>
+      </div>
+
+      <!-- TEMA: TEXTO TEATRAL -->
+      <div class="theme-content" id="theme-port-teatral">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">🎭</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos para entender o conteúdo antes de praticar</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-texto-teatral.png" alt="HQ O Vento e o Sol">
+          <div class="hq-caption"><span>📖</span><span>O Vento e o Sol — 4 páginas · Personagens: Prepo, Bia e Prof. Teatrão · Tema: Texto Teatral</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="quiz-texto-teatral.html" target="_blank">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre interpretação e características do texto teatral.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="complete-lacuna-texto-teatral.html" target="_blank">
+            <div class="act-icon">✏️</div><div class="act-title">Complete a Lacuna</div>
+            <div class="act-desc">9 frases sobre personagens, rubricas, falas e a moral da história.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="caca-erro-texto-teatral.html" target="_blank">
+            <div class="act-icon">🔍</div><div class="act-title">Caça ao Erro</div>
+            <div class="act-desc">9 afirmações — algumas erradas. Identifique as incorretas sobre a peça.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="ordenacao-cenas-texto-teatral.html" target="_blank">
+            <div class="act-icon">🎬</div><div class="act-title">Ordene as Cenas</div>
+            <div class="act-desc">8 cenas da peça embaralhadas. Use os botões ↑↓ para colocar na ordem certa.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Sequência</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="criador-dialogo-texto-teatral.html" target="_blank">
+            <div class="act-icon">✍️</div><div class="act-title">Criador de Diálogo</div>
+            <div class="act-desc">Escolhe um cenário, as personagens e escreve seu próprio texto teatral. Avaliação com checklist.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="mapa-mental-texto-teatral.html" target="_blank">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Reler a peça</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🎬 Ordenar cenas</span><span class="sched-act port">✏️ Complete a Lacuna</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🔍 Caça ao Erro</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">✍️ Criar seu próprio diálogo</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 5</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+      <div class="theme-content active" id="theme-port-preposicoes">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">🎨</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos para entender o conteúdo antes de praticar</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-preposicoes.png" alt="HQ As Aventuras do Prepo">
+          <div class="hq-caption"><span>📖</span><span>As Aventuras do Prepo — 4 páginas · Personagens: Prepo, Bia e Prof. Sem</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="quiz-preposicoes.html" target="_blank">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões com feedback explicativo imediato após cada resposta.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="complete-lacuna-preposicoes.html" target="_blank">
+            <div class="act-icon">✏️</div><div class="act-title">Complete a Lacuna</div>
+            <div class="act-desc">Banco de palavras clicável. Preenche as lacunas e verifica o resultado.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="caca-ao-erro-preposicoes.html" target="_blank">
+            <div class="act-icon">🔍</div><div class="act-title">Caça ao Erro</div>
+            <div class="act-desc">8 frases — algumas com erro, outras corretas. Identifique e corrija.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="frases-malucas-preposicoes.html" target="_blank">
+            <div class="act-icon">🤪</div><div class="act-title">Frases Malucas</div>
+            <div class="act-desc">45 segundos para criar uma frase absurda com a preposição certa. 6 rodadas.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="missao-relampago-preposicoes.html" target="_blank">
+            <div class="act-icon">⚡</div><div class="act-title">Missão Relâmpago</div>
+            <div class="act-desc">Escreva o máximo de locuções adjetivas antes do tempo acabar. 3 níveis.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Velocidade</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="criador-de-quiz-preposicoes.html" target="_blank">
+            <div class="act-icon">🧠</div><div class="act-title">Criador de Quiz</div>
+            <div class="act-desc">Monte as perguntas e aplique em alguém da família.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ensinar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="domino-preposicoes.html" target="_blank">
+            <div class="act-icon">🎲</div><div class="act-title">Dominó de Preposições</div>
+            <div class="act-desc">16 peças para imprimir e jogar com a família. 2 a 4 jogadores.</div>
+            <div class="act-tags"><span class="tag tag-p">Imprimir</span><span class="tag tag-a">Físico</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="mapa-mental-preposicoes.html" target="_blank">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">🎨 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">✏️ Complete a Lacuna</span><span class="sched-act port">🤪 Frases Malucas</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🔍 Caça ao Erro</span><span class="sched-act port">⚡ Missão Relâmpago</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">🎲 Dominó com a família</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 5</div><div class="sched-acts"><span class="sched-act port">🧠 Criar Quiz para aplicar</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 6</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: TEMPOS VERBAIS -->
+      <div class="theme-content" id="theme-port-verbais">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">⏱</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos para entender o conteúdo antes de praticar</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-tempos-verbais.png" alt="HQ Tempos Verbais — Passado, Presente e Futuro">
+          <div class="hq-caption"><span>📖</span><span>Passado, Presente e Futuro — 4 páginas · Personagens: Prepo, Bia, Prof. Teatrão e Verbão</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="quiz-tempos-verbais.html" target="_blank">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre identificação e uso dos tempos verbais com frases da peça.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="complete-lacuna-tempos-verbais.html" target="_blank">
+            <div class="act-icon">✏️</div><div class="act-title">Complete a Lacuna</div>
+            <div class="act-desc">Banco de verbos coloridos por tempo. Preencha as lacunas identificando passado, presente e futuro.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="caca-erro-tempos-verbais.html" target="_blank">
+            <div class="act-icon">🔍</div><div class="act-title">Caça ao Erro</div>
+            <div class="act-desc">9 afirmações sobre o tempo dos verbos — encontre as classificações erradas.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="classificador-tempos-verbais.html" target="_blank">
+            <div class="act-icon">⏱️</div><div class="act-title">Linha do Tempo</div>
+            <div class="act-desc">Clique em cada verbo e coloque na coluna certa — Passado, Presente ou Futuro.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="transformador-tempos-verbais.html" target="_blank">
+            <div class="act-icon">⚡</div><div class="act-title">Transformador de Verbos</div>
+            <div class="act-desc">Reescreva frases mudando o verbo para outro tempo. Correção automática com múltiplas respostas aceitas.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="mapa-mental-tempos-verbais.html" target="_blank">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">❓ Quiz</span><span class="sched-act port">⏱️ Linha do Tempo</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">✏️ Complete a Lacuna</span><span class="sched-act port">🔍 Caça ao Erro</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">⚡ Transformador de Verbos</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: LETRA L -->
+      <div class="theme-content" id="theme-port-letral">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">🏄</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos com o Elinho Cowboy e o Elinho Surfista antes de praticar!</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-letra-l.png" alt="HQ Letra ℓ — Cowboy ou Surfista?">
+          <div class="hq-caption"><span>📖</span><span>Cowboy ou Surfista? — 4 páginas · Personagens: Prepo, Bia, Prof. Teatrão e Elinho</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="sortidor-letra-l.html" target="_blank">
+            <div class="act-icon">🤠🏄</div><div class="act-title">Sortidor de Sons</div>
+            <div class="act-desc">Classifique 16 palavras entre Elinho Cowboy (som de L) e Elinho Surfista (som de U).</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="fabrica-letra-l.html" target="_blank">
+            <div class="act-icon">🏭</div><div class="act-title">Fábrica de Palavras</div>
+            <div class="act-desc">Complete palavras escolhendo se o ℓ tem som de L ou U. 12 desafios com divisão silábica.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="detetive-silaba-letra-l.html" target="_blank">
+            <div class="act-icon">🔎</div><div class="act-title">Detetive da Sílaba</div>
+            <div class="act-desc">Veja a divisão silábica com o ℓ destacado e identifique se é som de L ou U. 10 desafios.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="memoria-letra-l.html" target="_blank">
+            <div class="act-icon">🃏</div><div class="act-title">Jogo da Memória</div>
+            <div class="act-desc">Pare cada palavra com sua pronúncia correta (com som de L ou U). 8 pares para encontrar.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Memória</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="mapa-mental-letra-l.html" target="_blank">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">🔎 Detetive da Sílaba</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🤠🏄 Sortidor de Sons</span><span class="sched-act port">🏭 Fábrica de Palavras</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🃏 Jogo da Memória</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: VARIAÇÃO LINGUÍSTICA -->
+      <div class="theme-content" id="theme-port-variacao">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">🗺️</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos com Zé, Das Graças e o Arauto antes de praticar!</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-variacao-linguistica.png" alt="HQ Variação Linguística — Todo mundo fala certo!">
+          <div class="hq-caption"><span>📖</span><span>Todo mundo fala certo! — 4 páginas · Personagens: Prepo, Bia, Prof. Teatrão, Zé, Das Graças, Arauto e Galo</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="quiz-variacao-linguistica.html" target="_blank">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre interpretação da peça e conceitos de variação linguística.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="tradutor-regional-variacao.html" target="_blank">
+            <div class="act-icon">🗺️</div><div class="act-title">Tradutor Regional</div>
+            <div class="act-desc">Encontre o equivalente padrão de 8 expressões regionais da peça: muié, amarelim, xente e mais.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Vocabulário</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="detector-variacao-linguistica.html" target="_blank">
+            <div class="act-icon">🔍</div><div class="act-title">Detector de Variação</div>
+            <div class="act-desc">9 situações para classificar: variação regional, geracional ou situacional.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="reescritor-variacao-linguistica.html" target="_blank">
+            <div class="act-icon">✍️</div><div class="act-title">Reescritor de Falas</div>
+            <div class="act-desc">Reescreva falas da peça mudando o registro — sertão para formal e formal para sertão. 6 desafios.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="mapa-mental-variacao-linguistica.html" target="_blank">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🗺️ Tradutor Regional</span><span class="sched-act port">🔍 Detector de Variação</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✍️ Reescritor de Falas</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: PONTUAÇÃO EXPRESSIVA -->
+      <div class="theme-content" id="theme-port-pontuacao">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">? ! .</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos com o ? azul, o ! vermelho e o . cinza antes de praticar!</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-pontuacao-expressiva.png" alt="HQ Pontuação Expressiva — Os Sinais Têm Sentimentos!">
+          <div class="hq-caption"><span>📖</span><span>Os Sinais Têm Sentimentos! — 4 páginas · Personagens: Prepo, Bia, Prof. Teatrão e os sinais animados</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="quiz-pontuacao-expressiva.html" target="_blank">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre o uso expressivo de ?, ! e . com frases da peça Folia dos Três Bois.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="escolha-sinal-pontuacao.html" target="_blank">
+            <div class="act-icon">? ! .</div><div class="act-title">Escolha o Sinal</div>
+            <div class="act-desc">12 frases da peça sem pontuação. Clique em ?, ! ou . com base no contexto e na emoção.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="detector-emocao-pontuacao.html" target="_blank">
+            <div class="act-icon">😤😲😊</div><div class="act-title">Detector de Emoção</div>
+            <div class="act-desc">10 frases com pontuação já definida. Identifique qual emoção aquele sinal expressa no contexto.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="transformador-emocao-pontuacao.html" target="_blank">
+            <div class="act-icon">✍️</div><div class="act-title">Transformador de Emoções</div>
+            <div class="act-desc">Reescreva frases trocando a pontuação e explique o que mudou na emoção. 7 desafios.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">? ! . Escolha o Sinal</span><span class="sched-act port">😤 Detector de Emoção</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✍️ Transformador de Emoções</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: TEXTO INSTRUCIONAL -->
+      <div class="theme-content" id="theme-port-instrucional">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">📋</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a HQ com o Verbão Imperativo verde e aprenda a estrutura do texto instrucional!</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-texto-instrucional.png" alt="HQ Texto Instrucional — Textos que Ensinam a Fazer">
+          <div class="hq-caption"><span>📖</span><span>Textos que Ensinam a Fazer — 4 páginas · Personagens: Prepo, Bia, Prof. Teatrão e Verbão Imperativo</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="quiz-texto-instrucional.html" target="_blank">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre a função, estrutura, partes e verbos do texto instrucional.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="organizador-texto-instrucional.html" target="_blank">
+            <div class="act-icon">🗂️</div><div class="act-title">Organizador</div>
+            <div class="act-desc">12 peças do texto do dedoche embaralhadas. Coloque cada uma na zona certa: título, materiais ou passos.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="caca-verbo-instrucional.html" target="_blank">
+            <div class="act-icon">⚡</div><div class="act-title">Caça ao Verbo</div>
+            <div class="act-desc">6 trechos de textos reais (dedoche, receita, manual, shampoo...). Clique em todos os verbos no imperativo.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Identificar</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="criador-texto-instrucional.html" target="_blank">
+            <div class="act-icon">✍️</div><div class="act-title">Criador de Texto</div>
+            <div class="act-desc">Escolha o tema, escreva o título, liste os materiais e crie o passo a passo com verbos sugeridos. Avaliação com checklist.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="mapa-mental-texto-instrucional.html" target="_blank">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🗂️ Organizador</span><span class="sched-act port">⚡ Caça ao Verbo</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✍️ Criar seu texto instrucional</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: ENTONAÇÃO -->
+      <div class="theme-content" id="theme-port-entonacao">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">🎵</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a HQ com o Toni — a onda sonora animada — e aprenda sobre entonação!</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-entonacao.png" alt="HQ Entonação — A melodia da fala">
+          <div class="hq-caption"><span>📖</span><span>A Melodia da Fala — 4 páginas · Personagens: Prepo, Bia, Prof. Teatrão e Toni (a onda sonora)</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="quiz-entonacao.html" target="_blank">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre o conceito de entonação, seus elementos e aplicação no teatro de fantoches.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="detector-entonacao.html" target="_blank">
+            <div class="act-icon">🎭</div><div class="act-title">Detector de Entonação</div>
+            <div class="act-desc">10 cenas das peças. Leia o contexto e escolha qual entonação o ator deve usar para cada personagem.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="rubrica-entonacao.html" target="_blank">
+            <div class="act-icon">📜</div><div class="act-title">Rubrica ao Vivo</div>
+            <div class="act-desc">8 rubricas das peças. Leia o estado emocional do personagem e escolha como o ator deve entonar a fala seguinte.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Interpretar</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="ensaiador-entonacao.html" target="_blank">
+            <div class="act-icon">🎛️</div><div class="act-title">Ensaiador de Falas</div>
+            <div class="act-desc">6 falas para marcar palavra por palavra: alto, médio, baixo, rápido ou devagar. Compare com a sugestão do diretor.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🎭 Detector de Entonação</span><span class="sched-act port">📜 Rubrica ao Vivo</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🎛️ Ensaiador de Falas</span><span class="sched-act port">🎙️ Praticar em voz alta!</span></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MATEMÁTICA -->
+  <div class="screen" id="screen-mat">
+    <div class="disc-hero mat">
+      <div class="disc-hero-badge">🔢 Matemática — 5º Ano</div>
+      <h1>MATEMÁTICA</h1>
+      <p>Cálculo, raciocínio lógico e resolução de problemas</p>
+    </div>
+    <div class="disc-body">
+      <div class="theme-tabs">
+        <button class="theme-tab-btn mat-tab active" onclick="showTheme('mat','tabuada')">✖️ Tabuada</button>
+      </div>
+
+      <!-- TEMA: TABUADA -->
+      <div class="theme-content active" id="theme-mat-tabuada">
+        <div class="start-banner blue">
+          <div class="start-banner-icon">🧠</div>
+          <div>
+            <h3>Como usar essas atividades</h3>
+            <p>Comece pelos Flashcards para identificar os pontos fracos. Depois treine as tabuadas com dificuldade e use o Caça ao Erro como revisão final.</p>
+          </div>
+        </div>
+        <div class="order-card">
+          <div class="order-title">Ordem sugerida</div>
+          <div class="order-steps">
+            <div class="order-step"><div class="step-num mat">1</div>🧠 Flashcards — descubra os pontos fracos</div>
+            <div class="order-step"><div class="step-num mat">2</div>⏱ Treino Cronometrado — foque nas que errou</div>
+            <div class="order-step"><div class="step-num mat">3</div>⚔️ Batalha — pratique com motivação</div>
+            <div class="order-step"><div class="step-num mat">4</div>🔍 Caça ao Erro — revisão final</div>
+          </div>
+        </div>
+        <div class="act-grid">
+          <a class="act-card mat" href="flashcards-tabuada.html" target="_blank">
+            <div class="act-icon">🧠</div><div class="act-title">Flashcards</div>
+            <div class="act-desc">Sistema Leitner de repetição espaçada. O que você erra aparece mais vezes automaticamente.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Espaçado</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card mat" href="treino-tabuada.html" target="_blank">
+            <div class="act-icon">⏱️</div><div class="act-title">Treino Cronometrado</div>
+            <div class="act-desc">Escolhe as tabuadas e o tempo (1, 2 ou 3 min). O sistema registra onde você errou.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Velocidade</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="batalha-tabuada.html" target="_blank">
+            <div class="act-icon">⚔️</div><div class="act-title">Batalha da Tabuada</div>
+            <div class="act-desc">4 modos: múltipla escolha, digitar, contra o tempo e sobrevivência com 3 vidas.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Gamificado</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="caca-erro-tabuada.html" target="_blank">
+            <div class="act-icon">🔍</div><div class="act-title">Caça ao Erro</div>
+            <div class="act-desc">Operações com resultados certos e errados misturados. Identifique os erros sem armadilhas.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Metacognição</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day mat">Dia 1</div><div class="sched-acts"><span class="sched-act mat">🧠 Flashcards (diagnóstico)</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 2</div><div class="sched-acts"><span class="sched-act mat">⏱ Treino Cronometrado</span><span class="sched-act mat">⚔️ Batalha — múltipla escolha</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 3</div><div class="sched-acts"><span class="sched-act mat">⚔️ Batalha — sobrevivência</span><span class="sched-act mat">🧠 Flashcards (revisão)</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 4</div><div class="sched-acts"><span class="sched-act mat">🔍 Caça ao Erro</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 5</div><div class="sched-acts"><span class="sched-act mat">⚔️ Batalha — contra o tempo</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+var currentDisc = null;
+
+function showHome() {
+  setScreen('home');
+  currentDisc = null;
+  setNavActive('nav-home');
+  closeAllSubs();
+  closeSidebar();
+}
+
+function showDisc(disc) {
+  setScreen(disc);
+  currentDisc = disc;
+  setNavActive('nav-' + disc);
+  closeAllSubs();
+  document.getElementById('sub-' + disc).classList.add('open');
+  var firstTheme = { port: 'preposicoes', mat: 'tabuada' }[disc];
+  activateTheme(disc, firstTheme);
+  closeSidebar();
+}
+
+function showTheme(disc, theme) {
+  if (currentDisc !== disc) showDisc(disc);
+  activateTheme(disc, theme);
+  // Mark theme link active
+  document.querySelectorAll('#sub-' + disc + ' .theme-link').forEach(function(l) {
+    l.classList.remove('active');
+  });
+  closeSidebar();
+}
+
+function activateTheme(disc, theme) {
+  var screen = document.getElementById('screen-' + disc);
+  screen.querySelectorAll('.theme-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  screen.querySelectorAll('.theme-content').forEach(function(c) { c.classList.remove('active'); });
+  var content = document.getElementById('theme-' + disc + '-' + theme);
+  if (content) content.classList.add('active');
+  // Ativa o tab correspondente pelo id do conteúdo
+  screen.querySelectorAll('.theme-tab-btn').forEach(function(b) {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'" + theme + "'") >= 0) {
+      b.classList.add('active');
+    }
+  });
+}
+
+function setScreen(name) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+function setNavActive(id) {
+  document.querySelectorAll('.disc-nav-btn').forEach(function(b) { b.classList.remove('active'); });
+  var btn = document.getElementById(id);
+  if (btn) btn.classList.add('active');
+}
+
+function closeAllSubs() {
+  document.querySelectorAll('.theme-sub').forEach(function(s) { s.classList.remove('open'); });
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+</script>
+</body>
+</html>
