@@ -217,14 +217,18 @@ function rate(score){
 
 function loadCard(){
   flipped=false;
-  document.getElementById('fc-inner').classList.remove('flipped');
+  const inner=document.getElementById('fc-inner');
+  inner.classList.remove('flipped');
   document.getElementById('rating-row').classList.remove('visible');
-  const card=queue[idx];
-  document.getElementById('fc-q').innerHTML=`${card.a} <span class="op">×</span> ${card.b} <span class="op">=</span> <span class="op">?</span>`;
-  document.getElementById('fc-a').textContent=card.ans;
-  const pct=Math.round((idx/queue.length)*100);
-  document.getElementById('prog-bar').style.width=pct+'%';
-  document.getElementById('session-info').textContent=`Carta ${idx+1} de ${queue.length}`;
+  // Aguarda animação de flip completar (500ms) antes de atualizar o conteúdo
+  setTimeout(function(){
+    const card=queue[idx];
+    document.getElementById('fc-q').innerHTML=`${card.a} <span class="op">×</span> ${card.b} <span class="op">=</span> <span class="op">?</span>`;
+    document.getElementById('fc-a').textContent=card.ans;
+    const pct=Math.round((idx/queue.length)*100);
+    document.getElementById('prog-bar').style.width=pct+'%';
+    document.getElementById('session-info').textContent=`Carta ${idx+1} de ${queue.length}`;
+  },520);
 }
 
 function updateBoxes(){
