@@ -25,6 +25,9 @@
   --mat-color: #059669;
   --mat-light: #34D399;
   --mat-bg: #ECFDF5;
+  --cien-color: #0284C7;
+  --cien-light: #38BDF8;
+  --cien-bg: #F0F9FF;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -238,7 +241,16 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .act-card.mat::after  { color: var(--mat-color); }
 .act-card.port:hover { box-shadow: 0 6px 24px rgba(124,58,237,.15); transform: translateY(-3px); border-color: var(--port-light); }
 .act-card.mat:hover  { box-shadow: 0 6px 24px rgba(5,150,105,.15);  transform: translateY(-3px); border-color: var(--mat-light); }
+.act-card.cien:hover { box-shadow: 0 6px 24px rgba(2,132,199,.15);  transform: translateY(-3px); border-color: var(--cien-light); }
+.act-card.cien { border-top: 4px solid var(--cien-color); }
+.act-card.cien::after { color: var(--cien-color); }
 .act-card:hover::after { opacity: 1; }
+.disc-hero.cien { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); }
+.disc-home-card.cien:hover { border-color: var(--cien-light); box-shadow: 0 8px 28px rgba(2,132,199,.15); }
+.theme-tab-btn.cien-tab:hover { border-color: var(--cien-color); color: var(--cien-color); }
+.theme-tab-btn.cien-tab.active { background: var(--cien-bg); border-color: var(--cien-color); color: var(--cien-color); }
+.tag-cien { background: #e0f2fe; color: #0284C7; }
+.step-num.cien { background: var(--cien-color); }
 .act-icon { font-size: 26px; margin-bottom: 9px; }
 .act-title { font-family: "Space Mono", monospace; font-size: 14px; margin-bottom: 5px; }
 .act-desc { font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 10px; }
@@ -307,7 +319,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
     <span class="d-icon">📝</span>
     <span class="d-name">Português</span>
-    <span class="d-count">44</span>
+    <span class="d-count">43</span>
   </button>
   <div class="theme-sub" id="sub-port">
     <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
@@ -332,7 +344,16 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <div class="sidebar-section-label">Em breve</div>
   <button class="disc-nav-btn soon"><span class="d-icon">🌍</span><span class="d-name">Geografia</span></button>
   <button class="disc-nav-btn soon"><span class="d-icon">📜</span><span class="d-name">História</span></button>
-  <button class="disc-nav-btn soon"><span class="d-icon">🔬</span><span class="d-name">Ciências</span></button>
+
+  <button class="disc-nav-btn" id="nav-cien" onclick="showDisc('cien')">
+    <span class="d-icon">🔬</span>
+    <span class="d-name">Ciências</span>
+    <span class="d-count">2</span>
+  </button>
+  <div class="theme-sub" id="sub-cien">
+    <button class="theme-link" onclick="showTheme('cien','lixo-que-produzimos')">🗑️ O Lixo que Produzimos</button>
+    <button class="theme-link" onclick="showTheme('cien','caminho-do-lixo')">🚛 O Caminho do Lixo</button>
+  </div>
 
   <div class="sidebar-footer">
     Método ativo de aprendizagem<br>Roediger & Karpicke (2006)
@@ -349,9 +370,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <h1>Estudos do 5º Ano</h1>
       <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
       <div class="home-stats">
-        <div class="hstat"><span>2</span>disciplinas</div>
-        <div class="hstat"><span>9</span>temas</div>
-        <div class="hstat"><span>48</span>atividades</div>
+        <div class="hstat"><span>3</span>disciplinas</div>
+        <div class="hstat"><span>11</span>temas</div>
+        <div class="hstat"><span>55</span>atividades</div>
       </div>
     </div>
     <div class="home-body">
@@ -363,7 +384,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
           <div class="dhc-chips">
             <span class="chip" style="background:#F3F0FF;color:#5B21B6">8 temas</span>
-            <span class="chip" style="background:#ECFDF5;color:#065F46">44 atividades</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">43 atividades</span>
             <span class="chip" style="background:#FEF3C7;color:#92400E">8 HQs</span>
           </div>
         </button>
@@ -386,11 +407,16 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">História</div>
           <div class="dhc-desc">Fatos, períodos e contextos históricos</div>
         </div>
-        <div class="disc-home-card soon">
+        <button class="disc-home-card cien" onclick="showDisc('cien')">
           <div class="dhc-icon">🔬</div>
           <div class="dhc-name">Ciências</div>
           <div class="dhc-desc">Natureza, corpo humano e meio ambiente</div>
-        </div>
+          <div class="dhc-chips">
+            <span class="chip" style="background:#e0f2fe;color:#0284C7">2 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">8 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">2 HQs</span>
+          </div>
+        </button>
       </div>
     </div>
   </div>
@@ -764,12 +790,6 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
             <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
             <div class="level lv3">🏆 Ensinar (90%)</div>
           </a>
-          <a class="act-card port" href="mapa-mental-pontuacao-expressiva.html" target="_blank">
-            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
-            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
-            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
-            <div class="level lv3">🏆 Ensinar (90%)</div>
-          </a>
         </div>
         <hr class="sdiv">
         <div class="sched-title">📅 Sugestão de uso semanal</div>
@@ -777,7 +797,6 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">? ! . Escolha o Sinal</span><span class="sched-act port">😤 Detector de Emoção</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✍️ Transformador de Emoções</span></div></div>
-          <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
         </div>
       </div>
 
@@ -958,6 +977,118 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     </div>
   </div>
 
+  <!-- CIÊNCIAS -->
+  <div class="screen" id="screen-cien">
+    <div class="disc-hero cien">
+      <div class="disc-hero-badge">🔬 Ciências — 5º Ano</div>
+      <h1>CIÊNCIAS</h1>
+      <p>Natureza, meio ambiente e sustentabilidade</p>
+    </div>
+    <div class="disc-body">
+      <div class="theme-tabs">
+        <button class="theme-tab-btn cien-tab active" onclick="showTheme('cien','lixo-que-produzimos')">🗑️ O Lixo que Produzimos</button>
+        <button class="theme-tab-btn cien-tab" onclick="showTheme('cien','caminho-do-lixo')">🚛 O Caminho do Lixo</button>
+      </div>
+
+      <!-- TEMA: O Lixo que Produzimos -->
+      <div class="theme-content active" id="theme-cien-lixo-que-produzimos">
+        <div class="hq-card">
+          <img class="hq-img" src="hq-lixo-que-produzimos.jpg" alt="HQ O Lixo que Produzimos">
+          <div class="hq-caption"><span>📖</span><span>Bia Investiga o Lixo da Escola — 4 páginas · Personagens: Bia, Lixinho e Prof. Ciência · Tema: Tipos de lixo e poluição</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card cien" href="quiz-lixo-que-produzimos.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 perguntas sobre tipos de lixo, poluição e primeiras atitudes de redução.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card cien" href="grafico-lixo-que-produzimos.html" target="_blank">
+            <div class="act-icon">📊</div>
+            <div class="act-title">Leitura de Gráfico</div>
+            <div class="act-desc">Interprete o gráfico de resíduos da escola em 15 minutos e responda perguntas de análise.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Análise</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card cien" href="detetive-lixo-que-produzimos.html" target="_blank">
+            <div class="act-icon">🕵️</div>
+            <div class="act-title">Detetive do Lixo</div>
+            <div class="act-desc">Classifique 12 resíduos e argumente sobre os efeitos da poluição industrial.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card cien" href="mapa-mental-lixo-que-produzimos.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte: tipos de lixo, poluição, consumo e como agir.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Seg</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">📖 HQ</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Ter</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">❓ Quiz</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qua</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">📊 Gráfico</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qui</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🕵️ Detetive</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Sex</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: O Caminho do Lixo -->
+      <div class="theme-content" id="theme-cien-caminho-do-lixo">
+        <div class="hq-card">
+          <img class="hq-img" src="hq-caminho-do-lixo.jpg" alt="HQ O Caminho do Lixo">
+          <div class="hq-caption"><span>📖</span><span>Lixinho e o Final Feliz — 4 páginas · Personagens: Bia, Lixinho e Prof. Ciência · Tema: Destinos do lixo e 5Rs</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card cien" href="quiz-caminho-do-lixo.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 perguntas sobre lixão, aterro, reciclagem, compostagem, 5Rs e coleta seletiva.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card cien" href="grafico-caminho-do-lixo.html" target="_blank">
+            <div class="act-icon">📊</div>
+            <div class="act-title">Gráfico e Classificação</div>
+            <div class="act-desc">Interprete o gráfico de reciclagem no Brasil e classifique o que pode ser reciclado.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Análise</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card cien" href="5rs-caminho-do-lixo.html" target="_blank">
+            <div class="act-icon">⭐</div>
+            <div class="act-title">Jornada dos 5Rs</div>
+            <div class="act-desc">Ordene os 5Rs na sequência correta e argumente por escrito sobre por que a ordem importa.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Criação</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card cien" href="mapa-mental-caminho-do-lixo.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Conecte destinos do lixo, ciclo da natureza, 5Rs e cores da coleta seletiva.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Seg</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">📖 HQ</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Ter</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">❓ Quiz</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qua</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">📊 Gráfico</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qui</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">⭐ 5Rs</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Sex</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -978,7 +1109,7 @@ function showDisc(disc) {
   setNavActive('nav-' + disc);
   closeAllSubs();
   document.getElementById('sub-' + disc).classList.add('open');
-  var firstTheme = { port: 'preposicoes', mat: 'tabuada' }[disc];
+  var firstTheme = { port: 'preposicoes', mat: 'tabuada', cien: 'lixo-que-produzimos' }[disc];
   activateTheme(disc, firstTheme);
   closeSidebar();
 }
