@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jornada dos 5Rs — O Caminho do Lixo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#0284C7;--light:#38BDF8;--bg:#F0F9FF;--green:#15803D;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Baloo 2',sans-serif;background:var(--bg);min-height:100vh;}
+header{background:linear-gradient(135deg,#0C4A6E,#0284C7 60%,#38BDF8);color:white;padding:22px 20px;text-align:center;}
+.char{font-size:2.8rem;display:block;}
+header h1{font-size:1.5rem;font-weight:900;}
+header p{font-size:.9rem;opacity:.85;margin-top:4px;}
+.container{max-width:820px;margin:0 auto;padding:22px 16px;}
+.card{background:white;border-radius:18px;padding:22px 20px;margin-bottom:20px;box-shadow:0 3px 14px rgba(2,132,199,.1);}
+.card-title{font-size:1rem;font-weight:900;color:var(--primary);margin-bottom:6px;}
+.card-sub{font-size:.88rem;color:#475569;margin-bottom:16px;line-height:1.5;}
+/* Parte 1 - ordenação */
+.rs-pool{display:flex;flex-wrap:wrap;gap:10px;min-height:56px;padding:10px;background:#f0f9ff;border:2px dashed #bae6fd;border-radius:12px;margin-bottom:14px;}
+.rs-card{background:white;border:2px solid #bae6fd;border-radius:12px;padding:12px 16px;font-weight:800;font-size:.95rem;cursor:grab;user-select:none;display:flex;align-items:center;gap:8px;touch-action:none;transition:box-shadow .15s;}
+.rs-card:active{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.15);}
+.rs-card.dragging{opacity:.4;}
+.order-slots{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.slot{min-width:120px;height:56px;background:#f8fafc;border:2px dashed #94a3b8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:#94a3b8;font-weight:700;flex:1;}
+.slot.filled{border-color:var(--primary);background:#e0f2fe;}
+.slot.correct-slot{border-color:#16a34a;background:#dcfce7;}
+.slot.wrong-slot{border-color:#dc2626;background:#fee2e2;}
+.order-labels{display:flex;gap:10px;margin-bottom:4px;}
+.order-label{flex:1;text-align:center;font-size:.75rem;font-family:'Space Mono',monospace;color:#64748b;font-weight:700;}
+/* Parte 2 - redação argumentativa */
+.rs-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:16px;}
+.rs-info{border-radius:12px;padding:14px 16px;font-size:.88rem;line-height:1.5;}
+.rs-info strong{display:block;font-size:.95rem;margin-bottom:4px;}
+.rs-repensar{background:#ede9fe;color:#5b21b6;}
+.rs-recusar{background:#fee2e2;color:#991b1b;}
+.rs-reduzir{background:#dbeafe;color:#1d4ed8;}
+.rs-reutilizar{background:#d1fae5;color:#065f46;}
+.rs-reciclar{background:#dcfce7;color:#14532d;}
+textarea{width:100%;border:2px solid #e2e8f0;border-radius:12px;padding:14px;font-family:'Baloo 2',sans-serif;font-size:.95rem;color:#1e293b;background:#f8fafc;resize:vertical;min-height:100px;margin-bottom:10px;}
+textarea:focus{outline:none;border-color:var(--primary);background:white;}
+.char-count{font-size:.78rem;color:#94a3b8;text-align:right;margin-bottom:10px;font-family:'Space Mono',monospace;}
+.gabarito{display:none;padding:14px 16px;border-radius:12px;background:#e0f2fe;color:#0c4a6e;font-size:.88rem;font-weight:600;line-height:1.6;margin-bottom:10px;}
+.gabarito.show{display:block;}
+/* Parte 3 - ciclo */
+.cycle-wrap{display:flex;justify-content:center;margin-bottom:16px;}
+.cycle-svg{max-width:360px;width:100%;}
+/* botões */
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.btn{border:none;border-radius:12px;padding:12px 22px;font-family:'Baloo 2',sans-serif;font-size:.93rem;font-weight:800;cursor:pointer;}
+.btn-check{background:var(--primary);color:white;}
+.btn-reveal{background:#64748b;color:white;}
+.btn-reset{background:#94a3b8;color:white;}
+.btn-back{background:var(--green);color:white;}
+.fb-order{display:none;padding:12px 16px;border-radius:10px;font-weight:600;font-size:.9rem;margin-bottom:10px;}
+.fb-order.show{display:block;}
+.fb-order.ok{background:#dcfce7;color:#166534;}
+.fb-order.nok{background:#fee2e2;color:#991b1b;}
+footer{text-align:center;padding:16px;font-size:.78rem;color:#94a3b8;}
+</style>
+</head>
+<body>
+<header>
+  <span class="char">⭐🔄</span>
+  <h1>Jornada dos 5Rs</h1>
+  <p>Ordene, compreenda e argumente sobre os 5Rs da sustentabilidade!</p>
+</header>
+<div class="container">
+
+  <!-- Parte 1 -->
+  <div class="card">
+    <div class="card-title">🔢 Parte 1 — Coloque os 5Rs na ordem correta</div>
+    <div class="card-sub">Arraste os cartões abaixo para as 5 posições na ordem certa (do primeiro ao último passo).</div>
+
+    <div class="order-labels">
+      <div class="order-label">1º</div>
+      <div class="order-label">2º</div>
+      <div class="order-label">3º</div>
+      <div class="order-label">4º</div>
+      <div class="order-label">5º</div>
+    </div>
+    <div class="order-slots" id="slots">
+      <div class="slot" id="slot-0" ondragover="slotOver(event)" ondrop="slotDrop(event,0)" ondragleave="slotLeave(event)">Arraste aqui</div>
+      <div class="slot" id="slot-1" ondragover="slotOver(event)" ondrop="slotDrop(event,1)" ondragleave="slotLeave(event)">Arraste aqui</div>
+      <div class="slot" id="slot-2" ondragover="slotOver(event)" ondrop="slotDrop(event,2)" ondragleave="slotLeave(event)">Arraste aqui</div>
+      <div class="slot" id="slot-3" ondragover="slotOver(event)" ondrop="slotDrop(event,3)" ondragleave="slotLeave(event)">Arraste aqui</div>
+      <div class="slot" id="slot-4" ondragover="slotOver(event)" ondrop="slotDrop(event,4)" ondragleave="slotLeave(event)">Arraste aqui</div>
+    </div>
+
+    <div class="rs-pool" id="pool"></div>
+    <div class="fb-order" id="fb-order"></div>
+    <div class="btn-row">
+      <button class="btn btn-reset" onclick="resetOrder()">↩ Recomeçar</button>
+      <button class="btn btn-check" onclick="checkOrder()">✅ Verificar ordem</button>
+    </div>
+  </div>
+
+  <!-- Parte 2 -->
+  <div class="card">
+    <div class="card-title">✍️ Parte 2 — Argumente: por que a ordem importa?</div>
+    <div class="card-sub">Leia os significados de cada R e responda às perguntas abaixo.</div>
+
+    <div class="rs-info-grid">
+      <div class="rs-info rs-repensar"><strong>🤔 Repensar</strong>Questionar nossos hábitos e a necessidade real do que consumimos.</div>
+      <div class="rs-info rs-recusar"><strong>✋ Recusar</strong>Não aceitar produtos desnecessários ou com embalagens excessivas.</div>
+      <div class="rs-info rs-reduzir"><strong>📉 Reduzir</strong>Só comprar o que é realmente necessário.</div>
+      <div class="rs-info rs-reutilizar"><strong>🔄 Reutilizar</strong>Dar novos usos a objetos antes de descartá-los.</div>
+      <div class="rs-info rs-reciclar"><strong>♻️ Reciclar</strong>Separar corretamente para que os materiais virem novos produtos.</div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div style="font-size:.95rem;font-weight:700;color:#1e293b;margin-bottom:8px;">1. Por que "Repensar" vem antes de "Reciclar"? Escreva com suas palavras.</div>
+      <textarea id="arg1" maxlength="400" placeholder="Escreva sua resposta..." oninput="updateCount('arg1','cc1')"></textarea>
+      <div class="char-count" id="cc1">0 / 400</div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div style="font-size:.95rem;font-weight:700;color:#1e293b;margin-bottom:8px;">2. Você já comprou algo que não era necessário? Como os 5Rs poderiam ter mudado essa decisão?</div>
+      <textarea id="arg2" maxlength="400" placeholder="Escreva sua resposta..." oninput="updateCount('arg2','cc2')"></textarea>
+      <div class="char-count" id="cc2">0 / 400</div>
+    </div>
+
+    <div class="gabarito" id="gab1">💡 <strong>Gabarito Q1:</strong> Repensar vem antes porque questionar o consumo evita que o resíduo seja gerado. Se você repensa antes de comprar e decide não comprar, não há embalagem para reciclar. A reciclagem é importante, mas consome energia e recursos — é melhor nunca precisar dela. A ordem dos 5Rs reflete prioridade: a melhor solução está no início da cadeia, não no final.</div>
+    <div class="gabarito" id="gab2">💡 <strong>Gabarito Q2:</strong> Resposta pessoal. Exemplo: "Comprei um brinquedo que logo deixei de usar. Pelos 5Rs, eu poderia ter Repensado se realmente precisava, Recusado a compra por impulso, ou Reutilizado outro brinquedo que já tinha."</div>
+
+    <div class="btn-row">
+      <button class="btn btn-check" onclick="checkArgs()">✅ Verificar respostas</button>
+      <button class="btn btn-reveal" onclick="revealArgs()">👁 Ver gabaritos</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-bottom:24px;">
+    <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+  </div>
+</div>
+<footer>Portal Educacional 5º Ano • Ciências — O Caminho do Lixo</footer>
+<script>
+const rsCards = [
+  { id:'repensar', label:'🤔 Repensar', pos:0 },
+  { id:'recusar',  label:'✋ Recusar',  pos:1 },
+  { id:'reduzir',  label:'📉 Reduzir',  pos:2 },
+  { id:'reutilizar',label:'🔄 Reutilizar',pos:3},
+  { id:'reciclar', label:'♻️ Reciclar', pos:4 },
+];
+const correctOrder = ['repensar','recusar','reduzir','reutilizar','reciclar'];
+let slotContent = [null,null,null,null,null];
+let draggingId = null;
+
+function buildPool() {
+  const pool = document.getElementById('pool');
+  pool.innerHTML = '';
+  rsCards.filter(c => !slotContent.includes(c.id)).forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'rs-card';
+    el.id = 'rc-' + c.id;
+    el.textContent = c.label;
+    el.draggable = true;
+    el.addEventListener('dragstart', e => { draggingId = c.id; el.classList.add('dragging'); });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    // touch
+    el.addEventListener('touchstart', e => {
+      draggingId = c.id;
+      const clone = el.cloneNode(true);
+      clone.id = 'drag-clone';
+      clone.style.cssText = 'position:fixed;opacity:.85;pointer-events:none;z-index:9999;transform:scale(1.05);';
+      document.body.appendChild(clone);
+    }, {passive:true});
+    el.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const cl = document.getElementById('drag-clone');
+      if (cl) { cl.style.left=(e.touches[0].clientX-40)+'px'; cl.style.top=(e.touches[0].clientY-20)+'px'; }
+    }, {passive:false});
+    el.addEventListener('touchend', e => {
+      const cl = document.getElementById('drag-clone'); if(cl)cl.remove();
+      const t = e.changedTouches[0];
+      const target = document.elementFromPoint(t.clientX, t.clientY);
+      if (target) {
+        const slot = target.closest('.slot');
+        if (slot) {
+          const idx = parseInt(slot.id.split('-')[1]);
+          placeCard(idx);
+        }
+      }
+      draggingId = null;
+    });
+    pool.appendChild(el);
+  });
+  renderSlots();
+}
+
+function renderSlots() {
+  for (let i = 0; i < 5; i++) {
+    const slot = document.getElementById('slot-' + i);
+    slot.classList.remove('filled','correct-slot','wrong-slot');
+    if (slotContent[i]) {
+      const card = rsCards.find(c => c.id === slotContent[i]);
+      slot.textContent = card.label;
+      slot.classList.add('filled');
+    } else {
+      slot.textContent = 'Arraste aqui';
+    }
+  }
+}
+
+function slotOver(e) { e.preventDefault(); e.currentTarget.style.background='#bae6fd'; }
+function slotLeave(e) { e.currentTarget.style.background=''; }
+function slotDrop(e, idx) {
+  e.preventDefault(); e.currentTarget.style.background='';
+  if (!draggingId) return;
+  placeCard(idx);
+  draggingId = null;
+}
+
+function placeCard(idx) {
+  if (!draggingId) return;
+  // if slot already has card, return it to pool
+  if (slotContent[idx]) {
+    const prev = slotContent[idx];
+    slotContent[idx] = null;
+  }
+  // remove from other slots if present
+  slotContent = slotContent.map(s => s === draggingId ? null : s);
+  slotContent[idx] = draggingId;
+  buildPool();
+  document.getElementById('fb-order').className = 'fb-order';
+}
+
+function checkOrder() {
+  let correct = 0;
+  slotContent.forEach((id, i) => {
+    const slot = document.getElementById('slot-' + i);
+    slot.classList.remove('correct-slot','wrong-slot');
+    if (!id) return;
+    if (id === correctOrder[i]) { slot.classList.add('correct-slot'); correct++; }
+    else slot.classList.add('wrong-slot');
+  });
+  const total = 5;
+  const fb = document.getElementById('fb-order');
+  if (correct === total) {
+    fb.textContent = '✅ Perfeito! A ordem correta é: Repensar → Recusar → Reduzir → Reutilizar → Reciclar. Essa sequência prioriza evitar o lixo antes de precisar reciclá-lo.';
+    fb.className = 'fb-order show ok';
+  } else {
+    fb.textContent = `❌ ${correct}/5 corretos. Dica: o primeiro R é uma mudança de mentalidade; o último é o que fazemos quando já geramos o resíduo. Tente reordenar!`;
+    fb.className = 'fb-order show nok';
+  }
+}
+
+function resetOrder() {
+  slotContent = [null,null,null,null,null];
+  buildPool();
+  document.getElementById('fb-order').className = 'fb-order';
+  for (let i=0;i<5;i++) { const s=document.getElementById('slot-'+i); s.classList.remove('correct-slot','wrong-slot'); }
+}
+
+function updateCount(tid, cid) {
+  const len = document.getElementById(tid).value.length;
+  document.getElementById(cid).textContent = len + ' / 400';
+}
+
+function checkArgs() {
+  const a1 = document.getElementById('arg1').value.trim();
+  const a2 = document.getElementById('arg2').value.trim();
+  if (a1.length < 20 || a2.length < 20) { alert('Preencha as duas respostas com pelo menos 20 caracteres cada antes de verificar.'); return; }
+  revealArgs();
+}
+function revealArgs() {
+  document.getElementById('gab1').classList.add('show');
+  document.getElementById('gab2').classList.add('show');
+}
+
+buildPool();
+</script>
+</body>
+</html>

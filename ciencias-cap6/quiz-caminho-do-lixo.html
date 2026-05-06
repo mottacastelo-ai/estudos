@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — O Caminho do Lixo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#0284C7;--light:#38BDF8;--bg:#F0F9FF;--green:#15803D;--correct:#16a34a;--wrong:#dc2626;--neutral:#64748b;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Baloo 2',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;}
+header{background:linear-gradient(135deg,#0C4A6E,#0284C7 60%,#38BDF8);color:white;padding:24px 20px;text-align:center;}
+.char{font-size:3rem;display:block;margin-bottom:8px;}
+header h1{font-size:1.6rem;font-weight:900;margin-bottom:4px;}
+header p{font-size:.95rem;opacity:.85;}
+.container{max-width:720px;margin:0 auto;padding:24px 16px;flex:1;}
+.progress-bar{background:#cbd5e1;border-radius:99px;height:10px;margin-bottom:6px;}
+.progress-fill{background:var(--primary);height:100%;border-radius:99px;transition:width .4s;}
+.progress-label{font-size:.8rem;color:var(--neutral);margin-bottom:20px;font-family:'Space Mono',monospace;}
+.question-card{background:white;border-radius:20px;padding:28px 24px;box-shadow:0 4px 20px rgba(2,132,199,.1);margin-bottom:20px;}
+.q-number{font-size:.75rem;font-family:'Space Mono',monospace;color:var(--primary);font-weight:700;margin-bottom:10px;}
+.q-text{font-size:1.1rem;font-weight:700;color:#1e293b;line-height:1.5;margin-bottom:20px;}
+.options{display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:14px 18px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:600;color:#334155;cursor:pointer;text-align:left;transition:all .2s;}
+.option-btn:hover:not(:disabled){border-color:var(--light);background:#e0f2fe;color:var(--primary);}
+.option-btn.correct{background:#dcfce7;border-color:var(--correct);color:var(--correct);}
+.option-btn.wrong{background:#fee2e2;border-color:var(--wrong);color:var(--wrong);}
+.option-btn:disabled{cursor:default;}
+.feedback-box{margin-top:16px;padding:14px 18px;border-radius:12px;font-weight:600;font-size:.95rem;display:none;}
+.feedback-box.show{display:block;}
+.feedback-box.ok{background:#dcfce7;color:#166534;}
+.feedback-box.nok{background:#fee2e2;color:#991b1b;}
+.nav-btn{background:var(--primary);color:white;border:none;border-radius:12px;padding:14px 28px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;display:block;margin:0 auto;transition:opacity .2s;}
+.nav-btn:hover{opacity:.88;}
+.nav-btn:disabled{opacity:.4;cursor:default;}
+.result-card{background:white;border-radius:20px;padding:40px 28px;text-align:center;box-shadow:0 4px 20px rgba(2,132,199,.15);display:none;}
+.result-card.show{display:block;}
+.result-emoji{font-size:5rem;margin-bottom:16px;display:block;}
+.result-title{font-size:1.8rem;font-weight:900;color:#1e293b;margin-bottom:8px;}
+.result-score{font-size:3rem;font-weight:900;color:var(--primary);margin:12px 0;}
+.result-msg{font-size:1rem;color:#475569;margin-bottom:28px;line-height:1.6;}
+.back-btn{background:var(--green);color:white;border:none;border-radius:12px;padding:14px 28px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-right:12px;}
+.retry-btn{background:var(--primary);color:white;border:none;border-radius:12px;padding:14px 28px;font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;}
+footer{text-align:center;padding:16px;font-size:.8rem;color:var(--neutral);}
+</style>
+</head>
+<body>
+<header>
+  <span class="char">♻️🚛</span>
+  <h1>Quiz — O Caminho do Lixo</h1>
+  <p>Lixinho quer saber: você sabe para onde vai o lixo? 10 perguntas!</p>
+</header>
+<div class="container">
+  <div id="quiz-area">
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">Questão 1 de 10</div>
+    <div class="question-card">
+      <div class="q-number" id="q-number">QUESTÃO 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback-box" id="feedback"></div>
+    </div>
+    <button class="nav-btn" id="next-btn" onclick="nextQuestion()" disabled>Próxima →</button>
+  </div>
+  <div class="result-card" id="result-card">
+    <span class="result-emoji" id="result-emoji"></span>
+    <div class="result-title">Quiz concluído!</div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <button class="back-btn" onclick="window.close()">← Voltar ao Portal</button>
+    <button class="retry-btn" onclick="restartQuiz()">Tentar novamente</button>
+  </div>
+</div>
+<footer>Portal Educacional 5º Ano • Ciências — O Caminho do Lixo</footer>
+<script>
+const questions=[
+  {text:"O texto 'Aprendendo com a natureza' usa folhas caindo e virando adubo como exemplo de qual processo?",options:["Reciclagem industrial em fábricas","Ciclo natural — tudo se transforma e volta ao ambiente","Compostagem artificial feita por humanos","Decomposição causada por poluição"],correct:1,feedback:"Correto! O texto usa o ciclo das folhas como metáfora: elas caem, apodrecem, viram adubo e alimentam novas plantas. Esse movimento circular é o que chamamos de ciclo — a base da reciclagem."},
+  {text:"Qual é a principal diferença entre um lixão e um aterro sanitário?",options:["O lixão é controlado pelo governo; o aterro é privado","No aterro sanitário o local é impermeabilizado e o chorume é coletado; no lixão tudo fica exposto e contamina solo e água","O aterro recebe apenas lixo eletrônico; o lixão recebe lixo domiciliar","No lixão há tratamento de gases; no aterro não"],correct:1,feedback:"Correto! O aterro sanitário é impermeabilizado com plástico antes de receber o lixo, que depois é compactado e coberto com terra. O chorume é coletado por canos. No lixão, tudo fica exposto — o chorume contamina o solo e a água livremente."},
+  {text:"O que é o chorume e por que ele é perigoso?",options:["É o gás liberado pela decomposição do lixo no aterro","É um líquido escuro formado pela decomposição do lixo que contamina o solo e a água","É o pó resultante da incineração do lixo eletrônico","É a fumaça produzida quando o lixo é queimado a céu aberto"],correct:1,feedback:"Correto! O chorume é um líquido altamente poluente formado pela decomposição do lixo. No lixão ele escorre livremente; no aterro sanitário é coletado por canos e tratado em piscinas específicas."},
+  {text:"Na reciclagem, qual é o primeiro passo do processo industrial após a coleta seletiva?",options:["Os materiais são derretidos imediatamente","As pessoas nas empresas separam o lixo por material (plástico, papel, vidro, metal) e lavam tudo para tirar resíduos","Os materiais são enviados diretamente para lojas","Os materiais são compactados e enterrados"],correct:1,feedback:"Correto! Após a coleta, trabalhadores das empresas de reciclagem separam os materiais por tipo e lavam tudo para remover resíduos e evitar contaminação — só então o material segue para ser transformado."},
+  {text:"O que é compostagem?",options:["A queima controlada de resíduos orgânicos para gerar energia","A transformação de restos orgânicos como verduras e cascas de frutas em adubo natural","A separação de plásticos para reciclagem industrial","O tratamento químico do chorume em aterros sanitários"],correct:1,feedback:"Correto! A compostagem transforma restos de verduras, cascas de frutas, folhas e serragem em adubo natural — um processo que imita o ciclo da natureza e dura cerca de três meses."},
+  {text:"Qual material é o MAIS reciclado no Brasil, segundo o gráfico do livro?",options:["Plástico PET","Embalagem longa vida","Lata de alumínio","Vidro"],correct:2,feedback:"Correto! O gráfico mostra que a lata de alumínio tem a maior proporção de material reciclado no Brasil — quase a totalidade das latas produzidas é reciclada."},
+  {text:"Qual material é o MENOS reciclado no Brasil, segundo o gráfico?",options:["Lata de alumínio","Embalagem de plástico","Vidro","PET"],correct:1,feedback:"Correto! A embalagem de plástico apresenta a menor proporção de reciclagem no Brasil — a maior parte não é reciclada, o que representa um grande problema ambiental."},
+  {text:"Na coleta seletiva, a lixeira VERMELHA é destinada a qual material?",options:["Papel e papelão","Vidro","Plástico","Metal"],correct:2,feedback:"Correto! Na coleta seletiva brasileira: azul = papel, vermelho = plástico, verde = vidro, amarelo = metal, marrom = orgânico."},
+  {text:"Qual é a ordem correta dos 5Rs da sustentabilidade, do primeiro ao último?",options:["Reciclar → Reutilizar → Reduzir → Recusar → Repensar","Repensar → Recusar → Reduzir → Reutilizar → Reciclar","Reduzir → Recusar → Repensar → Reciclar → Reutilizar","Reutilizar → Reciclar → Reduzir → Repensar → Recusar"],correct:1,feedback:"Perfeito! A ordem é Repensar → Recusar → Reduzir → Reutilizar → Reciclar. Repensar vem primeiro porque a mudança começa na mentalidade — antes mesmo de comprar ou descartar qualquer coisa."},
+  {text:"O que significa 'reutilizar' dentro dos 5Rs?",options:["Separar o lixo para a coleta seletiva","Comprar menos produtos industrializados","Dar novos usos a objetos que seriam descartados, aumentando sua vida útil","Levar os resíduos a uma cooperativa de reciclagem"],correct:2,feedback:"Correto! Reutilizar é dar novos usos a objetos antes de descartá-los — como transformar uma caixa de leite em porta-lápis ou consertar uma roupa em vez de jogar fora."}
+];
+let current=0,score=0,answered=false;
+function renderQuestion(){
+  const q=questions[current];
+  document.getElementById('q-number').textContent=`QUESTÃO ${current+1}`;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('progress-label').textContent=`Questão ${current+1} de ${questions.length}`;
+  document.getElementById('progress').style.width=`${(current/questions.length)*100}%`;
+  const opts=document.getElementById('options');opts.innerHTML='';
+  q.options.forEach((opt,i)=>{const btn=document.createElement('button');btn.className='option-btn';btn.textContent=opt;btn.onclick=()=>selectOption(i);opts.appendChild(btn);});
+  document.getElementById('feedback').className='feedback-box';
+  document.getElementById('next-btn').disabled=true;answered=false;
+}
+function selectOption(idx){
+  if(answered)return;answered=true;
+  const q=questions[current];
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[idx].classList.add(idx===q.correct?'correct':'wrong');
+  if(idx!==q.correct)btns[q.correct].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(idx===q.correct){score++;fb.textContent='✅ '+q.feedback;fb.className='feedback-box ok show';}
+  else{fb.textContent='❌ '+q.feedback;fb.className='feedback-box nok show';}
+  document.getElementById('next-btn').disabled=false;
+  if(current===questions.length-1)document.getElementById('next-btn').textContent='Ver resultado 🏆';
+}
+function nextQuestion(){current++;if(current>=questions.length)showResult();else renderQuestion();}
+function showResult(){
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('result-card').classList.add('show');
+  const pct=Math.round((score/questions.length)*100);
+  document.getElementById('result-score').textContent=`${score} / ${questions.length} (${pct}%)`;
+  let emoji,msg;
+  if(pct>=90){emoji='🌟';msg='Incrível! Você conhece o caminho do lixo de ponta a ponta!';}
+  else if(pct>=70){emoji='♻️';msg='Muito bem! Revise os pontos que errou e tente novamente.';}
+  else if(pct>=50){emoji='🔍';msg='Bom esforço! Releia a HQ e as atividades antes de tentar de novo.';}
+  else{emoji='📚';msg='Continue estudando! Volte ao portal para reforçar o conteúdo.';}
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-msg').textContent=msg;
+}
+function restartQuiz(){
+  current=0;score=0;answered=false;
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('result-card').classList.remove('show');
+  document.getElementById('next-btn').textContent='Próxima →';
+  renderQuestion();
+}
+renderQuestion();
+</script>
+</body>
+</html>

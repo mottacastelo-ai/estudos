@@ -1,0 +1,219 @@
+<!--
+=============================================================
+  INSTRUÇÕES DE INSERÇÃO NO index.html
+  Disciplina: Ciências | Temas: O Lixo que Produzimos + O Caminho do Lixo
+=============================================================
+
+PASSO 1 — CSS: adicione dentro do bloco <style>, na seção :root:
+
+  --cien-color: #0284C7;
+  --cien-light: #38BDF8;
+  --cien-bg: #F0F9FF;
+
+PASSO 2 — CSS: adicione as classes da disciplina:
+
+.cien-tab { border-bottom: 3px solid #0284C7; color: #0284C7; }
+.act-card.cien { border-top: 4px solid #0284C7; }
+.act-card.cien:hover { box-shadow: 0 8px 24px rgba(2,132,199,0.18); }
+.tag-cien { background: #e0f2fe; color: #0284C7; }
+
+PASSO 3 — Sidebar: substitua o botão "Em breve" de Ciências por:
+
+<button class="disc-nav-btn" id="nav-cien" onclick="showDisc('cien')">
+  <span class="d-icon">🔬</span>
+  <span class="d-name">Ciências</span>
+  <span class="d-count">2</span>
+</button>
+<div class="theme-sub" id="sub-cien">
+  <button class="theme-link" onclick="showTheme('cien','lixo-que-produzimos')">🗑️ O Lixo que Produzimos</button>
+  <button class="theme-link" onclick="showTheme('cien','caminho-do-lixo')">🚛 O Caminho do Lixo</button>
+</div>
+
+PASSO 4 — JavaScript: adicione 'cien' ao objeto firstTheme dentro de showDisc():
+
+  var firstTheme = { port: 'preposicoes', mat: 'tabuada', cien: 'lixo-que-produzimos' }[disc];
+
+PASSO 5 — Home: atualize os contadores hstat:
+  Disciplinas: +1 | Temas: +2 | Atividades: +8
+
+PASSO 6 — Adicione o bloco abaixo ao #content-area:
+=============================================================
+-->
+
+<!-- ==================== SCREEN CIÊNCIAS ==================== -->
+<div class="screen" id="screen-cien" style="display:none">
+
+  <!-- Abas de temas -->
+  <div class="theme-tabs">
+    <button class="theme-tab-btn cien-tab" onclick="showTheme('cien','lixo-que-produzimos')">🗑️ O Lixo que Produzimos</button>
+    <button class="theme-tab-btn cien-tab" onclick="showTheme('cien','caminho-do-lixo')">🚛 O Caminho do Lixo</button>
+  </div>
+
+  <!-- ===== TEMA 1: O Lixo que Produzimos ===== -->
+  <div class="theme-content" id="theme-cien-lixo-que-produzimos">
+
+    <div class="start-banner" style="background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8);">
+      <div class="banner-char">🗑️🔬</div>
+      <div class="banner-info">
+        <div class="banner-title">O Lixo que Produzimos</div>
+        <div class="banner-sub">Ciências • 5º Ano • Capítulo 5 • 4 atividades</div>
+        <div class="banner-desc">
+          Descubra os quatro tipos de lixo, entenda como a poluição do ar, da água e do solo afeta a saúde de todos e aprenda por que o problema começa nas escolhas de consumo.
+        </div>
+      </div>
+    </div>
+
+    <div class="hq-card">
+      <div class="hq-label">📖 Comece por aqui</div>
+      <div class="hq-title">Bia Investiga o Lixo da Escola</div>
+      <div class="hq-desc">
+        Lixinho aparece no pátio da escola e guia Bia por uma investigação sobre os quatro tipos de lixo — domiciliar, eletrônico, de serviços de saúde e industrial. A cada descoberta, o problema da poluição fica mais claro e a necessidade de agir mais urgente.
+      </div>
+      <div class="hq-chars">
+        <span class="hq-char-chip">🗑️ Lixinho</span>
+        <span class="hq-char-chip">👧 Bia</span>
+        <span class="hq-char-chip">🔬 Prof. Ciência</span>
+      </div>
+      <div class="hq-img-wrap">
+        <img src="hq-lixo-que-produzimos.png" alt="HQ O Lixo que Produzimos" class="hq-img" onerror="this.style.display='none'">
+      </div>
+    </div>
+
+    <hr class="sdiv">
+
+    <div class="act-grid">
+
+      <a class="act-card cien" href="quiz-lixo-que-produzimos.html" target="_blank">
+        <div class="act-icon">❓</div>
+        <div class="act-title">Quiz Interativo</div>
+        <div class="act-desc">10 perguntas sobre tipos de lixo, poluição e primeiras atitudes de redução.</div>
+        <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+        <div class="level lv4">📖 Retrieval practice</div>
+      </a>
+
+      <a class="act-card cien" href="grafico-lixo-que-produzimos.html" target="_blank">
+        <div class="act-icon">📊</div>
+        <div class="act-title">Leitura de Gráfico</div>
+        <div class="act-desc">Interprete o gráfico de resíduos da escola em 15 minutos e responda perguntas de análise e produção escrita.</div>
+        <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Análise</span></div>
+        <div class="level lv2">⚡ Praticar (80%)</div>
+      </a>
+
+      <a class="act-card cien" href="detetive-lixo-que-produzimos.html" target="_blank">
+        <div class="act-icon">🕵️</div>
+        <div class="act-title">Detetive do Lixo</div>
+        <div class="act-desc">Classifique 12 tipos de resíduos e argumente sobre os efeitos da poluição industrial no ambiente e na saúde.</div>
+        <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+        <div class="level lv2">⚡ Praticar (80%)</div>
+      </a>
+
+      <a class="act-card cien" href="mapa-mental-lixo-que-produzimos.html" target="_blank">
+        <div class="act-icon">🗺️</div>
+        <div class="act-title">Mapa Mental</div>
+        <div class="act-desc">Arraste os balões e conecte: tipos de lixo, poluição, consumo e embalagens, e como agir.</div>
+        <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Síntese</span></div>
+        <div class="level lv3">🏆 Ensinar (90%)</div>
+      </a>
+
+    </div>
+
+    <hr class="sdiv">
+
+    <div class="sched">
+      <div class="sched-title">📅 Sugestão de uso semanal</div>
+      <div class="sched-grid">
+        <div class="sched-day"><div class="sched-d">Seg</div><div class="sched-a">📖 HQ</div></div>
+        <div class="sched-day"><div class="sched-d">Ter</div><div class="sched-a">❓ Quiz</div></div>
+        <div class="sched-day"><div class="sched-d">Qua</div><div class="sched-a">📊 Gráfico</div></div>
+        <div class="sched-day"><div class="sched-d">Qui</div><div class="sched-a">🕵️ Detetive</div></div>
+        <div class="sched-day"><div class="sched-d">Sex</div><div class="sched-a">🗺️ Mapa Mental</div></div>
+      </div>
+    </div>
+
+  </div><!-- /theme-cien-lixo-que-produzimos -->
+
+
+  <!-- ===== TEMA 2: O Caminho do Lixo ===== -->
+  <div class="theme-content" id="theme-cien-caminho-do-lixo" style="display:none">
+
+    <div class="start-banner" style="background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8);">
+      <div class="banner-char">🚛♻️</div>
+      <div class="banner-info">
+        <div class="banner-title">O Caminho do Lixo</div>
+        <div class="banner-sub">Ciências • 5º Ano • Capítulo 6 • 4 atividades</div>
+        <div class="banner-desc">
+          Acompanhe a jornada do lixo após o descarte: lixão, aterro sanitário, reciclagem e compostagem. Entenda os 5Rs da sustentabilidade e aprenda como a coleta seletiva funciona.
+        </div>
+      </div>
+    </div>
+
+    <div class="hq-card">
+      <div class="hq-label">📖 Comece por aqui</div>
+      <div class="hq-title">Lixinho e o Final Feliz</div>
+      <div class="hq-desc">
+        Lixinho guia Bia e Prof. Ciência pela jornada que um resíduo percorre após ser descartado. Do lixão assustador ao aterro organizado, da fábrica de reciclagem à compostagem — e no final, os 5Rs como mapa para um futuro melhor.
+      </div>
+      <div class="hq-chars">
+        <span class="hq-char-chip">🗑️ Lixinho</span>
+        <span class="hq-char-chip">👧 Bia</span>
+        <span class="hq-char-chip">🔬 Prof. Ciência</span>
+      </div>
+      <div class="hq-img-wrap">
+        <img src="hq-caminho-do-lixo.png" alt="HQ O Caminho do Lixo" class="hq-img" onerror="this.style.display='none'">
+      </div>
+    </div>
+
+    <hr class="sdiv">
+
+    <div class="act-grid">
+
+      <a class="act-card cien" href="quiz-caminho-do-lixo.html" target="_blank">
+        <div class="act-icon">❓</div>
+        <div class="act-title">Quiz Interativo</div>
+        <div class="act-desc">10 perguntas sobre lixão vs. aterro, reciclagem, compostagem, 5Rs e coleta seletiva.</div>
+        <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+        <div class="level lv4">📖 Retrieval practice</div>
+      </a>
+
+      <a class="act-card cien" href="grafico-caminho-do-lixo.html" target="_blank">
+        <div class="act-icon">📊</div>
+        <div class="act-title">Gráfico e Classificação</div>
+        <div class="act-desc">Interprete o gráfico de reciclagem no Brasil por material e classifique o que pode e não pode ser reciclado.</div>
+        <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Análise</span></div>
+        <div class="level lv2">⚡ Praticar (80%)</div>
+      </a>
+
+      <a class="act-card cien" href="5rs-caminho-do-lixo.html" target="_blank">
+        <div class="act-icon">⭐</div>
+        <div class="act-title">Jornada dos 5Rs</div>
+        <div class="act-desc">Ordene os 5Rs na sequência correta e argumente por escrito sobre por que a ordem importa para a sustentabilidade.</div>
+        <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-c">Criação</span></div>
+        <div class="level lv3">🏆 Ensinar (90%)</div>
+      </a>
+
+      <a class="act-card cien" href="mapa-mental-caminho-do-lixo.html" target="_blank">
+        <div class="act-icon">🗺️</div>
+        <div class="act-title">Mapa Mental</div>
+        <div class="act-desc">Conecte destinos do lixo, o ciclo da natureza, os 5Rs e as cores da coleta seletiva num mapa interativo.</div>
+        <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Síntese</span></div>
+        <div class="level lv3">🏆 Ensinar (90%)</div>
+      </a>
+
+    </div>
+
+    <hr class="sdiv">
+
+    <div class="sched">
+      <div class="sched-title">📅 Sugestão de uso semanal</div>
+      <div class="sched-grid">
+        <div class="sched-day"><div class="sched-d">Seg</div><div class="sched-a">📖 HQ</div></div>
+        <div class="sched-day"><div class="sched-d">Ter</div><div class="sched-a">❓ Quiz</div></div>
+        <div class="sched-day"><div class="sched-d">Qua</div><div class="sched-a">📊 Gráfico</div></div>
+        <div class="sched-day"><div class="sched-d">Qui</div><div class="sched-a">⭐ 5Rs</div></div>
+        <div class="sched-day"><div class="sched-d">Sex</div><div class="sched-a">🗺️ Mapa Mental</div></div>
+      </div>
+    </div>
+
+  </div><!-- /theme-cien-caminho-do-lixo -->
+
+</div><!-- /screen-cien -->

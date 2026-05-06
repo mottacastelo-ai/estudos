@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detetive do Lixo — O Lixo que Produzimos</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#0284C7;--light:#38BDF8;--bg:#F0F9FF;--green:#15803D;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Baloo 2',sans-serif;background:var(--bg);min-height:100vh;}
+header{background:linear-gradient(135deg,#0C4A6E,#0284C7 60%,#38BDF8);color:white;padding:22px 20px;text-align:center;}
+.char{font-size:2.8rem;display:block;}
+header h1{font-size:1.5rem;font-weight:900;}
+header p{font-size:.9rem;opacity:.85;margin-top:4px;}
+.container{max-width:880px;margin:0 auto;padding:20px 16px;}
+.instructions{background:white;border-radius:14px;padding:16px 20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(2,132,199,.08);font-size:.92rem;color:#334155;line-height:1.6;}
+.instructions strong{color:var(--primary);}
+/* tipos legenda */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.leg-item{display:flex;align-items:center;gap:8px;background:white;border-radius:10px;padding:8px 14px;box-shadow:0 2px 8px rgba(0,0,0,.06);font-size:.85rem;font-weight:700;}
+.leg-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+/* cards de itens */
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.item-card{background:white;border-radius:14px;padding:18px 16px;box-shadow:0 3px 12px rgba(0,0,0,.07);display:flex;flex-direction:column;gap:10px;}
+.item-emoji{font-size:2.2rem;text-align:center;}
+.item-name{font-size:.95rem;font-weight:800;color:#1e293b;text-align:center;}
+.item-risk{font-size:.78rem;color:#64748b;text-align:center;line-height:1.4;min-height:32px;}
+select.type-select{width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:9px 10px;font-family:'Baloo 2',sans-serif;font-size:.88rem;font-weight:700;color:#334155;background:#f8fafc;cursor:pointer;}
+select.type-select:focus{outline:none;border-color:var(--primary);}
+select.type-select.correct{border-color:#16a34a;background:#dcfce7;color:#166534;}
+select.type-select.wrong{border-color:#dc2626;background:#fee2e2;color:#991b1b;}
+/* argumentação */
+.arg-section{background:white;border-radius:16px;padding:22px 20px;margin-bottom:20px;box-shadow:0 3px 12px rgba(2,132,199,.08);}
+.arg-title{font-size:1rem;font-weight:900;color:var(--primary);margin-bottom:14px;}
+.arg-q{font-size:.95rem;font-weight:700;color:#1e293b;margin-bottom:8px;line-height:1.5;}
+textarea{width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:12px 14px;font-family:'Baloo 2',sans-serif;font-size:.93rem;color:#1e293b;background:#f8fafc;resize:vertical;min-height:80px;margin-bottom:10px;}
+textarea:focus{outline:none;border-color:var(--primary);background:white;}
+.gabarito{display:none;padding:12px 16px;border-radius:10px;background:#e0f2fe;color:#0c4a6e;font-size:.88rem;font-weight:600;line-height:1.5;margin-bottom:14px;}
+.gabarito.show{display:block;}
+.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;}
+.btn{border:none;border-radius:12px;padding:13px 24px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;}
+.btn-check{background:var(--primary);color:white;}
+.btn-reveal{background:#64748b;color:white;}
+.btn-reset{background:#94a3b8;color:white;}
+.btn-back{background:var(--green);color:white;}
+.result-box{background:white;border-radius:16px;padding:20px 22px;box-shadow:0 3px 12px rgba(2,132,199,.1);margin-bottom:20px;display:none;}
+.result-box.show{display:block;}
+.result-score{font-size:1.4rem;font-weight:900;color:var(--primary);text-align:center;margin-top:10px;}
+footer{text-align:center;padding:16px;font-size:.78rem;color:#94a3b8;}
+</style>
+</head>
+<body>
+<header>
+  <span class="char">🕵️</span>
+  <h1>Detetive do Lixo</h1>
+  <p>Classifique cada resíduo e argumente sobre o impacto da poluição!</p>
+</header>
+<div class="container">
+  <div class="instructions">
+    <strong>Parte 1:</strong> Selecione o tipo correto de lixo para cada item. <strong>Parte 2:</strong> Responda às perguntas de argumentação sobre poluição.
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#6b7280"></div>Domiciliar</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#f97316"></div>Eletrônico</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#ef4444"></div>Serviços de Saúde</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#eab308"></div>Industrial</div>
+  </div>
+
+  <div class="items-grid" id="items-grid"></div>
+
+  <div class="controls">
+    <button class="btn btn-reset" onclick="resetAll()">↩ Recomeçar</button>
+    <button class="btn btn-check" onclick="checkClassification()">✅ Verificar classificação</button>
+  </div>
+
+  <div class="result-box" id="result-box"></div>
+
+  <div class="arg-section">
+    <div class="arg-title">✍️ Parte 2 — Argumentação sobre poluição</div>
+
+    <div class="arg-q">1. Segundo as manchetes do livro, quais elementos naturais foram contaminados por substâncias industriais?</div>
+    <textarea id="arg1" placeholder="Escreva sua resposta..."></textarea>
+    <div class="gabarito" id="gab1">💡 <strong>Gabarito:</strong> As manchetes indicam que o solo e o ambiente em geral foram contaminados por substâncias de indústrias químicas. A poluição industrial pode atingir o solo, a água dos rios e o ar — três elementos naturais essenciais para a vida.</div>
+
+    <div class="arg-q">2. Como a contaminação industrial pode prejudicar o ambiente e a saúde dos seres vivos? Escreva pelo menos dois efeitos.</div>
+    <textarea id="arg2" placeholder="Escreva sua resposta..."></textarea>
+    <div class="gabarito" id="gab2">💡 <strong>Gabarito:</strong> A contaminação industrial pode: (1) matar animais aquáticos ao poluir rios e mares com substâncias tóxicas; (2) causar doenças respiratórias em pessoas que respiram ar poluído; (3) contaminar o solo e torná-lo impróprio para a agricultura; (4) afetar plantas e toda a cadeia alimentar que delas depende.</div>
+
+    <div class="arg-q">3. Cite duas atitudes que você e sua família podem tomar para reduzir a poluição do ar no dia a dia.</div>
+    <textarea id="arg3" placeholder="Escreva sua resposta..."></textarea>
+    <div class="gabarito" id="gab3">💡 <strong>Gabarito (exemplos):</strong> Usar transporte público (ônibus, metrô) em vez do carro particular; andar de bicicleta ou a pé para destinos próximos; dar carona a conhecidos; não queimar lixo ou folhas; cobrar das autoridades o uso de filtros nas chaminés de fábricas.</div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+      <button class="btn btn-check" onclick="checkArgs()">✅ Verificar respostas</button>
+      <button class="btn btn-reveal" onclick="revealAll()">👁 Ver gabaritos</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-bottom:24px;">
+    <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+  </div>
+</div>
+<footer>Portal Educacional 5º Ano • Ciências — O Lixo que Produzimos</footer>
+<script>
+const items = [
+  { emoji:'🍎', name:'Restos de alimentos',        correct:'domiciliar', risk:'Gerado nas casas e comércios' },
+  { emoji:'📱', name:'Celular antigo',              correct:'eletronico',  risk:'Contém metais tóxicos' },
+  { emoji:'🏥', name:'Seringa usada',              correct:'saude',       risk:'Risco de infecção biológica' },
+  { emoji:'🏭', name:'Tambor com químico',         correct:'industrial',  risk:'Substâncias perigosas de fábricas' },
+  { emoji:'🔋', name:'Pilha usada',                correct:'eletronico',  risk:'Contém mercúrio e cádmio' },
+  { emoji:'🗞️', name:'Jornal amassado',            correct:'domiciliar', risk:'Papel de uso doméstico' },
+  { emoji:'💉', name:'Curativo hospitalar',        correct:'saude',       risk:'Pode conter agentes infecciosos' },
+  { emoji:'⚙️', name:'Peças metálicas de fábrica',correct:'industrial',  risk:'Resíduos da produção industrial' },
+  { emoji:'🧴', name:'Frasco de remédio vazio',    correct:'saude',       risk:'Contato com medicamentos' },
+  { emoji:'📺', name:'TV quebrada',                correct:'eletronico',  risk:'Componentes eletrônicos tóxicos' },
+  { emoji:'🍾', name:'Embalagem de alimento',      correct:'domiciliar', risk:'Descarte cotidiano doméstico' },
+  { emoji:'🔩', name:'Sucata industrial',          correct:'industrial',  risk:'Metal e resíduo de maquinário' },
+];
+
+const typeOptions = [
+  { value:'', label:'— Selecione o tipo —' },
+  { value:'domiciliar', label:'🏠 Domiciliar' },
+  { value:'eletronico',  label:'📱 Eletrônico' },
+  { value:'saude',       label:'🏥 Serviços de Saúde' },
+  { value:'industrial',  label:'🏭 Industrial' },
+];
+
+function buildGrid() {
+  const grid = document.getElementById('items-grid');
+  grid.innerHTML = '';
+  items.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <div class="item-emoji">${item.emoji}</div>
+      <div class="item-name">${item.name}</div>
+      <div class="item-risk">${item.risk}</div>
+      <select class="type-select" id="sel-${i}">
+        ${typeOptions.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}
+      </select>`;
+    grid.appendChild(card);
+  });
+}
+buildGrid();
+
+function checkClassification() {
+  let correct = 0;
+  items.forEach((item, i) => {
+    const sel = document.getElementById('sel-' + i);
+    sel.classList.remove('correct','wrong');
+    if (!sel.value) return;
+    if (sel.value === item.correct) { sel.classList.add('correct'); correct++; }
+    else sel.classList.add('wrong');
+  });
+  const total = items.length;
+  const pct = Math.round((correct / total) * 100);
+  const box = document.getElementById('result-box');
+  box.innerHTML = `<div style="font-size:.95rem;font-weight:700;color:#334155;margin-bottom:8px;">Itens corretamente classificados: <strong>${correct}/${total}</strong></div>
+    <div class="result-score">${pct}% — ${pct>=85?'🌟 Excelente! Você é um verdadeiro detetive do lixo!':pct>=60?'🔍 Bom trabalho! Revise os itens marcados em vermelho.':'📚 Continue tentando! Releia os tipos de lixo e tente novamente.'}</div>`;
+  box.classList.add('show');
+}
+
+function resetAll() {
+  buildGrid();
+  document.getElementById('result-box').classList.remove('show');
+  ['arg1','arg2','arg3'].forEach(id => document.getElementById(id).value = '');
+  ['gab1','gab2','gab3'].forEach(id => document.getElementById(id).classList.remove('show'));
+}
+
+function checkArgs() {
+  let ok = true;
+  ['arg1','arg2','arg3'].forEach(id => {
+    const val = document.getElementById(id).value.trim();
+    if (val.length < 15) { alert('Preencha todas as respostas antes de verificar (mínimo 15 caracteres cada).'); ok = false; }
+  });
+  if (ok) revealAll();
+}
+
+function revealAll() {
+  ['gab1','gab2','gab3'].forEach(id => document.getElementById(id).classList.add('show'));
+}
+</script>
+</body>
+</html>

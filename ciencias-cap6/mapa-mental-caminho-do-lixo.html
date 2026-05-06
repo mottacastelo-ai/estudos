@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — O Caminho do Lixo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#0284C7;--light:#38BDF8;--bg:#F0F9FF;--green:#15803D;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Baloo 2',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;}
+header{background:linear-gradient(135deg,#0C4A6E,#0284C7 60%,#38BDF8);color:white;padding:20px;text-align:center;}
+.char{font-size:2.5rem;display:block;}
+header h1{font-size:1.5rem;font-weight:900;}
+header p{font-size:.9rem;opacity:.85;margin-top:4px;}
+.instructions{max-width:960px;margin:14px auto;padding:12px 18px;background:white;border-radius:14px;font-size:.88rem;color:#334155;box-shadow:0 2px 10px rgba(2,132,199,.08);line-height:1.6;}
+.instructions strong{color:var(--primary);}
+.canvas-wrap{flex:1;position:relative;overflow:hidden;cursor:grab;background:#dbeafe;min-height:500px;}
+.canvas-wrap:active{cursor:grabbing;}
+svg#lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.node{position:absolute;border-radius:14px;padding:11px 15px;font-weight:800;font-size:.85rem;text-align:center;cursor:grab;user-select:none;box-shadow:0 4px 14px rgba(0,0,0,.12);min-width:110px;max-width:152px;line-height:1.3;touch-action:none;}
+.node:active{cursor:grabbing;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:99;}
+.central{background:#0284C7;color:white;font-size:.95rem;min-width:135px;border-radius:18px;}
+.destino{background:#15803D;color:white;}
+.ciclo{background:#0ea5e9;color:white;}
+.rs{background:#b45309;color:white;}
+.coleta{background:#7c3aed;color:white;}
+.controls{display:flex;gap:12px;justify-content:center;padding:16px;flex-wrap:wrap;}
+.btn{border:none;border-radius:12px;padding:12px 22px;font-family:'Baloo 2',sans-serif;font-size:.93rem;font-weight:800;cursor:pointer;}
+.btn-check{background:var(--primary);color:white;}
+.btn-reset{background:#64748b;color:white;}
+.btn-back{background:var(--green);color:white;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.overlay-card{background:white;border-radius:20px;padding:28px 24px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;}
+.overlay-card h2{font-size:1.2rem;font-weight:900;color:var(--primary);margin-bottom:14px;}
+.row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;padding:9px;border-radius:10px;}
+.row.ok{background:#dcfce7;}
+.row.nok{background:#fee2e2;}
+.row-icon{font-size:1.1rem;flex-shrink:0;}
+.row-text{font-size:.88rem;font-weight:600;color:#1e293b;line-height:1.4;}
+.score-final{font-size:1.2rem;font-weight:900;color:var(--primary);margin-top:14px;text-align:center;}
+.close-btn{display:block;margin:16px auto 0;background:var(--primary);color:white;border:none;border-radius:12px;padding:11px 24px;font-family:'Baloo 2',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;}
+footer{text-align:center;padding:12px;font-size:.78rem;color:#94a3b8;}
+</style>
+</head>
+<body>
+<header>
+  <span class="char">🗺️</span>
+  <h1>Mapa Mental — O Caminho do Lixo</h1>
+  <p>Arraste os nós e conecte os conceitos. Depois verifique!</p>
+</header>
+<div class="instructions">
+  <strong>Como usar:</strong> Aproxime cada nó do seu conceito-pai. Quando dois nós relacionados estiverem a menos de 250px, uma linha aparecerá.
+  <br>🟢 Destinos do lixo &nbsp; 🔵 Ciclo/Reciclagem &nbsp; 🟠 5Rs &nbsp; 🟣 Coleta seletiva
+</div>
+<div class="canvas-wrap" id="canvas"><svg id="lines"></svg></div>
+<div class="controls">
+  <button class="btn btn-back" onclick="window.close()">← Portal</button>
+  <button class="btn btn-reset" onclick="reset()">↩ Reorganizar</button>
+  <button class="btn btn-check" onclick="checkMap()">✅ Verificar</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <h2>📋 Resultado do Mapa</h2>
+    <div id="overlay-body"></div>
+    <button class="close-btn" onclick="document.getElementById('overlay').classList.remove('show')">Fechar</button>
+  </div>
+</div>
+<footer>Portal Educacional 5º Ano • Ciências — O Caminho do Lixo</footer>
+<script>
+const nodes=[
+  {id:'central',   label:'♻️ O Caminho\ndo Lixo',        cls:'central'},
+  {id:'destinos',  label:'🚛 Destinos\ndo Lixo',          cls:'destino'},
+  {id:'lixao',     label:'⛔ Lixão',                       cls:'destino'},
+  {id:'aterro',    label:'✅ Aterro\nSanitário',           cls:'destino'},
+  {id:'reciclag',  label:'♻️ Reciclagem',                  cls:'destino'},
+  {id:'compost',   label:'🌱 Compostagem',                 cls:'destino'},
+  {id:'ciclo',     label:'🔄 Ciclo\nda Natureza',          cls:'ciclo'},
+  {id:'folha',     label:'🍃 Folha →\nAdubo → Planta',    cls:'ciclo'},
+  {id:'chorume',   label:'💧 Chorume',                     cls:'ciclo'},
+  {id:'rs',        label:'⭐ Os 5Rs',                      cls:'rs'},
+  {id:'repensar',  label:'🤔 Repensar',                    cls:'rs'},
+  {id:'recusar',   label:'✋ Recusar',                     cls:'rs'},
+  {id:'reduzir',   label:'📉 Reduzir',                     cls:'rs'},
+  {id:'reutilizar',label:'🔄 Reutilizar',                  cls:'rs'},
+  {id:'reciclar',  label:'♻️ Reciclar',                    cls:'rs'},
+  {id:'coleta',    label:'🗑️ Coleta\nSeletiva',            cls:'coleta'},
+  {id:'azul',      label:'🔵 Azul =\nPapel',              cls:'coleta'},
+  {id:'vermelho',  label:'🔴 Vermelho =\nPlástico',        cls:'coleta'},
+  {id:'verde',     label:'🟢 Verde =\nVidro',              cls:'coleta'},
+  {id:'amarelo',   label:'🟡 Amarelo =\nMetal',            cls:'coleta'},
+];
+
+const connections=[
+  ['central','destinos'],['central','ciclo'],['central','rs'],['central','coleta'],
+  ['destinos','lixao'],['destinos','aterro'],['destinos','reciclag'],['destinos','compost'],
+  ['ciclo','folha'],['ciclo','chorume'],
+  ['rs','repensar'],['rs','recusar'],['rs','reduzir'],['rs','reutilizar'],['rs','reciclar'],
+  ['coleta','azul'],['coleta','vermelho'],['coleta','verde'],['coleta','amarelo'],
+];
+
+const pos={};
+function scatter(){
+  const W=window.innerWidth||900;
+  const H=Math.max(document.getElementById('canvas').offsetHeight||500,400);
+  pos['central']={x:W/2-68,y:H/2-35};
+  const placed=[{x:W/2,y:H/2}];
+  nodes.filter(n=>n.id!=='central').forEach(n=>{
+    let x,y,t=0;
+    do{x=40+Math.random()*(W-200);y=40+Math.random()*(H-120);t++;}
+    while(t<25&&placed.some(p=>Math.hypot(p.x-x,p.y-y)<90));
+    placed.push({x,y});pos[n.id]={x,y};
+  });
+}
+
+function render(){
+  const canvas=document.getElementById('canvas');
+  canvas.querySelectorAll('.node').forEach(n=>n.remove());
+  nodes.forEach(n=>{
+    const el=document.createElement('div');
+    el.className='node '+n.cls;el.id='nd-'+n.id;
+    el.textContent=n.label;
+    el.style.left=pos[n.id].x+'px';el.style.top=pos[n.id].y+'px';
+    drag(el,n.id);canvas.appendChild(el);
+  });
+  drawLines();
+}
+
+function drawLines(){
+  const svg=document.getElementById('lines');svg.innerHTML='';
+  const cr=document.getElementById('canvas').getBoundingClientRect();
+  connections.forEach(([a,b])=>{
+    const ea=document.getElementById('nd-'+a),eb=document.getElementById('nd-'+b);
+    if(!ea||!eb)return;
+    const ra=ea.getBoundingClientRect(),rb=eb.getBoundingClientRect();
+    const x1=ra.left-cr.left+ra.width/2,y1=ra.top-cr.top+ra.height/2;
+    const x2=rb.left-cr.left+rb.width/2,y2=rb.top-cr.top+rb.height/2;
+    if(Math.hypot(x2-x1,y2-y1)<250){
+      const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('x1',x1);l.setAttribute('y1',y1);
+      l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+      l.setAttribute('stroke','#0284C7');l.setAttribute('stroke-width','2.5');
+      l.setAttribute('stroke-opacity','0.4');l.setAttribute('stroke-dasharray','6 4');
+      svg.appendChild(l);
+    }
+  });
+}
+
+function drag(el,id){
+  let ox,oy,sx,sy;
+  el.addEventListener('mousedown',e=>{
+    ox=e.clientX;oy=e.clientY;sx=pos[id].x;sy=pos[id].y;el.style.zIndex=50;
+    const mm=e2=>{pos[id].x=sx+(e2.clientX-ox);pos[id].y=sy+(e2.clientY-oy);el.style.left=pos[id].x+'px';el.style.top=pos[id].y+'px';drawLines();};
+    const mu=()=>{el.style.zIndex='';window.removeEventListener('mousemove',mm);window.removeEventListener('mouseup',mu);};
+    window.addEventListener('mousemove',mm);window.addEventListener('mouseup',mu);e.preventDefault();
+  });
+  el.addEventListener('touchstart',e=>{
+    const t=e.touches[0];ox=t.clientX;oy=t.clientY;sx=pos[id].x;sy=pos[id].y;el.style.zIndex=50;
+    const tm=e2=>{e2.preventDefault();const t2=e2.touches[0];pos[id].x=sx+(t2.clientX-ox);pos[id].y=sy+(t2.clientY-oy);el.style.left=pos[id].x+'px';el.style.top=pos[id].y+'px';drawLines();};
+    const te=()=>{el.style.zIndex='';window.removeEventListener('touchmove',tm);window.removeEventListener('touchend',te);};
+    window.addEventListener('touchmove',tm,{passive:false});window.addEventListener('touchend',te);e.preventDefault();
+  },{passive:false});
+}
+
+function checkMap(){
+  const cr=document.getElementById('canvas').getBoundingClientRect();
+  let correct=0;const lines=[];
+  connections.forEach(([a,b])=>{
+    const ea=document.getElementById('nd-'+a),eb=document.getElementById('nd-'+b);
+    if(!ea||!eb)return;
+    const ra=ea.getBoundingClientRect(),rb=eb.getBoundingClientRect();
+    const x1=ra.left-cr.left+ra.width/2,y1=ra.top-cr.top+ra.height/2;
+    const x2=rb.left-cr.left+rb.width/2,y2=rb.top-cr.top+rb.height/2;
+    const ok=Math.hypot(x2-x1,y2-y1)<250;
+    if(ok)correct++;
+    const na=nodes.find(n=>n.id===a),nb=nodes.find(n=>n.id===b);
+    lines.push(`<div class="row ${ok?'ok':'nok'}"><span class="row-icon">${ok?'✅':'❌'}</span><div class="row-text"><strong>${na.label.replace('\n',' ')}</strong> → ${nb.label.replace('\n',' ')}</div></div>`);
+  });
+  const total=connections.length,pct=Math.round((correct/total)*100);
+  const msg=pct>=85?'🌟 Mapa excelente! Você domina o caminho do lixo.':pct>=60?'🔍 Bom trabalho! Ajuste as conexões que faltam.':'📚 Continue organizando — aproxime os nós que se relacionam.';
+  document.getElementById('overlay-body').innerHTML=lines.join('')+`<div class="score-final">${correct}/${total} conexões (${pct}%) — ${msg}</div>`;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function reset(){scatter();render();}
+window.addEventListener('resize',drawLines);
+scatter();render();
+</script>
+</body>
+</html>

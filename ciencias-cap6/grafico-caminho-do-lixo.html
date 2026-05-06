@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gráfico e Classificação — O Caminho do Lixo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#0284C7;--light:#38BDF8;--bg:#F0F9FF;--green:#15803D;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Baloo 2',sans-serif;background:var(--bg);min-height:100vh;}
+header{background:linear-gradient(135deg,#0C4A6E,#0284C7 60%,#38BDF8);color:white;padding:22px 20px;text-align:center;}
+.char{font-size:2.8rem;display:block;}
+header h1{font-size:1.5rem;font-weight:900;}
+header p{font-size:.9rem;opacity:.85;margin-top:4px;}
+.container{max-width:820px;margin:0 auto;padding:22px 16px;}
+.card{background:white;border-radius:18px;padding:22px 20px;margin-bottom:20px;box-shadow:0 3px 14px rgba(2,132,199,.1);}
+.card-title{font-size:1rem;font-weight:900;color:var(--primary);margin-bottom:16px;}
+/* Gráfico empilhado */
+.chart-wrap{overflow-x:auto;margin-bottom:8px;}
+.stacked-chart{display:flex;align-items:flex-end;gap:20px;height:240px;padding:0 10px 0 50px;position:relative;border-left:3px solid #94a3b8;border-bottom:3px solid #94a3b8;}
+.y-axis{position:absolute;left:0;top:0;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding-bottom:4px;}
+.y-val{font-size:.7rem;font-family:'Space Mono',monospace;color:#64748b;width:44px;text-align:right;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
+.bar-stack{width:56px;display:flex;flex-direction:column;justify-content:flex-end;}
+.seg{width:100%;transition:filter .2s;cursor:default;}
+.seg:first-child{border-radius:6px 6px 0 0;}
+.bar-col-label{font-size:.72rem;font-weight:700;color:#334155;text-align:center;max-width:72px;line-height:1.3;}
+.legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;}
+.leg{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#334155;}
+.leg-sq{width:14px;height:14px;border-radius:3px;flex-shrink:0;}
+.chart-source{font-size:.7rem;color:#94a3b8;margin-top:6px;}
+/* perguntas */
+.q-block{margin-bottom:18px;}
+.q-text{font-size:.97rem;font-weight:700;color:#1e293b;margin-bottom:10px;line-height:1.5;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;padding:11px 15px;font-family:'Baloo 2',sans-serif;font-size:.93rem;font-weight:600;color:#334155;cursor:pointer;text-align:left;transition:all .2s;}
+.opt:hover:not(:disabled){border-color:var(--light);background:#e0f2fe;color:var(--primary);}
+.opt.correct{background:#dcfce7;border-color:#16a34a;color:#166534;}
+.opt.wrong{background:#fee2e2;border-color:#dc2626;color:#991b1b;}
+.opt:disabled{cursor:default;}
+.fb{display:none;margin-top:8px;padding:11px 14px;border-radius:10px;font-weight:600;font-size:.88rem;line-height:1.5;}
+.fb.show{display:block;}
+.fb.ok{background:#dcfce7;color:#166534;}
+.fb.nok{background:#fee2e2;color:#991b1b;}
+/* classificação */
+.classif-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px;}
+.classif-item{background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:14px 12px;text-align:center;}
+.classif-emoji{font-size:1.8rem;margin-bottom:6px;}
+.classif-name{font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:8px;}
+select.classif-sel{width:100%;border:2px solid #e2e8f0;border-radius:8px;padding:7px 8px;font-family:'Baloo 2',sans-serif;font-size:.8rem;font-weight:700;color:#334155;background:white;cursor:pointer;}
+select.classif-sel:focus{outline:none;border-color:var(--primary);}
+select.classif-sel.c-ok{border-color:#16a34a;background:#dcfce7;color:#166534;}
+select.classif-sel.c-nok{border-color:#dc2626;background:#fee2e2;color:#991b1b;}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;}
+.btn{border:none;border-radius:12px;padding:12px 22px;font-family:'Baloo 2',sans-serif;font-size:.93rem;font-weight:800;cursor:pointer;}
+.btn-check{background:var(--primary);color:white;}
+.btn-reset{background:#64748b;color:white;}
+.btn-back{background:var(--green);color:white;}
+.result-classif{background:white;border-radius:14px;padding:16px 20px;box-shadow:0 2px 10px rgba(2,132,199,.1);display:none;margin-bottom:20px;text-align:center;}
+.result-classif.show{display:block;}
+.result-classif .score{font-size:1.3rem;font-weight:900;color:var(--primary);}
+footer{text-align:center;padding:16px;font-size:.78rem;color:#94a3b8;}
+</style>
+</head>
+<body>
+<header>
+  <span class="char">📊♻️</span>
+  <h1>Gráfico e Classificação</h1>
+  <p>Interprete dados de reciclagem e classifique o que pode ser reciclado!</p>
+</header>
+<div class="container">
+
+  <!-- Parte 1: Gráfico -->
+  <div class="card">
+    <div class="card-title">📊 Parte 1 — Quantidade de lixo reciclado no Brasil</div>
+    <div class="chart-wrap">
+      <div class="stacked-chart" id="chart">
+        <div class="y-axis">
+          <div class="y-val">100%</div>
+          <div class="y-val">80%</div>
+          <div class="y-val">60%</div>
+          <div class="y-val">40%</div>
+          <div class="y-val">20%</div>
+          <div class="y-val">0%</div>
+        </div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="leg"><div class="leg-sq" style="background:#22c55e"></div>Reciclado</div>
+      <div class="leg"><div class="leg-sq" style="background:#f97316"></div>Não reciclado</div>
+    </div>
+    <div class="chart-source">Fonte: Panorama dos resíduos sólidos no Brasil 2018/2019. Abrelpe, São Paulo, 2019.</div>
+
+    <div style="margin-top:20px;">
+      <div class="q-block" id="qg1">
+        <div class="q-text">1. Qual material apresenta a maior proporção de reciclagem no Brasil?</div>
+        <div class="opts">
+          <button class="opt" onclick="ans(this,'qg1',false)">Plástico PET</button>
+          <button class="opt" onclick="ans(this,'qg1',false)">Embalagem longa vida</button>
+          <button class="opt" onclick="ans(this,'qg1',true)">Lata de alumínio</button>
+          <button class="opt" onclick="ans(this,'qg1',false)">Vidro</button>
+        </div>
+        <div class="fb" id="fb-qg1"></div>
+      </div>
+
+      <div class="q-block" id="qg2">
+        <div class="q-text">2. Qual material tem a menor proporção de reciclagem no Brasil?</div>
+        <div class="opts">
+          <button class="opt" onclick="ans(this,'qg2',false)">Lata de alumínio</button>
+          <button class="opt" onclick="ans(this,'qg2',true)">Embalagem de plástico</button>
+          <button class="opt" onclick="ans(this,'qg2',false)">Vidro</button>
+          <button class="opt" onclick="ans(this,'qg2',false)">PET</button>
+        </div>
+        <div class="fb" id="fb-qg2"></div>
+      </div>
+
+      <div class="q-block" id="qg3">
+        <div class="q-text">3. Se a embalagem de plástico é a menos reciclada, qual atitude dos 5Rs seria mais eficaz para reduzir esse problema?</div>
+        <div class="opts">
+          <button class="opt" onclick="ans(this,'qg3',false)">Reciclar — separar o plástico na coleta seletiva</button>
+          <button class="opt" onclick="ans(this,'qg3',true)">Reduzir e Recusar — consumir menos produtos com embalagem plástica e recusar embalagens desnecessárias</button>
+          <button class="opt" onclick="ans(this,'qg3',false)">Reutilizar — usar as embalagens plásticas como vasos de planta</button>
+          <button class="opt" onclick="ans(this,'qg3',false)">Repensar — assistir documentários sobre poluição plástica</button>
+        </div>
+        <div class="fb" id="fb-qg3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parte 2: classificação -->
+  <div class="card">
+    <div class="card-title">🗂️ Parte 2 — O que pode ser reciclado?</div>
+    <p style="font-size:.88rem;color:#475569;margin-bottom:16px;line-height:1.6;">Classifique cada item: <strong>Pode ser reciclado</strong>, <strong>Não pode ser reciclado</strong> ou <strong>Exige descarte especial</strong>.</p>
+    <div class="classif-grid" id="classif-grid"></div>
+    <div class="btn-row">
+      <button class="btn btn-reset" onclick="resetClassif()">↩ Recomeçar</button>
+      <button class="btn btn-check" onclick="checkClassif()">✅ Verificar</button>
+    </div>
+    <div class="result-classif" id="result-classif"></div>
+  </div>
+
+  <div style="text-align:center;margin-bottom:24px;">
+    <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+  </div>
+</div>
+<footer>Portal Educacional 5º Ano • Ciências — O Caminho do Lixo</footer>
+<script>
+// Dados do gráfico empilhado (reciclado%, não-reciclado%)
+const chartData = [
+  { label:'PET',                  rec:55, norec:45 },
+  { label:'Longa\nvida',         rec:80, norec:20 },
+  { label:'Lata de\nalumínio',   rec:95, norec:5  },
+  { label:'Embalagem\nplástico', rec:22, norec:78 },
+  { label:'Vidro',                rec:50, norec:50 },
+];
+const H=220;
+function buildChart(){
+  const chart=document.getElementById('chart');
+  chartData.forEach(d=>{
+    const col=document.createElement('div');col.className='bar-col';
+    const stack=document.createElement('div');stack.className='bar-stack';
+    stack.style.height=H+'px';
+    const segNR=document.createElement('div');segNR.className='seg';
+    segNR.style.cssText=`height:${(d.norec/100)*H}px;background:#f97316;`;
+    const segR=document.createElement('div');segR.className='seg';
+    segR.style.cssText=`height:${(d.rec/100)*H}px;background:#22c55e;border-radius:6px 6px 0 0;`;
+    // values
+    segR.title=`Reciclado: ${d.rec}%`;
+    segNR.title=`Não reciclado: ${d.norec}%`;
+    stack.appendChild(segNR);stack.appendChild(segR);
+    const lbl=document.createElement('div');lbl.className='bar-col-label';lbl.textContent=d.label;
+    col.appendChild(stack);col.appendChild(lbl);chart.appendChild(col);
+  });
+}
+buildChart();
+
+const fbData={
+  qg1:{ok:'✅ Correto! A lata de alumínio tem a barra verde mais alta — cerca de 95% das latas são recicladas no Brasil.',nok:'❌ Observe qual barra tem a maior porção verde (reciclado). A lata de alumínio lidera com ~95%.'},
+  qg2:{ok:'✅ Correto! A embalagem de plástico tem a maior porção laranja (não reciclado) — cerca de 78% não é reciclada.',nok:'❌ Procure a barra com maior porção laranja (não reciclado). A embalagem de plástico tem ~78% não reciclada.'},
+  qg3:{ok:'✅ Excelente! Reduzir e Recusar atacam o problema na raiz — menos plástico comprado = menos plástico para reciclar. Reciclar é importante, mas vem depois de tentar não gerar o resíduo.',nok:'❌ Reciclar ajuda, mas o problema é o volume enorme gerado. A solução mais eficaz é Reduzir o consumo de plástico e Recusar embalagens desnecessárias — agindo antes de gerar o resíduo.'},
+};
+
+function ans(btn,qid,correct){
+  const block=document.getElementById(qid);
+  if(block.dataset.answered)return;
+  block.dataset.answered='1';
+  const opts=block.querySelectorAll('.opt');
+  opts.forEach(o=>o.disabled=true);
+  btn.classList.add(correct?'correct':'wrong');
+  if(!correct)opts.forEach(o=>{if(fbData[qid].ok.includes(o.textContent.substring(0,10)))o.classList.add('correct');});
+  const fb=document.getElementById('fb-'+qid);
+  fb.textContent=correct?fbData[qid].ok:fbData[qid].nok;
+  fb.className='fb show '+(correct?'ok':'nok');
+}
+
+// Classificação
+const classifItems=[
+  {emoji:'📄',name:'Papel de escritório',correct:'sim'},
+  {emoji:'🛍️',name:'Sacola plástica',correct:'sim'},
+  {emoji:'🍾',name:'Garrafa de vidro',correct:'sim'},
+  {emoji:'🥫',name:'Lata de alumínio',correct:'sim'},
+  {emoji:'🧻',name:'Papel higiênico',correct:'nao'},
+  {emoji:'💡',name:'Lâmpada fluorescente',correct:'especial'},
+  {emoji:'🔋',name:'Pilha usada',correct:'especial'},
+  {emoji:'🥡',name:'Plástico tipo celofane',correct:'nao'},
+  {emoji:'🫙',name:'Pote de vidro de remédio',correct:'sim'},
+  {emoji:'💊',name:'Embalagem de medicamento',correct:'especial'},
+  {emoji:'📦',name:'Caixa de papelão',correct:'sim'},
+  {emoji:'🛢️',name:'Lata de tinta',correct:'especial'},
+];
+
+function buildClassif(){
+  const grid=document.getElementById('classif-grid');grid.innerHTML='';
+  classifItems.forEach((item,i)=>{
+    const div=document.createElement('div');div.className='classif-item';
+    div.innerHTML=`<div class="classif-emoji">${item.emoji}</div>
+      <div class="classif-name">${item.name}</div>
+      <select class="classif-sel" id="cs-${i}">
+        <option value="">— Selecione —</option>
+        <option value="sim">♻️ Pode reciclar</option>
+        <option value="nao">🚫 Não pode reciclar</option>
+        <option value="especial">⚠️ Descarte especial</option>
+      </select>`;
+    grid.appendChild(div);
+  });
+  document.getElementById('result-classif').classList.remove('show');
+}
+buildClassif();
+
+function checkClassif(){
+  let correct=0;
+  classifItems.forEach((item,i)=>{
+    const sel=document.getElementById('cs-'+i);
+    sel.classList.remove('c-ok','c-nok');
+    if(!sel.value)return;
+    if(sel.value===item.correct){sel.classList.add('c-ok');correct++;}
+    else sel.classList.add('c-nok');
+  });
+  const total=classifItems.length,pct=Math.round((correct/total)*100);
+  const res=document.getElementById('result-classif');
+  res.innerHTML=`<div class="score">${correct}/${total} corretos (${pct}%)</div>
+    <div style="font-size:.9rem;color:#475569;margin-top:8px;">${pct>=85?'🌟 Excelente! Você sabe separar o lixo corretamente.':pct>=60?'🔍 Bom trabalho! Itens em vermelho precisam de revisão.':'📚 Continue tentando — releia a tabela do livro sobre o que pode ser reciclado.'}</div>`;
+  res.classList.add('show');
+}
+function resetClassif(){buildClassif();}
+</script>
+</body>
+</html>
