@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartógrafo Cultural — Diversidade Cultural</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height:100vh}
+.hero{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);padding:36px 24px 30px;color:white;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 16px;border-radius:20px;margin-bottom:12px}
+.hero h1{font-family:"Space Mono",monospace;font-size:24px;margin-bottom:6px;line-height:1.2}
+.hero p{font-size:13px;font-weight:600;opacity:.85}
+.container{max-width:760px;margin:0 auto;padding:28px 16px}
+.instruction{background:white;border:2px solid #d1fae5;border-radius:14px;padding:14px 18px;margin-bottom:22px;font-size:13px;font-weight:700;color:#374151;line-height:1.5}
+.game-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
+@media(max-width:600px){.game-layout{grid-template-columns:1fr}}
+.col-title{font-family:"Space Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:12px}
+.feasts-pool{display:flex;flex-direction:column;gap:8px}
+.feast-chip{background:white;border:2.5px solid #d1fae5;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:800;cursor:grab;transition:all .18s;user-select:none}
+.feast-chip:hover{border-color:var(--primary);background:#dcfce7;transform:translateX(4px)}
+.feast-chip.dragging{opacity:.5;transform:scale(.97)}
+.feast-chip.placed{opacity:.4;cursor:default;border-style:dashed}
+.regions{display:flex;flex-direction:column;gap:10px}
+.region-card{background:white;border:2.5px solid #d1fae5;border-radius:14px;padding:12px 16px;min-height:70px;transition:border-color .2s}
+.region-card.drag-over{border-color:var(--primary);background:#dcfce7}
+.region-name{font-family:"Space Mono",monospace;font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px}
+.region-drop-zone{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;padding:4px}
+.placed-chip{background:#d1fae5;border:2px solid #86efac;border-radius:10px;padding:5px 10px;font-size:12px;font-weight:800;color:#14532D;cursor:pointer;transition:all .15s}
+.placed-chip:hover{background:#bbf7d0;transform:scale(1.03)}
+.btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.check-btn{background:var(--primary);color:white;border:none;border-radius:14px;padding:13px 28px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer}
+.reset-btn{background:white;color:var(--primary);border:2px solid var(--primary);border-radius:14px;padding:12px 22px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer}
+.back-btn{background:white;color:#6B7280;border:2px solid #e5e7eb;border-radius:14px;padding:12px 22px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer}
+.result-section{display:none;background:white;border:2px solid #d1fae5;border-radius:20px;padding:24px;margin-top:8px}
+.result-section h3{font-family:"Space Mono",monospace;font-size:16px;color:var(--primary);margin-bottom:16px}
+.result-item{padding:10px 14px;border-radius:12px;margin-bottom:8px;font-size:13px;font-weight:700;line-height:1.5}
+.result-item.ok{background:#d1fae5;color:#14532D;border:1.5px solid #86efac}
+.result-item.err{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+.score-line{font-family:"Space Mono",monospace;font-size:22px;color:var(--primary);margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🌍 Geografia — 5º Ano</div>
+  <h1>Cartógrafo Cultural 🗺️</h1>
+  <p>Arraste cada festa para a região onde ela acontece</p>
+</div>
+<div class="container">
+  <div class="instruction">🖱️ <strong>Arraste</strong> cada festa ou dança popular para a região do Brasil onde ela é realizada. Clique em uma festa já colocada para devolvê-la à lista. Depois clique em <strong>Verificar</strong>!</div>
+
+  <div class="game-layout">
+    <div>
+      <div class="col-title">🎪 Festas e danças</div>
+      <div class="feasts-pool" id="feastsPool">
+        <div class="feast-chip" draggable="true" data-id="parintins">Festival Folclórico de Parintins</div>
+        <div class="feast-chip" draggable="true" data-id="cavalhada">Cavalhada</div>
+        <div class="feast-chip" draggable="true" data-id="siriri">Siriri</div>
+        <div class="feast-chip" draggable="true" data-id="navegantes">Festa de Nossa Senhora dos Navegantes</div>
+        <div class="feast-chip" draggable="true" data-id="fandango">Fandango caiçara</div>
+        <div class="feast-chip" draggable="true" data-id="cirio">Círio de Nazaré</div>
+        <div class="feast-chip" draggable="true" data-id="bumba">Bumba meu boi</div>
+        <div class="feast-chip" draggable="true" data-id="samba">Samba de lenço</div>
+      </div>
+    </div>
+    <div>
+      <div class="col-title">🗺️ Regiões do Brasil</div>
+      <div class="regions" id="regions">
+        <div class="region-card" data-region="norte">
+          <div class="region-name">Norte</div>
+          <div class="region-drop-zone"></div>
+        </div>
+        <div class="region-card" data-region="nordeste">
+          <div class="region-name">Nordeste</div>
+          <div class="region-drop-zone"></div>
+        </div>
+        <div class="region-card" data-region="centro-oeste">
+          <div class="region-name">Centro-Oeste</div>
+          <div class="region-drop-zone"></div>
+        </div>
+        <div class="region-card" data-region="sudeste">
+          <div class="region-name">Sudeste</div>
+          <div class="region-drop-zone"></div>
+        </div>
+        <div class="region-card" data-region="sul">
+          <div class="region-name">Sul</div>
+          <div class="region-drop-zone"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="check-btn" onclick="checkAnswers()">✅ Verificar</button>
+    <button class="reset-btn" onclick="resetGame()">🔄 Recomeçar</button>
+    <button class="back-btn" onclick="window.close()">← Portal</button>
+  </div>
+
+  <div class="result-section" id="resultSection">
+    <h3>Resultado 📊</h3>
+    <div class="score-line" id="scoreLine"></div>
+    <div id="resultItems"></div>
+  </div>
+</div>
+<script>
+// Correct region for each feast id
+const correct = {
+  parintins: 'norte',    // Amazonas — Norte
+  cirio:     'norte',    // Pará — Norte
+  bumba:     'nordeste', // Maranhão — Nordeste
+  navegantes:'sul',      // Rio Grande do Sul — Sul
+  fandango:  'sul',      // Paraná/São Paulo — Sul (costeiro SP/PR)
+  cavalhada: 'centro-oeste', // Goiás — Centro-Oeste
+  siriri:    'centro-oeste', // MT/MS — Centro-Oeste
+  samba:     'sudeste'   // São Paulo — Sudeste
+};
+
+const feedbacks = {
+  parintins: 'O Festival Folclórico de Parintins é realizado em Parintins, no estado do Amazonas — Região Norte.',
+  cirio:     'O Círio de Nazaré acontece em Belém, no estado do Pará — Região Norte.',
+  bumba:     'O Bumba meu boi tem seu maior destaque no Maranhão — Região Nordeste.',
+  navegantes:'A Festa de Nossa Senhora dos Navegantes tem destaque no Rio Grande do Sul — Região Sul.',
+  fandango:  'O Fandango caiçara é das comunidades caiçaras do litoral do Paraná e São Paulo. Como o Paraná é sul e SP é sudeste, a resposta aceita é Sul (origem caiçara, litoral do PR/SP).',
+  cavalhada: 'A Cavalhada é uma festa popular do estado de Goiás — Região Centro-Oeste.',
+  siriri:    'O Siriri é praticado nos estados de Mato Grosso e Mato Grosso do Sul — Região Centro-Oeste.',
+  samba:     'O Samba de lenço é uma dança popular do estado de São Paulo — Região Sudeste.'
+};
+
+const names = {
+  parintins:'Festival Folclórico de Parintins', cirio:'Círio de Nazaré',
+  bumba:'Bumba meu boi', navegantes:'Festa de Nossa Senhora dos Navegantes',
+  fandango:'Fandango caiçara', cavalhada:'Cavalhada',
+  siriri:'Siriri', samba:'Samba de lenço'
+};
+
+let dragging = null;
+const placements = {}; // id -> region
+
+function init(){
+  document.querySelectorAll('.feast-chip').forEach(chip=>{
+    chip.addEventListener('dragstart', e=>{
+      dragging = chip.dataset.id;
+      setTimeout(()=>chip.classList.add('dragging'),0);
+    });
+    chip.addEventListener('dragend', ()=>chip.classList.remove('dragging'));
+  });
+
+  document.querySelectorAll('.region-card').forEach(card=>{
+    card.addEventListener('dragover', e=>{e.preventDefault(); card.classList.add('drag-over');});
+    card.addEventListener('dragleave', ()=>card.classList.remove('drag-over'));
+    card.addEventListener('drop', e=>{
+      e.preventDefault(); card.classList.remove('drag-over');
+      if(!dragging) return;
+      const region = card.dataset.region;
+      // Remove from previous region if already placed
+      if(placements[dragging]) removePlacement(dragging);
+      placements[dragging] = region;
+      // Mark chip as placed in pool
+      document.querySelector(`.feast-chip[data-id="${dragging}"]`).classList.add('placed');
+      // Add to drop zone
+      const dz = card.querySelector('.region-drop-zone');
+      const pc = document.createElement('div');
+      pc.className = 'placed-chip';
+      pc.dataset.id = dragging;
+      pc.textContent = names[dragging];
+      pc.onclick = () => returnChip(dragging);
+      dz.appendChild(pc);
+      dragging = null;
+    });
+  });
+}
+
+function removePlacement(id){
+  const prev = placements[id];
+  if(!prev) return;
+  document.querySelectorAll('.region-card').forEach(c=>{
+    if(c.dataset.region===prev){
+      c.querySelectorAll('.placed-chip').forEach(pc=>{ if(pc.dataset.id===id) pc.remove(); });
+    }
+  });
+  delete placements[id];
+}
+
+function returnChip(id){
+  removePlacement(id);
+  document.querySelector(`.feast-chip[data-id="${id}"]`).classList.remove('placed');
+}
+
+function checkAnswers(){
+  const section = document.getElementById('resultSection');
+  section.style.display = 'block';
+  section.scrollIntoView({behavior:'smooth'});
+  let score = 0;
+  const itemsEl = document.getElementById('resultItems');
+  itemsEl.innerHTML = '';
+  Object.entries(names).forEach(([id, name])=>{
+    const placed = placements[id];
+    const isOk = placed === correct[id];
+    if(isOk) score++;
+    const div = document.createElement('div');
+    div.className = 'result-item ' + (isOk ? 'ok' : 'err');
+    const where = placed ? `você colocou em <strong>${regionName(placed)}</strong>` : '<strong>não posicionada</strong>';
+    const should = `região correta: <strong>${regionName(correct[id])}</strong>`;
+    div.innerHTML = `${isOk ? '✅' : '❌'} <strong>${name}</strong> — ${where}. ${!isOk ? should+'<br>' : ''}${feedbacks[id]}`;
+    itemsEl.appendChild(div);
+  });
+  document.getElementById('scoreLine').textContent = score + '/8 corretos';
+}
+
+function regionName(r){ return {norte:'Norte',nordeste:'Nordeste','centro-oeste':'Centro-Oeste',sudeste:'Sudeste',sul:'Sul'}[r]||r; }
+
+function resetGame(){
+  Object.keys(placements).forEach(id=>{
+    document.querySelector(`.feast-chip[data-id="${id}"]`).classList.remove('placed');
+  });
+  Object.keys(placements).forEach(k=>delete placements[k]);
+  document.querySelectorAll('.region-drop-zone').forEach(dz=>dz.innerHTML='');
+  document.getElementById('resultSection').style.display='none';
+}
+
+init();
+</script>
+</body>
+</html>

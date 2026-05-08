@@ -28,6 +28,9 @@
   --cien-color: #0284C7;
   --cien-light: #38BDF8;
   --cien-bg: #F0F9FF;
+  --geo-color: #15803D;
+  --geo-light: #4ADE80;
+  --geo-bg: #F0FDF4;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -244,13 +247,24 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .act-card.cien:hover { box-shadow: 0 6px 24px rgba(2,132,199,.15);  transform: translateY(-3px); border-color: var(--cien-light); }
 .act-card.cien { border-top: 4px solid var(--cien-color); }
 .act-card.cien::after { color: var(--cien-color); }
+.act-card.geo:hover { box-shadow: 0 6px 24px rgba(21,128,61,.15); transform: translateY(-3px); border-color: var(--geo-light); }
+.act-card.geo { border-top: 4px solid var(--geo-color); }
+.act-card.geo::after { color: var(--geo-color); }
 .act-card:hover::after { opacity: 1; }
 .disc-hero.cien { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); }
+.disc-hero.geo  { background: linear-gradient(135deg, #14532D, #15803D 60%, #4ADE80); }
 .disc-home-card.cien:hover { border-color: var(--cien-light); box-shadow: 0 8px 28px rgba(2,132,199,.15); }
+.disc-home-card.geo:hover  { border-color: var(--geo-light);  box-shadow: 0 8px 28px rgba(21,128,61,.15); }
 .theme-tab-btn.cien-tab:hover { border-color: var(--cien-color); color: var(--cien-color); }
 .theme-tab-btn.cien-tab.active { background: var(--cien-bg); border-color: var(--cien-color); color: var(--cien-color); }
+.theme-tab-btn.geo-tab:hover { border-color: var(--geo-color); color: var(--geo-color); }
+.theme-tab-btn.geo-tab.active { background: var(--geo-bg); border-color: var(--geo-color); color: var(--geo-color); }
 .tag-cien { background: #e0f2fe; color: #0284C7; }
+.tag-geo  { background: #dcfce7; color: #15803D; }
 .step-num.cien { background: var(--cien-color); }
+.step-num.geo  { background: var(--geo-color); }
+.sched-day.geo { color: var(--geo-color); }
+.sched-act.geo { background: var(--geo-bg); color: #14532D; }
 .act-icon { font-size: 26px; margin-bottom: 9px; }
 .act-title { font-family: "Space Mono", monospace; font-size: 14px; margin-bottom: 5px; }
 .act-desc { font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 10px; }
@@ -341,8 +355,18 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('mat','tabuada')">✖️ Tabuada</button>
   </div>
 
+  <button class="disc-nav-btn" id="nav-geo" onclick="showDisc('geo')">
+    <span class="d-icon">🌍</span>
+    <span class="d-name">Geografia</span>
+    <span class="d-count">3</span>
+  </button>
+  <div class="theme-sub" id="sub-geo">
+    <button class="theme-link" onclick="showTheme('geo','diversidade-cultural')">🎪 Diversidade Cultural</button>
+    <button class="theme-link" onclick="showTheme('geo','pais-de-contrastes')">⚖️ País de Contrastes</button>
+    <button class="theme-link" onclick="showTheme('geo','tecnologia-agropecuaria')">🌾 Tecnologia Agropecuária</button>
+  </div>
+
   <div class="sidebar-section-label">Em breve</div>
-  <button class="disc-nav-btn soon"><span class="d-icon">🌍</span><span class="d-name">Geografia</span></button>
   <button class="disc-nav-btn soon"><span class="d-icon">📜</span><span class="d-name">História</span></button>
 
   <button class="disc-nav-btn" id="nav-cien" onclick="showDisc('cien')">
@@ -370,9 +394,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <h1>Estudos do 5º Ano</h1>
       <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
       <div class="home-stats">
-        <div class="hstat"><span>3</span>disciplinas</div>
-        <div class="hstat"><span>11</span>temas</div>
-        <div class="hstat"><span>55</span>atividades</div>
+        <div class="hstat"><span>4</span>disciplinas</div>
+        <div class="hstat"><span>14</span>temas</div>
+        <div class="hstat"><span>66</span>atividades</div>
       </div>
     </div>
     <div class="home-body">
@@ -397,11 +421,16 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
             <span class="chip" style="background:#ECFDF5;color:#065F46">4 atividades</span>
           </div>
         </button>
-        <div class="disc-home-card soon">
+        <button class="disc-home-card geo" onclick="showDisc('geo')">
           <div class="dhc-icon">🌍</div>
           <div class="dhc-name">Geografia</div>
-          <div class="dhc-desc">Espaço geográfico, regiões e sociedade</div>
-        </div>
+          <div class="dhc-desc">Diversidade cultural, desigualdades e tecnologia no campo</div>
+          <div class="dhc-chips">
+            <span class="chip" style="background:#dcfce7;color:#14532D">3 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">11 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">3 HQs</span>
+          </div>
+        </button>
         <div class="disc-home-card soon">
           <div class="dhc-icon">📜</div>
           <div class="dhc-name">História</div>
@@ -1089,6 +1118,178 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     </div>
   </div>
 
+
+  <!-- GEOGRAFIA -->
+  <div class="screen" id="screen-geo">
+    <div class="disc-hero geo">
+      <div class="disc-hero-badge">🌍 Geografia — 5º Ano</div>
+      <h1>GEOGRAFIA</h1>
+      <p>Diversidade cultural, desigualdades sociais e tecnologia no campo</p>
+    </div>
+    <div class="disc-body">
+      <div class="theme-tabs">
+        <button class="theme-tab-btn geo-tab active" onclick="showTheme('geo','diversidade-cultural')">🎪 Diversidade Cultural</button>
+        <button class="theme-tab-btn geo-tab" onclick="showTheme('geo','pais-de-contrastes')">⚖️ País de Contrastes</button>
+        <button class="theme-tab-btn geo-tab" onclick="showTheme('geo','tecnologia-agropecuaria')">🌾 Tecnologia Agropecuária</button>
+      </div>
+
+      <!-- TEMA: DIVERSIDADE CULTURAL -->
+      <div class="theme-content active" id="theme-geo-diversidade-cultural">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">🎪</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos para entender o conteúdo antes de praticar</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-diversidade-cultural.png" alt="HQ Diversidade Cultural Brasileira">
+          <div class="hq-caption"><span>📖</span><span>O Brasil de Muitos Sabores — 4 páginas · Personagens: Bia, Prepo e Prof. Geografina · Tema: Diversidade Cultural</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card geo" href="quiz-diversidade-cultural.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre pluralidade cultural, festas e danças populares do Brasil.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card geo" href="memoria-festas-diversidade-cultural.html" target="_blank">
+            <div class="act-icon">🃏</div>
+            <div class="act-title">Memória das Festas</div>
+            <div class="act-desc">Encontre os 8 pares: nome da festa ↔ descrição ou estado onde acontece.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Memória</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card geo" href="cartografo-cultural-diversidade-cultural.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Cartógrafo Cultural</div>
+            <div class="act-desc">Arraste cada festa ou dança popular para a região do Brasil onde ela é realizada.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Mapa</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card geo" href="mapa-mental-diversidade-cultural.html" target="_blank">
+            <div class="act-icon">🌐</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa da Diversidade Cultural. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day geo">Dia 1</div><div class="sched-acts"><span class="sched-act geo">📖 Ler HQ</span><span class="sched-act geo">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 2</div><div class="sched-acts"><span class="sched-act geo">🃏 Memória das Festas</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 3</div><div class="sched-acts"><span class="sched-act geo">🗺️ Cartógrafo Cultural</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 4</div><div class="sched-acts"><span class="sched-act geo">🌐 Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: BRASIL: PAÍS DE CONTRASTES -->
+      <div class="theme-content" id="theme-geo-pais-de-contrastes">
+        <div class="start-banner blue">
+          <div class="start-banner-icon">⚖️</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos para entender os contrastes sociais do Brasil</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-pais-de-contrastes.png" alt="HQ Brasil: País de Contrastes">
+          <div class="hq-caption"><span>📖</span><span>O Brasil que Não é Igual para Todos — 4 páginas · Personagens: Bia, Prepo e Prof. Geografina · Tema: Desigualdade Social</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card geo" href="quiz-pais-de-contrastes.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre desigualdade social, taxa de analfabetismo, salário mínimo e mapas temáticos.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card geo" href="detector-contrastes-pais-de-contrastes.html" target="_blank">
+            <div class="act-icon">🔍</div>
+            <div class="act-title">Detector de Contrastes</div>
+            <div class="act-desc">10 afirmações — Verdadeiro ou Falso. Desigualdades sociais, dados e conceitos do livro.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Análise</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card geo" href="mapa-mental-pais-de-contrastes.html" target="_blank">
+            <div class="act-icon">🌐</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do País de Contrastes. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day geo">Dia 1</div><div class="sched-acts"><span class="sched-act geo">📖 Ler HQ</span><span class="sched-act geo">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 2</div><div class="sched-acts"><span class="sched-act geo">🔍 Detector de Contrastes</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 3</div><div class="sched-acts"><span class="sched-act geo">🌐 Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: TECNOLOGIA NA AGRICULTURA E PECUÁRIA -->
+      <div class="theme-content" id="theme-geo-tecnologia-agropecuaria">
+        <div class="start-banner orange">
+          <div class="start-banner-icon">🌾</div>
+          <div>
+            <h3>Comece por aqui</h3>
+            <p>Leia a história em quadrinhos com Agro 4.0 e descubra como a tecnologia transformou o campo!</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="hq-tecnologia-agropecuaria.png" alt="HQ Tecnologia na Agricultura e Pecuária">
+          <div class="hq-caption"><span>📖</span><span>Os Agrossistemas do Brasil — 4 páginas · Personagens: Bia, Prepo e Agro 4.0 · Tema: Agrossistemas e Tecnologia</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card geo" href="quiz-tecnologia-agropecuaria.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre agrossistemas, agricultura 4.0, pecuária sustentável e pastejo rotacionado.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card geo" href="ordena-etapas-tecnologia-agropecuaria.html" target="_blank">
+            <div class="act-icon">☕</div>
+            <div class="act-title">Ordene as Etapas do Café</div>
+            <div class="act-desc">Arraste os 5 cards para organizar as etapas da produção agrícola do café na ordem correta.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Sequência</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card geo" href="classificador-agrossistemas-tecnologia-agropecuaria.html" target="_blank">
+            <div class="act-icon">🌱</div>
+            <div class="act-title">Classificador de Agrossistemas</div>
+            <div class="act-desc">Leia 9 descrições e classifique como agrossistema tradicional, moderno ou alternativo.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card geo" href="mapa-mental-tecnologia-agropecuaria.html" target="_blank">
+            <div class="act-icon">🌐</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa da Tecnologia no Campo. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day geo">Dia 1</div><div class="sched-acts"><span class="sched-act geo">📖 Ler HQ</span><span class="sched-act geo">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 2</div><div class="sched-acts"><span class="sched-act geo">🌱 Classificador de Agrossistemas</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 3</div><div class="sched-acts"><span class="sched-act geo">☕ Ordene as Etapas do Café</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 4</div><div class="sched-acts"><span class="sched-act geo">🌐 Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -1109,7 +1310,7 @@ function showDisc(disc) {
   setNavActive('nav-' + disc);
   closeAllSubs();
   document.getElementById('sub-' + disc).classList.add('open');
-  var firstTheme = { port: 'preposicoes', mat: 'tabuada', cien: 'lixo-que-produzimos' }[disc];
+  var firstTheme = { port: 'preposicoes', mat: 'tabuada', cien: 'lixo-que-produzimos', geo: 'diversidade-cultural' }[disc];
   activateTheme(disc, firstTheme);
   closeSidebar();
 }

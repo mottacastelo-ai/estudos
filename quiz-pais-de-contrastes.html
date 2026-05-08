@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Brasil: País de Contrastes</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height:100vh}
+.hero{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);padding:40px 24px 36px;color:white;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 16px;border-radius:20px;margin-bottom:14px}
+.hero h1{font-family:"Space Mono",monospace;font-size:26px;margin-bottom:8px;line-height:1.2}
+.hero p{font-size:14px;font-weight:600;opacity:.85}
+.container{max-width:680px;margin:0 auto;padding:32px 20px}
+.progress-bar-wrap{background:#d1fae5;border-radius:20px;height:8px;margin-bottom:28px;overflow:hidden}
+.progress-bar{height:8px;background:var(--primary);border-radius:20px;transition:width .4s ease;width:0%}
+.question-card{background:white;border:2px solid #d1fae5;border-radius:20px;padding:28px;margin-bottom:20px}
+.q-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px}
+.q-text{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:20px}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-btn{background:#f0fdf4;border:2px solid #d1fae5;border-radius:14px;padding:13px 18px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;color:#1A1A2E}
+.opt-btn:hover:not(:disabled){background:#dcfce7;border-color:var(--primary);transform:translateX(4px)}
+.opt-btn.correct{background:#d1fae5;border-color:#15803D;color:#14532D}
+.opt-btn.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+.opt-btn:disabled{cursor:default}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;line-height:1.5;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:#d1fae5;color:#14532D;border:1.5px solid #86efac}
+.feedback.err{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+.next-btn{display:block;margin:16px auto 0;background:var(--primary);color:white;border:none;border-radius:14px;padding:13px 32px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer;display:none;transition:transform .15s}
+.next-btn:hover{transform:translateY(-2px)}
+.result-card{background:white;border:2px solid #d1fae5;border-radius:24px;padding:40px 28px;text-align:center;display:none}
+.result-emoji{font-size:64px;margin-bottom:16px}
+.result-score{font-family:"Space Mono",monospace;font-size:48px;color:var(--primary);margin-bottom:8px}
+.result-msg{font-size:16px;font-weight:700;margin-bottom:24px;color:#374151}
+.result-sub{font-size:13px;font-weight:600;color:#6B7280;line-height:1.6;margin-bottom:28px}
+.restart-btn{background:var(--primary);color:white;border:none;border-radius:14px;padding:14px 36px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer;margin:0 6px}
+.back-btn{background:white;color:var(--primary);border:2px solid var(--primary);border-radius:14px;padding:13px 28px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;margin:0 6px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🌍 Geografia — 5º Ano</div>
+  <h1>Brasil:<br>País de Contrastes</h1>
+  <p>10 questões · Desigualdade social, mapas temáticos e dados</p>
+</div>
+<div class="container">
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div id="quizArea"></div>
+  <div class="result-card" id="resultCard">
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="result-sub" id="resultSub"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Jogar de novo</button>
+    <button class="back-btn" onclick="window.close()">← Voltar ao Portal</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    q: "O que é desigualdade social?",
+    opts: [
+      "Quando todas as pessoas têm o mesmo acesso a serviços e oportunidades",
+      "Quando algumas pessoas têm melhores condições de vida do que outras, com menos acesso a moradia, educação e saúde",
+      "Quando as pessoas escolhem viver de formas diferentes",
+      "Quando um país não tem diversidade cultural"
+    ],
+    correct: 1,
+    fb: "Desigualdade social ocorre quando algumas pessoas têm melhores condições de vida, com mais acesso a moradia digna, educação, saúde e oportunidades de trabalho — e outras, muito menos."
+  },
+  {
+    q: "O que indica a taxa de analfabetismo de um país ou região?",
+    opts: [
+      "O número de escolas públicas existentes",
+      "A porcentagem de pessoas com 15 anos ou mais que não sabem ler e escrever",
+      "O valor do salário mínimo pago aos professores",
+      "A quantidade de livros vendidos por ano"
+    ],
+    correct: 1,
+    fb: "A taxa de analfabetismo indica a porcentagem de pessoas com 15 anos ou mais que não sabem ler e escrever. Ela é usada para medir o acesso à educação em diferentes regiões."
+  },
+  {
+    q: "No mapa temático da taxa de analfabetismo do Brasil (2019), quais regiões apresentavam as maiores taxas?",
+    opts: [
+      "Sul e Sudeste",
+      "Norte e Centro-Oeste",
+      "Norte e Nordeste",
+      "Sudeste e Centro-Oeste"
+    ],
+    correct: 2,
+    fb: "De acordo com o mapa temático (IBGE, 2019), as regiões Norte e Nordeste apresentavam as maiores taxas de analfabetismo — mostrando a desigualdade no acesso à educação entre as regiões do Brasil."
+  },
+  {
+    q: "O que é salário mínimo?",
+    opts: [
+      "O salário mais alto pago a um trabalhador",
+      "O salário pago apenas a funcionários públicos",
+      "O menor valor que um trabalhador com registro em carteira pode receber por lei",
+      "O salário médio dos trabalhadores no Brasil"
+    ],
+    correct: 2,
+    fb: "De acordo com a legislação brasileira, o salário mínimo é o menor valor que um trabalhador com registro em carteira de trabalho pode receber. Nenhuma empresa pode pagar menos do que esse valor."
+  },
+  {
+    q: "O que é trabalho informal?",
+    opts: [
+      "Trabalho realizado durante as férias escolares",
+      "Trabalho sem registro em carteira de trabalho, sem direito a salário mínimo, férias ou outros benefícios",
+      "Trabalho realizado em casa pelo computador",
+      "Trabalho voluntário sem remuneração"
+    ],
+    correct: 1,
+    fb: "O trabalho informal é aquele realizado sem registro em carteira de trabalho. Quem trabalha informalmente não tem direito ao salário mínimo garantido, férias, FGTS e outros direitos trabalhistas."
+  },
+  {
+    q: "De acordo com os dados do livro, qual era a diferença salarial média entre homens e mulheres no Brasil em 2021?",
+    opts: [
+      "As mulheres ganhavam o mesmo que os homens",
+      "As mulheres ganhavam em média 20,5% menos que os homens",
+      "Os homens ganhavam 50% menos que as mulheres",
+      "As mulheres ganhavam 5% mais que os homens"
+    ],
+    correct: 1,
+    fb: "Segundo o gráfico de salários de mulheres e homens (2012–2021), as mulheres ganhavam em média 20,5% menos que os homens no Brasil — mesmo tendo o mesmo perfil de escolaridade e ocupação."
+  },
+  {
+    q: "O que o mapa temático do rendimento mensal domiciliar por pessoa representa?",
+    opts: [
+      "O número de pessoas em cada estado",
+      "A quantidade de empregos formais por região",
+      "A desigualdade social relacionada ao rendimento calculado pela soma dos ganhos de todos que vivem na mesma moradia",
+      "O número de analfabetos por estado"
+    ],
+    correct: 2,
+    fb: "O rendimento mensal domiciliar por pessoa é calculado pela soma dos rendimentos de todas as pessoas que vivem na mesma moradia. O mapa mostra como esse valor varia entre os estados, revelando desigualdades regionais."
+  },
+  {
+    q: "O que é carteira de trabalho?",
+    opts: [
+      "Um documento que comprova que o trabalhador está estudando",
+      "Um documento que registra a história profissional do trabalhador e garante seus direitos, como salário mínimo e férias",
+      "Um cartão bancário para receber salário",
+      "Um contrato verbal entre empregador e empregado"
+    ],
+    correct: 1,
+    fb: "A carteira de trabalho é o documento que registra a história profissional do trabalhador. Com ela registrada, o trabalhador tem direito a salário mínimo, férias, 13º salário, FGTS e outros benefícios."
+  },
+  {
+    q: "Sobre o mapa da taxa de escolarização de crianças de 0 a 5 anos (2019), qual região apresentava o maior percentual de crianças frequentando creches ou escolas?",
+    opts: [
+      "Norte","Nordeste","Centro-Oeste","Sudeste"
+    ],
+    correct: 3,
+    fb: "De acordo com o mapa (IBGE, 2019), a região Sudeste apresentava o maior percentual de crianças de 0 a 5 anos frequentando creches ou escolas — cerca de 59,8%."
+  },
+  {
+    q: "Isadora Faber ficou conhecida por criar, aos 13 anos, a página 'Diário de Classe'. O que ela fazia nessa página?",
+    opts: [
+      "Publicava histórias em quadrinhos para entretenimento",
+      "Denunciava os problemas de sua escola, como fios soltos, portas quebradas e ventiladores que não funcionavam",
+      "Ensinava matemática para crianças carentes",
+      "Vendia materiais escolares online"
+    ],
+    correct: 1,
+    fb: "Isadora Faber criou o Diário de Classe aos 13 anos para denunciar os problemas de sua escola em Florianópolis: fios soltos, portas quebradas, ventiladores que não funcionavam, entre outros. A iniciativa inspirou a criação de diários de classe em escolas de todo o Brasil."
+  }
+];
+
+let current = 0, score = 0, answered = false;
+
+function render(){
+  if(current >= questions.length){ showResult(); return; }
+  const q = questions[current];
+  document.getElementById('progressBar').style.width = (current/questions.length*100)+'%';
+  let html = `<div class="question-card">
+    <div class="q-num">Questão ${current+1} de ${questions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">`;
+  q.opts.forEach((o,i)=>{ html+=`<button class="opt-btn" id="opt${i}" onclick="answer(${i})">${o}</button>`; });
+  html+=`</div><div class="feedback" id="fb"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQ()">${current<questions.length-1?'Próxima →':'Ver resultado 🎉'}</button></div>`;
+  document.getElementById('quizArea').innerHTML = html;
+  answered = false;
+}
+
+function answer(i){
+  if(answered) return; answered = true;
+  const q = questions[current];
+  const fb = document.getElementById('fb');
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(i===q.correct){ score++; document.getElementById('opt'+i).classList.add('correct'); fb.className='feedback show ok'; fb.innerHTML='✅ '+q.fb; }
+  else { document.getElementById('opt'+i).classList.add('wrong'); document.getElementById('opt'+q.correct).classList.add('correct'); fb.className='feedback show err'; fb.innerHTML='❌ '+q.fb; }
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextQ(){ current++; render(); }
+
+function showResult(){
+  document.getElementById('progressBar').style.width='100%';
+  document.getElementById('quizArea').innerHTML='';
+  const card = document.getElementById('resultCard');
+  card.style.display='block';
+  const pct = Math.round(score/questions.length*100);
+  let emoji,msg,sub;
+  if(pct===100){emoji='🏆';msg='Incrível! Nota máxima!';sub='Você domina o conteúdo sobre desigualdade social no Brasil. Parabéns!';}
+  else if(pct>=70){emoji='🌟';msg='Muito bem!';sub='Ótimo desempenho! Revise as questões erradas para fixar ainda mais.';}
+  else if(pct>=50){emoji='👍';msg='Bom esforço!';sub='Você está no caminho certo. Revise os mapas e conceitos e tente novamente!';}
+  else{emoji='📚';msg='Continue estudando!';sub='Releia o conteúdo sobre desigualdade social, mapas temáticos e conceitos como salário mínimo e trabalho informal.';}
+  document.getElementById('resultEmoji').textContent=emoji;
+  document.getElementById('resultScore').textContent=score+'/'+questions.length;
+  document.getElementById('resultMsg').textContent=msg;
+  document.getElementById('resultSub').textContent=sub;
+}
+
+function restart(){ current=0; score=0; document.getElementById('resultCard').style.display='none'; render(); }
+render();
+</script>
+</body>
+</html>

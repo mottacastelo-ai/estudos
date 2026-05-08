@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memória das Festas — Diversidade Cultural</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height:100vh}
+.hero{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);padding:36px 24px 30px;color:white;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 16px;border-radius:20px;margin-bottom:12px}
+.hero h1{font-family:"Space Mono",monospace;font-size:24px;margin-bottom:6px;line-height:1.2}
+.hero p{font-size:13px;font-weight:600;opacity:.85}
+.container{max-width:700px;margin:0 auto;padding:28px 16px}
+.info-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.stat{background:white;border:2px solid #d1fae5;border-radius:14px;padding:8px 18px;font-family:"Space Mono",monospace;font-size:13px;font-weight:700;color:var(--primary)}
+.instruction{background:white;border:2px solid #d1fae5;border-radius:14px;padding:14px 18px;margin-bottom:22px;font-size:13px;font-weight:700;color:#374151;line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.card{background:white;border:2.5px solid #d1fae5;border-radius:14px;cursor:pointer;min-height:90px;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;transition:all .2s;position:relative;overflow:hidden}
+.card:hover:not(.flipped):not(.matched){background:#dcfce7;border-color:var(--primary);transform:scale(1.03)}
+.card-inner{transition:transform .35s;transform-style:preserve-3d;width:100%;height:100%}
+.card-front,.card-back{backface-visibility:hidden;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px;border-radius:11px}
+.card-front{background:linear-gradient(135deg,#15803D,#4ADE80);color:white;font-size:24px}
+.card-back{background:white;color:#1A1A2E;font-size:11px;font-weight:800;line-height:1.4;text-align:center;transform:rotateY(180deg)}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.card.matched{border-color:#15803D;background:#d1fae5}
+.card.matched .card-back{background:#d1fae5;color:#14532D}
+.card.wrong-flash{animation:wrongFlash .4s ease}
+@keyframes wrongFlash{0%,100%{background:white}50%{background:#fee2e2;border-color:#ef4444}}
+.msg-box{text-align:center;min-height:40px;margin-bottom:20px;font-size:14px;font-weight:700;color:var(--primary)}
+.btn-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.restart-btn{background:var(--primary);color:white;border:none;border-radius:14px;padding:13px 32px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer}
+.back-btn{background:white;color:var(--primary);border:2px solid var(--primary);border-radius:14px;padding:12px 24px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer}
+.victory{display:none;text-align:center;background:white;border:2px solid #d1fae5;border-radius:24px;padding:36px 24px;margin-top:8px}
+.victory-emoji{font-size:60px;margin-bottom:12px}
+.victory h2{font-family:"Space Mono",monospace;font-size:22px;color:var(--primary);margin-bottom:8px}
+.victory p{font-size:14px;font-weight:600;color:#374151;margin-bottom:20px}
+@media(max-width:480px){.grid{grid-template-columns:repeat(3,1fr)}.card{min-height:78px}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🌍 Geografia — 5º Ano</div>
+  <h1>Memória das Festas 🎪</h1>
+  <p>Encontre os pares: nome da festa ↔ descrição</p>
+</div>
+<div class="container">
+  <div class="info-bar">
+    <div class="stat" id="pairesFeitos">0/8 pares</div>
+    <div class="stat" id="tentativas">Tentativas: 0</div>
+  </div>
+  <div class="instruction">🃏 Vire as cartas duas a duas para encontrar os pares corretos. Cada par liga uma <strong>festa ou dança popular</strong> à sua <strong>descrição ou estado</strong>.</div>
+  <div class="msg-box" id="msgBox"></div>
+  <div class="grid" id="grid"></div>
+  <div class="btn-row">
+    <button class="restart-btn" onclick="initGame()">🔄 Novo jogo</button>
+    <button class="back-btn" onclick="window.close()">← Voltar ao Portal</button>
+  </div>
+  <div class="victory" id="victory">
+    <div class="victory-emoji">🏆</div>
+    <h2>Parabéns!</h2>
+    <p id="victoryMsg"></p>
+    <button class="restart-btn" onclick="initGame()">🔄 Jogar de novo</button>
+  </div>
+</div>
+<script>
+const pairs = [
+  { a:"Festival Folclórico de Parintins", b:"Festa no Amazonas com disputa entre Boi Caprichoso e Boi Garantido" },
+  { a:"Cavalhada", b:"Festa em Goiás que recria batalhas medievais com homens a cavalo" },
+  { a:"Siriri", b:"Dança praticada em rodas no Mato Grosso e Mato Grosso do Sul" },
+  { a:"Círio de Nazaré", b:"Celebração religiosa em Belém (PA) em homenagem a Nossa Senhora" },
+  { a:"Bumba meu boi", b:"Festa popular do Maranhão em que o boi é a personagem principal" },
+  { a:"Fandango caiçara", b:"Dança com tamanco no litoral do Paraná e São Paulo" },
+  { a:"Folia de Reis", b:"Grupos cantam e dançam pelas ruas em dezembro e janeiro" },
+  { a:"Samba de lenço", b:"Dança popular de São Paulo com uso de lenço por homens e mulheres" }
+];
+
+let cards = [], flipped = [], matched = 0, tries = 0, lock = false;
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function initGame(){
+  matched = 0; tries = 0; flipped = []; lock = false;
+  document.getElementById('victory').style.display = 'none';
+  document.getElementById('pairesFeitos').textContent = '0/8 pares';
+  document.getElementById('tentativas').textContent = 'Tentativas: 0';
+  document.getElementById('msgBox').textContent = '';
+
+  let items = [];
+  pairs.forEach((p,i)=>{
+    items.push({id:i, side:'a', text:p.a});
+    items.push({id:i, side:'b', text:p.b});
+  });
+  items = shuffle(items);
+  cards = items;
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  items.forEach((item, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.dataset.idx = idx;
+    div.innerHTML = `<div class="card-inner">
+      <div class="card-front">🎪</div>
+      <div class="card-back">${item.text}</div>
+    </div>`;
+    div.onclick = () => flipCard(idx);
+    grid.appendChild(div);
+  });
+}
+
+function flipCard(idx){
+  if(lock) return;
+  const cardEls = document.querySelectorAll('.card');
+  const el = cardEls[idx];
+  if(el.classList.contains('flipped')||el.classList.contains('matched')) return;
+  el.classList.add('flipped');
+  flipped.push(idx);
+  if(flipped.length === 2){
+    lock = true;
+    tries++;
+    document.getElementById('tentativas').textContent = 'Tentativas: ' + tries;
+    const [a,b] = flipped;
+    const ca = cards[a], cb = cards[b];
+    if(ca.id === cb.id && ca.side !== cb.side){
+      // Match!
+      setTimeout(()=>{
+        [a,b].forEach(i=>{ cardEls[i].classList.add('matched'); cardEls[i].classList.remove('flipped'); });
+        matched++;
+        document.getElementById('pairesFeitos').textContent = matched+'/8 pares';
+        document.getElementById('msgBox').textContent = '✅ Par correto!';
+        flipped = []; lock = false;
+        if(matched===8) showVictory();
+      }, 600);
+    } else {
+      document.getElementById('msgBox').textContent = '❌ Não é par. Tente novamente!';
+      setTimeout(()=>{
+        [a,b].forEach(i=>{ cardEls[i].classList.remove('flipped'); cardEls[i].classList.add('wrong-flash'); });
+        setTimeout(()=>{ [a,b].forEach(i=>cardEls[i].classList.remove('wrong-flash')); }, 400);
+        flipped = []; lock = false;
+      }, 800);
+    }
+  }
+}
+
+function showVictory(){
+  document.getElementById('victory').style.display = 'block';
+  const perf = tries <= 10 ? '🏆 Memória excelente!' : tries <= 16 ? '⭐ Muito bem!' : '👏 Conseguiu!';
+  document.getElementById('victoryMsg').textContent = `Você completou o jogo em ${tries} tentativas. ${perf} Você conhece bem as festas e danças populares brasileiras!`;
+}
+
+initGame();
+</script>
+</body>
+</html>

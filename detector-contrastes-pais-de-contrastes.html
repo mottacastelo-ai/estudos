@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detector de Contrastes — Brasil: País de Contrastes</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height:100vh}
+.hero{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);padding:36px 24px 30px;color:white;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 16px;border-radius:20px;margin-bottom:12px}
+.hero h1{font-family:"Space Mono",monospace;font-size:24px;margin-bottom:6px;line-height:1.2}
+.hero p{font-size:13px;font-weight:600;opacity:.85}
+.container{max-width:680px;margin:0 auto;padding:28px 16px}
+.instruction{background:white;border:2px solid #d1fae5;border-radius:14px;padding:14px 18px;margin-bottom:22px;font-size:13px;font-weight:700;color:#374151;line-height:1.5}
+.progress-wrap{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+.prog-stat{background:white;border:2px solid #d1fae5;border-radius:12px;padding:7px 16px;font-family:"Space Mono",monospace;font-size:12px;font-weight:700;color:var(--primary)}
+.card{background:white;border:2px solid #d1fae5;border-radius:20px;padding:26px 24px;margin-bottom:16px;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px}
+.afirmacao{font-size:16px;font-weight:700;line-height:1.6;margin-bottom:20px;padding:14px 16px;background:#f0fdf4;border-radius:12px;border-left:4px solid var(--primary)}
+.vf-row{display:flex;gap:12px}
+.vf-btn{flex:1;padding:14px;border-radius:14px;border:2.5px solid #d1fae5;background:white;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;transition:all .18s;text-align:center}
+.vf-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.vf-btn.v:hover{border-color:var(--primary);background:#dcfce7}
+.vf-btn.f:hover{border-color:#ef4444;background:#fee2e2}
+.vf-btn.selected-v{background:#d1fae5;border-color:#15803D;color:#14532D}
+.vf-btn.selected-f{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+.vf-btn:disabled{cursor:default}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:12px;font-size:13px;font-weight:700;line-height:1.6;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:#d1fae5;color:#14532D;border:1.5px solid #86efac}
+.feedback.err{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+.next-btn{margin-top:14px;background:var(--primary);color:white;border:none;border-radius:12px;padding:12px 28px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;display:none}
+.result-card{background:white;border:2px solid #d1fae5;border-radius:24px;padding:40px 28px;text-align:center;display:none}
+.result-emoji{font-size:60px;margin-bottom:12px}
+.result-score{font-family:"Space Mono",monospace;font-size:44px;color:var(--primary);margin-bottom:8px}
+.result-msg{font-size:15px;font-weight:700;margin-bottom:20px}
+.result-sub{font-size:13px;font-weight:600;color:#6B7280;line-height:1.6;margin-bottom:24px}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-r{border-radius:14px;padding:13px 28px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;border:none}
+.btn-primary{background:var(--primary);color:white}
+.btn-secondary{background:white;color:var(--primary);border:2px solid var(--primary)}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🌍 Geografia — 5º Ano</div>
+  <h1>Detector de Contrastes 🔍</h1>
+  <p>Verdadeiro ou Falso — Desigualdades sociais no Brasil</p>
+</div>
+<div class="container">
+  <div class="instruction">📋 Leia cada afirmação e clique em <strong>✅ Verdadeiro</strong> ou <strong>❌ Falso</strong>. Você vai receber uma explicação imediata. Preste atenção nos termos do livro!</div>
+  <div class="progress-wrap">
+    <div class="prog-stat" id="progStat">1 / 10</div>
+    <div class="prog-stat" id="scoreStat">✅ 0 acertos</div>
+  </div>
+  <div id="cardArea"></div>
+  <div class="result-card" id="resultCard">
+    <div class="result-emoji" id="rEmoji"></div>
+    <div class="result-score" id="rScore"></div>
+    <div class="result-msg" id="rMsg"></div>
+    <div class="result-sub" id="rSub"></div>
+    <div class="btn-row">
+      <button class="btn-r btn-primary" onclick="restart()">🔄 Recomeçar</button>
+      <button class="btn-r btn-secondary" onclick="window.close()">← Voltar ao Portal</button>
+    </div>
+  </div>
+</div>
+<script>
+const items = [
+  { afirmacao:"A desigualdade social no Brasil pode ser observada no acesso à educação, à saúde e ao trabalho digno.", answer:true, fb:"VERDADEIRO. O livro mostra que a desigualdade social se reflete justamente nessas áreas: acesso à educação (taxa de analfabetismo), à saúde e a moradias dignas." },
+  { afirmacao:"A taxa de analfabetismo mede apenas a porcentagem de crianças de 6 a 14 anos que não vão à escola.", answer:false, fb:"FALSO. A taxa de analfabetismo mede a porcentagem de pessoas com 15 anos ou mais que não sabem ler e escrever — não é restrita a crianças em idade escolar." },
+  { afirmacao:"Em 2019, as regiões Norte e Nordeste do Brasil apresentavam as maiores taxas de analfabetismo.", answer:true, fb:"VERDADEIRO. De acordo com o mapa temático do IBGE (2019), as maiores taxas de analfabetismo estavam nas regiões Norte e Nordeste, mostrando a desigualdade no acesso à educação entre as regiões." },
+  { afirmacao:"Um trabalhador com registro em carteira de trabalho pode receber menos que o salário mínimo, se o patrão assim decidir.", answer:false, fb:"FALSO. De acordo com a legislação brasileira, nenhum trabalhador com registro em carteira de trabalho pode receber menos que o salário mínimo. Este é um direito garantido por lei." },
+  { afirmacao:"O trabalho informal é aquele realizado sem registro em carteira de trabalho, sem direito a salário mínimo e outros benefícios trabalhistas.", answer:true, fb:"VERDADEIRO. O trabalho informal é realizado sem registro em carteira. Quem trabalha informalmente perde o direito ao salário mínimo garantido, férias, FGTS e outros benefícios." },
+  { afirmacao:"De acordo com o gráfico de salários (2012–2021), em todos os anos analisados a média salarial das mulheres foi menor que a dos homens.", answer:true, fb:"VERDADEIRO. O gráfico Brasil: salários de mulheres e homens (2012–2021) mostra que, em todos os anos do período, as mulheres ganharam em média menos que os homens — confirmando a desigualdade salarial por gênero." },
+  { afirmacao:"O rendimento mensal domiciliar por pessoa é calculado apenas pelo salário de quem trabalha fora de casa.", answer:false, fb:"FALSO. O rendimento mensal domiciliar por pessoa é calculado pela SOMA dos rendimentos de TODAS as pessoas que vivem na mesma moradia, dividida pelo número de moradores." },
+  { afirmacao:"Em 2019, a região Sudeste apresentava a maior taxa de escolarização de crianças de 0 a 5 anos, com cerca de 59,8%.", answer:true, fb:"VERDADEIRO. De acordo com o mapa de taxa de escolarização de crianças de 0 a 5 anos (IBGE, 2019), o Sudeste tinha a maior taxa — 59,8% — enquanto o Norte apresentava a menor." },
+  { afirmacao:"Isadora Faber foi uma ativista estudantil que criou o 'Diário de Classe' para denunciar problemas em sua escola e inspirar mudanças na educação pública.", answer:true, fb:"VERDADEIRO. Isadora Faber criou a página 'Diário de Classe' aos 13 anos, em Florianópolis, denunciando fios soltos, portas quebradas e ventiladores com defeito. A iniciativa inspirou a criação de diários de classe em escolas de todo o Brasil." },
+  { afirmacao:"A desigualdade social só existe no Brasil; outros países não têm esse problema.", answer:false, fb:"FALSO. O livro afirma explicitamente que 'essa desigualdade também pode ser observada em outros países do mundo'. A desigualdade social é um problema global, não exclusivo do Brasil." }
+];
+
+let current = 0, score = 0, answered = false;
+
+function render(){
+  if(current >= items.length){ showResult(); return; }
+  const item = items[current];
+  document.getElementById('progStat').textContent = (current+1) + ' / ' + items.length;
+  document.getElementById('scoreStat').textContent = '✅ ' + score + ' acertos';
+  document.getElementById('cardArea').innerHTML = `
+    <div class="card">
+      <div class="card-num">Afirmação ${current+1} de ${items.length}</div>
+      <div class="afirmacao">${item.afirmacao}</div>
+      <div class="vf-row">
+        <button class="vf-btn v" id="btnV" onclick="answer(true)">✅ Verdadeiro</button>
+        <button class="vf-btn f" id="btnF" onclick="answer(false)">❌ Falso</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <button class="next-btn" id="nextBtn" onclick="next()">${current < items.length-1 ? 'Próxima →' : 'Ver resultado 🎉'}</button>
+    </div>`;
+  answered = false;
+}
+
+function answer(resp){
+  if(answered) return; answered = true;
+  const item = items[current];
+  const isOk = resp === item.answer;
+  if(isOk) score++;
+  document.getElementById('btnV').disabled = true;
+  document.getElementById('btnF').disabled = true;
+  if(resp === true) document.getElementById('btnV').className = 'vf-btn v ' + (isOk ? 'selected-v' : 'selected-f');
+  else document.getElementById('btnF').className = 'vf-btn f ' + (isOk ? 'selected-f' : 'selected-v');
+  const fb = document.getElementById('fb');
+  fb.className = 'feedback show ' + (isOk ? 'ok' : 'err');
+  fb.innerHTML = (isOk ? '✅ ' : '❌ Resposta: ' + (item.answer ? 'VERDADEIRO' : 'FALSO') + '<br>') + item.fb;
+  document.getElementById('nextBtn').style.display = 'inline-block';
+  document.getElementById('scoreStat').textContent = '✅ ' + score + ' acertos';
+}
+
+function next(){ current++; render(); }
+
+function showResult(){
+  document.getElementById('cardArea').innerHTML = '';
+  document.getElementById('resultCard').style.display = 'block';
+  const pct = Math.round(score/items.length*100);
+  let e,m,s;
+  if(pct===100){e='🏆';m='Perfeito!';s='Você identificou todos os contrastes corretamente. Excelente domínio do conteúdo!';}
+  else if(pct>=70){e='🌟';m='Muito bem!';s='Você entende bem as desigualdades sociais. Revise os pontos que errou.';}
+  else if(pct>=50){e='👍';m='Continue praticando!';s='Releia os mapas temáticos e os conceitos como taxa de analfabetismo, salário mínimo e trabalho informal.';}
+  else{e='📚';m='Vamos estudar mais!';s='Revise o Capítulo 4 e tente novamente. Foque nos termos técnicos do livro!';}
+  document.getElementById('rEmoji').textContent = e;
+  document.getElementById('rScore').textContent = score+'/'+items.length;
+  document.getElementById('rMsg').textContent = m;
+  document.getElementById('rSub').textContent = s;
+}
+
+function restart(){ current=0; score=0; document.getElementById('resultCard').style.display='none'; render(); }
+render();
+</script>
+</body>
+</html>

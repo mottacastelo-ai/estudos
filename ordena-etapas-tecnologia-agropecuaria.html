@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordene as Etapas do Café — Tecnologia na Agropecuária</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height:100vh}
+.hero{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);padding:36px 24px 30px;color:white;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 16px;border-radius:20px;margin-bottom:12px}
+.hero h1{font-family:"Space Mono",monospace;font-size:24px;margin-bottom:6px;line-height:1.2}
+.hero p{font-size:13px;font-weight:600;opacity:.85}
+.container{max-width:620px;margin:0 auto;padding:28px 16px}
+.instruction{background:white;border:2px solid #d1fae5;border-radius:14px;padding:14px 18px;margin-bottom:22px;font-size:13px;font-weight:700;color:#374151;line-height:1.5}
+.steps-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.step-item{background:white;border:2.5px solid #d1fae5;border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:grab;transition:all .18s;user-select:none}
+.step-item:active{cursor:grabbing;opacity:.85}
+.step-item.dragging{opacity:.5;transform:scale(.98)}
+.step-item.drag-over{border-color:var(--primary);background:#dcfce7;transform:scale(1.01)}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--primary);color:white;font-family:"Space Mono",monospace;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-emoji{font-size:22px;flex-shrink:0}
+.step-text{flex:1}
+.step-title{font-size:14px;font-weight:800;margin-bottom:2px}
+.step-desc{font-size:12px;font-weight:600;color:#6B7280;line-height:1.4}
+.drag-handle{color:#d1fae5;font-size:18px;flex-shrink:0}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.btn{border-radius:12px;padding:12px 24px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;border:none}
+.btn-primary{background:var(--primary);color:white}
+.btn-secondary{background:white;border:2px solid var(--primary);color:var(--primary)}
+.btn-back{background:white;border:2px solid #e5e7eb;color:#6B7280}
+.result-section{display:none;background:white;border:2px solid #d1fae5;border-radius:20px;padding:22px;margin-top:4px}
+.result-section h3{font-family:"Space Mono",monospace;font-size:15px;color:var(--primary);margin-bottom:14px}
+.result-item{padding:10px 14px;border-radius:12px;margin-bottom:8px;font-size:13px;font-weight:700;line-height:1.4}
+.result-item.ok{background:#d1fae5;color:#14532D;border:1.5px solid #86efac}
+.result-item.err{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+.score-big{font-family:"Space Mono",monospace;font-size:28px;color:var(--primary);margin-bottom:12px;text-align:center}
+.congrats{font-size:32px;text-align:center;margin-bottom:8px}
+.msg{font-size:14px;font-weight:700;text-align:center;margin-bottom:18px;color:#374151}
+.correct-order{background:#f0fdf4;border:2px solid #d1fae5;border-radius:14px;padding:14px 18px;margin-bottom:14px}
+.correct-order-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--primary);margin-bottom:10px}
+.correct-step{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;font-weight:700;border-bottom:1px solid #d1fae5}
+.correct-step:last-child{border-bottom:none}
+.cn{width:22px;height:22px;border-radius:50%;background:var(--primary);color:white;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🌍 Geografia — 5º Ano</div>
+  <h1>☕ Ordene as Etapas do Café</h1>
+  <p>Organize as 5 etapas da produção agrícola na ordem certa</p>
+</div>
+<div class="container">
+  <div class="instruction">✋ <strong>Arraste</strong> os cards para colocar as etapas da produção do café na ordem correta — do primeiro ao último passo. Quando terminar, clique em <strong>Verificar</strong>!</div>
+  <div class="steps-list" id="stepsList"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="checkOrder()">✅ Verificar</button>
+    <button class="btn btn-secondary" onclick="shuffleAndReset()">🔀 Embaralhar</button>
+    <button class="btn btn-back" onclick="window.close()">← Portal</button>
+  </div>
+  <div class="result-section" id="resultSection"></div>
+</div>
+<script>
+const correctOrder = [
+  {id:1, emoji:'🚜', title:'1. Preparo do solo', desc:'Os tratores auxiliam a remover a vegetação e puxam outras máquinas que abrem sulcos no solo, preparando-o para o plantio.'},
+  {id:2, emoji:'🌱', title:'2. Plantio', desc:'Algumas máquinas dispersam sementes no solo ou colocam as mudas das plantas de forma espaçada no terreno.'},
+  {id:3, emoji:'✈️', title:'3. Adubação e prevenção de pragas', desc:'Aviões e outras máquinas distribuem adubos e fertilizantes pela plantação. O mesmo é feito com defensivos agrícolas, utilizados para combater alguns tipos de praga.'},
+  {id:4, emoji:'🌾', title:'4. Colheita', desc:'Algumas máquinas fazem a colheita dos produtos, diminuindo o tempo gasto nessa etapa da produção agrícola.'},
+  {id:5, emoji:'🚛', title:'5. Transporte', desc:'Diversos tipos de veículo realizam o transporte da produção.'}
+];
+
+let currentOrder = [];
+
+function shuffleArray(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function render(){
+  const list = document.getElementById('stepsList');
+  list.innerHTML = '';
+  currentOrder.forEach((step, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'step-item';
+    div.dataset.id = step.id;
+    div.draggable = true;
+    div.innerHTML = `<span class="step-num">${idx+1}</span>
+      <span class="step-emoji">${step.emoji}</span>
+      <div class="step-text">
+        <div class="step-title">${step.title}</div>
+        <div class="step-desc">${step.desc}</div>
+      </div>
+      <span class="drag-handle">⠿</span>`;
+    list.appendChild(div);
+  });
+  addDragListeners();
+  updateNumbers();
+}
+
+function updateNumbers(){
+  document.querySelectorAll('.step-item').forEach((el, i)=>{
+    el.querySelector('.step-num').textContent = i+1;
+  });
+}
+
+let dragSrc = null;
+function addDragListeners(){
+  document.querySelectorAll('.step-item').forEach(item=>{
+    item.addEventListener('dragstart', e=>{
+      dragSrc = item;
+      setTimeout(()=>item.classList.add('dragging'),0);
+    });
+    item.addEventListener('dragend', ()=>{ item.classList.remove('dragging'); document.querySelectorAll('.step-item').forEach(i=>i.classList.remove('drag-over')); });
+    item.addEventListener('dragover', e=>{ e.preventDefault(); if(item!==dragSrc) item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', ()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop', e=>{
+      e.preventDefault(); item.classList.remove('drag-over');
+      if(!dragSrc||dragSrc===item) return;
+      const list = document.getElementById('stepsList');
+      const items = [...list.querySelectorAll('.step-item')];
+      const srcIdx = items.indexOf(dragSrc);
+      const tgtIdx = items.indexOf(item);
+      // Reorder currentOrder array
+      const moved = currentOrder.splice(srcIdx,1)[0];
+      currentOrder.splice(tgtIdx,0,moved);
+      render();
+    });
+  });
+
+  // Touch support
+  let touchSrcIdx = null;
+  document.querySelectorAll('.step-item').forEach((item, idx)=>{
+    item.addEventListener('touchstart', e=>{
+      touchSrcIdx = [...document.querySelectorAll('.step-item')].indexOf(item);
+      item.style.opacity='.6';
+    },{passive:true});
+    item.addEventListener('touchend', e=>{
+      item.style.opacity='1';
+      const touch = e.changedTouches[0];
+      const els = document.querySelectorAll('.step-item');
+      for(let i=0;i<els.length;i++){
+        const r=els[i].getBoundingClientRect();
+        if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom&&i!==touchSrcIdx){
+          const moved=currentOrder.splice(touchSrcIdx,1)[0];
+          currentOrder.splice(i,0,moved);
+          render(); return;
+        }
+      }
+    });
+  });
+}
+
+function shuffleAndReset(){
+  currentOrder = shuffleArray(correctOrder);
+  document.getElementById('resultSection').style.display='none';
+  render();
+}
+
+function checkOrder(){
+  const section = document.getElementById('resultSection');
+  section.style.display='block';
+  section.scrollIntoView({behavior:'smooth'});
+  let html='';
+  let correct=0;
+  currentOrder.forEach((step,idx)=>{
+    const isOk = step.id === correctOrder[idx].id;
+    if(isOk) correct++;
+    html+=`<div class="result-item ${isOk?'ok':'err'}">
+      ${isOk?'✅':'❌'} <strong>Posição ${idx+1}:</strong> ${step.title}
+      ${!isOk ? ` — deveria estar na posição <strong>${correctOrder.findIndex(c=>c.id===step.id)+1}</strong>` : ''}
+    </div>`;
+  });
+
+  let congrats='', msg='';
+  if(correct===5){congrats='🏆';msg='Perfeito! Você conhece todas as etapas da produção do café na ordem certa!';}
+  else if(correct>=3){congrats='⭐';msg='Quase lá! Reveja a ordem e tente de novo.';}
+  else{congrats='📚';msg='Releia o infográfico das etapas do café e tente novamente!';}
+
+  const correctHtml = correctOrder.map((s,i)=>`<div class="correct-step"><div class="cn">${i+1}</div>${s.emoji} ${s.title}</div>`).join('');
+
+  section.innerHTML=`
+    <div class="congrats">${congrats}</div>
+    <div class="score-big">${correct}/5 corretos</div>
+    <div class="msg">${msg}</div>
+    ${html}
+    <div class="correct-order">
+      <div class="correct-order-title">📋 Ordem correta das etapas</div>
+      ${correctHtml}
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+      <button class="btn btn-primary" onclick="shuffleAndReset()">🔀 Tentar novamente</button>
+      <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+    </div>`;
+}
+
+shuffleAndReset();
+</script>
+</body>
+</html>

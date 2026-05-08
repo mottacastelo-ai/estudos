@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador de Agrossistemas — Tecnologia na Agropecuária</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height:100vh}
+.hero{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);padding:36px 24px 30px;color:white;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 16px;border-radius:20px;margin-bottom:12px}
+.hero h1{font-family:"Space Mono",monospace;font-size:24px;margin-bottom:6px;line-height:1.2}
+.hero p{font-size:13px;font-weight:600;opacity:.85}
+.container{max-width:760px;margin:0 auto;padding:28px 16px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.legend-item{display:flex;align-items:center;gap:8px;background:white;border:2px solid #d1fae5;border-radius:12px;padding:8px 14px;font-size:12px;font-weight:800}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot-trad{background:#F59E0B}
+.dot-mod{background:#0284C7}
+.dot-alt{background:#15803D}
+.instruction{background:white;border:2px solid #d1fae5;border-radius:14px;padding:14px 18px;margin-bottom:20px;font-size:13px;font-weight:700;color:#374151;line-height:1.5}
+.game-layout{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:24px}
+.card-area{display:flex;flex-direction:column;gap:10px}
+.desc-card{background:white;border:2.5px solid #d1fae5;border-radius:14px;padding:14px 18px;cursor:pointer;transition:all .18s;user-select:none}
+.desc-card:hover{border-color:var(--primary);background:#dcfce7;transform:translateX(4px)}
+.desc-card.selected{border-color:var(--primary);background:#dcfce7}
+.desc-card.answered-ok{border-color:#15803D;background:#d1fae5}
+.desc-card.answered-err{border-color:#ef4444;background:#fee2e2}
+.desc-card.disabled{cursor:default}
+.desc-text{font-size:14px;font-weight:700;line-height:1.5;margin-bottom:8px}
+.type-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.type-btn{padding:7px 14px;border-radius:10px;border:2px solid #d1fae5;background:white;font-family:"Baloo 2",cursive;font-size:12px;font-weight:800;cursor:pointer;transition:all .15s}
+.type-btn:hover:not(:disabled){transform:scale(1.04)}
+.type-btn.trad{border-color:#F59E0B;color:#92400E}
+.type-btn.trad:hover:not(:disabled){background:#FEF3C7}
+.type-btn.mod{border-color:#0284C7;color:#0369A1}
+.type-btn.mod:hover:not(:disabled){background:#E0F2FE}
+.type-btn.alt{border-color:#15803D;color:#14532D}
+.type-btn.alt:hover:not(:disabled){background:#d1fae5}
+.type-btn.selected-trad{background:#FEF3C7;border-color:#F59E0B}
+.type-btn.selected-mod{background:#E0F2FE;border-color:#0284C7}
+.type-btn.selected-alt{background:#d1fae5;border-color:#15803D}
+.feedback-inline{margin-top:8px;font-size:12px;font-weight:700;line-height:1.4;padding:8px 12px;border-radius:9px;display:none}
+.feedback-inline.show{display:block}
+.fi-ok{background:#d1fae5;color:#14532D}
+.fi-err{background:#fee2e2;color:#991b1b}
+.score-bar{background:white;border:2px solid #d1fae5;border-radius:14px;padding:12px 18px;margin-bottom:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.score-item{font-family:"Space Mono",monospace;font-size:13px;font-weight:700;color:var(--primary)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.btn{border-radius:12px;padding:11px 22px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;border:none}
+.btn-primary{background:var(--primary);color:white}
+.btn-back{background:white;border:2px solid #e5e7eb;color:#6B7280}
+.summary{display:none;background:white;border:2px solid #d1fae5;border-radius:20px;padding:24px;text-align:center}
+.sum-emoji{font-size:52px;margin-bottom:10px}
+.sum-score{font-family:"Space Mono",monospace;font-size:36px;color:var(--primary);margin-bottom:8px}
+.sum-msg{font-size:15px;font-weight:700;margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🌍 Geografia — 5º Ano</div>
+  <h1>Classificador de Agrossistemas 🌾</h1>
+  <p>Identifique se cada descrição é um agrossistema Tradicional, Moderno ou Alternativo</p>
+</div>
+<div class="container">
+  <div class="legend">
+    <div class="legend-item"><div class="dot dot-trad"></div>Agrossistema tradicional</div>
+    <div class="legend-item"><div class="dot dot-mod"></div>Agrossistema moderno</div>
+    <div class="legend-item"><div class="dot dot-alt"></div>Agrossistema alternativo</div>
+  </div>
+  <div class="instruction">👆 Leia cada descrição e clique no tipo de agrossistema correspondente. Use os termos exatos do livro!</div>
+  <div class="score-bar">
+    <div class="score-item" id="progStat">0/9 respondidas</div>
+    <div class="score-item" id="scoreStat">✅ 0 acertos</div>
+  </div>
+  <div class="card-area" id="cardArea"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restart()">🔄 Recomeçar</button>
+    <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+  </div>
+  <div class="summary" id="summary"></div>
+</div>
+<script>
+const cards = [
+  {text:"Uma família cultiva hortaliças usando enxada e arado de boi, colhendo com as próprias mãos e sem usar fertilizantes químicos.", correct:"trad", fb:"Agrossistema TRADICIONAL: pouca tecnologia, muita mão de obra — geralmente da própria família."},
+  {text:"Uma fazenda de soja usa tratores, avião para adubação, colheitadeiras automáticas, defensivos agrícolas e aplica fertilizantes para aumentar a produção.", correct:"mod", fb:"Agrossistema MODERNO: menor uso de mão de obra, maior uso de máquinas, fertilizantes e defensivos agrícolas."},
+  {text:"Uma propriedade rural cria galinhas e planta verduras usando apenas compostos orgânicos e substâncias naturais, sem prejudicar o ambiente.", correct:"alt", fb:"Agrossistema ALTERNATIVO: usa técnicas que não prejudicam o ambiente nem a saúde. Substâncias naturais ou de origem orgânica."},
+  {text:"Uma família planta cebolinha em pequenas parcelas de terra, utilizando principalmente a força humana e de animais, sem máquinas.", correct:"trad", fb:"Agrossistema TRADICIONAL: pouca tecnologia, mão de obra familiar, como no exemplo da plantação de cebolinha no Amazonas."},
+  {text:"Uma fazenda de morangos usa sistemas de irrigação por gotejamento, máquinas de ordenha, fertilizantes e técnicas modernas de colheita.", correct:"mod", fb:"Agrossistema MODERNO: menor uso de mão de obra, irrigação, máquinas e produtos químicos — como no exemplo da plantação de morangos no Distrito Federal."},
+  {text:"Uma horta urbana utiliza minhocário para produzir adubo orgânico, planta sem agrotóxicos e usa compostagem para nutrir o solo.", correct:"alt", fb:"Agrossistema ALTERNATIVO: técnicas que não prejudicam o ambiente, uso de substâncias orgânicas naturais, como hortas sustentáveis."},
+  {text:"Uma fazenda de gado leiteiro usa confinamento dos animais, máquinas de ordenha automatizadas, rações com fórmulas técnicas e drones para monitorar o rebanho.", correct:"mod", fb:"Agrossistema MODERNO: intenso aproveitamento das terras, tecnologia, máquinas e técnicas modernas — pecuária intensiva com tecnologia."},
+  {text:"Uma propriedade rural usa o pastejo rotacionado, divide a área em blocos e libera o gado em uma parte por vez, permitindo que o capim se recupere naturalmente.", correct:"alt", fb:"Agrossistema ALTERNATIVO (pecuária sustentável): o pastejo rotacionado é uma técnica que não prejudica o ambiente e mantém a pastagem saudável."},
+  {text:"Uma fazenda tradicional de café no interior de Minas Gerais colhe os grãos à mão durante a época da colheita, com pouca mecanização e uso da família na lavoura.", correct:"trad", fb:"Agrossistema TRADICIONAL: pouca presença de tecnologia e máquinas, com maior utilização de mão de obra — muitas vezes da própria família."}
+];
+
+let score=0, answered=0;
+
+function render(){
+  const area=document.getElementById('cardArea');
+  area.innerHTML='';
+  cards.forEach((card,i)=>{
+    const div=document.createElement('div');
+    div.className='desc-card';
+    div.id='card'+i;
+    div.innerHTML=`<div class="desc-text">${card.text}</div>
+      <div class="type-btns">
+        <button class="type-btn trad" onclick="classify(${i},'trad')">🟡 Tradicional</button>
+        <button class="type-btn mod" onclick="classify(${i},'mod')">🔵 Moderno</button>
+        <button class="type-btn alt" onclick="classify(${i},'alt')">🟢 Alternativo</button>
+      </div>
+      <div class="feedback-inline" id="fi${i}"></div>`;
+    area.appendChild(div);
+  });
+}
+
+function classify(i, type){
+  const card=document.getElementById('card'+i);
+  if(card.classList.contains('answered-ok')||card.classList.contains('answered-err')) return;
+  const isOk=type===cards[i].correct;
+  answered++;
+  if(isOk) score++;
+  document.getElementById('progStat').textContent=answered+'/'+cards.length+' respondidas';
+  document.getElementById('scoreStat').textContent='✅ '+score+' acertos';
+  card.querySelectorAll('.type-btn').forEach(b=>b.disabled=true);
+  const selected=card.querySelector('.type-btn.'+type);
+  if(selected){
+    selected.classList.add('selected-'+type);
+    selected.style.borderWidth='3px';
+  }
+  const fi=document.getElementById('fi'+i);
+  fi.className='feedback-inline show '+(isOk?'fi-ok':'fi-err');
+  fi.innerHTML=(isOk?'✅ ':'❌ ')+cards[i].fb;
+  card.classList.add(isOk?'answered-ok':'answered-err');
+  card.classList.add('disabled');
+  if(answered===cards.length) setTimeout(showSummary,600);
+}
+
+function showSummary(){
+  const s=document.getElementById('summary');
+  s.style.display='block'; s.scrollIntoView({behavior:'smooth'});
+  const pct=Math.round(score/cards.length*100);
+  let e,m;
+  if(pct===100){e='🏆';m='Perfeito! Você sabe classificar todos os agrossistemas!';}
+  else if(pct>=70){e='🌟';m='Muito bem! Domine os termos do livro para chegar ao 100%.';}
+  else if(pct>=50){e='👍';m='Releia as definições de agrossistema tradicional, moderno e alternativo.';}
+  else{e='📚';m='Revise o Capítulo 5 e os três tipos de agrossistema. Você consegue!';}
+  s.innerHTML=`<div class="sum-emoji">${e}</div><div class="sum-score">${score}/${cards.length}</div><div class="sum-msg">${m}</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="restart()">🔄 Tentar novamente</button>
+      <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+    </div>`;
+}
+
+function restart(){
+  score=0;answered=0;
+  document.getElementById('progStat').textContent='0/'+cards.length+' respondidas';
+  document.getElementById('scoreStat').textContent='✅ 0 acertos';
+  document.getElementById('summary').style.display='none';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

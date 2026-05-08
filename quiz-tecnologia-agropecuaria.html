@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Tecnologia na Agricultura e Pecuária</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height:100vh}
+.hero{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);padding:40px 24px 36px;color:white;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 16px;border-radius:20px;margin-bottom:14px}
+.hero h1{font-family:"Space Mono",monospace;font-size:26px;margin-bottom:8px;line-height:1.2}
+.hero p{font-size:14px;font-weight:600;opacity:.85}
+.container{max-width:680px;margin:0 auto;padding:32px 20px}
+.progress-bar-wrap{background:#d1fae5;border-radius:20px;height:8px;margin-bottom:28px;overflow:hidden}
+.progress-bar{height:8px;background:var(--primary);border-radius:20px;transition:width .4s ease;width:0%}
+.question-card{background:white;border:2px solid #d1fae5;border-radius:20px;padding:28px;margin-bottom:20px}
+.q-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px}
+.q-text{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:20px}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-btn{background:#f0fdf4;border:2px solid #d1fae5;border-radius:14px;padding:13px 18px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;color:#1A1A2E}
+.opt-btn:hover:not(:disabled){background:#dcfce7;border-color:var(--primary);transform:translateX(4px)}
+.opt-btn.correct{background:#d1fae5;border-color:#15803D;color:#14532D}
+.opt-btn.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+.opt-btn:disabled{cursor:default}
+.feedback{margin-top:14px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;line-height:1.5;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:#d1fae5;color:#14532D;border:1.5px solid #86efac}
+.feedback.err{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+.next-btn{display:none;margin:16px auto 0;background:var(--primary);color:white;border:none;border-radius:14px;padding:13px 32px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer;transition:transform .15s}
+.next-btn:hover{transform:translateY(-2px)}
+.result-card{background:white;border:2px solid #d1fae5;border-radius:24px;padding:40px 28px;text-align:center;display:none}
+.result-emoji{font-size:64px;margin-bottom:16px}
+.result-score{font-family:"Space Mono",monospace;font-size:48px;color:var(--primary);margin-bottom:8px}
+.result-msg{font-size:16px;font-weight:700;margin-bottom:24px;color:#374151}
+.result-sub{font-size:13px;font-weight:600;color:#6B7280;line-height:1.6;margin-bottom:28px}
+.restart-btn{background:var(--primary);color:white;border:none;border-radius:14px;padding:14px 36px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer;margin:0 6px}
+.back-btn{background:white;color:var(--primary);border:2px solid var(--primary);border-radius:14px;padding:13px 28px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;margin:0 6px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🌍 Geografia — 5º Ano</div>
+  <h1>Tecnologia na Agricultura<br>e na Pecuária</h1>
+  <p>10 questões · Agrossistemas, agricultura 4.0 e pecuária sustentável</p>
+</div>
+<div class="container">
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div id="quizArea"></div>
+  <div class="result-card" id="resultCard">
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="result-sub" id="resultSub"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Jogar de novo</button>
+    <button class="back-btn" onclick="window.close()">← Voltar ao Portal</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    q:"O que são agrossistemas, também conhecidos como sistemas agrários?",
+    opts:[
+      "Apenas as fazendas que produzem soja e cana-de-açúcar",
+      "A forma como a atividade agropecuária é realizada em cada propriedade rural",
+      "Somente as grandes empresas do setor agrícola",
+      "Os rios e lagos usados para irrigação no campo"
+    ],
+    correct:1,
+    fb:"De acordo com o livro, os agrossistemas (também chamados de sistemas agrários) correspondem à forma como a atividade agropecuária é realizada em cada propriedade rural. Podemos conhecer as características da agropecuária por meio da identificação dos agrossistemas."
+  },
+  {
+    q:"Como podemos classificar os agrossistemas de acordo com a utilização da terra?",
+    opts:[
+      "Em orgânicos e industriais",
+      "Em rurais e urbanos",
+      "Em agropecuária extensiva e agropecuária intensiva",
+      "Em nacionais e internacionais"
+    ],
+    correct:2,
+    fb:"De acordo com a utilização da terra, os agrossistemas se classificam em agropecuária extensiva e agropecuária intensiva — dois modelos com características bem diferentes de uso do solo."
+  },
+  {
+    q:"O que caracteriza a agropecuária extensiva?",
+    opts:[
+      "Há intenso aproveitamento das terras e uso de muitas tecnologias",
+      "Ocupa grandes extensões de terra, com retirada da vegetação natural, desgaste do solo e animais criados soltos em pastagens",
+      "Os animais são criados confinados em espaços cercados",
+      "Utiliza apenas técnicas orgânicas e sustentáveis"
+    ],
+    correct:1,
+    fb:"A agropecuária extensiva ocupa grandes extensões de terra, onde a vegetação natural é retirada e o solo sofre grande desgaste. Na pecuária extensiva, por exemplo, os animais são criados soltos e se alimentam geralmente em pastagens."
+  },
+  {
+    q:"Qual é a principal diferença entre o agrossistema tradicional e o agrossistema moderno?",
+    opts:[
+      "O tradicional usa mais agrotóxicos do que o moderno",
+      "O moderno usa principalmente mão de obra familiar, enquanto o tradicional usa mais máquinas",
+      "O tradicional apresenta pouca tecnologia e mais mão de obra, enquanto o moderno usa mais máquinas e menos mão de obra",
+      "Não há diferença entre eles"
+    ],
+    correct:2,
+    fb:"O agrossistema tradicional apresenta pouca tecnologia e uso de máquinas, com maior utilização de mão de obra — muitas vezes da própria família. O agrossistema moderno se caracteriza pelo menor uso de mão de obra e maior uso de máquinas, fertilizantes e defensivos agrícolas."
+  },
+  {
+    q:"O agrossistema alternativo se caracteriza por:",
+    opts:[
+      "Uso intensivo de defensivos agrícolas e máquinas de alta tecnologia",
+      "Uso de técnicas que não prejudicam o ambiente nem a saúde, com substâncias naturais ou de origem orgânica",
+      "Criação de animais exclusivamente em confinamento",
+      "Produção destinada apenas à exportação"
+    ],
+    correct:1,
+    fb:"O agrossistema alternativo caracteriza-se pelo uso de técnicas que não prejudicam o ambiente nem a saúde das pessoas e dos animais. Na criação de animais e nas plantações, são utilizadas substâncias naturais ou de origem orgânica."
+  },
+  {
+    q:"Quais são as cinco etapas da produção agrícola mostradas no infográfico do café no livro?",
+    opts:[
+      "Irrigação, colheita, moagem, torrefação, embalagem",
+      "Preparo do solo, plantio, adubação e prevenção de pragas, colheita, transporte",
+      "Desmatamento, aração, adubação, colheita, exportação",
+      "Seleção de sementes, plantio, rega, poda, venda"
+    ],
+    correct:1,
+    fb:"As cinco etapas apresentadas no infográfico da produção do café são: 1. Preparo do solo, 2. Plantio, 3. Adubação e prevenção de pragas, 4. Colheita, 5. Transporte. Máquinas são usadas em todas essas etapas."
+  },
+  {
+    q:"O que é agricultura 4.0?",
+    opts:[
+      "Um tipo de agricultura que usa somente bois para arar a terra",
+      "A modalidade que reúne drones, máquinas automáticas, novos métodos de cultivo e aplicativos para aumentar a produtividade",
+      "A agricultura praticada exclusivamente em estufas fechadas",
+      "Uma técnica agrícola exclusiva do Brasil"
+    ],
+    correct:1,
+    fb:"A agricultura 4.0 é a modalidade que reúne drones, máquinas automáticas, novos métodos de cultivo e aplicativos para planejar plantio, colheita e transporte. Em 2022, cerca de 60% dos produtores rurais já usavam novas tecnologias no campo."
+  },
+  {
+    q:"Na pecuária intensiva, como os animais são geralmente criados?",
+    opts:[
+      "Soltos em grandes pastagens, sem cercas",
+      "Confinados em espaços cercados, como estábulos",
+      "Em rios e açudes próximos às fazendas",
+      "Exclusivamente em florestas preservadas"
+    ],
+    correct:1,
+    fb:"Na agropecuária intensiva, os animais são criados confinados, ou seja, em espaços cercados, como estábulos. Há intenso aproveitamento das terras e uso de inúmeras técnicas para aumentar a produtividade."
+  },
+  {
+    q:"O que é pastejo rotacionado e por que ele é importante para a pecuária sustentável?",
+    opts:[
+      "Técnica de criar o gado em lugares cada vez mais distantes da fazenda",
+      "Técnica de dividir a área em blocos, liberar o gado em uma parte por vez e dar descanso ao capim, com taxa de lotação adequada",
+      "Forma de vender o gado em diferentes mercados regionais",
+      "Método de selecionar raças bovinas para resistência a doenças"
+    ],
+    correct:1,
+    fb:"O pastejo rotacionado é uma técnica sustentável que divide a pastagem em blocos, liberando o gado para pastar em uma parte por vez enquanto o capim se recupera no restante. Isso reduz o desmatamento e melhora a produtividade, aplicando uma taxa de lotação de animais adequada."
+  },
+  {
+    q:"Para que servem as fotografias aéreas e as imagens de satélite na agropecuária, segundo a seção 'Cartografando'?",
+    opts:[
+      "Apenas para criar mapas turísticos das fazendas",
+      "Para monitorar a expansão agropecuária, controlar práticas de conservação ambiental e avaliar as transformações na paisagem",
+      "Somente para medir a distância entre cidades",
+      "Para identificar tipos de rochas no solo"
+    ],
+    correct:1,
+    fb:"As fotografias aéreas (feitas por aviões ou drones) e as imagens de satélite são usadas para monitorar a expansão da atividade agropecuária, controlar práticas de conservação ambiental e avaliar as transformações na paisagem ao longo do tempo. A seção 'Cartografando' compara imagens de satélite do município de Colniza (MT) de 1990 e 2022 como exemplo."
+  }
+];
+
+let current=0,score=0,answered=false;
+function render(){
+  if(current>=questions.length){showResult();return;}
+  const q=questions[current];
+  document.getElementById('progressBar').style.width=(current/questions.length*100)+'%';
+  let html=`<div class="question-card"><div class="q-num">Questão ${current+1} de ${questions.length}</div><div class="q-text">${q.q}</div><div class="options">`;
+  q.opts.forEach((o,i)=>{html+=`<button class="opt-btn" id="opt${i}" onclick="answer(${i})">${o}</button>`;});
+  html+=`</div><div class="feedback" id="fb"></div><button class="next-btn" id="nextBtn" onclick="nextQ()">${current<questions.length-1?'Próxima →':'Ver resultado 🎉'}</button></div>`;
+  document.getElementById('quizArea').innerHTML=html;
+  answered=false;
+}
+function answer(i){
+  if(answered)return;answered=true;
+  const q=questions[current];
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(i===q.correct){score++;document.getElementById('opt'+i).classList.add('correct');fb.className='feedback show ok';fb.innerHTML='✅ '+q.fb;}
+  else{document.getElementById('opt'+i).classList.add('wrong');document.getElementById('opt'+q.correct).classList.add('correct');fb.className='feedback show err';fb.innerHTML='❌ '+q.fb;}
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextQ(){current++;render();}
+function showResult(){
+  document.getElementById('progressBar').style.width='100%';
+  document.getElementById('quizArea').innerHTML='';
+  document.getElementById('resultCard').style.display='block';
+  const pct=Math.round(score/questions.length*100);
+  let e,m,s;
+  if(pct===100){e='🏆';m='Perfeito! Nota máxima!';s='Você domina os agrossistemas e a tecnologia no campo. Incrível!';}
+  else if(pct>=70){e='🌟';m='Muito bem!';s='Ótimo domínio do conteúdo! Revise as questões que errou para fixar os termos técnicos.';}
+  else if(pct>=50){e='👍';m='Bom esforço!';s='Releia sobre agrossistemas, as etapas do café e pastejo rotacionado e tente novamente!';}
+  else{e='📚';m='Continue estudando!';s='Revise o Capítulo 5 — especialmente agrossistema tradicional, moderno e alternativo — e tente de novo!';}
+  document.getElementById('resultEmoji').textContent=e;
+  document.getElementById('resultScore').textContent=score+'/'+questions.length;
+  document.getElementById('resultMsg').textContent=m;
+  document.getElementById('resultSub').textContent=s;
+}
+function restart(){current=0;score=0;document.getElementById('resultCard').style.display='none';render();}
+render();
+</script>
+</body>
+</html>
