@@ -14,9 +14,11 @@ FOTOS → [FASE 0] Análise de escopo → Proposta estrutural → ⏸ AGUARDAR A
          ↓ (após aprovação)
          Separação por tema → Para cada tema:
            1. Prompt HQ (.md)
-           2. Atividades HTML (Quiz + variáveis + Mapa Mental)
-           3. Atualização do index.html
-           4. Entrega em ZIP (arquivos novos/alterados apenas)
+           2. Geração automática das imagens via Claude in Chrome + ChatGPT
+           3. Colagem das 4 páginas em hq-[slug].png
+           4. Atividades HTML (Quiz + variáveis + Mapa Mental)
+           5. Atualização do index.html
+           6. Entrega via Cowork
 ```
 
 > **Regra absoluta:** Nenhum arquivo é gerado antes da aprovação explícita de Léo na Fase 0.
@@ -100,7 +102,7 @@ Nenhum conceito, termo técnico ou conteúdo que **não esteja visível nas foto
 **Checklist de fidelidade** (executar antes de finalizar cada tema):
 - [ ] Todos os termos técnicos das fotos estão presentes na HQ e em pelo menos uma atividade com o nome exato do livro
 - [ ] Nenhum conceito foi introduzido sem respaldo nas fotos enviadas
-- [ ] Sinônimos coloquiais (se usados para facilitar compreensão) sempre acompanham o termo técnico, nunca o substituem
+- [ ] Sinônimos coloquiais (se usados para facilitar compreensão) sempre acompanham o termo técnico, nunca os substituem
 
 ---
 
@@ -133,7 +135,7 @@ Para novas disciplinas não listadas, proponha uma paleta ao usuário antes de c
 Cada novo tema deve ter um personagem ou elemento narrativo novo (ou reutilizar existentes quando fizer sentido).
 
 ### Personagens já existentes (sempre disponíveis)
-- **Prepo** — robô roxo mascote, aparece em múltiplos temas
+- **Prepo** — robô roxo mascote, aparece em múltiplos temas. **Imagem de referência canônica:** `ref-prepo.png` na raiz do projeto (`C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\ref-prepo.png`). Esta imagem deve ser usada como âncora visual em toda geração no ChatGPT.
 - **Bia** — menina 11 anos, cabelos pretos cacheados, uniforme azul; protagonista frequente
 - **Prof. Teatrão** — professor dramático com lenço colorido
 - **Verbão** — letra animada, 3 versões de roupa (passado/presente/futuro)
@@ -152,14 +154,14 @@ Cada novo tema deve ter um personagem ou elemento narrativo novo (ou reutilizar 
 
 ## FASE 3 — Geração do prompt de HQ
 
-O arquivo `.md` gerado deve ser um **documento de produção completo** — Léo deve conseguir colá-lo diretamente em Ideogram, DALL·E 3 ou Adobe Firefly sem nenhuma edição adicional. O padrão de qualidade é o arquivo `prompt-hq-entonacao.md`.
+O arquivo `.md` gerado deve ser um **documento de produção completo** — deve poder ser colado diretamente no ChatGPT (Images 2.0) sem nenhuma edição adicional. O padrão de qualidade é o arquivo `prompt-hq-entonacao.md`.
 
 **Critérios obrigatórios:**
 - Mínimo de 250 linhas
 - Prompts em inglês para as ferramentas de geração (as ferramentas respondem melhor em inglês)
 - Cada página tem seu próprio bloco de prompt pronto para colar, entre três backticks
 - Bloco de estilo visual separado e reutilizável, aplicado em todas as páginas
-- Folha de personagens dedicada (gerada primeiro), especialmente para personagens novos com múltiplas versões emocionais
+- Folha de personagens dedicada (usada primeiro como referência visual na sessão do ChatGPT, mas não baixada)
 - Instruções de uso no topo (qual ferramenta, qual ordem de geração)
 - Dicas práticas no final (o que fazer se o texto dos balões sair errado, como obter consistência visual)
 - Falas dos personagens em português dentro dos prompts em inglês, entre aspas
@@ -175,21 +177,18 @@ Crie o arquivo `.md` seguindo este template expandido:
 
 ## INSTRUÇÕES DE USO
 
-Cole o bloco de cada página diretamente em:
-- **Ideogram** (melhor para texto dentro das imagens)
-- **DALL·E 3** (via ChatGPT)
-- **Adobe Firefly**
-
-Gere **uma página por vez**. Comece pela folha de personagens.
+Este arquivo é processado automaticamente pelo Claude in Chrome.
+Ferramenta: ChatGPT com Images 2.0.
+Gere uma página por vez, na ordem definida abaixo.
 
 ---
 
 ## ESTILO VISUAL (aplique em todas as páginas)
 
-```
+\`\`\`
 [Bloco em inglês com: estilo geral, paleta de cores, traço, público-alvo,
 elementos visuais temáticos da disciplina/tema, bordas dos painéis, estética dos balões]
-```
+\`\`\`
 
 ---
 
@@ -197,7 +196,7 @@ elementos visuais temáticos da disciplina/tema, bordas dos painéis, estética 
 
 | Personagem | Descrição visual |
 |---|---|
-| **Prepo** | [descrição consistente] |
+| **Prepo** | [descrição consistente — usada como fallback textual, mas a referência primária é ref-prepo.png] |
 | **Bia** | [descrição consistente] |
 | [outros personagens recorrentes que aparecem no tema] | [descrição] |
 
@@ -211,11 +210,11 @@ elementos visuais temáticos da disciplina/tema, bordas dos painéis, estética 
 **Objetivo pedagógico:** [o que o aluno deve aprender nesta página]
 
 **PROMPT:**
-```
+\`\`\`
 [Prompt completo em inglês, pronto para colar na ferramenta.
 Descreve cada painel com: cenário, personagens, expressões, falas em português entre aspas,
 elementos visuais temáticos, ondas/setas/ícones de apoio pedagógico]
-```
+\`\`\`
 
 ---
 
@@ -223,9 +222,9 @@ elementos visuais temáticos, ondas/setas/ícones de apoio pedagógico]
 **Objetivo pedagógico:** [...]
 
 **PROMPT:**
-```
+\`\`\`
 [Prompt completo em inglês]
-```
+\`\`\`
 
 ---
 
@@ -233,9 +232,9 @@ elementos visuais temáticos, ondas/setas/ícones de apoio pedagógico]
 **Objetivo pedagógico:** [...]
 
 **PROMPT:**
-```
+\`\`\`
 [Prompt completo em inglês]
-```
+\`\`\`
 
 ---
 
@@ -243,34 +242,33 @@ elementos visuais temáticos, ondas/setas/ícones de apoio pedagógico]
 **Objetivo pedagógico:** [...]
 
 **PROMPT:**
-```
+\`\`\`
 [Prompt completo em inglês — último painel termina com personagem convidando o leitor a praticar no portal]
-```
+\`\`\`
 
 ---
 
-## FOLHA DE PERSONAGENS (gere primeiro)
+## FOLHA DE PERSONAGENS (gerada primeiro para ancorar a sessão — não baixar)
 
-```
+\`\`\`
 [Prompt em inglês para folha de referência visual de todos os personagens.
 Para personagens novos: mostrar pelo menos 3 variações emocionais lado a lado.
 Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
-```
+\`\`\`
 
 ---
 
 ## DICAS PARA MELHORES RESULTADOS
 
 - [Dica específica sobre o personagem novo ou elemento visual central do tema]
-- [Qual ferramenta funciona melhor para este tema e por quê]
-- Se o texto dos balões sair errado, corrija no Canva
+- Se o texto dos balões sair em inglês, corrija no Canva
 - [Qualquer outra dica relevante para este tema específico]
 
 ---
 
 ## ORDEM DE GERAÇÃO
 
-1. Folha de personagens
+1. Folha de personagens (ancoragem visual — não baixar)
 2. Página 1 — [título]
 3. Página 2 — [título]
 4. Página 3 — [título]
@@ -281,6 +279,86 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 *Conteúdo baseado em: [livro didático, páginas referenciadas]*
 *Tema: [descrição resumida do conteúdo pedagógico]*
 ```
+
+---
+
+## FASE 3.5 — Geração automática das imagens via Claude in Chrome
+
+Esta fase é executada **integralmente pelo Claude in Chrome**, sem intervenção de Léo. Ocorre após a geração do prompt `.md` da Fase 3 e antes das atividades HTML.
+
+### 3.5.1 Pré-requisitos
+
+- Claude in Chrome conectado e ativo
+- Arquivo `ref-prepo.png` presente em `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\ref-prepo.png`
+- Arquivo de prompt `.md` do tema já gerado (Fase 3)
+- Pasta de destino do projeto acessível: `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\`
+
+### 3.5.2 Sequência de automação — passo a passo
+
+O Claude in Chrome executa os seguintes passos em ordem, sem pausas para aprovação:
+
+**Passo 1 — Abrir nova conversa no GPT customizado**
+- Navegar para `https://chatgpt.com/g/g-69ff2b40169881918c5f75a8d9767f30-gpt-quadrinhos-sabendo`
+- Confirmar que o GPT carregou corretamente antes de prosseguir
+
+**Passo 2 — Ancorar os personagens fixos com imagens canônicas**
+- Anexar ao campo de mensagem os dois arquivos:
+  - `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\ref-prepo.png`
+  - `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\ref-bia.png`
+- Colar o bloco **FOLHA DE PERSONAGENS** do arquivo `.md` na mesma mensagem e enviar tudo junto
+- Aguardar a geração completa da folha de personagens
+- **Não baixar** — a folha serve apenas para ancorar o estilo dos personagens na sessão
+
+**Passo 3 — Gerar Página 1**
+- Colar o bloco **PROMPT da PÁGINA 1** do arquivo `.md`
+- Aguardar a geração completa da imagem
+- Clicar no botão de download da imagem gerada
+- Aguardar o arquivo aparecer em `C:\Users\wizar\Downloads\`
+- Mover o arquivo para `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\` com o nome `[slug]_1.png`
+
+**Passo 4 — Gerar Páginas 2, 3 e 4**
+- Repetir o mesmo procedimento do Passo 3 para cada página
+- Nomear os arquivos como `[slug]_2.png`, `[slug]_3.png`, `[slug]_4.png`
+
+### 3.5.3 Colagem das 4 páginas em imagem única
+
+Após o download e renomeação das 4 imagens, o Claude executa a colagem via Python/Pillow:
+
+```python
+from PIL import Image
+
+slug = "[slug-do-tema]"
+pasta = r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos"
+
+files = [f"{pasta}\\{slug}_{i}.png" for i in range(1, 5)]
+imgs = [Image.open(f) for f in files]
+
+TARGET_W = max(img.size[0] for img in imgs)
+GAP = 6
+GAP_COLOR = (30, 30, 30)
+
+resized = [img.resize((TARGET_W, int(img.size[1] * TARGET_W / img.size[0])), Image.LANCZOS) for img in imgs]
+
+total_h = sum(r.size[1] for r in resized) + GAP * (len(resized) - 1)
+canvas = Image.new("RGB", (TARGET_W, total_h), GAP_COLOR)
+
+y = 0
+for i, r in enumerate(resized):
+    canvas.paste(r, (0, y))
+    y += r.size[1] + (GAP if i < len(resized) - 1 else 0)
+
+canvas.save(f"{pasta}\\hq-{slug}.png", "PNG", optimize=True)
+```
+
+**Resultado:** arquivo `hq-[slug].png` salvo diretamente na raiz do projeto, pronto para ser referenciado pelo `index.html`.
+
+### 3.5.4 Limpeza dos arquivos intermediários
+
+Após a colagem bem-sucedida, remover os 4 arquivos temporários `[slug]_1.png` … `[slug]_4.png` da pasta do projeto.
+
+### 3.5.5 Confirmação antes de avançar
+
+Verificar que `hq-[slug].png` existe na pasta do projeto com dimensões coerentes (largura mínima de 1024px, altura mínima de 3000px). Somente então avançar para a Fase 4.
 
 ---
 
@@ -482,7 +560,7 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 ```html
 <div class="theme-content" id="theme-[disc]-[slug]">
   <div class="hq-card">
-    <img class="hq-img" src="hq-[slug].jpg" alt="HQ [Nome do Tema]">
+    <img class="hq-img" src="hq-[slug].png" alt="HQ [Nome do Tema]">
     <div class="hq-caption"><span>📖</span><span>[Título HQ] — 4 páginas · Personagens: [lista] · Tema: [tema]</span></div>
   </div>
   <hr class="sdiv">
@@ -497,6 +575,8 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 </div>
 ```
 
+> **Atenção:** a extensão padrão do arquivo HQ é `.png` (gerado na Fase 3.5). Usar `.jpg` apenas se Léo fornecer a imagem nesse formato.
+
 ---
 
 ## FASE 7 — Entrega via Cowork
@@ -507,12 +587,13 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 
 ```
 C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\
-├── index.html                        ← editado diretamente (Fase 6)
-├── hq-[slug]-prompt.md               ← criado
-├── quiz-[slug].html                  ← criado
-├── mapa-mental-[slug].html           ← criado
-├── [atividade-variavel-1]-[slug].html ← criado
-└── [atividade-variavel-2]-[slug].html ← criado
+├── index.html                         ← editado diretamente (Fase 6)
+├── hq-[slug]-prompt.md                ← criado (Fase 3)
+├── hq-[slug].png                      ← criado automaticamente (Fase 3.5)
+├── quiz-[slug].html                   ← criado (Fase 5)
+├── mapa-mental-[slug].html            ← criado (Fase 5)
+├── [atividade-variavel-1]-[slug].html ← criado (Fase 5)
+└── [atividade-variavel-2]-[slug].html ← criado (Fase 5)
 ```
 
 Todos os arquivos vão direto para a raiz do projeto — nunca em subpastas.
@@ -520,12 +601,15 @@ Todos os arquivos vão direto para a raiz do projeto — nunca em subpastas.
 ### 7.2 Checklist antes de concluir
 
 - [ ] `index.html` salvo com todas as alterações da Fase 6
+- [ ] `hq-[slug].png` presente na raiz do projeto (gerado na Fase 3.5)
 - [ ] Todos os arquivos HTML das atividades na raiz da pasta
 - [ ] Todos os `href` dos `act-card` no index batem com os nomes dos arquivos criados
 - [ ] O `id` do `theme-content` bate com o `onclick` do tab e do sidebar
 - [ ] Contadores da home atualizados
 - [ ] `firstTheme` atualizado no JavaScript (se nova disciplina)
 - [ ] Nenhum arquivo criado em subpasta
+- [ ] `src` da `hq-img` no index usa extensão `.png`
+- [ ] Arquivos temporários `[slug]_1.png` … `[slug]_4.png` removidos da pasta
 
 ### 7.3 Mensagem de conclusão
 
@@ -552,3 +636,4 @@ O `index.html` completo exige que Léo forneça o arquivo atual no início da co
 - `references/temas-existentes.md` — lista de todos os temas já implementados
 - `references/atividades-por-disciplina.md` — catálogo de tipos de atividade por disciplina com critérios de escolha
 - `references/index-template-snippets.md` — snippets HTML prontos para copiar ao atualizar o index
+- `ref-prepo.png` — imagem de referência canônica do Prepo (raiz do projeto)
