@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Marcos de Memória</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; overflow-x: hidden; }
+.hero { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 1.8rem 1.5rem 1.2rem; text-align: center; color: white; }
+.hero h1 { font-size: 1.4rem; font-weight: 900; }
+.hero p { font-size: .9rem; opacity: .9; margin-top: .3rem; }
+.controls { display: flex; gap: .7rem; flex-wrap: wrap; padding: 1rem 1rem .5rem; justify-content: center; }
+.btn { border-radius: 10px; padding: .6rem 1.3rem; font-family: 'Baloo 2', sans-serif; font-size: .9rem; font-weight: 800; cursor: pointer; border: none; transition: transform .15s; }
+.btn:hover { transform: scale(1.04); }
+.btn-primary { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; }
+.btn-outline { background: white; border: 2.5px solid var(--primary); color: var(--primary); }
+.btn-green { background: #059669; color: white; }
+.canvas-wrap { width: 100%; overflow: auto; }
+#canvas { display: block; cursor: default; }
+.legend { padding: .8rem 1rem 1.5rem; text-align: center; font-size: .85rem; color: #6b7280; }
+.result-bar { display: none; margin: .8rem 1rem; background: white; border-radius: 14px; padding: 1rem 1.2rem; box-shadow: 0 2px 12px rgba(180,83,9,.1); font-weight: 700; border-left: 5px solid var(--primary); }
+.result-bar.show { display: block; }
+.back-btn { display: block; margin: 0 auto 2rem; background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .7rem 1.6rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; width: fit-content; }
+.back-btn:hover { background: var(--primary); color: white; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div style="font-size:2.5rem;margin-bottom:.3rem">🗿🧠</div>
+  <h1>Mapa Mental — Marcos de Memória</h1>
+  <p>Arraste os nós · Conecte com setas · Compare com o gabarito</p>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" onclick="addConnection()">➕ Conectar nós selecionados</button>
+  <button class="btn btn-outline" onclick="clearSelection()">❌ Limpar seleção</button>
+  <button class="btn btn-green" onclick="showGabarito()">📖 Ver gabarito</button>
+  <button class="btn btn-outline" onclick="resetMap()">🔄 Reiniciar</button>
+</div>
+<div class="canvas-wrap">
+  <canvas id="canvas" width="900" height="620"></canvas>
+</div>
+<div class="result-bar" id="result-bar"></div>
+<div class="legend">💡 Clique em dois nós e depois em "Conectar" para criar uma seta. Arraste os nós para organizar o mapa.</div>
+<br>
+<button class="back-btn" onclick="window.close() || (window.location.href='index.html')">← Voltar ao Portal</button>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+const C = {
+  center: '#78350F', monumento: '#B45309', exclusao: '#DC2626',
+  indigena: '#059669', valongo: '#1e40af', detail: '#6b7280'
+};
+
+const initialNodes = [
+  { id:0, x:440, y:310, label:'MARCOS\nDE MEMÓRIA', color:C.center, r:55 },
+  { id:1, x:220, y:160, label:'Monumentos\ne memória', color:C.monumento, r:44 },
+  { id:2, x:660, y:160, label:'Quem escolhe\nos monumentos?', color:C.exclusao, r:46 },
+  { id:3, x:220, y:460, label:'Memória\nindígena', color:C.indigena, r:42 },
+  { id:4, x:660, y:460, label:'Cais do\nValongo', color:C.valongo, r:42 },
+  { id:5, x:110, y:310, label:'Cavaleiro\nGuaicuru', color:C.detail, r:38 },
+  { id:6, x:440, y:100, label:'Patrimônio\nda Humanidade', color:C.valongo, r:42 },
+  { id:7, x:750, y:310, label:'Exclusão de\nmulheres, negros\ne indígenas', color:C.exclusao, r:46 },
+  { id:8, x:340, y:520, label:'Nomes de\ncidades', color:C.indigena, r:38 },
+  { id:9, x:440, y:520, label:'Patrimônio\nimaterial', color:C.indigena, r:38 },
+];
+
+const gabaritoConnections = [
+  [0,1],[0,2],[0,3],[0,4],
+  [1,5],[2,7],[3,8],[3,9],[4,6]
+];
+
+let nodes = JSON.parse(JSON.stringify(initialNodes));
+let connections = [];
+let selected = [];
+let dragging = null, dragOffX = 0, dragOffY = 0;
+
+function resizeCanvas() {
+  const w = Math.min(900, window.innerWidth - 8);
+  canvas.width = w; canvas.height = Math.max(500, w * 0.68);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  connections.forEach(([a,b]) => {
+    const na = nodes[a], nb = nodes[b];
+    ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(nb.x, nb.y);
+    ctx.strokeStyle = '#d1d5db'; ctx.lineWidth = 2.5; ctx.stroke();
+    const angle = Math.atan2(nb.y - na.y, nb.x - na.x);
+    const ax = nb.x - Math.cos(angle) * nb.r;
+    const ay = nb.y - Math.sin(angle) * nb.r;
+    ctx.beginPath(); ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - 10 * Math.cos(angle - .4), ay - 10 * Math.sin(angle - .4));
+    ctx.lineTo(ax - 10 * Math.cos(angle + .4), ay - 10 * Math.sin(angle + .4));
+    ctx.closePath(); ctx.fillStyle = '#9ca3af'; ctx.fill();
+  });
+  nodes.forEach((n, i) => {
+    ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fillStyle = n.color; ctx.fill();
+    if (selected.includes(i)) { ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 4; ctx.stroke(); }
+    ctx.fillStyle = 'white';
+    const sz = n.r > 48 ? 13 : 11;
+    ctx.font = `bold ${sz}px 'Baloo 2', sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const lines = n.label.split('\n');
+    const lh = sz + 2;
+    lines.forEach((line, li) => { ctx.fillText(line, n.x, n.y + (li - (lines.length-1)/2) * lh); });
+  });
+}
+
+function getNode(x, y) {
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i], dx = x - n.x, dy = y - n.y;
+    if (Math.sqrt(dx*dx+dy*dy) <= n.r) return i;
+  }
+  return -1;
+}
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+}
+
+canvas.addEventListener('mousedown', e => { const {x,y}=getPos(e); const ni=getNode(x,y); if(ni>=0){dragging=ni;dragOffX=x-nodes[ni].x;dragOffY=y-nodes[ni].y;} });
+canvas.addEventListener('mousemove', e => { if(dragging===null)return; const {x,y}=getPos(e); nodes[dragging].x=x-dragOffX; nodes[dragging].y=y-dragOffY; draw(); });
+canvas.addEventListener('mouseup', e => {
+  if(dragging!==null){
+    const {x,y}=getPos(e);
+    if(Math.abs(x-dragOffX-nodes[dragging].x+dragOffX)<5&&Math.abs(y-dragOffY-nodes[dragging].y+dragOffY)<5){
+      const idx=selected.indexOf(dragging);
+      if(idx>=0) selected.splice(idx,1); else { selected.push(dragging); if(selected.length>2)selected.shift(); }
+    }
+    dragging=null; draw();
+  }
+});
+canvas.addEventListener('touchstart', e=>{e.preventDefault();const{x,y}=getPos(e);const ni=getNode(x,y);if(ni>=0){dragging=ni;dragOffX=x-nodes[ni].x;dragOffY=y-nodes[ni].y;}},{passive:false});
+canvas.addEventListener('touchmove', e=>{e.preventDefault();if(dragging===null)return;const{x,y}=getPos(e);nodes[dragging].x=x-dragOffX;nodes[dragging].y=y-dragOffY;draw();},{passive:false});
+canvas.addEventListener('touchend', e=>{if(dragging!==null){const idx=selected.indexOf(dragging);if(idx>=0)selected.splice(idx,1);else{selected.push(dragging);if(selected.length>2)selected.shift();}dragging=null;draw();}});
+
+function addConnection(){
+  if(selected.length!==2){alert('Selecione exatamente 2 nós primeiro.');return;}
+  const[a,b]=selected;
+  if(!connections.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a)))connections.push([a,b]);
+  selected=[];draw();
+}
+function clearSelection(){selected=[];draw();}
+function showGabarito(){
+  connections=JSON.parse(JSON.stringify(gabaritoConnections));selected=[];draw();
+  const rb=document.getElementById('result-bar');
+  rb.className='result-bar show';
+  rb.innerHTML='<span style="color:var(--primary)">📖 Gabarito exibido!</span> Monumentos, exclusão, memória indígena e Cais do Valongo são as 4 ramificações principais dos Marcos de Memória.';
+}
+function resetMap(){nodes=JSON.parse(JSON.stringify(initialNodes));connections=[];selected=[];resizeCanvas();draw();}
+
+resizeCanvas(); draw();
+window.addEventListener('resize',()=>{resizeCanvas();draw();});
+</script>
+</body>
+</html>

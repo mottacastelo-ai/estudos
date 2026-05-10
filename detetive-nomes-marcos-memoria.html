@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detetive dos Nomes — Memória Indígena nas Cidades</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: #374151; }
+.hero { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 2rem 1.5rem 1.2rem; text-align: center; color: white; }
+.hero h1 { font-size: 1.5rem; font-weight: 900; line-height: 1.2; }
+.hero p { font-size: .9rem; opacity: .9; margin-top: .3rem; }
+.container { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.score-bar { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 12px; padding: .8rem 1.2rem; margin-bottom: 1.2rem; box-shadow: 0 2px 10px rgba(180,83,9,.08); }
+.score-label { font-size: .85rem; color: #6b7280; font-family: 'Space Mono', monospace; }
+.score-val { font-size: 1.3rem; font-weight: 900; color: var(--primary); }
+.instruction { background: white; border-left: 4px solid var(--primary); border-radius: 0 12px 12px 0; padding: .9rem 1.1rem; margin-bottom: 1.5rem; font-size: .95rem; font-weight: 600; line-height: 1.5; }
+.city-card {
+  background: white; border-radius: 16px; padding: 1.4rem 1.5rem;
+  margin-bottom: 1.2rem; box-shadow: 0 2px 12px rgba(180,83,9,.08);
+  border-top: 4px solid var(--primary);
+}
+.city-name { font-size: 1.4rem; font-weight: 900; color: var(--dark); margin-bottom: .3rem; }
+.city-state { font-size: .85rem; font-family: 'Space Mono', monospace; color: #6b7280; margin-bottom: .9rem; }
+.q-text { font-size: 1rem; font-weight: 700; margin-bottom: .8rem; line-height: 1.4; }
+.input-row { display: flex; gap: .7rem; align-items: center; flex-wrap: wrap; }
+.answer-input {
+  flex: 1; min-width: 180px; padding: .7rem 1rem; border: 2.5px solid #e5e7eb;
+  border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 600;
+  outline: none; transition: border-color .2s;
+}
+.answer-input:focus { border-color: var(--primary); }
+.answer-input.correct { border-color: #059669; background: #d1fae5; color: #065f46; }
+.answer-input.wrong { border-color: #DC2626; background: #fee2e2; }
+.check-btn {
+  background: linear-gradient(135deg, var(--primary), var(--light)); color: white;
+  border: none; border-radius: 10px; padding: .7rem 1.3rem;
+  font-family: 'Baloo 2', sans-serif; font-size: .95rem; font-weight: 800;
+  cursor: pointer; transition: transform .15s;
+}
+.check-btn:hover { transform: scale(1.04); }
+.check-btn:disabled { opacity: .5; cursor: default; }
+.feedback-line { margin-top: .6rem; font-size: .9rem; font-weight: 700; line-height: 1.4; display: none; }
+.feedback-line.show { display: block; }
+.feedback-line.correct { color: #065f46; }
+.feedback-line.wrong { color: #7f1d1d; }
+.hint-btn { background: none; border: none; color: var(--primary); font-family: 'Baloo 2', sans-serif; font-size: .85rem; font-weight: 700; cursor: pointer; text-decoration: underline; margin-top: .4rem; display: inline-block; }
+.hint-box { background: #fef3c7; border: 1.5px solid #fcd34d; border-radius: 8px; padding: .6rem .9rem; font-size: .87rem; font-weight: 600; color: #78350F; margin-top: .5rem; display: none; }
+.hint-box.show { display: block; }
+.final-card { display: none; text-align: center; background: white; border-radius: 20px; padding: 2.5rem 1.5rem; box-shadow: 0 4px 24px rgba(180,83,9,.12); margin-top: 1.5rem; }
+.final-card.show { display: block; }
+.back-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .7rem 1.6rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; margin-top: 1rem; display: inline-block; }
+.back-btn:hover { background: var(--primary); color: white; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div style="font-size:2.8rem;margin-bottom:.3rem">🔍🏙️</div>
+  <h1>Detetive dos Nomes</h1>
+  <p>Descubra a memória indígena escondida nos nomes das cidades brasileiras</p>
+</div>
+<div class="container">
+  <div class="score-bar">
+    <span class="score-label">Pontuação</span>
+    <span class="score-val" id="score-val">0 / 8</span>
+  </div>
+  <div class="instruction">🔍 Cada cidade abaixo tem um nome de origem indígena. Leia a dica e descubra o significado ou a língua de origem. Você pode pedir uma dica se precisar!</div>
+  <div id="cards-area"></div>
+  <div class="final-card" id="final-card">
+    <div style="font-size:3.5rem;margin-bottom:.5rem" id="final-emoji">🏆</div>
+    <div style="font-size:1.8rem;font-weight:900;color:var(--primary);margin-bottom:.5rem" id="final-score"></div>
+    <div style="font-size:1.05rem;font-weight:600;color:#374151;margin-bottom:1.2rem" id="final-msg"></div>
+    <p style="font-size:.9rem;color:#6b7280;margin-bottom:1rem">A memória indígena está presente em toda a nossa língua e nos nossos mapas — só precisamos prestar atenção!</p>
+    <button class="back-btn" onclick="window.close() || (window.location.href='index.html')">← Voltar ao Portal</button>
+  </div>
+</div>
+<script>
+const cities = [
+  {
+    name: 'PARACATU', state: 'MG',
+    question: 'Esta cidade fica às margens de um rio famoso pelos seus peixes. Qual é o significado do seu nome na língua Paiakã?',
+    answers: ['bom, com muito peixe', 'muito peixe', 'rio dos peixes', 'bom e com muito peixe'],
+    explanation: 'Paracatu vem do Paiakã e significa "bom, com muito peixe" — uma referência direta ao Rio Paracatu, abundante em peixes.',
+    hint: 'O nome descreve o Rio Paracatu. Pense em algo relacionado a água e peixe...'
+  },
+  {
+    name: 'TABATINGA', state: 'AM',
+    question: 'Esta cidade fica na Amazônia, perto do rio. O nome vem do Tupi. O que significa?',
+    answers: ['aldeia branca', 'terra branca', 'vila branca', 'aldeia de barro branco'],
+    explanation: 'Tabatinga vem do Tupi e significa "aldeia branca" — provavelmente uma referência ao barro ou à argila branca encontrada às margens do rio.',
+    hint: 'O nome se refere a uma comunidade (aldeia) e a uma cor...'
+  },
+  {
+    name: 'PARANAGUÁ', state: 'PR',
+    question: 'Esta cidade tem uma baia enorme, quase como um mar. O que significa seu nome em língua indígena?',
+    answers: ['semelhante ao mar', 'como o mar', 'parecido com o mar', 'semelhante a um mar'],
+    explanation: 'Paranaguá vem de "para nd\'yú\'gua", que significa "semelhante ao mar" — uma referência perfeita à sua enorme baía.',
+    hint: 'O nome compara a baía a um grande corpo d\'água...'
+  },
+  {
+    name: 'TARAUACÁ', state: 'AC',
+    question: 'O nome desta cidade no Acre vem do Tupi "tará branco + waká". O que waká significa?',
+    answers: ['rio', 'água', 'rio caudaloso', 'córrego'],
+    explanation: 'Waká significa "rio" em Tupi. Tarauacá significa então "rio das tarauacajás" (taraucajás = aves da região).',
+    hint: 'Waká é um elemento natural que corre pela cidade...'
+  },
+  {
+    name: 'QUIRITINGA', state: 'MT',
+    question: 'O nome vem de "guirá\' tinga" em Tupi. "Tinga" significa branco. O que é "guirá\'"?',
+    answers: ['garça', 'pássaro', 'ave', 'garça-branca'],
+    explanation: '"Guirá\'" significa "garça" em Tupi. Quiritinga = "garça branca" — uma ave muito comum na região do Pantanal.',
+    hint: 'É uma ave branca, elegante, muito vista em rios e lagos...'
+  },
+  {
+    name: 'SAPUCAIA', state: 'RJ',
+    question: 'O nome desta cidade referencia uma árvore nativa brasileira. Qual é a origem do nome?',
+    answers: ['nome da árvore sapucaia', 'árvore sapucaia', 'a árvore sapucaia', 'sapucaia (árvore)'],
+    explanation: 'Sapucaia é o nome de uma árvore nativa (Lecythis pisonis), cujas sementes eram usadas pelos indígenas. O nome da cidade é diretamente o nome da planta.',
+    hint: 'O nome é igual ao de uma árvore brasileira cujas sementes são comestíveis...'
+  },
+  {
+    name: 'GRAVATÁ', state: 'PE',
+    question: 'O nome vem de "kai + nikua + lê" em Tupi. O resultado final significa o que?',
+    answers: ['fruta de palmeira', 'fruto da palmeira', 'fruta da palmeira', 'palmeira e fruto'],
+    explanation: '"Kai" (fruta/planta), "nikua" (preito/respeito) e "lê" (lua) juntos formam o significado de "fruta de palmeira" — a gravatá é uma planta da família das bromeliáceas.',
+    hint: 'O resultado final descreve algo que cresce em uma palmeira...'
+  },
+  {
+    name: 'SAPIRANGA', state: 'RS',
+    question: 'O nome vem de "eçá + piranga" em Tupi. "Eçá" significa olho. O que piranga significa?',
+    answers: ['vermelho', 'cor vermelha', 'da cor vermelha', 'vermelho-vivo'],
+    explanation: '"Piranga" significa "vermelho" em Tupi. Sapiranga = "olho vermelho" ou "araçá vermelho" — provavelmente referência a um fruto da região com polpa vermelha.',
+    hint: 'Piranga é uma cor quente, presente em frutos maduros...'
+  }
+];
+
+let score = 0;
+let answered = new Array(cities.length).fill(false);
+
+function normalize(str) {
+  return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
+}
+
+function renderCards() {
+  const area = document.getElementById('cards-area');
+  area.innerHTML = '';
+  cities.forEach((city, i) => {
+    const card = document.createElement('div');
+    card.className = 'city-card';
+    card.id = `card-${i}`;
+    card.innerHTML = `
+      <div class="city-name">📍 ${city.name}</div>
+      <div class="city-state">Estado: ${city.state}</div>
+      <div class="q-text">${city.question}</div>
+      <div class="input-row">
+        <input class="answer-input" id="input-${i}" type="text" placeholder="Digite sua resposta..." ${answered[i] ? 'disabled' : ''}>
+        <button class="check-btn" id="btn-${i}" onclick="checkCity(${i})" ${answered[i] ? 'disabled' : ''}>Verificar</button>
+      </div>
+      <div class="feedback-line" id="fb-${i}"></div>
+      ${!answered[i] ? `<button class="hint-btn" onclick="showHint(${i})">💡 Pedir dica</button><div class="hint-box" id="hint-${i}">${city.hint}</div>` : ''}
+    `;
+    area.appendChild(card);
+    if (answered[i]) {
+      const input = document.getElementById(`input-${i}`);
+      input.classList.add('correct');
+      const fb = document.getElementById(`fb-${i}`);
+      fb.className = 'feedback-line correct show';
+      fb.textContent = '✅ ' + city.explanation;
+    }
+    // Enter key
+    const input = document.getElementById(`input-${i}`);
+    if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') checkCity(i); });
+  });
+}
+
+function checkCity(i) {
+  const input = document.getElementById(`input-${i}`);
+  const val = normalize(input.value);
+  const fb = document.getElementById(`fb-${i}`);
+  const correct = cities[i].answers.some(a => normalize(a) === val || val.includes(normalize(a)) || normalize(a).includes(val));
+  if (correct) {
+    input.className = 'answer-input correct';
+    input.disabled = true;
+    document.getElementById(`btn-${i}`).disabled = true;
+    fb.className = 'feedback-line correct show';
+    fb.textContent = '✅ ' + cities[i].explanation;
+    if (!answered[i]) { answered[i] = true; score++; updateScore(); }
+    if (answered.every(a => a)) showFinal();
+  } else {
+    input.className = 'answer-input wrong';
+    fb.className = 'feedback-line wrong show';
+    fb.textContent = `❌ Não foi dessa vez. Tente novamente! Dica: ${cities[i].hint}`;
+    setTimeout(() => { input.className = 'answer-input'; }, 1200);
+  }
+}
+
+function showHint(i) {
+  document.getElementById(`hint-${i}`).className = 'hint-box show';
+}
+
+function updateScore() {
+  document.getElementById('score-val').textContent = `${score} / ${cities.length}`;
+}
+
+function showFinal() {
+  document.getElementById('final-card').className = 'final-card show';
+  document.getElementById('final-score').textContent = `${score} / ${cities.length} acertos`;
+  const pct = Math.round(score / cities.length * 100);
+  let emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Incrível! Você é um verdadeiro detetive da memória indígena!'; }
+  else if (pct >= 70) { emoji = '🌟'; msg = 'Muito bem! Você conhece bem a herança indígena nos nomes das cidades.'; }
+  else { emoji = '📚'; msg = 'Bom esforço! Revise os significados e tente novamente.'; }
+  document.getElementById('final-emoji').textContent = emoji;
+  document.getElementById('final-msg').textContent = msg;
+}
+
+renderCards();
+</script>
+</body>
+</html>

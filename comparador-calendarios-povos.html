@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparador de Calendários — História 5º ano</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: #374151; }
+.hero {
+  background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B);
+  padding: 2rem 1.5rem 1.2rem; text-align: center; color: white;
+}
+.hero-emoji { font-size: 2.8rem; margin-bottom: .3rem; }
+.hero h1 { font-size: 1.5rem; font-weight: 900; }
+.hero p { font-size: .9rem; opacity: .9; margin-top: .3rem; }
+.container { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h2 { font-size: 1.15rem; font-weight: 800; color: var(--dark); margin: 1.5rem 0 .8rem; }
+.instruction { background: white; border-left: 4px solid var(--primary); border-radius: 0 12px 12px 0; padding: .9rem 1.1rem; margin-bottom: 1.2rem; font-size: .95rem; font-weight: 600; color: #374151; }
+/* Drag cards */
+.drag-pool { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; min-height: 60px; padding: .8rem; background: white; border-radius: 14px; border: 2px dashed #d1d5db; }
+.drag-card {
+  background: linear-gradient(135deg, var(--primary), var(--light));
+  color: white; border-radius: 10px; padding: .5rem .9rem;
+  font-size: .9rem; font-weight: 700; cursor: grab; user-select: none;
+  box-shadow: 0 2px 8px rgba(180,83,9,.2); transition: transform .15s, box-shadow .15s;
+  touch-action: none;
+}
+.drag-card:active { cursor: grabbing; transform: scale(1.06); box-shadow: 0 6px 18px rgba(180,83,9,.35); }
+.drag-card.placed { opacity: .4; pointer-events: none; }
+/* Calendar columns */
+.calendars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.cal-col {
+  background: white; border-radius: 16px; padding: 1.1rem;
+  border-top: 5px solid var(--primary); box-shadow: 0 2px 12px rgba(180,83,9,.08);
+}
+.cal-title { font-weight: 900; font-size: 1rem; color: var(--dark); margin-bottom: .3rem; }
+.cal-povo { font-size: .8rem; color: #6b7280; margin-bottom: .9rem; font-family: 'Space Mono', monospace; }
+.drop-zone {
+  min-height: 54px; border: 2.5px dashed #d1d5db; border-radius: 10px;
+  padding: .4rem .5rem; display: flex; flex-wrap: wrap; gap: .4rem;
+  align-content: flex-start; transition: border-color .2s, background .2s;
+}
+.drop-zone.over { border-color: var(--primary); background: #fff7ed; }
+.drop-zone.correct { border-color: #059669; background: #d1fae5; }
+.drop-zone.wrong { border-color: #DC2626; background: #fee2e2; }
+.placed-card {
+  background: #f3f4f6; border-radius: 8px; padding: .35rem .7rem;
+  font-size: .85rem; font-weight: 700; color: #374151;
+  cursor: pointer; border: 2px solid #e5e7eb;
+}
+.placed-card:hover { background: #fee2e2; border-color: #fca5a5; }
+/* Buttons */
+.btn-row { display: flex; gap: .8rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.check-btn {
+  background: linear-gradient(135deg, var(--primary), var(--light));
+  color: white; border: none; border-radius: 12px;
+  padding: .8rem 1.8rem; font-family: 'Baloo 2', sans-serif;
+  font-size: 1rem; font-weight: 800; cursor: pointer; transition: transform .15s;
+}
+.check-btn:hover { transform: scale(1.04); }
+.reset-btn {
+  background: white; border: 2.5px solid var(--primary); color: var(--primary);
+  border-radius: 12px; padding: .8rem 1.4rem;
+  font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer;
+}
+.feedback-global { display: none; border-radius: 14px; padding: 1rem 1.2rem; font-weight: 700; margin-bottom: 1rem; }
+.feedback-global.show { display: block; }
+.feedback-global.correct { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
+.feedback-global.partial { background: #fef3c7; color: #78350F; border: 2px solid #fcd34d; }
+.gabarito { display: none; background: white; border-radius: 16px; padding: 1.2rem; margin-top: 1rem; border-top: 4px solid var(--light); }
+.gabarito.show { display: block; }
+.gabarito h3 { color: var(--dark); font-size: 1.05rem; margin-bottom: .8rem; }
+.gabarito-item { font-size: .9rem; margin-bottom: .4rem; }
+.back-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .7rem 1.6rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; }
+.back-btn:hover { background: var(--primary); color: white; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-emoji">🗓️⚖️</div>
+  <h1>Comparador de Calendários</h1>
+  <p>Arraste as características para o calendário correto · História 5º ano</p>
+</div>
+<div class="container">
+  <div class="instruction">📌 Arraste cada característica abaixo para o calendário ao qual ela pertence. Você pode clicar em um card já colocado para devolvê-lo ao banco.</div>
+
+  <h2>🃏 Banco de Características</h2>
+  <div class="drag-pool" id="pool"></div>
+
+  <h2>📅 Calendários</h2>
+  <div class="calendars-grid" id="cal-grid"></div>
+
+  <div class="btn-row">
+    <button class="check-btn" onclick="checkAnswers()">✅ Verificar</button>
+    <button class="reset-btn" onclick="resetAll()">🔄 Reiniciar</button>
+  </div>
+  <div class="feedback-global" id="feedback-global"></div>
+  <div class="gabarito" id="gabarito">
+    <h3>📖 Gabarito</h3>
+    <div id="gabarito-content"></div>
+  </div>
+  <br>
+  <button class="back-btn" onclick="window.close() || (window.location.href='index.html')">← Voltar ao Portal</button>
+</div>
+<script>
+const calendars = [
+  { id: 'egipcio', title: 'Calendário Egípcio', povo: 'Egito Antigo' },
+  { id: 'ioruba',  title: 'Calendário Iorubá',  povo: 'Nigéria, Benin e Serra Leoa' },
+  { id: 'etíope',  title: 'Calendário Etíope',   povo: 'Etiópia' },
+  { id: 'maia',    title: 'Tzolk\'in / Haab\'',  povo: 'Maias — América Central' },
+  { id: 'kainawa', title: 'Calendário Kainawá',   povo: 'Huni Kuin — Brasil / Peru' }
+];
+
+const cards = [
+  { id: 'c1', text: '365 dias no total', correct: 'egipcio' },
+  { id: 'c2', text: '37 partes de 10 dias', correct: 'egipcio' },
+  { id: 'c3', text: '5 dias extras no final', correct: 'egipcio' },
+  { id: 'c4', text: '91 partes com 4 dias cada', correct: 'ioruba' },
+  { id: 'c5', text: 'Semana de apenas 4 dias', correct: 'ioruba' },
+  { id: 'c6', text: '13º mês com 5 dias', correct: 'etíope' },
+  { id: 'c7', text: 'Ano novo em setembro', correct: 'etíope' },
+  { id: 'c8', text: '12 meses de 30 dias', correct: 'etíope' },
+  { id: 'c9', text: 'Tzolk\'in: 260 dias', correct: 'maia' },
+  { id: 'c10', text: 'Haab\': 18 meses de 20 dias', correct: 'maia' },
+  { id: 'c11', text: 'Dois calendários simultâneos', correct: 'maia' },
+  { id: 'c12', text: 'Baseado em fenômenos naturais', correct: 'kainawa' },
+  { id: 'c13', text: 'Janeiro = flor do ipê', correct: 'kainawa' },
+  { id: 'c14', text: 'Agosto = cigarra ao rio', correct: 'kainawa' },
+  { id: 'c15', text: 'Não usa números de dias', correct: 'kainawa' },
+];
+
+// State: cardId -> calId (where placed) or null (in pool)
+const state = {};
+cards.forEach(c => state[c.id] = null);
+
+function renderPool() {
+  const pool = document.getElementById('pool');
+  pool.innerHTML = '';
+  cards.forEach(card => {
+    if (state[card.id] !== null) return;
+    const el = document.createElement('div');
+    el.className = 'drag-card';
+    el.textContent = card.text;
+    el.draggable = true;
+    el.dataset.id = card.id;
+    el.addEventListener('dragstart', e => { e.dataTransfer.setData('text', card.id); });
+    pool.appendChild(el);
+  });
+}
+
+function renderCalendars() {
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  calendars.forEach(cal => {
+    const col = document.createElement('div');
+    col.className = 'cal-col';
+    col.innerHTML = `<div class="cal-title">${cal.title}</div><div class="cal-povo">${cal.povo}</div><div class="drop-zone" id="drop-${cal.id}"></div>`;
+    grid.appendChild(col);
+    const zone = col.querySelector('.drop-zone');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('over');
+      const cardId = e.dataTransfer.getData('text');
+      state[cardId] = cal.id;
+      renderAll();
+    });
+    // Render placed cards
+    cards.filter(c => state[c.id] === cal.id).forEach(card => {
+      const el = document.createElement('div');
+      el.className = 'placed-card';
+      el.textContent = card.text;
+      el.title = 'Clique para devolver ao banco';
+      el.onclick = () => { state[card.id] = null; renderAll(); };
+      zone.appendChild(el);
+    });
+  });
+}
+
+function renderAll() {
+  renderPool();
+  renderCalendars();
+  document.getElementById('feedback-global').className = 'feedback-global';
+  document.getElementById('gabarito').className = 'gabarito';
+  document.querySelectorAll('.drop-zone').forEach(z => { z.classList.remove('correct','wrong'); });
+}
+
+function checkAnswers() {
+  let correct = 0, total = cards.filter(c => state[c.id] !== null).length;
+  if (total === 0) { alert('Arraste pelo menos um card antes de verificar!'); return; }
+  cards.forEach(card => {
+    if (state[card.id] === null) return;
+    const zone = document.getElementById(`drop-${state[card.id]}`);
+    if (state[card.id] === card.correct) { correct++; }
+  });
+  // Highlight zones
+  calendars.forEach(cal => {
+    const zone = document.getElementById(`drop-${cal.id}`);
+    const placed = cards.filter(c => state[c.id] === cal.id);
+    const allCorrect = placed.length > 0 && placed.every(c => c.correct === cal.id);
+    const hasWrong = placed.some(c => c.correct !== cal.id);
+    zone.classList.remove('correct','wrong');
+    if (hasWrong) zone.classList.add('wrong');
+    else if (allCorrect) zone.classList.add('correct');
+  });
+  const fb = document.getElementById('feedback-global');
+  const allPlaced = cards.every(c => state[c.id] !== null);
+  if (correct === cards.length && allPlaced) {
+    fb.className = 'feedback-global correct show';
+    fb.textContent = `🏆 Perfeito! Todas as ${cards.length} características estão nos calendários corretos!`;
+  } else {
+    fb.className = 'feedback-global partial show';
+    fb.textContent = `📚 ${correct} de ${total} características colocadas corretamente. Zonas verdes = correto, vermelhas = revise!`;
+  }
+  // Show gabarito
+  const gab = document.getElementById('gabarito');
+  gab.className = 'gabarito show';
+  document.getElementById('gabarito-content').innerHTML = calendars.map(cal => {
+    const correct_cards = cards.filter(c => c.correct === cal.id).map(c => c.text).join(', ');
+    return `<div class="gabarito-item"><strong>${cal.title}:</strong> ${correct_cards}</div>`;
+  }).join('');
+}
+
+function resetAll() {
+  cards.forEach(c => state[c.id] = null);
+  renderAll();
+}
+
+renderAll();
+</script>
+</body>
+</html>

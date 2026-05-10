@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Diversos Povos, Diversos Calendários</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #B45309;
+  --light: #F59E0B;
+  --bg: #FFFBEB;
+  --dark: #78350F;
+  --correct: #059669;
+  --wrong: #DC2626;
+  --neutral: #374151;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Baloo 2', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--neutral);
+}
+.hero {
+  background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B);
+  padding: 2rem 1.5rem 1.5rem;
+  text-align: center;
+  color: white;
+}
+.hero-emoji { font-size: 3rem; margin-bottom: .4rem; }
+.hero h1 { font-size: 1.6rem; font-weight: 900; line-height: 1.2; }
+.hero p { font-size: .95rem; opacity: .9; margin-top: .4rem; }
+.container { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.progress-bar-wrap { background: #e5e7eb; border-radius: 99px; height: 10px; margin: 1.2rem 0; }
+.progress-bar { background: linear-gradient(90deg, var(--primary), var(--light)); height: 10px; border-radius: 99px; transition: width .4s; }
+.q-label { font-family: 'Space Mono', monospace; font-size: .8rem; color: var(--primary); font-weight: 700; margin-bottom: .3rem; }
+.q-text { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.2rem; line-height: 1.4; }
+.options { display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1rem; }
+.opt-btn {
+  background: white;
+  border: 2.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: .85rem 1.1rem;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all .2s;
+  color: var(--neutral);
+}
+.opt-btn:hover:not(:disabled) { border-color: var(--primary); background: #fff7ed; transform: translateX(4px); }
+.opt-btn.correct { border-color: var(--correct); background: #d1fae5; color: #065f46; }
+.opt-btn.wrong { border-color: var(--wrong); background: #fee2e2; color: #7f1d1d; }
+.opt-btn:disabled { cursor: default; }
+.feedback {
+  border-radius: 12px;
+  padding: .9rem 1.1rem;
+  font-weight: 700;
+  font-size: .95rem;
+  margin-bottom: 1rem;
+  display: none;
+  line-height: 1.4;
+}
+.feedback.show { display: block; }
+.feedback.correct { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
+.feedback.wrong { background: #fee2e2; color: #7f1d1d; border: 2px solid #fca5a5; }
+.next-btn {
+  background: linear-gradient(135deg, var(--primary), var(--light));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: .85rem 2rem;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: none;
+  transition: transform .15s;
+}
+.next-btn:hover { transform: scale(1.04); }
+.next-btn.show { display: inline-block; }
+.result-card {
+  display: none;
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem 1.5rem;
+  box-shadow: 0 4px 24px rgba(180,83,9,.12);
+}
+.result-card.show { display: block; }
+.result-emoji { font-size: 4rem; margin-bottom: .5rem; }
+.result-score { font-size: 3rem; font-weight: 900; color: var(--primary); margin: .5rem 0; }
+.result-msg { font-size: 1.1rem; font-weight: 600; color: var(--neutral); margin-bottom: 1.5rem; }
+.result-breakdown { background: var(--bg); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; font-size: .95rem; }
+.back-btn {
+  background: white;
+  border: 2.5px solid var(--primary);
+  color: var(--primary);
+  border-radius: 12px;
+  padding: .75rem 1.8rem;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .2s;
+}
+.back-btn:hover { background: var(--primary); color: white; }
+.card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(180,83,9,.08); margin-bottom: 1rem; border-top: 4px solid var(--primary); }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-emoji">🗓️</div>
+  <h1>Diversos Povos, Diversos Calendários</h1>
+  <p>Quiz Interativo · 10 questões · História 5º ano</p>
+</div>
+<div class="container">
+  <div id="quiz-area">
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress" style="width:10%"></div></div>
+    <div class="card">
+      <div class="q-label" id="q-label">Questão 1 de 10</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Próxima questão →</button>
+    </div>
+  </div>
+  <div class="result-card" id="result-card">
+    <div class="result-emoji" id="result-emoji"></div>
+    <div style="font-size:1.1rem;font-weight:700;color:#6b7280;margin-bottom:.3rem">Sua pontuação</div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="result-breakdown" id="result-breakdown"></div>
+    <button class="back-btn" onclick="window.close() || (window.location.href='index.html')">← Voltar ao Portal</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    q: "O calendário egípcio tinha quantos dias no total?",
+    opts: ["360 dias", "365 dias", "354 dias", "400 dias"],
+    correct: 1,
+    explanation: "O calendário egípcio tinha 365 dias, dividido em 37 partes — cada parte com 10 dias — mais 5 dias extras no final do ano."
+  },
+  {
+    q: "Em quantos dias era dividida cada parte do calendário egípcio?",
+    opts: ["7 dias", "30 dias", "10 dias", "5 dias"],
+    correct: 2,
+    explanation: "O calendário egípcio era dividido em 37 partes, cada uma com 10 dias (décadas), mais 5 dias no final."
+  },
+  {
+    q: "O calendário iorubá, do povo que vive na Nigéria, no Benin e em Serra Leoa, tem partes de quantos dias cada?",
+    opts: ["7 dias", "10 dias", "5 dias", "4 dias"],
+    correct: 3,
+    explanation: "O calendário iorubá tem 91 partes com 4 dias cada — uma espécie de semana de 4 dias."
+  },
+  {
+    q: "O calendário etíope tem 12 meses de 30 dias. Como é o 13º mês?",
+    opts: ["Tem 30 dias como os outros", "Tem apenas 5 dias", "Tem 7 dias", "Não existe 13º mês"],
+    correct: 1,
+    explanation: "O calendário etíope tem 12 meses de 30 dias e um 13º mês de apenas 5 dias. O ano novo etíope é comemorado em setembro!"
+  },
+  {
+    q: "Qual era o nome do calendário maia de 260 dias?",
+    opts: ["Haab'", "Tzolk'in", "Kainawá", "Iorubá"],
+    correct: 1,
+    explanation: "O tzolk'in era o calendário maia de 260 dias, dividido em 20 grupos de 13 dias. Era usado especialmente para cerimônias e rituais."
+  },
+  {
+    q: "O calendário maia haab' era composto por quantos meses e quantos dias por mês?",
+    opts: ["12 meses de 30 dias", "13 meses de 28 dias", "18 meses de 20 dias (+ 5 dias)", "20 meses de 18 dias"],
+    correct: 2,
+    explanation: "O haab' tinha 18 meses de 20 dias, mais um período de 5 dias chamado Uayeb — totalizando 365 dias."
+  },
+  {
+    q: "O calendário indígena Kainawá (huni kuin) organiza o tempo com base em quê?",
+    opts: ["Nos números e cálculos astronômicos", "Nos fenômenos naturais como flores, animais e chuvas", "Nos movimentos da Lua", "Nas estações do ano europeias"],
+    correct: 1,
+    explanation: "O calendário Kainawá é baseado nos fenômenos naturais: floração do ipê, filhotes de anta, chegada da cigarra, maturação da pupunha — o ciclo das águas e da natureza."
+  },
+  {
+    q: "No calendário Kainawá, o mês de janeiro é marcado por qual fenômeno natural?",
+    opts: ["Tempo dos filhotes de anta", "Tempo da flor do ipê", "Tempo da cigarra descer ao rio", "Frutos da pupunha"],
+    correct: 1,
+    explanation: "Janeiro no calendário Kainawá é o tempo da flor do ipê — um dos eventos naturais que marca o ciclo do ano."
+  },
+  {
+    q: "Por que é importante conhecer os diferentes calendários criados pelos povos ao longo da história?",
+    opts: [
+      "Porque todos os calendários são iguais e usam os mesmos números",
+      "Porque mostram que cada povo organizou o tempo com sua própria sabedoria e cultura",
+      "Porque o calendário gregoriano é cópia de todos os outros",
+      "Porque os calendários antigos são mais precisos que os modernos"
+    ],
+    correct: 1,
+    explanation: "Cada calendário reflete a cultura, os saberes e as necessidades de seu povo. Conhecê-los mostra a riqueza da diversidade humana e que nenhuma forma de organizar o tempo é mais 'certa' que outra."
+  },
+  {
+    q: "Qual povo criou DOIS calendários usados ao mesmo tempo — um de 260 dias e outro de 365 dias?",
+    opts: ["Os egípcios", "Os iorubás", "Os maias", "Os Kainawá"],
+    correct: 2,
+    explanation: "Os maias usavam dois calendários simultaneamente: o tzolk'in (260 dias) e o haab' (365 dias). Juntos, eles guiavam as colheitas, cerimônias e batalhas."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answers = [];
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('q-label').textContent = `Questão ${current + 1} de ${questions.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress').style.width = `${((current + 1) / questions.length) * 100}%`;
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').className = 'next-btn';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.correct].classList.add('correct');
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct show';
+    fb.textContent = '✅ Correto! ' + q.explanation;
+    answers.push(true);
+  } else {
+    btns[idx].classList.add('wrong');
+    fb.className = 'feedback wrong show';
+    fb.textContent = '❌ Errado. ' + q.explanation;
+    answers.push(false);
+  }
+  document.getElementById('next-btn').className = 'next-btn show';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const card = document.getElementById('result-card');
+  card.className = 'result-card show';
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('result-score').textContent = `${score}/${questions.length}`;
+  let emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Incrível! Você domina os calendários dos povos!'; }
+  else if (pct >= 70) { emoji = '🌟'; msg = 'Muito bem! Você conhece bem a diversidade dos calendários.'; }
+  else if (pct >= 50) { emoji = '📚'; msg = 'Bom esforço! Releia a HQ e tente novamente.'; }
+  else { emoji = '💪'; msg = 'Continue estudando! Cada povo tem sua sabedoria.'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-breakdown').innerHTML = `<strong>Acertos:</strong> ${score} &nbsp;|&nbsp; <strong>Erros:</strong> ${questions.length - score} &nbsp;|&nbsp; <strong>Aproveitamento:</strong> ${pct}%`;
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
