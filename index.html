@@ -1368,7 +1368,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       </div>
 
       <!-- TEMA 2: Marcos de Memória -->
-      <div class="theme-content" id="theme-hist-marcos-memoria" style="display:none">
+      <div class="theme-content" id="theme-hist-marcos-memoria">
         <div class="hq-card">
           <img class="hq-img" src="hq-marcos-memoria.png" alt="HQ Marcos de Memória">
           <div class="hq-caption"><span>📖</span><span>Marcos de Memória — 4 páginas · Personagens: Memo (Guardião da Memória), Bia e Prepo · Monumentos, exclusão, memória indígena e Cais do Valongo</span></div>
@@ -1473,16 +1473,15 @@ function setNavActive(id) {
 function closeAllSubs() {
   document.querySelectorAll('.theme-sub').forEach(function(s) { s.classList.remove('open'); });
 }
-
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
 }
-
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
 }
 </script>
+</div>
 </body>
 </html>
