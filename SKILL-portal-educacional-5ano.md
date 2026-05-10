@@ -13,13 +13,13 @@ Dado um conjunto de fotos de conteúdo escolar, esta skill executa o seguinte pi
 FOTOS → [FASE 0] Análise de escopo → Proposta estrutural → ⏸ AGUARDAR APROVAÇÃO DE LÉO
          ↓ (após aprovação)
          Separação por tema → Para cada tema:
-           1. Prompt HQ (.md)
-           2. Geração automática das imagens via Claude in Chrome + ChatGPT
-           3. Colagem das 4 páginas em hq-[slug].png
-           4. Atividades HTML (Quiz + variáveis + Mapa Mental)
-           5. Atualização do index.html
-           6. Entrega via Cowork
+           1. Prompt HQ (.md)                   ← entregue para uso externo por Léo
+           2. Atividades HTML (Quiz + variáveis + Mapa Mental)
+           3. Atualização do index.html
+           4. Entrega via Cowork
 ```
+
+> **Nota:** A geração das imagens de HQ (ChatGPT) e a colagem das páginas são etapas externas à skill, executadas por Léo com a skill dedicada de HQ. A skill do portal entrega o prompt `.md` e segue direto para as atividades — o `hq-[slug].png` deve ser copiado manualmente por Léo para a raiz do projeto antes do deploy.
 
 > **Regra absoluta:** Nenhum arquivo é gerado antes da aprovação explícita de Léo na Fase 0.
 
@@ -135,7 +135,7 @@ Para novas disciplinas não listadas, proponha uma paleta ao usuário antes de c
 Cada novo tema deve ter um personagem ou elemento narrativo novo (ou reutilizar existentes quando fizer sentido).
 
 ### Personagens já existentes (sempre disponíveis)
-- **Prepo** — robô roxo mascote, aparece em múltiplos temas. **Imagem de referência canônica:** `ref-prepo.png` na raiz do projeto (`C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\ref-prepo.png`). Esta imagem deve ser usada como âncora visual em toda geração no ChatGPT.
+- **Prepo** — robô roxo mascote, aparece em múltiplos temas
 - **Bia** — menina 11 anos, cabelos pretos cacheados, uniforme azul; protagonista frequente
 - **Prof. Teatrão** — professor dramático com lenço colorido
 - **Verbão** — letra animada, 3 versões de roupa (passado/presente/futuro)
@@ -177,8 +177,7 @@ Crie o arquivo `.md` seguindo este template expandido:
 
 ## INSTRUÇÕES DE USO
 
-Este arquivo é processado automaticamente pelo Claude in Chrome.
-Ferramenta: ChatGPT com Images 2.0.
+Cole o bloco de cada página diretamente no ChatGPT (Images 2.0) ou outra ferramenta de geração.
 Gere uma página por vez, na ordem definida abaixo.
 
 ---
@@ -196,7 +195,7 @@ elementos visuais temáticos da disciplina/tema, bordas dos painéis, estética 
 
 | Personagem | Descrição visual |
 |---|---|
-| **Prepo** | [descrição consistente — usada como fallback textual, mas a referência primária é ref-prepo.png] |
+| **Prepo** | [descrição visual consistente] |
 | **Bia** | [descrição consistente] |
 | [outros personagens recorrentes que aparecem no tema] | [descrição] |
 
@@ -248,7 +247,7 @@ elementos visuais temáticos, ondas/setas/ícones de apoio pedagógico]
 
 ---
 
-## FOLHA DE PERSONAGENS (gerada primeiro para ancorar a sessão — não baixar)
+## FOLHA DE PERSONAGENS (gere primeiro)
 
 \`\`\`
 [Prompt em inglês para folha de referência visual de todos os personagens.
@@ -268,7 +267,7 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 
 ## ORDEM DE GERAÇÃO
 
-1. Folha de personagens (ancoragem visual — não baixar)
+1. Folha de personagens
 2. Página 1 — [título]
 3. Página 2 — [título]
 4. Página 3 — [título]
@@ -279,90 +278,6 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 *Conteúdo baseado em: [livro didático, páginas referenciadas]*
 *Tema: [descrição resumida do conteúdo pedagógico]*
 ```
-
----
-
-## FASE 3.5 — Geração automática das imagens via Claude in Chrome ⛔ GATE OBRIGATÓRIO
-
-> **⛔ BLOQUEIO TOTAL:** O Cowork deve parar completamente aqui e acionar o Claude in Chrome para executar esta fase. **A Fase 4 não pode ser iniciada sob nenhuma circunstância antes de o arquivo `hq-[slug].png` estar confirmado na pasta do projeto.** Não há exceção a esta regra.
-
-Esta fase é executada **integralmente pelo Claude in Chrome**, sem intervenção de Léo. Ocorre após a geração do prompt `.md` da Fase 3 e antes das atividades HTML.
-
-### 3.5.1 Pré-requisitos
-
-- Claude in Chrome conectado e ativo
-- Arquivo `ref-prepo.png` presente em `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\ref-prepo.png`
-- Arquivo de prompt `.md` do tema já gerado (Fase 3)
-- Pasta de destino do projeto acessível: `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\`
-
-### 3.5.2 Sequência de automação — passo a passo
-
-O Claude in Chrome executa os seguintes passos em ordem, sem pausas para aprovação:
-
-**Passo 1 — Abrir nova conversa no GPT customizado**
-- Navegar para `https://chatgpt.com/g/g-69ff2b40169881918c5f75a8d9767f30-gpt-quadrinhos-sabendo`
-- Confirmar que o GPT carregou corretamente antes de prosseguir
-
-**Passo 2 — Ancorar os personagens fixos com imagens canônicas**
-- Anexar ao campo de mensagem os dois arquivos:
-  - `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\ref-prepo.png`
-  - `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\ref-bia.png`
-- Colar o bloco **FOLHA DE PERSONAGENS** do arquivo `.md` na mesma mensagem e enviar tudo junto
-- Aguardar a geração completa da folha de personagens
-- **Não baixar** — a folha serve apenas para ancorar o estilo dos personagens na sessão
-
-**Passo 3 — Gerar Página 1**
-- Colar o bloco **PROMPT da PÁGINA 1** do arquivo `.md`
-- Aguardar a geração completa da imagem
-- Clicar no botão de download da imagem gerada
-- Aguardar o arquivo aparecer em `C:\Users\wizar\Downloads\`
-- Mover o arquivo para `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\` com o nome `[slug]_1.png`
-
-**Passo 4 — Gerar Páginas 2, 3 e 4**
-- Repetir o mesmo procedimento do Passo 3 para cada página
-- Nomear os arquivos como `[slug]_2.png`, `[slug]_3.png`, `[slug]_4.png`
-
-### 3.5.3 Colagem das 4 páginas em imagem única
-
-Após o download e renomeação das 4 imagens, o Claude executa a colagem via Python/Pillow:
-
-```python
-from PIL import Image
-
-slug = "[slug-do-tema]"
-pasta = r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos"
-
-files = [f"{pasta}\\{slug}_{i}.png" for i in range(1, 5)]
-imgs = [Image.open(f) for f in files]
-
-TARGET_W = max(img.size[0] for img in imgs)
-GAP = 6
-GAP_COLOR = (30, 30, 30)
-
-resized = [img.resize((TARGET_W, int(img.size[1] * TARGET_W / img.size[0])), Image.LANCZOS) for img in imgs]
-
-total_h = sum(r.size[1] for r in resized) + GAP * (len(resized) - 1)
-canvas = Image.new("RGB", (TARGET_W, total_h), GAP_COLOR)
-
-y = 0
-for i, r in enumerate(resized):
-    canvas.paste(r, (0, y))
-    y += r.size[1] + (GAP if i < len(resized) - 1 else 0)
-
-canvas.save(f"{pasta}\\hq-{slug}.png", "PNG", optimize=True)
-```
-
-**Resultado:** arquivo `hq-[slug].png` salvo diretamente na raiz do projeto, pronto para ser referenciado pelo `index.html`.
-
-### 3.5.4 Limpeza dos arquivos intermediários
-
-Após a colagem bem-sucedida, remover os 4 arquivos temporários `[slug]_1.png` … `[slug]_4.png` da pasta do projeto.
-
-### 3.5.5 ⛔ Confirmação obrigatória antes de avançar
-
-Verificar que `hq-[slug].png` existe na pasta do projeto com dimensões coerentes (largura mínima de 1024px, altura mínima de 3000px).
-
-**O Cowork só retoma a execução após esta confirmação. Avançar para a Fase 4 sem o arquivo de imagem presente é uma falha crítica de execução.**
 
 ---
 
@@ -579,7 +494,7 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 </div>
 ```
 
-> **Atenção:** a extensão padrão do arquivo HQ é `.png` (gerado na Fase 3.5). Usar `.jpg` apenas se Léo fornecer a imagem nesse formato.
+> **Atenção:** a extensão padrão do arquivo HQ é `.png`. Usar `.jpg` apenas se Léo fornecer a imagem nesse formato.
 
 ---
 
@@ -593,27 +508,25 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\
 ├── index.html                         ← editado diretamente (Fase 6)
 ├── hq-[slug]-prompt.md                ← criado (Fase 3)
-├── hq-[slug].png                      ← criado automaticamente (Fase 3.5)
 ├── quiz-[slug].html                   ← criado (Fase 5)
 ├── mapa-mental-[slug].html            ← criado (Fase 5)
 ├── [atividade-variavel-1]-[slug].html ← criado (Fase 5)
 └── [atividade-variavel-2]-[slug].html ← criado (Fase 5)
 ```
 
-Todos os arquivos vão direto para a raiz do projeto — nunca em subpastas.
+> **Nota:** o arquivo `hq-[slug].png` **não é gerado por esta skill** — Léo o gera externamente (skill de HQ) e o copia manualmente para a raiz do projeto antes do deploy.
 
 ### 7.2 Checklist antes de concluir
 
 - [ ] `index.html` salvo com todas as alterações da Fase 6
-- [ ] `hq-[slug].png` presente na raiz do projeto (gerado na Fase 3.5)
 - [ ] Todos os arquivos HTML das atividades na raiz da pasta
 - [ ] Todos os `href` dos `act-card` no index batem com os nomes dos arquivos criados
 - [ ] O `id` do `theme-content` bate com o `onclick` do tab e do sidebar
 - [ ] Contadores da home atualizados
 - [ ] `firstTheme` atualizado no JavaScript (se nova disciplina)
 - [ ] Nenhum arquivo criado em subpasta
-- [ ] `src` da `hq-img` no index usa extensão `.png`
-- [ ] Arquivos temporários `[slug]_1.png` … `[slug]_4.png` removidos da pasta
+- [ ] `src` da `hq-img` no index usa extensão `.png` (ou `.jpg` se aplicável)
+- [ ] Léo foi informado de que precisa copiar manualmente o `hq-[slug].png` para a pasta antes do deploy
 
 ### 7.3 Mensagem de conclusão
 
@@ -622,7 +535,8 @@ Ao finalizar, informar Léo:
 2. Quais atividades variáveis foram escolhidas e **por que** (justificativa pedagógica)
 3. O personagem novo criado (se houver) com breve descrição
 4. Se algum conceito da Fase 0 ficou sem cobertura nas atividades geradas
-5. Próximo passo: commit + push no GitHub Desktop → GitHub Pages publica automaticamente
+5. Lembrete para gerar as imagens de HQ com a skill dedicada e copiar o `hq-[slug].png` para a raiz do projeto
+6. Próximo passo: commit + push no GitHub Desktop → GitHub Pages publica automaticamente
 
 ### 7.4 Fallback — quando executado fora do Cowork
 
@@ -640,4 +554,3 @@ O `index.html` completo exige que Léo forneça o arquivo atual no início da co
 - `references/temas-existentes.md` — lista de todos os temas já implementados
 - `references/atividades-por-disciplina.md` — catálogo de tipos de atividade por disciplina com critérios de escolha
 - `references/index-template-snippets.md` — snippets HTML prontos para copiar ao atualizar o index
-- `ref-prepo.png` — imagem de referência canônica do Prepo (raiz do projeto)
