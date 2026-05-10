@@ -6,213 +6,303 @@
 <title>Mapa Mental — Tecnologia na Agropecuária</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Baloo 2',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
-header{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);color:white;padding:22px 20px;text-align:center}
-header h1{font-family:'Space Mono',monospace;font-size:1.3rem;font-weight:900;margin-bottom:4px}
-header p{font-size:.85rem;opacity:.85}
-.instructions{max-width:700px;margin:14px auto;padding:12px 18px;background:white;border-radius:14px;font-size:.86rem;color:#334155;box-shadow:0 2px 10px rgba(21,128,61,.08);line-height:1.6}
-.instructions strong{color:var(--primary)}
-.legend{max-width:700px;margin:0 auto 10px;padding:0 14px;display:flex;gap:14px;flex-wrap:wrap}
-.leg-item{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:800;color:#374151}
-.leg-dot{width:16px;height:16px;border-radius:5px;flex-shrink:0}
-.leg-dot.root{background:linear-gradient(135deg,#15803D,#4ADE80)}
-.leg-dot.level1{background:#d1fae5;border:2px solid #86efac}
-.leg-dot.level2{background:white;border:2px solid #d1fae5}
-.canvas-wrap{flex:1;position:relative;overflow:hidden;background:white;border-top:2px solid #d1fae5;border-bottom:2px solid #d1fae5;min-height:520px}
-svg#lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-.node{position:absolute;border-radius:14px;padding:10px 14px;font-weight:800;font-size:.82rem;text-align:center;cursor:grab;user-select:none;box-shadow:0 3px 12px rgba(0,0,0,.1);min-width:110px;max-width:165px;line-height:1.3;touch-action:none}
-.node:active{cursor:grabbing;box-shadow:0 7px 22px rgba(0,0,0,.18);z-index:99}
-.node.root{background:linear-gradient(135deg,#15803D,#4ADE80);color:white;font-size:.9rem;min-width:155px;border-radius:18px}
-.node.level1{background:#d1fae5;border:2px solid #86efac;color:#14532D}
-.node.level2{background:white;border:2px solid #d1fae5;color:#374151}
-.controls{display:flex;gap:12px;justify-content:center;padding:16px;flex-wrap:wrap}
-.btn{border:none;border-radius:12px;padding:12px 22px;font-family:'Baloo 2',sans-serif;font-size:.93rem;font-weight:800;cursor:pointer}
-.btn-check{background:var(--primary);color:white}
-.btn-reset{background:#64748b;color:white}
-.btn-back{background:white;border:2px solid #e5e7eb;color:#6B7280}
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
-.overlay.show{display:flex}
-.overlay-card{background:white;border-radius:20px;padding:26px 22px;max-width:480px;width:92%;max-height:82vh;overflow-y:auto}
-.overlay-card h2{font-size:1.1rem;font-weight:900;color:var(--primary);margin-bottom:14px}
-.row{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;padding:9px;border-radius:10px}
-.row.ok{background:#dcfce7}
-.row.nok{background:#fee2e2}
-.row-icon{font-size:1rem;flex-shrink:0}
-.row-text{font-size:.84rem;font-weight:600;color:#1e293b;line-height:1.4}
-.score-final{font-size:1.1rem;font-weight:900;color:var(--primary);margin-top:14px;text-align:center}
-.close-btn{display:block;margin:16px auto 0;background:var(--primary);color:white;border:none;border-radius:12px;padding:11px 24px;font-family:'Baloo 2',sans-serif;font-size:.93rem;font-weight:800;cursor:pointer}
-footer{text-align:center;padding:10px;font-size:.75rem;color:#94a3b8}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --geo: #15803D; --geo-light: #4ADE80; --geo-bg: #F0FDF4;
+  --bg: #F0FDF4; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #D1FAE5;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--geo); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(21,128,61,.1); }
+.card-header { background: linear-gradient(135deg, #14532D, #15803D 60%, #4ADE80); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--geo-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #f8fffe; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--geo-light); color: var(--geo); }
+.toolbar button.active { background: var(--geo-bg); border-color: var(--geo); color: var(--geo); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--geo); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: 520px; background: var(--geo-bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid #15803D; outline-offset: 2px; }
+.n-root   { background: linear-gradient(135deg,#15803D,#4ADE80); color: white; border: 2px solid #14532D; font-size: 13px; font-weight: 800; min-width: 145px; padding: 11px 20px; z-index: 11; }
+.n-level1 { background: #d1fae5; border: 2px solid #86efac; color: #14532D; }
+.n-level2 { background: white; border: 2px solid #d1fae5; color: #374151; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #86efac; background: #f0fdf4; display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: #14532D; margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: #f0fdf4; display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #bbf7d0; }
+.score-fill  { height: 8px; border-radius: 999px; background: #15803D; transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: #14532D; white-space: nowrap; }
 </style>
 </head>
 <body>
-<header>
-  <h1>🗺️ Mapa Mental</h1>
-  <p>Tecnologia na Agropecuária — Geografia 5º Ano</p>
-</header>
-<div class="instructions">
-  <strong>Como usar:</strong> Arraste cada balão para perto do conceito ao qual ele pertence. Quando dois nós relacionados ficarem próximos, uma linha verde aparecerá entre eles. Organize todo o mapa e clique em <strong>Verificar</strong>!
-</div>
-<div class="legend">
-  <div class="leg-item"><div class="leg-dot root"></div> Tema central</div>
-  <div class="leg-item"><div class="leg-dot level1"></div> Categoria principal</div>
-  <div class="leg-item"><div class="leg-dot level2"></div> Conceito específico</div>
-</div>
-<div class="canvas-wrap" id="canvas">
-  <svg id="lines"></svg>
-</div>
-<div class="controls">
-  <button class="btn btn-back" onclick="window.close()">← Portal</button>
-  <button class="btn btn-reset" onclick="reset()">↩ Reorganizar</button>
-  <button class="btn btn-check" onclick="checkMap()">✅ Verificar</button>
-</div>
-<div class="overlay" id="overlay">
-  <div class="overlay-card">
-    <h2>📋 Resultado do Mapa</h2>
-    <div id="overlay-body"></div>
-    <button class="close-btn" onclick="document.getElementById('overlay').classList.remove('show')">Fechar</button>
+<div class="wrap">
+  <a class="back-link" href="index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🗺️</div>
+      <div><h1>Mapa Mental</h1><p>Tecnologia na Agropecuária</p></div>
+      <div class="hbadge">🏆 Síntese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar os balões e organizar o mapa.
+      Use <strong>+ Conectar</strong> para criar setas entre eles.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com a estrutura correta.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect" class="active">+ Conectar</button>
+      <button id="btn-move">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexões</span>
+      <span id="hint-bar">Clique em dois balões para criar uma seta</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balão para conectar ✔</div>
+      <div id="stage">
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#15803D" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">ESTRUTURA DO MAPA — GABARITO</div>
+      <svg id="gabarito-svg" viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#15803D"/>
+            <stop offset="100%" stop-color="#4ADE80"/>
+          </linearGradient>
+          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#15803D" opacity="0.6"/>
+          </marker>
+        </defs>
+        <!-- Root → L1 lines -->
+        <line x1="350" y1="34" x2="110" y2="82" stroke="#15803D" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="350" y2="82" stroke="#15803D" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="590" y2="82" stroke="#15803D" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <!-- L1-agro → L2 -->
+        <line x1="110" y1="110" x2="52"  y2="156" stroke="#86efac" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="110" y1="110" x2="168" y2="156" stroke="#86efac" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- L1-agric → L2 -->
+        <line x1="350" y1="110" x2="292" y2="156" stroke="#86efac" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="350" y1="110" x2="408" y2="156" stroke="#86efac" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- L1-pec → L2 -->
+        <line x1="590" y1="110" x2="530" y2="156" stroke="#86efac" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="590" y1="110" x2="650" y2="156" stroke="#86efac" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- Root node -->
+        <rect x="234" y="6" width="232" height="32" rx="16" fill="url(#rg)" stroke="#14532D" stroke-width="2"/>
+        <text x="350" y="27" text-anchor="middle" font-size="11" font-weight="800" fill="white">🌾 TECNOLOGIA NA AGROPECUÁRIA</text>
+        <!-- L1: Agrossistemas -->
+        <rect x="22" y="82" width="176" height="28" rx="14" fill="#d1fae5" stroke="#86efac" stroke-width="1.5"/>
+        <text x="110" y="101" text-anchor="middle" font-size="10" font-weight="700" fill="#14532D">🌱 Agrossistemas</text>
+        <!-- L1: Tecnologias agricult. -->
+        <rect x="258" y="82" width="184" height="28" rx="14" fill="#d1fae5" stroke="#86efac" stroke-width="1.5"/>
+        <text x="350" y="101" text-anchor="middle" font-size="10" font-weight="700" fill="#14532D">☕ Tecnologias na agricultura</text>
+        <!-- L1: Tecnologias pecuária -->
+        <rect x="500" y="82" width="180" height="28" rx="14" fill="#d1fae5" stroke="#86efac" stroke-width="1.5"/>
+        <text x="590" y="101" text-anchor="middle" font-size="10" font-weight="700" fill="#14532D">🐄 Tecnologias na pecuária</text>
+        <!-- L2 under Agrossistemas -->
+        <rect x="4"   y="156" width="96" height="24" rx="12" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="52"  y="172" text-anchor="middle" font-size="8.5" fill="#374151">Agrop. extensiva</text>
+        <rect x="122" y="156" width="92" height="24" rx="12" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="168" y="172" text-anchor="middle" font-size="8.5" fill="#374151">Agrop. intensiva</text>
+        <!-- L2 under Agricultura -->
+        <rect x="234" y="156" width="116" height="24" rx="12" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="292" y="172" text-anchor="middle" font-size="8.5" fill="#374151">Agricultura 4.0</text>
+        <rect x="358" y="156" width="100" height="24" rx="12" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="408" y="172" text-anchor="middle" font-size="8.5" fill="#374151">Etapas do café</text>
+        <!-- L2 under Pecuária -->
+        <rect x="474" y="156" width="112" height="24" rx="12" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="530" y="172" text-anchor="middle" font-size="8.5" fill="#374151">Pastejo rotacionado</text>
+        <rect x="604" y="156" width="92" height="24" rx="12" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="650" y="172" text-anchor="middle" font-size="8.5" fill="#374151">Pec. sustentável</text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 9 conexões</span>
+      </div>
+    </div>
   </div>
 </div>
-<footer>Portal Educacional 5º Ano • Geografia — Tecnologia na Agropecuária</footer>
 <script>
-const nodes = [
-  {id:'root',    label:'🌾 TECNOLOGIA NA AGROPECUÁRIA',         cls:'root'},
-  {id:'agro',    label:'🌱 Agrossistemas',                       cls:'level1'},
-  {id:'agric',   label:'☕ Tecnologias na agricultura',          cls:'level1'},
-  {id:'pec',     label:'🐄 Tecnologias na pecuária',             cls:'level1'},
-  {id:'extens',  label:'Agropecuária extensiva',                 cls:'level2'},
-  {id:'intens',  label:'Agropecuária intensiva',                 cls:'level2'},
-  {id:'agro4',   label:'Agricultura 4.0 (drones e aplicativos)', cls:'level2'},
-  {id:'etapas',  label:'Etapas: solo → plantio → colheita',      cls:'level2'},
-  {id:'pastejo', label:'Pastejo rotacionado',                     cls:'level2'},
-  {id:'sustent', label:'Pecuária sustentável',                    cls:'level2'},
+var NODES = [
+  {id:'root',    label:'🌾 TECNOLOGIA NA AGROPECUÁRIA',      cls:'n-root'},
+  {id:'agro',    label:'🌱 Agrossistemas',                    cls:'n-level1'},
+  {id:'agric',   label:'☕ Tecnologias na agricultura',       cls:'n-level1'},
+  {id:'pec',     label:'🐄 Tecnologias na pecuária',          cls:'n-level1'},
+  {id:'extens',  label:'Agropecuária extensiva',              cls:'n-level2'},
+  {id:'intens',  label:'Agropecuária intensiva',              cls:'n-level2'},
+  {id:'agro4',   label:'Agricultura 4.0',                    cls:'n-level2'},
+  {id:'etapas',  label:'Etapas de produção do café',         cls:'n-level2'},
+  {id:'pastejo', label:'Pastejo rotacionado',                 cls:'n-level2'},
+  {id:'sustent', label:'Pecuária sustentável',                cls:'n-level2'},
 ];
 
-const connections = [
+var GABARITO = [
   ['root','agro'],['root','agric'],['root','pec'],
   ['agro','extens'],['agro','intens'],
   ['agric','agro4'],['agric','etapas'],
   ['pec','pastejo'],['pec','sustent'],
 ];
 
-const THRESHOLD = 220;
-const pos = {};
+var SHUFFLE = ['extens','agric','pastejo','agro','agro4','root','intens','pec','etapas','sustent'];
 
-function scatter(){
-  const W = document.getElementById('canvas').offsetWidth || window.innerWidth;
-  const H = Math.max(document.getElementById('canvas').offsetHeight, 520);
-  const placed = [];
-  const shuffled = [...nodes].sort(()=>Math.random()-.5);
-  shuffled.forEach(n=>{
-    const nw = n.cls==='root'?170:n.cls==='level1'?155:145;
-    let x,y,t=0;
-    do{
-      x=16+Math.random()*(W-nw-32);
-      y=16+Math.random()*(H-90);
-      t++;
-    } while(t<40 && placed.some(p=>Math.abs(p.x-x)<nw-5&&Math.abs(p.y-y)<60));
-    placed.push({x,y});
-    pos[n.id]={x,y};
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'connect', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
+
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 480 ? 2 : 5;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 16, padY = 32;
+  var colW = (W - padX*2) / COLS;
+  var rowH = Math.max(80, (stage.clientHeight - padY*2) / ROWS);
+  var minH = padY*2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i%COLS + 0.5) * colW,
+      y: padY + (Math.floor(i/COLS) + 0.5) * rowH
+    };
   });
 }
 
-function render(){
-  const cv = document.getElementById('canvas');
-  cv.querySelectorAll('.node').forEach(n=>n.remove());
-  nodes.forEach(n=>{
-    const el=document.createElement('div');
-    el.className='node '+n.cls;
-    el.id='nd-'+n.id;
-    el.textContent=n.label;
-    el.style.left=pos[n.id].x+'px';
-    el.style.top =pos[n.id].y+'px';
-    addDrag(el,n.id);
-    cv.appendChild(el);
-  });
-  drawLines();
-}
-
-function drawLines(){
-  const svg=document.getElementById('lines');
-  svg.innerHTML='';
-  const cr=document.getElementById('canvas').getBoundingClientRect();
-  connections.forEach(([a,b])=>{
-    const ea=document.getElementById('nd-'+a);
-    const eb=document.getElementById('nd-'+b);
-    if(!ea||!eb) return;
-    const ra=ea.getBoundingClientRect(), rb=eb.getBoundingClientRect();
-    const x1=ra.left-cr.left+ra.width/2,  y1=ra.top-cr.top+ra.height/2;
-    const x2=rb.left-cr.left+rb.width/2,  y2=rb.top-cr.top+rb.height/2;
-    if(Math.hypot(x2-x1,y2-y1)<THRESHOLD){
-      const l=document.createElementNS('http://www.w3.org/2000/svg','line');
-      l.setAttribute('x1',x1); l.setAttribute('y1',y1);
-      l.setAttribute('x2',x2); l.setAttribute('y2',y2);
-      l.setAttribute('stroke','#4ADE80');
-      l.setAttribute('stroke-width','2.5');
-      l.setAttribute('stroke-opacity','0.7');
-      svg.appendChild(l);
+function renderNodes() {
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-'+n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls; el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
     }
+    placeNode(n.id);
   });
 }
 
-function addDrag(el,id){
-  let ox,oy,sx,sy;
-  el.addEventListener('mousedown',e=>{
-    ox=e.clientX; oy=e.clientY; sx=pos[id].x; sy=pos[id].y; el.style.zIndex=50;
-    const mm=e2=>{
-      pos[id].x=sx+(e2.clientX-ox);
-      pos[id].y=sy+(e2.clientY-oy);
-      el.style.left=pos[id].x+'px';
-      el.style.top =pos[id].y+'px';
-      drawLines();
-    };
-    const mu=()=>{el.style.zIndex='';window.removeEventListener('mousemove',mm);window.removeEventListener('mouseup',mu);};
-    window.addEventListener('mousemove',mm);
-    window.addEventListener('mouseup',mu);
-    e.preventDefault();
-  });
-  el.addEventListener('touchstart',e=>{
-    const t=e.touches[0]; ox=t.clientX; oy=t.clientY; sx=pos[id].x; sy=pos[id].y; el.style.zIndex=50;
-    const tm=e2=>{
-      e2.preventDefault();
-      const t2=e2.touches[0];
-      pos[id].x=sx+(t2.clientX-ox);
-      pos[id].y=sy+(t2.clientY-oy);
-      el.style.left=pos[id].x+'px';
-      el.style.top =pos[id].y+'px';
-      drawLines();
-    };
-    const te=()=>{el.style.zIndex='';window.removeEventListener('touchmove',tm);window.removeEventListener('touchend',te);};
-    window.addEventListener('touchmove',tm,{passive:false});
-    window.addEventListener('touchend',te);
-    e.preventDefault();
-  },{passive:false});
+function placeNode(id) {
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw+4, Math.min(W-hw-4, p.x));
+  var cy = Math.max(hh+4, Math.min(H-hh-4, p.y));
+  el.style.left = (cx-hw)+'px'; el.style.top = (cy-hh)+'px';
 }
 
-function checkMap(){
-  const cr=document.getElementById('canvas').getBoundingClientRect();
-  let correct=0; const lines=[];
-  connections.forEach(([a,b])=>{
-    const ea=document.getElementById('nd-'+a), eb=document.getElementById('nd-'+b);
-    if(!ea||!eb) return;
-    const ra=ea.getBoundingClientRect(), rb=eb.getBoundingClientRect();
-    const x1=ra.left-cr.left+ra.width/2, y1=ra.top-cr.top+ra.height/2;
-    const x2=rb.left-cr.left+rb.width/2, y2=rb.top-cr.top+rb.height/2;
-    const ok=Math.hypot(x2-x1,y2-y1)<THRESHOLD;
-    if(ok) correct++;
-    const na=nodes.find(n=>n.id===a), nb=nodes.find(n=>n.id===b);
-    lines.push(`<div class="row ${ok?'ok':'nok'}"><span class="row-icon">${ok?'✅':'❌'}</span><div class="row-text"><strong>${na.label}</strong> → ${nb.label}</div></div>`);
-  });
-  const total=connections.length, pct=Math.round(correct/total*100);
-  const msg=pct>=85?'🌟 Excelente! Você montou o mapa corretamente.':pct>=60?'🔍 Bom trabalho! Ajuste os que faltam.':'📚 Continue organizando — aproxime os balões relacionados.';
-  document.getElementById('overlay-body').innerHTML=lines.join('')+`<div class="score-final">${correct}/${total} conexões (${pct}%) — ${msg}</div>`;
-  document.getElementById('overlay').classList.add('show');
+function center(id) {
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
 }
 
-function reset(){ scatter(); render(); }
-window.addEventListener('resize', drawLines);
-scatter(); render();
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode==='erase';
+  arrows.forEach(function(a, i) {
+    var f=center(a.from), t=center(a.to), dx=t.x-f.x, dy=t.y-f.y;
+    var len=Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl=document.getElementById('nd-'+a.to);
+    var rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
+    var ex=t.x-(dx/len)*rad, ey=t.y-(dy/len)*rad;
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
+    line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
+    line.setAttribute('stroke', isErase?'#DC2626':'#15803D');
+    line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents='stroke'; line.style.cursor='pointer';
+      (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
+  });
+}
+
+function updateCount() { var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões'); }
+
+function setMode(m) {
+  mode=m;
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  document.getElementById('pending-msg').style.display='none';
+  ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {connect:'Clique em dois balões para criar uma seta',move:'Clique e arraste qualquer balão',erase:'Clique em uma seta para apagá-la'}[m];
+}
+
+function onNodeClick(e, id) {
+  if (mode!=='connect') return;
+  if (!arrowFrom) { arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
+  else {
+    document.getElementById('nd-'+arrowFrom).classList.remove('selected');
+    document.getElementById('nd-'+id).classList.remove('selected');
+    if (arrowFrom!==id) {
+      var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom=null; document.getElementById('pending-msg').style.display='none';
+  }
+  e.stopPropagation();
+}
+
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+document.addEventListener('mousemove',function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup',function(){ dragging=null; });
+document.addEventListener('touchmove',function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
+document.addEventListener('touchend',function(){ dragging=null; });
+
+document.getElementById('btn-connect').addEventListener('click',function(){ setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click',function(){ setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click',function(){ setMode(mode==='erase'?'connect':'erase'); });
+document.getElementById('btn-reset').addEventListener('click',function(){ arrows=[]; calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); updateCount(); updateGabarito(); });
+document.getElementById('btn-gabarito').addEventListener('click',function(){
+  gabVisible=!gabVisible;
+  document.getElementById('gabarito-panel').style.display=gabVisible?'block':'none';
+  document.getElementById('btn-gabarito').textContent=gabVisible?'Ocultar gabarito':'Ver gabarito';
+  if(gabVisible) updateGabarito();
+});
+
+function updateGabarito() {
+  if (!gabVisible) return;
+  var hits=0;
+  GABARITO.forEach(function(pair){ if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++; });
+  var total=GABARITO.length, pct=Math.round((hits/total)*100);
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-label').textContent=hits+' de '+total+' conexões ('+pct+'%)';
+}
+
+window.addEventListener('resize',function(){ calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load',function(){ calcPositions(); renderNodes(); setMode('connect'); });
 </script>
 </body>
 </html>
