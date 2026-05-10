@@ -282,7 +282,9 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 
 ---
 
-## FASE 3.5 — Geração automática das imagens via Claude in Chrome
+## FASE 3.5 — Geração automática das imagens via Claude in Chrome ⛔ GATE OBRIGATÓRIO
+
+> **⛔ BLOQUEIO TOTAL:** O Cowork deve parar completamente aqui e acionar o Claude in Chrome para executar esta fase. **A Fase 4 não pode ser iniciada sob nenhuma circunstância antes de o arquivo `hq-[slug].png` estar confirmado na pasta do projeto.** Não há exceção a esta regra.
 
 Esta fase é executada **integralmente pelo Claude in Chrome**, sem intervenção de Léo. Ocorre após a geração do prompt `.md` da Fase 3 e antes das atividades HTML.
 
@@ -356,9 +358,11 @@ canvas.save(f"{pasta}\\hq-{slug}.png", "PNG", optimize=True)
 
 Após a colagem bem-sucedida, remover os 4 arquivos temporários `[slug]_1.png` … `[slug]_4.png` da pasta do projeto.
 
-### 3.5.5 Confirmação antes de avançar
+### 3.5.5 ⛔ Confirmação obrigatória antes de avançar
 
-Verificar que `hq-[slug].png` existe na pasta do projeto com dimensões coerentes (largura mínima de 1024px, altura mínima de 3000px). Somente então avançar para a Fase 4.
+Verificar que `hq-[slug].png` existe na pasta do projeto com dimensões coerentes (largura mínima de 1024px, altura mínima de 3000px).
+
+**O Cowork só retoma a execução após esta confirmação. Avançar para a Fase 4 sem o arquivo de imagem presente é uma falha crítica de execução.**
 
 ---
 
