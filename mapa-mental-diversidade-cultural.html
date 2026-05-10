@@ -8,223 +8,211 @@
 <style>
 :root{--primary:#15803D;--light:#4ADE80;--bg:#F0FDF4}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height:100vh}
-.hero{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);padding:36px 24px 30px;color:white;text-align:center}
-.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 16px;border-radius:20px;margin-bottom:12px}
-.hero h1{font-family:"Space Mono",monospace;font-size:24px;margin-bottom:6px;line-height:1.2}
-.hero p{font-size:13px;font-weight:600;opacity:.85}
-.container{max-width:700px;margin:0 auto;padding:20px 14px}
-.instruction{background:white;border:2px solid #d1fae5;border-radius:14px;padding:14px 18px;margin-bottom:16px;font-size:13px;font-weight:700;color:#374151;line-height:1.6}
-.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.leg-item{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:#374151}
-.leg-dot{width:18px;height:18px;border-radius:6px;border:2px solid transparent;flex-shrink:0}
-.leg-dot.root{background:linear-gradient(135deg,#15803D,#4ADE80);border-color:#14532D}
-.leg-dot.level1{background:#d1fae5;border-color:#86efac}
-.leg-dot.level2{background:white;border-color:#d1fae5}
-.canvas-wrap{background:white;border:2px solid #d1fae5;border-radius:20px;position:relative;overflow:hidden;margin-bottom:16px;touch-action:none}
-canvas{display:block;position:absolute;top:0;left:0;pointer-events:none}
-.node{position:absolute;border-radius:14px;cursor:grab;padding:10px 14px;font-size:12px;font-weight:800;text-align:center;line-height:1.3;user-select:none;border:2.5px solid transparent;touch-action:none}
-.node:active{cursor:grabbing;z-index:100}
-.node.root{background:linear-gradient(135deg,#15803D,#4ADE80);color:white;border-color:#14532D;font-size:13px;min-width:150px;max-width:170px;border-radius:18px;box-shadow:0 3px 14px rgba(21,128,61,.3)}
-.node.level1{background:#d1fae5;border-color:#86efac;color:#14532D;min-width:120px;max-width:150px;box-shadow:0 2px 8px rgba(21,128,61,.15)}
-.node.level2{background:white;border-color:#d1fae5;color:#374151;font-size:11px;min-width:105px;max-width:140px}
-.node:hover{filter:brightness(.96)}
-.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.btn{border-radius:12px;padding:11px 20px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;border:none}
-.btn-primary{background:var(--primary);color:white}
-.btn-secondary{background:white;border:2px solid var(--primary);color:var(--primary)}
+body{font-family:'Baloo 2',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,#14532D,#15803D 60%,#4ADE80);color:white;padding:22px 20px;text-align:center}
+header h1{font-family:'Space Mono',monospace;font-size:1.3rem;font-weight:900;margin-bottom:4px}
+header p{font-size:.85rem;opacity:.85}
+.instructions{max-width:700px;margin:14px auto;padding:12px 18px;background:white;border-radius:14px;font-size:.86rem;color:#334155;box-shadow:0 2px 10px rgba(21,128,61,.08);line-height:1.6}
+.instructions strong{color:var(--primary)}
+.legend{max-width:700px;margin:0 auto 10px;padding:0 14px;display:flex;gap:14px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:800;color:#374151}
+.leg-dot{width:16px;height:16px;border-radius:5px;flex-shrink:0}
+.leg-dot.root{background:linear-gradient(135deg,#15803D,#4ADE80)}
+.leg-dot.level1{background:#d1fae5;border:2px solid #86efac}
+.leg-dot.level2{background:white;border:2px solid #d1fae5}
+.canvas-wrap{flex:1;position:relative;overflow:hidden;background:white;border-top:2px solid #d1fae5;border-bottom:2px solid #d1fae5;min-height:520px}
+svg#lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.node{position:absolute;border-radius:14px;padding:10px 14px;font-weight:800;font-size:.82rem;text-align:center;cursor:grab;user-select:none;box-shadow:0 3px 12px rgba(0,0,0,.1);min-width:110px;max-width:155px;line-height:1.3;touch-action:none}
+.node:active{cursor:grabbing;box-shadow:0 7px 22px rgba(0,0,0,.18);z-index:99}
+.node.root{background:linear-gradient(135deg,#15803D,#4ADE80);color:white;font-size:.9rem;min-width:145px;border-radius:18px}
+.node.level1{background:#d1fae5;border:2px solid #86efac;color:#14532D}
+.node.level2{background:white;border:2px solid #d1fae5;color:#374151}
+.controls{display:flex;gap:12px;justify-content:center;padding:16px;flex-wrap:wrap}
+.btn{border:none;border-radius:12px;padding:12px 22px;font-family:'Baloo 2',sans-serif;font-size:.93rem;font-weight:800;cursor:pointer}
+.btn-check{background:var(--primary);color:white}
+.btn-reset{background:#64748b;color:white}
 .btn-back{background:white;border:2px solid #e5e7eb;color:#6B7280}
-.gabarito{display:none;background:white;border:2px solid #d1fae5;border-radius:18px;padding:20px 24px;margin-top:4px}
-.gabarito h3{font-family:"Space Mono",monospace;font-size:14px;color:var(--primary);margin-bottom:14px}
-.gab-tree{font-size:13px;font-weight:700;line-height:2.1;color:#374151}
-.gab-root{color:var(--primary);font-size:15px}
-.gab-l1{margin-left:16px;color:#15803D}
-.gab-l2{margin-left:32px;color:#374151;font-weight:600}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.overlay-card{background:white;border-radius:20px;padding:26px 22px;max-width:480px;width:92%;max-height:82vh;overflow-y:auto}
+.overlay-card h2{font-size:1.1rem;font-weight:900;color:var(--primary);margin-bottom:14px}
+.row{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;padding:9px;border-radius:10px}
+.row.ok{background:#dcfce7}
+.row.nok{background:#fee2e2}
+.row-icon{font-size:1rem;flex-shrink:0}
+.row-text{font-size:.84rem;font-weight:600;color:#1e293b;line-height:1.4}
+.score-final{font-size:1.1rem;font-weight:900;color:var(--primary);margin-top:14px;text-align:center}
+.close-btn{display:block;margin:16px auto 0;background:var(--primary);color:white;border:none;border-radius:12px;padding:11px 24px;font-family:'Baloo 2',sans-serif;font-size:.93rem;font-weight:800;cursor:pointer}
+footer{text-align:center;padding:10px;font-size:.75rem;color:#94a3b8}
 </style>
 </head>
 <body>
-<div class="hero">
-  <div class="hero-badge">🌍 Geografia — 5º Ano</div>
-  <h1>Mapa Mental 🗺️</h1>
-  <p>Diversidade Cultural Brasileira</p>
+<header>
+  <h1>🗺️ Mapa Mental</h1>
+  <p>Diversidade Cultural Brasileira — Geografia 5º Ano</p>
+</header>
+<div class="instructions">
+  <strong>Como usar:</strong> Arraste cada balão para perto do conceito ao qual ele pertence. Quando dois nós relacionados ficarem próximos, uma linha verde aparecerá entre eles. Organize todo o mapa e clique em <strong>Verificar</strong>!
 </div>
-<div class="container">
-  <div class="instruction">🎯 <strong>Desafio:</strong> Os balões estão embaralhados! Arraste-os e organize o mapa mental — conecte cada conceito ao seu grupo correto. Quando terminar, clique em <strong>Ver Gabarito</strong> para conferir.</div>
-  <div class="legend">
-    <div class="leg-item"><div class="leg-dot root"></div> Tema central</div>
-    <div class="leg-item"><div class="leg-dot level1"></div> Categoria principal</div>
-    <div class="leg-item"><div class="leg-dot level2"></div> Conceito específico</div>
-  </div>
-  <div class="canvas-wrap" id="canvasWrap">
-    <canvas id="canvas"></canvas>
-  </div>
-  <div class="btn-row">
-    <button class="btn btn-primary" onclick="embaralhar()">🔀 Embaralhar</button>
-    <button class="btn btn-secondary" onclick="toggleGabarito()">📋 Ver Gabarito</button>
-    <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
-  </div>
-  <div class="gabarito" id="gabarito">
-    <h3>Gabarito — Estrutura do Mapa Mental</h3>
-    <div class="gab-tree">
-      <div class="gab-root">🌎 DIVERSIDADE CULTURAL BRASILEIRA</div>
-      <div class="gab-l1">📜 Pluralidade cultural</div>
-      <div class="gab-l2">→ Grupos étnico-culturais</div>
-      <div class="gab-l2">→ Hábitos alimentares</div>
-      <div class="gab-l1">🎪 Festas e danças populares</div>
-      <div class="gab-l2">→ Festival Folclórico de Parintins (AM)</div>
-      <div class="gab-l2">→ Festa junina (Nordeste)</div>
-      <div class="gab-l1">🎵 Manifestações culturais</div>
-      <div class="gab-l2">→ Música popular</div>
-      <div class="gab-l2">→ Culinária</div>
-    </div>
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot root"></div> Tema central</div>
+  <div class="leg-item"><div class="leg-dot level1"></div> Categoria principal</div>
+  <div class="leg-item"><div class="leg-dot level2"></div> Conceito específico</div>
+</div>
+<div class="canvas-wrap" id="canvas">
+  <svg id="lines"></svg>
+</div>
+<div class="controls">
+  <button class="btn btn-back" onclick="window.close()">← Portal</button>
+  <button class="btn btn-reset" onclick="reset()">↩ Reorganizar</button>
+  <button class="btn btn-check" onclick="checkMap()">✅ Verificar</button>
+</div>
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <h2>📋 Resultado do Mapa</h2>
+    <div id="overlay-body"></div>
+    <button class="close-btn" onclick="document.getElementById('overlay').classList.remove('show')">Fechar</button>
   </div>
 </div>
+<footer>Portal Educacional 5º Ano • Geografia — Diversidade Cultural Brasileira</footer>
 <script>
-const nodeData = [
-  {id:'root',  label:'🌎 DIVERSIDADE CULTURAL BRASILEIRA', cls:'root'},
-  {id:'plural',label:'📜 Pluralidade cultural',             cls:'level1'},
-  {id:'festas',label:'🎪 Festas e danças populares',        cls:'level1'},
-  {id:'manif', label:'🎵 Manifestações culturais',           cls:'level1'},
-  {id:'etnico',label:'Grupos étnico-culturais',              cls:'level2'},
-  {id:'habito',label:'Hábitos alimentares',                  cls:'level2'},
-  {id:'parin', label:'Festival de Parintins (AM)',           cls:'level2'},
-  {id:'junina',label:'Festa junina (Nordeste)',              cls:'level2'},
-  {id:'musica',label:'Música popular',                       cls:'level2'},
-  {id:'culin', label:'Culinária',                            cls:'level2'},
+const nodes = [
+  {id:'root',   label:'🌎 DIVERSIDADE CULTURAL BRASILEIRA', cls:'root'},
+  {id:'plural', label:'📜 Pluralidade cultural',             cls:'level1'},
+  {id:'festas', label:'🎪 Festas e danças populares',        cls:'level1'},
+  {id:'manif',  label:'🎵 Manifestações culturais',           cls:'level1'},
+  {id:'etnico', label:'Grupos étnico-culturais',              cls:'level2'},
+  {id:'habito', label:'Hábitos alimentares',                  cls:'level2'},
+  {id:'parin',  label:'Festival de Parintins (AM)',           cls:'level2'},
+  {id:'junina', label:'Festa junina (Nordeste)',              cls:'level2'},
+  {id:'musica', label:'Música popular',                       cls:'level2'},
+  {id:'culin',  label:'Culinária',                            cls:'level2'},
 ];
 
-const edges = [
+const connections = [
   ['root','plural'],['root','festas'],['root','manif'],
   ['plural','etnico'],['plural','habito'],
   ['festas','parin'],['festas','junina'],
   ['manif','musica'],['manif','culin'],
 ];
 
-let nodes = {}, drag = null, dragOff = {x:0, y:0};
-const wrap   = document.getElementById('canvasWrap');
-const canvas = document.getElementById('canvas');
-const ctx    = canvas.getContext('2d');
+const THRESHOLD = 220;
+const pos = {};
 
-function canvasH(W){ return Math.max(440, Math.round(W * 0.85)); }
-
-function resize(){
-  const W = wrap.clientWidth;
-  const H = canvasH(W);
-  canvas.width  = W;
-  canvas.height = H;
-  wrap.style.height = H + 'px';
-  draw();
-}
-
-function nodeW(nd){ return nd.cls==='root'?160 : nd.cls==='level1'?136:120; }
-
-/* Place nodes at random non-overlapping positions */
-function embaralhar(){
-  const W = canvas.width, H = canvas.height;
+function scatter(){
+  const W = document.getElementById('canvas').offsetWidth || window.innerWidth;
+  const H = Math.max(document.getElementById('canvas').offsetHeight, 520);
   const placed = [];
-  const shuffled = [...nodeData].sort(()=>Math.random()-.5);
-  shuffled.forEach(nd=>{
-    const el = nodes[nd.id];
-    const nw = nodeW(nd), nh = 52;
-    let x, y, ok, tries=0;
-    do {
-      x = 10 + Math.random()*(W - nw - 20);
-      y = 10 + Math.random()*(H - nh - 20);
-      ok = placed.every(p=>Math.abs(p.x-x)>nw-10||Math.abs(p.y-y)>nh-4);
-      tries++;
-    } while(!ok && tries<40);
+  const shuffled = [...nodes].sort(()=>Math.random()-.5);
+  shuffled.forEach(n=>{
+    const nw = n.cls==='root'?155:n.cls==='level1'?130:120;
+    let x,y,t=0;
+    do{
+      x=16+Math.random()*(W-nw-32);
+      y=16+Math.random()*(H-90);
+      t++;
+    } while(t<40 && placed.some(p=>Math.abs(p.x-x)<nw-5&&Math.abs(p.y-y)<60));
     placed.push({x,y});
-    el.style.left = x+'px';
-    el.style.top  = y+'px';
-    el.style.transform = '';
-  });
-  draw();
-}
-
-function initNodes(){
-  wrap.querySelectorAll('.node').forEach(n=>n.remove());
-  nodeData.forEach(nd=>{
-    const el = document.createElement('div');
-    el.className = 'node '+nd.cls;
-    el.id = 'node-'+nd.id;
-    el.textContent = nd.label;
-    wrap.appendChild(el);
-    nodes[nd.id] = el;
-    el.addEventListener('mousedown',  e=>startDrag(e,nd.id));
-    el.addEventListener('touchstart', e=>startDrag(e,nd.id),{passive:false});
-  });
-  embaralhar();
-}
-
-function nodeCenter(id){
-  const el = nodes[id];
-  const wr = wrap.getBoundingClientRect();
-  const er = el.getBoundingClientRect();
-  return {x:er.left-wr.left+er.width/2, y:er.top-wr.top+er.height/2};
-}
-
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  edges.forEach(([a,b])=>{
-    if(!nodes[a]||!nodes[b]) return;
-    const ca=nodeCenter(a), cb=nodeCenter(b);
-    ctx.beginPath();
-    ctx.moveTo(ca.x,ca.y);
-    ctx.bezierCurveTo(ca.x,(ca.y+cb.y)/2,cb.x,(ca.y+cb.y)/2,cb.x,cb.y);
-    ctx.strokeStyle='#86efac';
-    ctx.lineWidth=2.5;
-    ctx.stroke();
+    pos[n.id]={x,y};
   });
 }
 
-function startDrag(e,id){
-  e.preventDefault();
-  drag=id;
-  const el=nodes[id];
-  const wr=wrap.getBoundingClientRect();
-  const pos=e.touches?e.touches[0]:e;
-  const er=el.getBoundingClientRect();
-  dragOff.x=pos.clientX-er.left;
-  dragOff.y=pos.clientY-er.top;
-  el.style.zIndex=50;
+function render(){
+  const cv = document.getElementById('canvas');
+  cv.querySelectorAll('.node').forEach(n=>n.remove());
+  nodes.forEach(n=>{
+    const el=document.createElement('div');
+    el.className='node '+n.cls;
+    el.id='nd-'+n.id;
+    el.textContent=n.label;
+    el.style.left=pos[n.id].x+'px';
+    el.style.top =pos[n.id].y+'px';
+    addDrag(el,n.id);
+    cv.appendChild(el);
+  });
+  drawLines();
 }
 
-document.addEventListener('mousemove', moveDrag);
-document.addEventListener('touchmove', moveDrag,{passive:false});
-document.addEventListener('mouseup',  ()=>stopDrag());
-document.addEventListener('touchend', ()=>stopDrag());
-
-function moveDrag(e){
-  if(!drag) return;
-  e.preventDefault();
-  const pos=e.touches?e.touches[0]:e;
-  const wr=wrap.getBoundingClientRect();
-  const el=nodes[drag];
-  const W=canvas.width, H=canvas.height;
-  let x=pos.clientX-wr.left-dragOff.x;
-  let y=pos.clientY-wr.top -dragOff.y;
-  x=Math.max(0,Math.min(W-el.offsetWidth,x));
-  y=Math.max(0,Math.min(H-el.offsetHeight,y));
-  el.style.left=x+'px';
-  el.style.top =y+'px';
-  el.style.transform='';
-  draw();
+function drawLines(){
+  const svg=document.getElementById('lines');
+  svg.innerHTML='';
+  const cr=document.getElementById('canvas').getBoundingClientRect();
+  connections.forEach(([a,b])=>{
+    const ea=document.getElementById('nd-'+a);
+    const eb=document.getElementById('nd-'+b);
+    if(!ea||!eb) return;
+    const ra=ea.getBoundingClientRect(), rb=eb.getBoundingClientRect();
+    const x1=ra.left-cr.left+ra.width/2,  y1=ra.top-cr.top+ra.height/2;
+    const x2=rb.left-cr.left+rb.width/2,  y2=rb.top-cr.top+rb.height/2;
+    if(Math.hypot(x2-x1,y2-y1)<THRESHOLD){
+      const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+      l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+      l.setAttribute('stroke','#4ADE80');
+      l.setAttribute('stroke-width','2.5');
+      l.setAttribute('stroke-opacity','0.7');
+      svg.appendChild(l);
+    }
+  });
 }
 
-function stopDrag(){
-  if(drag){ nodes[drag].style.zIndex=''; }
-  drag=null;
+function addDrag(el,id){
+  let ox,oy,sx,sy;
+  el.addEventListener('mousedown',e=>{
+    ox=e.clientX; oy=e.clientY; sx=pos[id].x; sy=pos[id].y; el.style.zIndex=50;
+    const mm=e2=>{
+      pos[id].x=sx+(e2.clientX-ox);
+      pos[id].y=sy+(e2.clientY-oy);
+      el.style.left=pos[id].x+'px';
+      el.style.top =pos[id].y+'px';
+      drawLines();
+    };
+    const mu=()=>{el.style.zIndex='';window.removeEventListener('mousemove',mm);window.removeEventListener('mouseup',mu);};
+    window.addEventListener('mousemove',mm);
+    window.addEventListener('mouseup',mu);
+    e.preventDefault();
+  });
+  el.addEventListener('touchstart',e=>{
+    const t=e.touches[0]; ox=t.clientX; oy=t.clientY; sx=pos[id].x; sy=pos[id].y; el.style.zIndex=50;
+    const tm=e2=>{
+      e2.preventDefault();
+      const t2=e2.touches[0];
+      pos[id].x=sx+(t2.clientX-ox);
+      pos[id].y=sy+(t2.clientY-oy);
+      el.style.left=pos[id].x+'px';
+      el.style.top =pos[id].y+'px';
+      drawLines();
+    };
+    const te=()=>{el.style.zIndex='';window.removeEventListener('touchmove',tm);window.removeEventListener('touchend',te);};
+    window.addEventListener('touchmove',tm,{passive:false});
+    window.addEventListener('touchend',te);
+    e.preventDefault();
+  },{passive:false});
 }
 
-function toggleGabarito(){
-  const g=document.getElementById('gabarito');
-  g.style.display=g.style.display==='block'?'none':'block';
-  if(g.style.display==='block') g.scrollIntoView({behavior:'smooth'});
+function checkMap(){
+  const cr=document.getElementById('canvas').getBoundingClientRect();
+  let correct=0; const lines=[];
+  connections.forEach(([a,b])=>{
+    const ea=document.getElementById('nd-'+a), eb=document.getElementById('nd-'+b);
+    if(!ea||!eb) return;
+    const ra=ea.getBoundingClientRect(), rb=eb.getBoundingClientRect();
+    const x1=ra.left-cr.left+ra.width/2, y1=ra.top-cr.top+ra.height/2;
+    const x2=rb.left-cr.left+rb.width/2, y2=rb.top-cr.top+rb.height/2;
+    const ok=Math.hypot(x2-x1,y2-y1)<THRESHOLD;
+    if(ok) correct++;
+    const na=nodes.find(n=>n.id===a), nb=nodes.find(n=>n.id===b);
+    lines.push(`<div class="row ${ok?'ok':'nok'}"><span class="row-icon">${ok?'✅':'❌'}</span><div class="row-text"><strong>${na.label}</strong> → ${nb.label}</div></div>`);
+  });
+  const total=connections.length, pct=Math.round(correct/total*100);
+  const msg=pct>=85?'🌟 Excelente! Você montou o mapa corretamente.':pct>=60?'🔍 Bom trabalho! Ajuste os que faltam.':'📚 Continue organizando — aproxime os balões relacionados.';
+  document.getElementById('overlay-body').innerHTML=lines.join('')+`<div class="score-final">${correct}/${total} conexões (${pct}%) — ${msg}</div>`;
+  document.getElementById('overlay').classList.add('show');
 }
 
-window.addEventListener('resize',()=>{ resize(); embaralhar(); });
-resize();
-initNodes();
+function reset(){ scatter(); render(); }
+window.addEventListener('resize', drawLines);
+scatter(); render();
 </script>
 </body>
 </html>
