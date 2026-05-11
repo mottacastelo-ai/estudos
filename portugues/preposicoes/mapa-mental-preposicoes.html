@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mapa Mental — Tempos Verbais</title>
+<title>Mapa Mental — Preposição</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,7 +33,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .stage-wrap { position: relative; padding: 16px 20px 20px; }
 #pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
 #stage { position: relative; width: 100%; height: 560px; background: var(--bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
-.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 24px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 14px; min-width: 80px; max-width: 140px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; word-break: break-word; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; white-space: nowrap; }
 .node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
 .node.selected { outline: 3px solid #7C3AED; outline-offset: 2px; }
 .n-central, .n-purple, .n-coral, .n-teal, .n-amber {
@@ -51,11 +51,11 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 </head>
 <body>
 <div class="wrap">
-  <a class="back-link" href="index.html">← Voltar ao portal</a>
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
   <div class="activity-card">
     <div class="card-header">
       <div class="hicon">🗺️</div>
-      <div><h1>Mapa Mental</h1><p>Tempos Verbais</p></div>
+      <div><h1>Mapa Mental</h1><p>Preposição</p></div>
       <div class="hbadge">🏆 Síntese</div>
     </div>
     <div class="instrucao">
@@ -87,7 +87,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     </div>
     <div class="gabarito-panel" id="gabarito-panel">
       <div class="gabarito-title">UMA ESTRUTURA POSSÍVEL</div>
-      <svg id="gabarito-svg" viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+      <svg id="gabarito-svg" viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
         <defs>
           <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
             <path d="M0,0 L0,6 L8,3 z" fill="#7C3AED" opacity="0.6"/>
@@ -98,91 +98,99 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <line x1="350" y1="36" x2="258" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
         <line x1="350" y1="36" x2="450" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
         <line x1="350" y1="36" x2="612" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
-        <!-- O que são → filhos -->
+        <!-- O que é → filhos -->
         <line x1="80"  y1="126" x2="46"  y2="186" stroke="#AFA9EC" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
         <line x1="96"  y1="126" x2="76"  y2="246" stroke="#AFA9EC" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <!-- Passado → filhos -->
-        <line x1="248" y1="126" x2="210" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="266" y1="126" x2="258" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <!-- Presente → filhos -->
-        <line x1="438" y1="126" x2="404" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="458" y1="126" x2="458" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <!-- Futuro → filhos -->
-        <line x1="602" y1="126" x2="568" y2="186" stroke="#EF9F27" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="620" y1="126" x2="622" y2="186" stroke="#EF9F27" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <!-- Exemplos → filho -->
+        <line x1="258" y1="126" x2="258" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <!-- Usos → filhos -->
+        <line x1="438" y1="126" x2="390" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="448" y1="126" x2="418" y2="246" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="455" y1="126" x2="438" y2="306" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="460" y1="126" x2="462" y2="246" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="464" y1="126" x2="480" y2="306" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <!-- Formação → filho → neto -->
+        <line x1="612" y1="126" x2="612" y2="186" stroke="#EF9F27" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="612" y1="214" x2="612" y2="246" stroke="#EF9F27" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
 
         <!-- NÓ CENTRAL -->
-        <rect x="240" y="10" width="220" height="36" rx="18" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
-        <text x="350" y="33" text-anchor="middle" font-size="13" font-weight="800" fill="#2D1B69">Tempos Verbais</text>
+        <rect x="272" y="10" width="156" height="36" rx="18" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
+        <text x="350" y="33" text-anchor="middle" font-size="13" font-weight="800" fill="#2D1B69">Preposição</text>
 
-        <!-- O que são -->
-        <rect x="28" y="106" width="108" height="28" rx="14" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1.5"/>
-        <text x="82" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4C1D95">O que são</text>
-        <rect x="4"  y="168" width="114" height="26" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
-        <text x="61" y="185" text-anchor="middle" font-size="9.5" fill="#4C1D95">Indicam o tempo da ação</text>
-        <rect x="4"  y="228" width="114" height="26" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
-        <text x="61" y="245" text-anchor="middle" font-size="9.5" fill="#4C1D95">Flexão do verbo</text>
+        <!-- O que é -->
+        <rect x="30" y="106" width="100" height="28" rx="14" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1.5"/>
+        <text x="80" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4C1D95">O que é</text>
+        <rect x="4"  y="168" width="110" height="26" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
+        <text x="59" y="185" text-anchor="middle" font-size="9.5" fill="#4C1D95">Liga dois termos</text>
+        <rect x="4"  y="228" width="110" height="26" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
+        <text x="59" y="245" text-anchor="middle" font-size="9.5" fill="#4C1D95">Estabelece relação</text>
 
-        <!-- Passado -->
-        <rect x="200" y="106" width="90" height="28" rx="14" fill="#FAECE7" stroke="#F0997B" stroke-width="1.5"/>
-        <text x="245" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4A1B0C">Passado</text>
-        <rect x="172" y="168" width="114" height="26" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
-        <text x="229" y="185" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Já aconteceu</text>
-        <rect x="172" y="228" width="114" height="26" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
-        <text x="229" y="245" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Ex: venceu</text>
+        <!-- Exemplos -->
+        <rect x="196" y="106" width="124" height="28" rx="14" fill="#FAECE7" stroke="#F0997B" stroke-width="1.5"/>
+        <text x="258" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4A1B0C">Exemplos</text>
+        <rect x="154" y="168" width="208" height="26" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="258" y="185" text-anchor="middle" font-size="9.5" fill="#4A1B0C">a, de, em, para, por, até, com, sobre, sem, após</text>
 
-        <!-- Presente -->
-        <rect x="392" y="106" width="100" height="28" rx="14" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1.5"/>
-        <text x="442" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#085041">Presente</text>
-        <rect x="362" y="168" width="124" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
-        <text x="424" y="185" text-anchor="middle" font-size="9.5" fill="#085041">Acontece agora</text>
-        <rect x="362" y="228" width="124" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
-        <text x="424" y="245" text-anchor="middle" font-size="9.5" fill="#085041">Ex: tira</text>
+        <!-- Usos -->
+        <rect x="392" y="106" width="116" height="28" rx="14" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1.5"/>
+        <text x="450" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#085041">Usos</text>
+        <rect x="356" y="168" width="68" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="390" y="185" text-anchor="middle" font-size="9.5" fill="#085041">Lugar</text>
+        <rect x="364" y="228" width="68" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="398" y="245" text-anchor="middle" font-size="9.5" fill="#085041">Falta</text>
+        <rect x="364" y="288" width="68" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="398" y="305" text-anchor="middle" font-size="9.5" fill="#085041">Material</text>
+        <rect x="436" y="228" width="68" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="470" y="245" text-anchor="middle" font-size="9.5" fill="#085041">Tipo</text>
+        <rect x="436" y="288" width="68" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="470" y="305" text-anchor="middle" font-size="9.5" fill="#085041">Conteúdo</text>
 
-        <!-- Futuro -->
-        <rect x="558" y="106" width="90" height="28" rx="14" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1.5"/>
-        <text x="603" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#412402">Futuro</text>
-        <rect x="530" y="168" width="118" height="26" rx="13" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-        <text x="589" y="185" text-anchor="middle" font-size="9.5" fill="#412402">Ainda vai acontecer</text>
-        <rect x="530" y="228" width="118" height="26" rx="13" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-        <text x="589" y="245" text-anchor="middle" font-size="9.5" fill="#412402">Ex: soprará</text>
+        <!-- Formação -->
+        <rect x="556" y="106" width="112" height="28" rx="14" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1.5"/>
+        <text x="612" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#412402">Formação</text>
+        <rect x="544" y="168" width="136" height="26" rx="13" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+        <text x="612" y="185" text-anchor="middle" font-size="9.5" fill="#412402">Locução adjetiva</text>
+        <rect x="536" y="228" width="152" height="26" rx="13" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+        <text x="612" y="245" text-anchor="middle" font-size="9.5" fill="#412402">Preposição + substantivo</text>
       </svg>
       <div class="score-row">
         <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
-        <span class="score-label" id="score-label">0 de 13 conexões</span>
+        <span class="score-label" id="score-label">0 de 14 conexões</span>
       </div>
     </div>
   </div>
 </div>
 <script>
 var NODES = [
-  { id:'central',    label:'Tempos Verbais',      cls:'n-central' },
-  { id:'oq',         label:'O que são',           cls:'n-purple'  },
-  { id:'passado',    label:'Passado',             cls:'n-coral'   },
-  { id:'presente',   label:'Presente',            cls:'n-teal'    },
-  { id:'futuro',     label:'Futuro',              cls:'n-amber'   },
-  { id:'tempo_acao', label:'Indicam o tempo da ação', cls:'n-purple' },
-  { id:'flexao',     label:'Flexão do verbo',     cls:'n-purple'  },
-  { id:'ja_acont',   label:'Já aconteceu',        cls:'n-coral'   },
-  { id:'ex_pass',    label:'Ex: venceu',          cls:'n-coral'   },
-  { id:'acont_agora',label:'Acontece agora',      cls:'n-teal'    },
-  { id:'ex_pres',    label:'Ex: tira',            cls:'n-teal'    },
-  { id:'vai_acont',  label:'Ainda vai acontecer', cls:'n-amber'   },
-  { id:'ex_fut',     label:'Ex: soprará',         cls:'n-amber'   },
+  { id:'central',   label:'Preposição',              cls:'n-central' },
+  { id:'oq',        label:'O que é',                 cls:'n-purple'  },
+  { id:'exemplos',  label:'Exemplos',                cls:'n-coral'   },
+  { id:'usos',      label:'Usos',                    cls:'n-teal'    },
+  { id:'formacao',  label:'Formação',                cls:'n-amber'   },
+  { id:'liga',      label:'Liga dois termos',        cls:'n-purple'  },
+  { id:'relacao',   label:'Estabelece relação',      cls:'n-purple'  },
+  { id:'ex',        label:'a, de, em, para...',      cls:'n-coral'   },
+  { id:'lugar',     label:'Lugar',                   cls:'n-teal'    },
+  { id:'falta',     label:'Falta',                   cls:'n-teal'    },
+  { id:'material',  label:'Material',                cls:'n-teal'    },
+  { id:'tipo',      label:'Tipo',                    cls:'n-teal'    },
+  { id:'conteudo',  label:'Conteúdo',                cls:'n-teal'    },
+  { id:'locucao',   label:'Locução adjetiva',        cls:'n-amber'   },
+  { id:'prep_sub',  label:'Preposição + substantivo',cls:'n-amber'   },
 ];
 
 var GABARITO = [
-  ['central','oq'],['central','passado'],['central','presente'],['central','futuro'],
-  ['oq','tempo_acao'],['oq','flexao'],
-  ['passado','ja_acont'],['passado','ex_pass'],
-  ['presente','acont_agora'],['presente','ex_pres'],
-  ['futuro','vai_acont'],['futuro','ex_fut'],
+  ['central','oq'],['central','exemplos'],['central','usos'],['central','formacao'],
+  ['oq','liga'],['oq','relacao'],
+  ['exemplos','ex'],
+  ['usos','lugar'],['usos','falta'],['usos','material'],['usos','tipo'],['usos','conteudo'],
+  ['formacao','locucao'],['locucao','prep_sub'],
 ];
 
 var SHUFFLE = [
-  'ja_acont','central','acont_agora','oq','ex_fut','passado',
-  'flexao','futuro','ex_pass','tempo_acao','vai_acont','presente',
-  'ex_pres',
+  'lugar','central','locucao','oq','ex','tipo',
+  'liga','formacao','falta','relacao','conteudo','usos',
+  'material','prep_sub','exemplos',
 ];
 
 var stage = document.getElementById('stage');
@@ -195,8 +203,7 @@ function calcPositions() {
   var ROWS = Math.ceil(SHUFFLE.length / COLS);
   var padX = 16, padY = 32;
   var colW = (W - padX*2) / COLS;
-  var rowH = Math.max(100, (stage.clientHeight - padY*2) / ROWS);
-  // Redimensiona o stage se necessário para evitar sobreposição
+  var rowH = Math.max(80, (stage.clientHeight - padY*2) / ROWS);
   var minH = padY*2 + ROWS * rowH;
   if (minH > stage.clientHeight) stage.style.height = minH + 'px';
   SHUFFLE.forEach(function(id, i) {
@@ -212,72 +219,89 @@ function renderNodes() {
     var el = document.getElementById('nd-'+n.id);
     if (!el) {
       el = document.createElement('div');
-      el.id='nd-'+n.id; el.className='node '+n.cls; el.textContent=n.label;
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls; el.textContent = n.label;
       stage.appendChild(el);
-      el.addEventListener('mousedown',function(e){ onDown(e,n.id); });
-      el.addEventListener('touchstart',function(e){ onTouchDown(e,n.id); },{passive:false});
-      el.addEventListener('click',function(e){ onNodeClick(e,n.id); });
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
     }
     placeNode(n.id);
   });
 }
 
 function placeNode(id) {
-  var el=document.getElementById('nd-'+id), p=positions[id];
-  var hw=el.offsetWidth/2, hh=el.offsetHeight/2;
-  var W=stage.clientWidth, H=stage.clientHeight;
-  el.style.left=(Math.max(hw+4,Math.min(W-hw-4,p.x))-hw)+'px';
-  el.style.top=(Math.max(hh+4,Math.min(H-hh-4,p.y))-hh)+'px';
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw+4, Math.min(W-hw-4, p.x));
+  var cy = Math.max(hh+4, Math.min(H-hh-4, p.y));
+  el.style.left = (cx-hw)+'px'; el.style.top = (cy-hh)+'px';
 }
 
 function center(id) {
-  var el=document.getElementById('nd-'+id);
-  return {x:parseFloat(el.style.left)+el.offsetWidth/2, y:parseFloat(el.style.top)+el.offsetHeight/2};
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
 }
 
 function drawArrows() {
-  while(svgEl.children.length>1) svgEl.removeChild(svgEl.lastChild);
-  var isErase=mode==='erase';
-  arrows.forEach(function(a,i){
-    var f=center(a.from),t=center(a.to),dx=t.x-f.x,dy=t.y-f.y,len=Math.sqrt(dx*dx+dy*dy)||1;
-    var toEl=document.getElementById('nd-'+a.to), rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode==='erase';
+  arrows.forEach(function(a, i) {
+    var f=center(a.from), t=center(a.to), dx=t.x-f.x, dy=t.y-f.y;
+    var len=Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl=document.getElementById('nd-'+a.to);
+    var rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
     var ex=t.x-(dx/len)*rad, ey=t.y-(dy/len)*rad;
     var line=document.createElementNS('http://www.w3.org/2000/svg','line');
     line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
     line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
-    line.setAttribute('stroke',isErase?'#DC2626':'#7C3AED');
+    line.setAttribute('stroke', isErase?'#DC2626':'#7C3AED');
     line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
-    line.setAttribute('marker-end',isErase?'url(#mRed)':'url(#mArr)');
-    if(isErase){ line.style.pointerEvents='stroke'; line.style.cursor='pointer'; (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i); }
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents='stroke'; line.style.cursor='pointer';
+      (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
     svgEl.appendChild(line);
   });
 }
 
-function updateCount(){ var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões'); }
+function updateCount() { var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões'); }
 
-function setMode(m){
+function setMode(m) {
   mode=m;
-  if(arrowFrom){ document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
   document.getElementById('pending-msg').style.display='none';
   ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
   drawArrows();
-  document.getElementById('hint-bar').textContent={connect:'Clique em dois balões para criar uma seta',move:'Clique e arraste qualquer balão',erase:'Clique em uma seta para apagá-la'}[m];
+  document.getElementById('hint-bar').textContent = {connect:'Clique em dois balões para criar uma seta',move:'Clique e arraste qualquer balão',erase:'Clique em uma seta para apagá-la'}[m];
 }
 
-function onNodeClick(e,id){
-  if(mode!=='connect') return;
-  if(!arrowFrom){ arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
-  else{
+function onNodeClick(e, id) {
+  if (mode!=='connect') return;
+  if (!arrowFrom) { arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
+  else {
     document.getElementById('nd-'+arrowFrom).classList.remove('selected');
     document.getElementById('nd-'+id).classList.remove('selected');
-    if(arrowFrom!==id){ var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); }); if(!dup){ arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); } }
+    if (arrowFrom!==id) {
+      var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
     arrowFrom=null; document.getElementById('pending-msg').style.display='none';
   }
   e.stopPropagation();
 }
 
-function onDown(e,id){ if(mode!=='move') return; e.preventDefault(); var r=stage.getBoundingClientRect(),el=document.getElementById('nd-'+id); dragging=id; dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2,y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2}; }
-function onTouchDown(e,id){ if(mode!=='move') return; e.preventDefault(); var t=e.touches[0],r=stage.getBoundingClientRect(),el=document.getElementById('nd-'+id); dragging=id; dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2,y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2}; }
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
 document.addEventListener('mousemove',function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
 document.addEventListener('mouseup',function(){ dragging=null; });
 document.addEventListener('touchmove',function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
@@ -294,8 +318,8 @@ document.getElementById('btn-gabarito').addEventListener('click',function(){
   if(gabVisible) updateGabarito();
 });
 
-function updateGabarito(){
-  if(!gabVisible) return;
+function updateGabarito() {
+  if (!gabVisible) return;
   var hits=0;
   GABARITO.forEach(function(pair){ if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++; });
   var total=GABARITO.length, pct=Math.round((hits/total)*100);

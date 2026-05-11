@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mapa Mental — Variação Linguística</title>
+<title>Mapa Mental — Pontuação Expressiva</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,26 +36,24 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 24px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 14px; min-width: 80px; max-width: 140px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; word-break: break-word; }
 .node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
 .node.selected { outline: 3px solid #7C3AED; outline-offset: 2px; }
-.n-central, .n-purple, .n-coral, .n-teal, .n-amber, .n-pink {
-  background: #EDE9FE; border: 2px solid #A78BFA; color: #4C1D95;
-}
-.n-central { border-color: #7C3AED; font-size: 13px; font-weight: 800; min-width: 120px; padding: 12px 18px; z-index: 11; }
+.n-central, .n-purple, .n-coral, .n-teal, .n-amber { background: #EDE9FE; border: 2px solid #A78BFA; color: #4C1D95; }
+.n-central { border-color: #7C3AED; font-size: 13px; font-weight: 800; min-width: 130px; padding: 12px 18px; z-index: 11; }
 .gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #5DCAA5; background: #E1F5EE; display: none; }
 .gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: #085041; margin-bottom: 10px; letter-spacing: .06em; }
 #gabarito-svg { width: 100%; border-radius: 12px; background: #f4f2ff; display: block; }
 .score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
 .score-track { flex: 1; height: 8px; border-radius: 999px; background: #9FE1CB; }
-.score-fill  { height: 8px; border-radius: 999px; background: #059669; transition: width .4s; }
+.score-fill { height: 8px; border-radius: 999px; background: #059669; transition: width .4s; }
 .score-label { font-size: 12px; font-weight: 800; color: #065F46; white-space: nowrap; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back-link" href="index.html">← Voltar ao portal</a>
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
   <div class="activity-card">
     <div class="card-header">
       <div class="hicon">🗺️</div>
-      <div><h1>Mapa Mental</h1><p>Variação Linguística</p></div>
+      <div><h1>Mapa Mental</h1><p>Pontuação Expressiva</p></div>
       <div class="hbadge">🏆 Síntese</div>
     </div>
     <div class="instrucao">
@@ -87,114 +85,94 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     </div>
     <div class="gabarito-panel" id="gabarito-panel">
       <div class="gabarito-title">UMA ESTRUTURA POSSÍVEL</div>
-      <svg id="gabarito-svg" viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
-        <defs>
-          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill="#7C3AED" opacity="0.6"/>
-          </marker>
-        </defs>
-        <!-- central → categorias -->
-        <line x1="350" y1="36" x2="80"  y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
-        <line x1="350" y1="36" x2="258" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
-        <line x1="350" y1="36" x2="452" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
-        <line x1="350" y1="36" x2="620" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
-        <!-- O que é → filhos -->
-        <line x1="68"  y1="126" x2="40"  y2="186" stroke="#AFA9EC" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="90"  y1="126" x2="90"  y2="186" stroke="#AFA9EC" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <!-- Fatores → filhos -->
-        <line x1="244" y1="126" x2="188" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="256" y1="126" x2="234" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="266" y1="126" x2="282" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="272" y1="126" x2="330" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <!-- Exemplos → filhos -->
-        <line x1="440" y1="126" x2="400" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="458" y1="126" x2="490" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <!-- No texto teatral → filhos -->
-        <line x1="608" y1="126" x2="572" y2="186" stroke="#EF9F27" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-        <line x1="630" y1="126" x2="650" y2="186" stroke="#EF9F27" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
-
-        <!-- NÓ CENTRAL -->
-        <rect x="224" y="10" width="252" height="36" rx="18" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
-        <text x="350" y="33" text-anchor="middle" font-size="13" font-weight="800" fill="#2D1B69">Variação Linguística</text>
-
-        <!-- O que é -->
-        <rect x="20" y="106" width="116" height="28" rx="14" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1.5"/>
-        <text x="78" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4C1D95">O que é</text>
-        <rect x="2"  y="168" width="114" height="36" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
-        <text x="59" y="183" text-anchor="middle" font-size="9" fill="#4C1D95">Fala muda conforme</text>
-        <text x="59" y="196" text-anchor="middle" font-size="9" fill="#4C1D95">o falante</text>
-        <rect x="2"  y="216" width="114" height="36" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
-        <text x="59" y="231" text-anchor="middle" font-size="9" fill="#4C1D95">Não há forma</text>
-        <text x="59" y="244" text-anchor="middle" font-size="9" fill="#4C1D95">errada</text>
-
-        <!-- Fatores -->
-        <rect x="192" y="106" width="120" height="28" rx="14" fill="#FAECE7" stroke="#F0997B" stroke-width="1.5"/>
-        <text x="252" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4A1B0C">Fatores</text>
-        <rect x="152" y="168" width="68" height="26" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
-        <text x="186" y="185" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Lugar</text>
-        <rect x="200" y="168" width="68" height="26" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
-        <text x="234" y="185" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Escolaridade</text>
-        <rect x="248" y="168" width="68" height="26" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
-        <text x="282" y="185" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Idade</text>
-        <rect x="296" y="168" width="68" height="26" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
-        <text x="330" y="185" text-anchor="middle" font-size="9.5" fill="#4A1B0C">Profissão</text>
-
-        <!-- Exemplos -->
-        <rect x="388" y="106" width="128" height="28" rx="14" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1.5"/>
-        <text x="452" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#085041">Exemplos</text>
-        <rect x="352" y="168" width="112" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
-        <text x="408" y="185" text-anchor="middle" font-size="9.5" fill="#085041">amarelim / amarelinho</text>
-        <rect x="450" y="168" width="100" height="26" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
-        <text x="500" y="185" text-anchor="middle" font-size="9.5" fill="#085041">muié / mulher</text>
-
-        <!-- No texto teatral -->
-        <rect x="548" y="106" width="144" height="28" rx="14" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1.5"/>
-        <text x="620" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#412402">No texto teatral</text>
-        <rect x="530" y="168" width="114" height="36" rx="13" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-        <text x="587" y="183" text-anchor="middle" font-size="9" fill="#412402">Representa a</text>
-        <text x="587" y="196" text-anchor="middle" font-size="9" fill="#412402">fala real</text>
-        <rect x="596" y="168" width="100" height="36" rx="13" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-        <text x="646" y="183" text-anchor="middle" font-size="9" fill="#412402">Identidade do</text>
-        <text x="646" y="196" text-anchor="middle" font-size="9" fill="#412402">personagem</text>
+      <svg id="gabarito-svg" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs><marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7C3AED" opacity="0.6"/></marker></defs>
+        <line x1="400" y1="36" x2="80"  y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
+        <line x1="400" y1="36" x2="270" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
+        <line x1="400" y1="36" x2="530" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
+        <line x1="400" y1="36" x2="720" y2="104" stroke="#7C3AED" stroke-width="1.5" opacity="0.45" marker-end="url(#ga)"/>
+        <line x1="66" y1="126" x2="36" y2="186" stroke="#AFA9EC" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="92" y1="126" x2="116" y2="186" stroke="#AFA9EC" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="254" y1="126" x2="206" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="284" y1="126" x2="316" y2="186" stroke="#F0997B" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="308" y1="214" x2="216" y2="274" stroke="#F0997B" stroke-width="1.1" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="316" y1="214" x2="316" y2="274" stroke="#F0997B" stroke-width="1.1" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="326" y1="214" x2="404" y2="274" stroke="#F0997B" stroke-width="1.1" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="514" y1="126" x2="474" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="546" y1="126" x2="576" y2="186" stroke="#5DCAA5" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="706" y1="126" x2="664" y2="186" stroke="#EF9F27" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <line x1="734" y1="126" x2="758" y2="186" stroke="#EF9F27" stroke-width="1.2" opacity="0.6" marker-end="url(#ga)"/>
+        <rect x="242" y="10" width="316" height="36" rx="18" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
+        <text x="400" y="33" text-anchor="middle" font-size="13" font-weight="800" fill="#2D1B69">Pontuação Expressiva</text>
+        <rect x="18" y="106" width="124" height="28" rx="14" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1.5"/>
+        <text x="80" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4C1D95">? Interrogação</text>
+        <rect x="4" y="168" width="88" height="34" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
+        <text x="48" y="183" text-anchor="middle" font-size="9" fill="#4C1D95">Indica</text><text x="48" y="196" text-anchor="middle" font-size="9" fill="#4C1D95">pergunta</text>
+        <rect x="78" y="168" width="90" height="34" rx="13" fill="#EDE9FE" stroke="#A78BFA" stroke-width="1"/>
+        <text x="123" y="183" text-anchor="middle" font-size="9" fill="#4C1D95">Exprime</text><text x="123" y="196" text-anchor="middle" font-size="9" fill="#4C1D95">dúvida</text>
+        <rect x="200" y="106" width="148" height="28" rx="14" fill="#FAECE7" stroke="#F0997B" stroke-width="1.5"/>
+        <text x="274" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#4A1B0C">! Exclamação</text>
+        <rect x="156" y="168" width="110" height="34" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="211" y="183" text-anchor="middle" font-size="9" fill="#4A1B0C">Enfatiza</text><text x="211" y="196" text-anchor="middle" font-size="9" fill="#4A1B0C">declaração</text>
+        <rect x="270" y="168" width="120" height="34" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="330" y="183" text-anchor="middle" font-size="9" fill="#4A1B0C">Exprime</text><text x="330" y="196" text-anchor="middle" font-size="9" fill="#4A1B0C">emoção forte</text>
+        <rect x="164" y="268" width="86" height="28" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="207" y="286" text-anchor="middle" font-size="9" fill="#4A1B0C">Braveza</text>
+        <rect x="270" y="268" width="94" height="28" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="317" y="286" text-anchor="middle" font-size="9" fill="#4A1B0C">Indignação</text>
+        <rect x="370" y="268" width="80" height="28" rx="13" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+        <text x="410" y="286" text-anchor="middle" font-size="9" fill="#4A1B0C">Alegria</text>
+        <rect x="450" y="106" width="160" height="28" rx="14" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1.5"/>
+        <text x="530" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#085041">· Ponto Final</text>
+        <rect x="416" y="168" width="116" height="34" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="474" y="183" text-anchor="middle" font-size="9" fill="#085041">Afirmação</text><text x="474" y="196" text-anchor="middle" font-size="9" fill="#085041">simples</text>
+        <rect x="538" y="168" width="76" height="34" rx="13" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="576" y="183" text-anchor="middle" font-size="9" fill="#085041">Sem ênfase</text><text x="576" y="196" text-anchor="middle" font-size="9" fill="#085041">emocional</text>
+        <rect x="644" y="106" width="152" height="28" rx="14" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1.5"/>
+        <text x="720" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#412402">Função</text>
+        <rect x="610" y="168" width="108" height="34" rx="13" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+        <text x="664" y="183" text-anchor="middle" font-size="9" fill="#412402">Representa a</text><text x="664" y="196" text-anchor="middle" font-size="9" fill="#412402">entonação</text>
+        <rect x="716" y="168" width="80" height="34" rx="13" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+        <text x="756" y="183" text-anchor="middle" font-size="9" fill="#412402">Muda o</text><text x="756" y="196" text-anchor="middle" font-size="9" fill="#412402">sentido</text>
       </svg>
-      <div class="score-row">
-        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
-        <span class="score-label" id="score-label">0 de 14 conexões</span>
+        <span class="score-label" id="score-label">0 de 15 conexões</span>
       </div>
     </div>
   </div>
 </div>
 <script>
 var NODES = [
-  { id:'central',    label:'Variação Linguística',      cls:'n-central' },
-  { id:'oq',         label:'O que é',                   cls:'n-purple'  },
-  { id:'fatores',    label:'Fatores',                   cls:'n-coral'   },
-  { id:'exemplos',   label:'Exemplos',                  cls:'n-teal'    },
-  { id:'teatro',     label:'No texto teatral',          cls:'n-amber'   },
-  { id:'fala_muda',  label:'Fala muda conforme o falante', cls:'n-purple' },
-  { id:'nao_errada', label:'Não há forma errada',       cls:'n-purple'  },
-  { id:'lugar',      label:'Lugar',                     cls:'n-coral'   },
-  { id:'escol',      label:'Escolaridade',              cls:'n-coral'   },
-  { id:'idade',      label:'Idade',                     cls:'n-coral'   },
-  { id:'prof',       label:'Profissão',                 cls:'n-coral'   },
-  { id:'ex1',        label:'amarelim / amarelinho',     cls:'n-teal'    },
-  { id:'ex2',        label:'muié / mulher',             cls:'n-teal'    },
-  { id:'fala_real',  label:'Representa a fala real',   cls:'n-amber'   },
-  { id:'identidade', label:'Identidade do personagem',  cls:'n-amber'   },
+  { id:'central',     label:'Pontuação Expressiva',    cls:'n-central' },
+  { id:'interrog',    label:'? Interrogação',          cls:'n-purple'  },
+  { id:'exclam',      label:'! Exclamação',            cls:'n-coral'   },
+  { id:'ponto',       label:'· Ponto Final',           cls:'n-teal'    },
+  { id:'funcao',      label:'Função',                  cls:'n-amber'   },
+  { id:'pergunta',    label:'Indica pergunta',         cls:'n-purple'  },
+  { id:'duvida',      label:'Exprime dúvida',          cls:'n-purple'  },
+  { id:'enfatiza',    label:'Enfatiza declaração',     cls:'n-coral'   },
+  { id:'emocao',      label:'Exprime emoção forte',   cls:'n-coral'   },
+  { id:'braveza',     label:'Braveza',                 cls:'n-coral'   },
+  { id:'indig',       label:'Indignação',              cls:'n-coral'   },
+  { id:'alegria',     label:'Alegria',                 cls:'n-coral'   },
+  { id:'simples',     label:'Afirmação simples',       cls:'n-teal'    },
+  { id:'sem_enfase',  label:'Sem ênfase emocional',   cls:'n-teal'    },
+  { id:'entonacao',   label:'Representa a entonação', cls:'n-amber'   },
+  { id:'sentido',     label:'Muda o sentido',          cls:'n-amber'   },
 ];
 
 var GABARITO = [
-  ['central','oq'],['central','fatores'],['central','exemplos'],['central','teatro'],
-  ['oq','fala_muda'],['oq','nao_errada'],
-  ['fatores','lugar'],['fatores','escol'],['fatores','idade'],['fatores','prof'],
-  ['exemplos','ex1'],['exemplos','ex2'],
-  ['teatro','fala_real'],['teatro','identidade'],
+  ['central','interrog'],['central','exclam'],['central','ponto'],['central','funcao'],
+  ['interrog','pergunta'],['interrog','duvida'],
+  ['exclam','enfatiza'],['exclam','emocao'],
+  ['emocao','braveza'],['emocao','indig'],['emocao','alegria'],
+  ['ponto','simples'],['ponto','sem_enfase'],
+  ['funcao','entonacao'],['funcao','sentido'],
 ];
 
 var SHUFFLE = [
-  'lugar','central','ex1','oq','identidade','fatores',
-  'fala_muda','teatro','escol','nao_errada','ex2','exemplos',
-  'idade','prof','fala_real',
+  'pergunta','central','braveza','interrog','sentido','exclam',
+  'enfatiza','funcao','duvida','emocao','indig','ponto',
+  'alegria','simples','sem_enfase','entonacao',
 ];
 
 var stage = document.getElementById('stage');
@@ -203,7 +181,7 @@ var positions = {}, arrows = [], mode = 'connect', arrowFrom = null, dragging = 
 
 function calcPositions() {
   var W = stage.clientWidth;
-  var COLS = W < 520 ? 2 : 5;
+  var COLS = W < 520 ? 2 : 4;
   var ROWS = Math.ceil(SHUFFLE.length / COLS);
   var padX = 16, padY = 32;
   var colW = (W - padX*2) / COLS;
