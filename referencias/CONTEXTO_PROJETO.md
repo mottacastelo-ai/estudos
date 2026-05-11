@@ -47,8 +47,44 @@ O projeto repousa sobre três pilares científicos comprovados:
 - **URL ao vivo:** Configurada via GitHub Pages
 
 ### Estrutura de Arquivos
-- **Arquivo principal:** `index.html` (aplicação SPA)
-- **Documentação:** `README.md` (convenções de nomenclatura, padrões de cor por disciplina, guia de adição de temas)
+
+```
+estudos/
+├── index.html                        # Aplicação SPA principal
+├── README.md                         # Convenções e guia de desenvolvimento
+├── referencias/                      # Documentação e referências do projeto
+│   ├── CONTEXTO_PROJETO.md
+│   ├── temas-existentes.md
+│   ├── atividades-por-disciplina.md
+│   └── index-template-snippets.md
+├── portugues/                        # Disciplina → Tema
+│   ├── preposicoes/
+│   ├── texto-teatral/
+│   ├── tempos-verbais/
+│   ├── letra-l/
+│   ├── variacao-linguistica/
+│   ├── pontuacao/
+│   ├── texto-instrucional/
+│   └── entonacao/
+├── matematica/
+│   └── tabuada/
+├── ciencias/
+│   ├── lixo-que-produzimos/
+│   ├── caminho-do-lixo/
+│   └── tecnologia-agropecuaria/
+├── historia/
+│   ├── marcos-memoria/
+│   ├── calendarios-povos/
+│   ├── diversidade-cultural/
+│   └── pais-de-contrastes/
+└── [disc-folder]/[slug]/             # Padrão geral: cada tema em sua subpasta
+    ├── hq-[slug].png                 # HQ montada (páginas unidas verticalmente)
+    ├── hq-[slug]-prompt.md           # Prompt usado para gerar a HQ
+    ├── quiz-[slug].html              # Atividade principal
+    └── mapa-mental-[slug].html       # Atividade de mapa mental (quando aplicável)
+```
+
+**Nota:** imagens canônicas de personagens (`versao canonica *.png`) permanecem na raiz do projeto para que a skill hq-generator as localize via `os.listdir()`.
 
 ### Versionamento
 - **Ferramenta:** GitHub Desktop
@@ -61,43 +97,74 @@ O projeto repousa sobre três pilares científicos comprovados:
 
 ### Estrutura por Disciplina
 
-#### **Português (6 temas completados)**
+#### **Português (8 temas completados)** — pasta: `portugues/`
 
-1. **Preposições**
+1. **Preposições** (`preposicoes/`)
    - Personagem principal: Prepo (robô roxo mascote)
    - Arco: HQ → atividades de reconhecimento → mapeamento visual
    - Foco: Aprendizagem visual e prática de posicionamento
 
-2. **Texto Teatral**
+2. **Texto Teatral** (`texto-teatral/`)
    - Novo personagem: Prof. Teatrão (professor dramático com lenço colorido)
    - Arco: HQ teatral → identificação de elementos dramáticos → criação de diálogos
    - Foco: Estrutura narrativa e expressão
 
-3. **Tempos Verbais**
+3. **Tempos Verbais** (`tempos-verbais/`)
    - Novo personagem: Verbão (letra animada com 3 versões de roupa: passado/presente/futuro)
    - Arco: HQ com viagem temporal → conjugação → produção de narrativas em tempos diferentes
    - Foco: Flexibilidade verbal e consciência temporal
 
-4. **Letra ℓ e U**
+4. **Letra ℓ e U** (`letra-l/`)
    - Novo personagem: Elinho (letra animada estilo cowboy/surfista)
    - Arco: HQ → atividades de discriminação visual → escrita criativa com foco no som
    - Foco: Fonética e discriminação visual-auditiva
 
-5. **Variação Linguística**
+5. **Variação Linguística** (`variacao-linguistica/`)
    - Novos personagens: Zé e Das Graças (fantoches)
    - Arco: HQ com diálogos regionais → identificação de variantes → criação de diálogos inclusivos
    - Foco: Conscientização sociolinguística
 
-6. **Pontuação Expressiva**
+6. **Pontuação** (`pontuacao/`)
    - Novos personagens: Interrogação (? azul, curioso), Exclamação (! vermelho-laranja, musculoso), Ponto (. cinza, calmo)
    - Arco: HQ com personagens pontuação → interpretação de sentimentos → uso criativo em contextos
    - Foco: Pontuação como instrumento expressivo, não apenas gramatical
 
-#### **Matemática (1 tema completado)**
+7. **Texto Instrucional** (`texto-instrucional/`)
+   - Foco: Identificação de estrutura e linguagem de textos instrucionais
 
-1. **Tabuada**
+8. **Entonação** (`entonacao/`)
+   - Foco: Prosódia e leitura expressiva
+
+#### **Matemática (1 tema completado)** — pasta: `matematica/`
+
+1. **Tabuada** (`tabuada/`)
    - Arco: HQ → reconhecimento de padrões → fluência em retrieval → criação de jogos próprios
    - Foco: Automaticidade combinada com compreensão conceitual
+
+#### **Ciências (3 temas completados)** — pasta: `ciencias/`
+
+1. **Lixo que Produzimos** (`lixo-que-produzimos/`)
+   - Foco: Tipos de resíduos, consumo consciente e separação de lixo
+
+2. **Caminho do Lixo** (`caminho-do-lixo/`)
+   - Foco: Destinação final dos resíduos, reciclagem e impacto ambiental
+
+3. **Tecnologia Agropecuária** (`tecnologia-agropecuaria/`)
+   - Foco: Uso de tecnologia na produção agrícola e pecuária brasileira
+
+#### **História (4 temas completados)** — pasta: `historia/`
+
+1. **Marcos da Memória** (`marcos-memoria/`)
+   - Foco: Lugares e objetos como registros da memória coletiva e individual
+
+2. **Calendários dos Povos** (`calendarios-povos/`)
+   - Foco: Diferentes formas de medir e organizar o tempo em culturas diversas
+
+3. **Diversidade Cultural** (`diversidade-cultural/`)
+   - Foco: Pluralidade cultural brasileira e identidade nacional
+
+4. **País de Contrastes** (`pais-de-contrastes/`)
+   - Foco: Desigualdades regionais e sociais no Brasil
 
 ---
 
@@ -213,4 +280,4 @@ Quando adicionar novo tema:
 
 ---
 
-**Última atualização:** Maio de 2026
+**Última atualização:** 11 de Maio de 2026 — Reorganização para estrutura por disciplina/tema; adicionadas seções de Ciências e História.

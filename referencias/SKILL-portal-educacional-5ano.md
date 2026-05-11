@@ -1,6 +1,6 @@
 ---
 name: portal-educacional
-description: "Skill para o Portal Educacional do 5º Ano (github.com/mottacastelo-ai/estudos). Acione quando Léo fornecer fotos de conteúdo escolar ou mencionar novo tema, nova disciplina, fotos da escola, atividades para o portal ou atualizar o site. SEMPRE executa Fase 0 de análise de escopo e aguarda aprovação antes de gerar HQs, atividades ou HTML. Modo padrão via Cowork: edita index.html diretamente na pasta local e salva arquivos na raiz do projeto sem subpastas nem ZIPs. Fallback Claude.ai: ZIP com index.html completo já atualizado."
+description: "Skill para o Portal Educacional do 5º Ano (github.com/mottacastelo-ai/estudos). Acione quando Léo fornecer fotos de conteúdo escolar ou mencionar novo tema, nova disciplina, fotos da escola, atividades para o portal ou atualizar o site. SEMPRE executa Fase 0 de análise de escopo e aguarda aprovação antes de gerar HQs, atividades ou HTML. Modo padrão via Cowork: edita index.html diretamente na pasta local e salva arquivos em subpastas por disciplina/tema (ex: portugues/preposicoes/). Fallback Claude.ai: ZIP com index.html completo já atualizado."
 ---
 
 # Skill: Portal Educacional — 5º Ano
@@ -114,17 +114,19 @@ Com base na estrutura aprovada na Fase 0, delimite com precisão quais imagens/p
 
 ### 1.2 Verificação de conflito com temas existentes
 
-Consulte `references/temas-existentes.md` para verificar se o tema já foi implementado. Se já existir, pergunte antes de sobrescrever.
+Consulte `referencias/temas-existentes.md` para verificar se o tema já foi implementado. Se já existir, pergunte antes de sobrescrever.
 
-### 1.3 Mapeamento de disciplina → código
+### 1.3 Mapeamento de disciplina → código e pasta
 
-| Disciplina  | Código HTML | Cor primária | Cor clara   | Bg          | Gradiente hero                              |
-|-------------|-------------|--------------|-------------|-------------|---------------------------------------------|
-| Português   | `port`      | `#7C3AED`    | `#A78BFA`   | `#F3F0FF`   | `135deg, #2D1B69, #7C3AED 60%, #A78BFA`    |
-| Matemática  | `mat`       | `#059669`    | `#34D399`   | `#ECFDF5`   | `135deg, #064E3B, #059669 60%, #34D399`    |
-| Ciências    | `cien`      | `#0284C7`    | `#38BDF8`   | `#F0F9FF`   | `135deg, #0C4A6E, #0284C7 60%, #38BDF8`   |
-| História    | `hist`      | `#B45309`    | `#F59E0B`   | `#FFFBEB`   | `135deg, #78350F, #B45309 60%, #F59E0B`   |
-| Geografia   | `geo`       | `#15803D`    | `#4ADE80`   | `#F0FDF4`   | `135deg, #14532D, #15803D 60%, #4ADE80`   |
+| Disciplina  | Código HTML | Pasta (`disc-folder`) | Cor primária | Cor clara   | Bg          | Gradiente hero                              |
+|-------------|-------------|----------------------|--------------|-------------|-------------|---------------------------------------------|
+| Português   | `port`      | `portugues`          | `#7C3AED`    | `#A78BFA`   | `#F3F0FF`   | `135deg, #2D1B69, #7C3AED 60%, #A78BFA`    |
+| Matemática  | `mat`       | `matematica`         | `#059669`    | `#34D399`   | `#ECFDF5`   | `135deg, #064E3B, #059669 60%, #34D399`    |
+| Ciências    | `cien`      | `ciencias`           | `#0284C7`    | `#38BDF8`   | `#F0F9FF`   | `135deg, #0C4A6E, #0284C7 60%, #38BDF8`   |
+| História    | `hist`      | `historia`           | `#B45309`    | `#F59E0B`   | `#FFFBEB`   | `135deg, #78350F, #B45309 60%, #F59E0B`   |
+| Geografia   | `geo`       | `geografia`          | `#15803D`    | `#4ADE80`   | `#F0FDF4`   | `135deg, #14532D, #15803D 60%, #4ADE80`   |
+
+> **Convenção de caminho:** todos os arquivos de um tema são salvos em `[disc-folder]/[slug]/`. Exemplo: `portugues/preposicoes/quiz-preposicoes.html`.
 
 Para novas disciplinas não listadas, proponha uma paleta ao usuário antes de continuar.
 
@@ -291,13 +293,13 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 ### 4.1 Atividades obrigatórias (todo tema, toda disciplina)
 
 #### A) Quiz Interativo
-- **Arquivo:** `quiz-[slug].html`
+- **Arquivo:** `[disc-folder]/[slug]/quiz-[slug].html`
 - **Estrutura:** 10 questões de múltipla escolha com 4 alternativas
 - **Feedback:** imediato por questão + placar final com mensagem motivacional
 - **Nível Glasser:** 📖 Retrieval practice
 - **Card no index:**
 ```html
-<a class="act-card [disc]" href="quiz-[slug].html" target="_blank">
+<a class="act-card [disc]" href="[disc-folder]/[slug]/quiz-[slug].html" target="_blank">
   <div class="act-icon">❓</div>
   <div class="act-title">Quiz Interativo</div>
   <div class="act-desc">[10 questões sobre os conceitos principais do tema]</div>
@@ -307,14 +309,14 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 ```
 
 #### B) Mapa Mental
-- **Arquivo:** `mapa-mental-[slug].html`
+- **Arquivo:** `[disc-folder]/[slug]/mapa-mental-[slug].html`
 - **Estrutura:** Nós arrastáveis com conexões, gabarito ao final
 - **Conteúdo:** 6-10 nós representando os conceitos-chave do tema
 - **Nível Glasser:** 🏆 Ensinar (90%)
 - **Sempre é a última atividade listada no act-grid**
 - **Card no index:**
 ```html
-<a class="act-card [disc]" href="mapa-mental-[slug].html" target="_blank">
+<a class="act-card [disc]" href="[disc-folder]/[slug]/mapa-mental-[slug].html" target="_blank">
   <div class="act-icon">🗺️</div>
   <div class="act-title">Mapa Mental</div>
   <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
@@ -325,7 +327,7 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 
 ### 4.2 Atividades variáveis
 
-Consulte `references/atividades-por-disciplina.md` para sugestões por disciplina. Selecione **2-3 atividades** respeitando:
+Consulte `referencias/atividades-por-disciplina.md` para sugestões por disciplina. Selecione **2-3 atividades** respeitando:
 1. Nenhuma deve repetir o tipo de interação de outro tema da mesma disciplina
 2. Deve cobrir pelo menos um nível intermediário (70% ou 80% da pirâmide)
 3. Deve haver pelo menos uma atividade de criação/produção (90%)
@@ -351,7 +353,7 @@ Cada arquivo HTML de atividade deve:
 2. **Usar as fontes do projeto:** `Baloo 2` + `Space Mono`
 3. **Aplicar a paleta da disciplina** conforme tabela da Fase 1
 4. **Ter feedback imediato** para cada interação
-5. **Ter botão "Voltar ao Portal"** que fecha a aba (`window.close()`) ou vai para `index.html`
+5. **Ter botão "Voltar ao Portal"** com `href="../../index.html"` (os arquivos ficam 2 níveis abaixo da raiz: `[disc-folder]/[slug]/`). Não usar `window.close()` em atividades novas.
 6. **Ser responsivo** (funcionar em mobile)
 7. **Ter cabeçalho** com nome do tema e personagem em destaque
 
@@ -479,7 +481,7 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 ```html
 <div class="theme-content" id="theme-[disc]-[slug]">
   <div class="hq-card">
-    <img class="hq-img" src="hq-[slug].png" alt="HQ [Nome do Tema]">
+    <img class="hq-img" src="[disc-folder]/[slug]/hq-[slug].png" alt="HQ [Nome do Tema]">
     <div class="hq-caption"><span>📖</span><span>[Título HQ] — 4 páginas · Personagens: [lista] · Tema: [tema]</span></div>
   </div>
   <hr class="sdiv">
@@ -495,6 +497,7 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 ```
 
 > **Atenção:** a extensão padrão do arquivo HQ é `.png`. Usar `.jpg` apenas se Léo fornecer a imagem nesse formato.
+> **Caminho completo do src:** `[disc-folder]/[slug]/hq-[slug].png` — nunca apenas `hq-[slug].png`.
 
 ---
 
@@ -506,27 +509,34 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 
 ```
 C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\
-├── index.html                         ← editado diretamente (Fase 6)
-├── hq-[slug]-prompt.md                ← criado (Fase 3)
-├── quiz-[slug].html                   ← criado (Fase 5)
-├── mapa-mental-[slug].html            ← criado (Fase 5)
-├── [atividade-variavel-1]-[slug].html ← criado (Fase 5)
-└── [atividade-variavel-2]-[slug].html ← criado (Fase 5)
+├── index.html                                  ← editado diretamente (Fase 6)
+└── [disc-folder]/
+    └── [slug]/
+        ├── hq-[slug]-prompt.md                 ← criado (Fase 3)
+        ├── quiz-[slug].html                    ← criado (Fase 5)
+        ├── mapa-mental-[slug].html             ← criado (Fase 5)
+        ├── [atividade-variavel-1]-[slug].html  ← criado (Fase 5)
+        └── [atividade-variavel-2]-[slug].html  ← criado (Fase 5)
 ```
 
-> **Nota:** o arquivo `hq-[slug].png` **não é gerado por esta skill** — Léo o gera externamente (skill de HQ) e o copia manualmente para a raiz do projeto antes do deploy.
+Exemplos de caminhos reais:
+- `portugues/preposicoes/quiz-preposicoes.html`
+- `historia/marcos-memoria/hq-marcos-memoria-prompt.md`
+- `ciencias/tecnologia-agropecuaria/mapa-mental-tecnologia-agropecuaria.html`
+
+> **Nota:** o arquivo `hq-[slug].png` é gerado automaticamente pela skill hq-generator (acionada na Fase 7.4) e salvo diretamente em `[disc-folder]/[slug]/`.
 
 ### 7.2 Checklist antes de concluir
 
 - [ ] `index.html` salvo com todas as alterações da Fase 6
-- [ ] Todos os arquivos HTML das atividades na raiz da pasta
-- [ ] Todos os `href` dos `act-card` no index batem com os nomes dos arquivos criados
+- [ ] Todos os arquivos HTML das atividades criados em `[disc-folder]/[slug]/`
+- [ ] Todos os `href` dos `act-card` no index usam o caminho completo `[disc-folder]/[slug]/[arquivo].html`
 - [ ] O `id` do `theme-content` bate com o `onclick` do tab e do sidebar
 - [ ] Contadores da home atualizados
 - [ ] `firstTheme` atualizado no JavaScript (se nova disciplina)
-- [ ] Nenhum arquivo criado em subpasta
-- [ ] `src` da `hq-img` no index usa extensão `.png` (ou `.jpg` se aplicável)
-- [ ] Léo foi informado de que precisa copiar manualmente o `hq-[slug].png` para a pasta antes do deploy
+- [ ] `src` da `hq-img` no index aponta para `[disc-folder]/[slug]/hq-[slug].png` (nunca apenas `hq-[slug].png`)
+- [ ] Botão "Voltar ao Portal" nas atividades usa `href="../../index.html"`
+- [ ] hq-generator foi acionada com `SUBFOLDER = [disc-folder]/[slug]`
 
 ### 7.3 Mensagem de conclusão
 
@@ -547,7 +557,8 @@ Após salvar todos os arquivos na pasta local, acionar automaticamente a skill *
 |---|---|
 | `PASTA_PROJETO` | `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos` |
 | `SLUG` | slug do tema recém-gerado |
-| `PROMPT_MD` | `[PASTA_PROJETO]\hq-[slug]-prompt.md` |
+| `SUBFOLDER` | `[disc-folder]/[slug]` (ex: `historia/marcos-memoria`) |
+| `PROMPT_MD` | `[PASTA_PROJETO]\[disc-folder]\[slug]\hq-[slug]-prompt.md` |
 
 **Parâmetros detectados automaticamente pela hq-generator:**
 
@@ -573,6 +584,6 @@ Neste modo, a hq-generator **não é acionada automaticamente** — informar Lé
 
 ## Referências
 
-- `references/temas-existentes.md` — lista de todos os temas já implementados
-- `references/atividades-por-disciplina.md` — catálogo de tipos de atividade por disciplina com critérios de escolha
-- `references/index-template-snippets.md` — snippets HTML prontos para copiar ao atualizar o index
+- `referencias/temas-existentes.md` — lista de todos os temas já implementados
+- `referencias/atividades-por-disciplina.md` — catálogo de tipos de atividade por disciplina com critérios de escolha
+- `referencias/index-template-snippets.md` — snippets HTML prontos para copiar ao atualizar o index
