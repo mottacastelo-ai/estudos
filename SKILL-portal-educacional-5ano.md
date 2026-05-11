@@ -535,10 +535,30 @@ Ao finalizar, informar Léo:
 2. Quais atividades variáveis foram escolhidas e **por que** (justificativa pedagógica)
 3. O personagem novo criado (se houver) com breve descrição
 4. Se algum conceito da Fase 0 ficou sem cobertura nas atividades geradas
-5. Lembrete para gerar as imagens de HQ com a skill dedicada e copiar o `hq-[slug].png` para a raiz do projeto
-6. Próximo passo: commit + push no GitHub Desktop → GitHub Pages publica automaticamente
+5. Próximo passo após a geração das HQs: commit + push no GitHub Desktop → GitHub Pages publica automaticamente
 
-### 7.4 Fallback — quando executado fora do Cowork
+### 7.4 Acionamento automático da skill hq-generator
+
+Após salvar todos os arquivos na pasta local, acionar automaticamente a skill **hq-generator** para cada tema gerado, na sequência.
+
+**Parâmetros passados pela skill do portal:**
+
+| Parâmetro | Valor |
+|---|---|
+| `PASTA_PROJETO` | `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos` |
+| `SLUG` | slug do tema recém-gerado |
+| `PROMPT_MD` | `[PASTA_PROJETO]\hq-[slug]-prompt.md` |
+
+**Parâmetros detectados automaticamente pela hq-generator:**
+
+- `TAB_ID` — obtido via `list_connected_browsers` ou `tabs_context_mcp`; usar a aba ativa do Chrome
+- `CONVERSA_URL` — navegar para `https://chatgpt.com/g/g-69ff2b40169881918c5f75a8d9767f30-gpt-quadrinhos-sabendo` (sem `/c/...`) para iniciar nova conversa; a URL resultante após o redirecionamento é a `CONVERSA_URL`
+
+Se houver mais de um tema no lote, executar a hq-generator para cada um em sequência — aguardar a conclusão completa (Fase 2 da hq-generator) antes de iniciar o próximo tema.
+
+**Esta etapa substitui o lembrete manual de geração de HQ.** O arquivo `hq-[slug].png` já estará na raiz do projeto ao final.
+
+### 7.5 Fallback — quando executado fora do Cowork
 
 Se a skill for executada no Claude.ai (sem acesso ao sistema de arquivos local), entregar um **único ZIP** contendo:
 - Todos os arquivos HTML das atividades
@@ -546,6 +566,8 @@ Se a skill for executada no Claude.ai (sem acesso ao sistema de arquivos local),
 - O `index.html` **completo e já atualizado** — nunca um arquivo de instruções separado
 
 O `index.html` completo exige que Léo forneça o arquivo atual no início da conversa. Se não for fornecido, solicitar antes de prosseguir para a Fase 5.
+
+Neste modo, a hq-generator **não é acionada automaticamente** — informar Léo que deverá executá-la manualmente após extrair o ZIP.
 
 ---
 
