@@ -383,11 +383,12 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-hist" onclick="showDisc('hist')">
     <span class="d-icon">📜</span>
     <span class="d-name">História</span>
-    <span class="d-count">2</span>
+    <span class="d-count">3</span>
   </button>
   <div class="theme-sub" id="sub-hist">
     <button class="theme-link" onclick="showTheme('hist','calendarios-povos')">🗓️ Diversos Calendários</button>
     <button class="theme-link" onclick="showTheme('hist','marcos-memoria')">🗿 Marcos de Memória</button>
+    <button class="theme-link" onclick="showTheme('hist','memoria-negra-imigrantes')">✊🏽 Zumbi e Imigrantes</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-cien" onclick="showDisc('cien')">
@@ -416,8 +417,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>16</span>temas</div>
-        <div class="hstat"><span>74</span>atividades</div>
+        <div class="hstat"><span>17</span>temas</div>
+        <div class="hstat"><span>77</span>atividades</div>
       </div>
     </div>
     <div class="home-body">
@@ -457,8 +458,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">História</div>
           <div class="dhc-desc">Calendários, memória e patrimônio histórico</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#FFFBEB;color:#B45309">2 temas</span>
-            <span class="chip" style="background:#ECFDF5;color:#065F46">8 atividades</span>
+            <span class="chip" style="background:#FFFBEB;color:#B45309">3 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">11 atividades</span>
           </div>
         </button>
         <button class="disc-home-card cien" onclick="showDisc('cien')">
@@ -1325,6 +1326,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <div class="theme-tabs">
         <button class="theme-tab-btn hist-tab active" onclick="activateTheme('hist','calendarios-povos')">🗓️ Diversos Calendários</button>
         <button class="theme-tab-btn hist-tab" onclick="activateTheme('hist','marcos-memoria')">🗿 Marcos de Memória</button>
+        <button class="theme-tab-btn hist-tab" onclick="activateTheme('hist','memoria-negra-imigrantes')">✊🏽 Zumbi e Imigrantes</button>
       </div>
 
       <!-- TEMA 1: Calendários dos Povos -->
@@ -1403,6 +1405,46 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><span class="sched-day hist">Seg</span><div class="sched-acts"><span class="sched-act hist">📖 HQ</span></div></div>
           <div class="sched-row"><span class="sched-day hist">Ter</span><div class="sched-acts"><span class="sched-act hist">❓ Quiz</span></div></div>
           <div class="sched-row"><span class="sched-day hist">Qua</span><div class="sched-acts"><span class="sched-act hist">🔍 Detetive</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Sex</span><div class="sched-acts"><span class="sched-act hist">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA 3: Zumbi, Quilombos e Memória dos Imigrantes -->
+      <div class="theme-content" id="theme-hist-memoria-negra-imigrantes">
+        <div class="hq-card">
+          <img class="hq-img" src="historia/memoria-negra-imigrantes/hq-memoria-negra-imigrantes.png" alt="HQ Zumbi, Quilombos e Memória dos Imigrantes">
+          <div class="hq-caption"><span>📖</span><span>Selos da Memória — 4 páginas · Personagens: Timbre (selo animado), Bia e Prepo · Zumbi, Quilombos, Cais do Valongo e herança dos imigrantes</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card hist" href="historia/memoria-negra-imigrantes/quiz-memoria-negra-imigrantes.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre Zumbi dos Palmares, quilombos, Cais do Valongo, Santa Felicidade e os selos dos Correios.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card hist" href="historia/memoria-negra-imigrantes/selos-da-memoria.html" target="_blank">
+            <div class="act-icon">📮</div>
+            <div class="act-title">Selos da Memória</div>
+            <div class="act-desc">Arraste cada marco de memória para a zona correta — cultura negra ou imigrantes. Classifique os 6 selos e verifique seu resultado.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card hist" href="historia/memoria-negra-imigrantes/mapa-mental-memoria-negra-imigrantes.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Conecte os nós do mapa para organizar os marcos da memória negra e dos imigrantes. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><span class="sched-day hist">Seg</span><div class="sched-acts"><span class="sched-act hist">📖 HQ</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Ter</span><div class="sched-acts"><span class="sched-act hist">❓ Quiz</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Qua</span><div class="sched-acts"><span class="sched-act hist">📮 Selos da Memória</span></div></div>
           <div class="sched-row"><span class="sched-day hist">Sex</span><div class="sched-acts"><span class="sched-act hist">🗺️ Mapa Mental</span></div></div>
         </div>
       </div>

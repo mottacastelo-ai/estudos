@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selos da Memória — Marcos dos Imigrantes e da Cultura Negra</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: #374151; }
+.hero { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 2rem 1.5rem 1.2rem; text-align: center; color: white; }
+.hero h1 { font-size: 1.5rem; font-weight: 900; line-height: 1.2; }
+.hero p { font-size: .9rem; opacity: .9; margin-top: .3rem; }
+.container { max-width: 860px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.score-bar { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 12px; padding: .8rem 1.2rem; margin-bottom: 1.2rem; box-shadow: 0 2px 10px rgba(180,83,9,.08); }
+.score-label { font-size: .85rem; color: #6b7280; font-family: 'Space Mono', monospace; }
+.score-val { font-size: 1.3rem; font-weight: 900; color: var(--primary); }
+.instruction { background: white; border-left: 4px solid var(--primary); border-radius: 0 12px 12px 0; padding: .9rem 1.1rem; margin-bottom: 1.5rem; font-size: .95rem; font-weight: 600; line-height: 1.5; }
+/* Selos */
+.selos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.selo {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem .8rem 1.2rem;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(180,83,9,.1);
+  cursor: grab;
+  transition: transform .15s, box-shadow .15s;
+  user-select: none;
+  border: 3px solid #e5e7eb;
+  position: relative;
+}
+.selo::before {
+  content: '';
+  position: absolute;
+  top: -4px; left: -4px; right: -4px; bottom: -4px;
+  border: 2px dashed #d1d5db;
+  border-radius: 10px;
+  pointer-events: none;
+}
+.selo:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(180,83,9,.18); border-color: var(--primary); }
+.selo.dragging { opacity: .5; transform: scale(1.08); }
+.selo.placed { opacity: .4; cursor: default; pointer-events: none; }
+.selo-emoji { font-size: 2.2rem; margin-bottom: .4rem; }
+.selo-nome { font-size: .95rem; font-weight: 800; color: var(--dark); }
+.selo-tipo { font-size: .75rem; color: #6b7280; font-family: 'Space Mono', monospace; margin-top: .2rem; }
+/* Zonas de drop */
+.zonas-section { margin-bottom: 2rem; }
+.zonas-section h2 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin-bottom: 1rem; }
+.zonas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.zona {
+  background: white;
+  border-radius: 14px;
+  padding: 1rem;
+  min-height: 160px;
+  border: 3px dashed #d1d5db;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.zona.over { border-color: var(--primary); background: #fff7ed; }
+.zona.correct { border-color: #059669; background: #d1fae5; }
+.zona.wrong { border-color: #DC2626; background: #fee2e2; }
+.zona-titulo { font-size: .85rem; font-weight: 800; color: #374151; margin-bottom: .5rem; font-family: 'Space Mono', monospace; }
+.zona-desc { font-size: .78rem; color: #6b7280; margin-bottom: .6rem; line-height: 1.3; }
+.zona-dropped { font-size: .85rem; font-weight: 700; min-height: 40px; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.btn-check { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; border: none; border-radius: 12px; padding: .85rem 2rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: transform .15s; display: block; margin: 1.5rem auto; }
+.btn-check:hover { transform: scale(1.04); }
+.btn-check:disabled { opacity: .5; cursor: default; }
+.feedback-global { display: none; background: white; border-radius: 14px; padding: 1.2rem 1.5rem; box-shadow: 0 2px 12px rgba(180,83,9,.1); margin-top: 1rem; font-size: .95rem; font-weight: 700; border-left: 5px solid var(--primary); }
+.feedback-global.show { display: block; }
+.final-card { display: none; text-align: center; background: white; border-radius: 20px; padding: 2.5rem 1.5rem; box-shadow: 0 4px 24px rgba(180,83,9,.12); margin-top: 1.5rem; }
+.final-card.show { display: block; }
+.back-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .7rem 1.6rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; margin-top: 1rem; }
+.back-btn:hover { background: var(--primary); color: white; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div style="font-size:2.8rem;margin-bottom:.3rem">📮✊🏽</div>
+  <h1>Selos da Memória</h1>
+  <p>Combine cada marco de memória com o grupo que ele representa</p>
+</div>
+<div class="container">
+  <div class="score-bar">
+    <span class="score-label">Acertos</span>
+    <span class="score-val" id="score-val">0 / 6</span>
+  </div>
+  <div class="instruction">📮 Arraste cada marco de memória para a zona correta — memória da cultura negra ou memória dos imigrantes. Depois clique em "Verificar"!</div>
+
+  <div style="background:white;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(180,83,9,.08);">
+    <div style="font-size:.85rem;font-weight:800;color:var(--dark);margin-bottom:.8rem;font-family:'Space Mono',monospace;">📦 MARCOS PARA CLASSIFICAR — arraste para as zonas abaixo</div>
+    <div class="selos-grid" id="selos-container">
+      <div class="selo" draggable="true" data-id="zumbi" data-grupo="negra">
+        <div class="selo-emoji">✊🏽</div>
+        <div class="selo-nome">Monumento Zumbi dos Palmares</div>
+        <div class="selo-tipo">Salvador, BA</div>
+      </div>
+      <div class="selo" draggable="true" data-id="quilombo" data-grupo="negra">
+        <div class="selo-emoji">🌳</div>
+        <div class="selo-nome">Quilombo dos Palmares</div>
+        <div class="selo-tipo">Maior quilombo colonial</div>
+      </div>
+      <div class="selo" draggable="true" data-id="cais" data-grupo="negra">
+        <div class="selo-emoji">⚓</div>
+        <div class="selo-nome">Cais do Valongo</div>
+        <div class="selo-tipo">Rio de Janeiro, RJ</div>
+      </div>
+      <div class="selo" draggable="true" data-id="santa" data-grupo="imigrantes">
+        <div class="selo-emoji">🍝</div>
+        <div class="selo-nome">Santa Felicidade</div>
+        <div class="selo-tipo">Curitiba, PR</div>
+      </div>
+      <div class="selo" draggable="true" data-id="selos-correios" data-grupo="imigrantes">
+        <div class="selo-emoji">📮</div>
+        <div class="selo-nome">Selos dos Correios</div>
+        <div class="selo-tipo">Ucranianos, poloneses, alemães, italianos</div>
+      </div>
+      <div class="selo" draggable="true" data-id="veneto" data-grupo="imigrantes">
+        <div class="selo-emoji">🏛️</div>
+        <div class="selo-nome">Arquitetura do Vêneto</div>
+        <div class="selo-tipo">Herança italiana no Brasil</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="zonas-section">
+    <h2>🎯 Zonas de classificação</h2>
+    <div class="zonas-grid">
+      <div class="zona" id="zona-negra" data-grupo="negra">
+        <div class="zona-titulo">✊🏽 MEMÓRIA DA CULTURA NEGRA</div>
+        <div class="zona-desc">Marcos que preservam a história e a resistência dos africanos escravizados e de seus descendentes no Brasil.</div>
+        <div class="zona-dropped" id="dropped-negra"></div>
+      </div>
+      <div class="zona" id="zona-imigrantes" data-grupo="imigrantes">
+        <div class="zona-titulo">🌍 MEMÓRIA DOS IMIGRANTES</div>
+        <div class="zona-desc">Marcos que preservam as culturas dos grupos que vieram ao Brasil em busca de uma vida melhor.</div>
+        <div class="zona-dropped" id="dropped-imigrantes"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-check" id="btn-check" onclick="verificar()">✅ Verificar classificações</button>
+  <div class="feedback-global" id="feedback-global"></div>
+  <div class="final-card" id="final-card">
+    <div style="font-size:3.5rem;margin-bottom:.5rem" id="final-emoji">🏆</div>
+    <div style="font-size:1.8rem;font-weight:900;color:var(--primary);margin-bottom:.5rem" id="final-score"></div>
+    <div style="font-size:1.05rem;font-weight:600;color:#374151;margin-bottom:1.2rem" id="final-msg"></div>
+    <a class="back-btn" href="../../index.html">← Voltar ao Portal</a>
+  </div>
+</div>
+<script>
+const placements = {}; // id -> grupo colocado
+let checked = false;
+
+// Drag from selos
+document.querySelectorAll('.selo').forEach(function(selo) {
+  selo.addEventListener('dragstart', function(e) {
+    e.dataTransfer.setData('text/plain', selo.dataset.id);
+    selo.classList.add('dragging');
+  });
+  selo.addEventListener('dragend', function() {
+    selo.classList.remove('dragging');
+  });
+});
+
+// Drop zones
+document.querySelectorAll('.zona').forEach(function(zona) {
+  zona.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    zona.classList.add('over');
+  });
+  zona.addEventListener('dragleave', function() {
+    zona.classList.remove('over');
+  });
+  zona.addEventListener('drop', function(e) {
+    e.preventDefault();
+    zona.classList.remove('over');
+    if (checked) return;
+    const id = e.dataTransfer.getData('text/plain');
+    const grupo = zona.dataset.grupo;
+    const selo = document.querySelector('.selo[data-id="' + id + '"]');
+    if (!selo) return;
+    // Remove from previous zone if any
+    const prev = placements[id];
+    if (prev) {
+      const prevDrop = document.getElementById('dropped-' + prev);
+      const chip = prevDrop.querySelector('[data-id="' + id + '"]');
+      if (chip) chip.remove();
+    }
+    placements[id] = grupo;
+    const dropped = document.getElementById('dropped-' + grupo);
+    // Create chip
+    const chip = document.createElement('span');
+    chip.dataset.id = id;
+    chip.textContent = selo.querySelector('.selo-nome').textContent;
+    chip.style.cssText = 'background:var(--bg);border:1.5px solid var(--primary);border-radius:8px;padding:3px 8px;font-size:.78rem;font-weight:700;cursor:pointer;';
+    chip.title = 'Clique para remover';
+    chip.onclick = function() {
+      if (checked) return;
+      chip.remove();
+      delete placements[id];
+    };
+    dropped.appendChild(chip);
+  });
+});
+
+function verificar() {
+  if (checked) return;
+  const total = 6;
+  let acertos = 0;
+  const selos = document.querySelectorAll('.selo');
+  const feedback = [];
+  selos.forEach(function(s) {
+    const id = s.dataset.id;
+    const grupoCorreto = s.dataset.grupo;
+    const grupoEscolhido = placements[id];
+    if (grupoEscolhido === grupoCorreto) {
+      acertos++;
+    } else if (grupoEscolhido) {
+      feedback.push('❌ ' + s.querySelector('.selo-nome').textContent + ' pertence à memória ' + (grupoCorreto === 'negra' ? 'da cultura negra' : 'dos imigrantes') + '.');
+    } else {
+      feedback.push('⚠️ ' + s.querySelector('.selo-nome').textContent + ' não foi classificado.');
+    }
+  });
+
+  // Color zones
+  document.querySelectorAll('.zona').forEach(function(zona) {
+    zona.classList.remove('correct', 'wrong');
+  });
+
+  checked = true;
+  document.getElementById('btn-check').disabled = true;
+  document.getElementById('score-val').textContent = acertos + ' / ' + total;
+
+  const fg = document.getElementById('feedback-global');
+  fg.className = 'feedback-global show';
+  if (acertos === total) {
+    fg.innerHTML = '🎉 <strong>Perfeito!</strong> Você classificou todos os marcos corretamente! Monumentos, quilombos e o Cais do Valongo são marcos da cultura negra. Santa Felicidade, os selos e a arquitetura do Vêneto são marcos dos imigrantes.';
+    fg.style.borderLeftColor = '#059669';
+    document.getElementById('final-card').className = 'final-card show';
+    document.getElementById('final-emoji').textContent = '🏆';
+    document.getElementById('final-score').textContent = acertos + '/' + total + ' corretos';
+    document.getElementById('final-msg').textContent = 'Você é um guardião da memória! Sabe reconhecer como diferentes grupos preservam suas histórias.';
+  } else {
+    let html = '<strong>Resultado: ' + acertos + '/' + total + '</strong><br>';
+    if (feedback.length) html += '<br>' + feedback.join('<br>');
+    html += '<br><br>💡 <strong>Dica:</strong> Os marcos da cultura negra estão ligados à resistência dos africanos escravizados (Cais do Valongo, Quilombos, Zumbi). Os marcos dos imigrantes celebram as culturas europeias que vieram ao Brasil (selos, arquitetura, bairros).';
+    fg.innerHTML = html;
+    fg.style.borderLeftColor = '#B45309';
+  }
+}
+</script>
+</body>
+</html>

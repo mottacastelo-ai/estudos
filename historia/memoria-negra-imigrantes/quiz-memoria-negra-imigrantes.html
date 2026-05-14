@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Zumbi, Quilombos e Memória dos Imigrantes</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; --correct: #059669; --wrong: #DC2626; --neutral: #374151; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: var(--neutral); }
+.hero { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 2rem 1.5rem 1.5rem; text-align: center; color: white; }
+.hero-emoji { font-size: 3rem; margin-bottom: .4rem; }
+.hero h1 { font-size: 1.6rem; font-weight: 900; line-height: 1.2; }
+.hero p { font-size: .95rem; opacity: .9; margin-top: .4rem; }
+.container { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.progress-bar-wrap { background: #e5e7eb; border-radius: 99px; height: 10px; margin: 1.2rem 0; }
+.progress-bar { background: linear-gradient(90deg, var(--primary), var(--light)); height: 10px; border-radius: 99px; transition: width .4s; }
+.q-label { font-family: 'Space Mono', monospace; font-size: .8rem; color: var(--primary); font-weight: 700; margin-bottom: .3rem; }
+.q-text { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.2rem; line-height: 1.4; }
+.options { display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1rem; }
+.opt-btn { background: white; border: 2.5px solid #e5e7eb; border-radius: 12px; padding: .85rem 1.1rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: left; transition: all .2s; color: var(--neutral); }
+.opt-btn:hover:not(:disabled) { border-color: var(--primary); background: #fff7ed; transform: translateX(4px); }
+.opt-btn.correct { border-color: var(--correct); background: #d1fae5; color: #065f46; }
+.opt-btn.wrong { border-color: var(--wrong); background: #fee2e2; color: #7f1d1d; }
+.opt-btn:disabled { cursor: default; }
+.feedback { border-radius: 12px; padding: .9rem 1.1rem; font-weight: 700; font-size: .95rem; margin-bottom: 1rem; display: none; line-height: 1.4; }
+.feedback.show { display: block; }
+.feedback.correct { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
+.feedback.wrong { background: #fee2e2; color: #7f1d1d; border: 2px solid #fca5a5; }
+.next-btn { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; border: none; border-radius: 12px; padding: .85rem 2rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; display: none; transition: transform .15s; }
+.next-btn:hover { transform: scale(1.04); }
+.next-btn.show { display: inline-block; }
+.result-card { display: none; text-align: center; background: white; border-radius: 20px; padding: 2.5rem 1.5rem; box-shadow: 0 4px 24px rgba(180,83,9,.12); }
+.result-card.show { display: block; }
+.result-emoji { font-size: 4rem; margin-bottom: .5rem; }
+.result-score { font-size: 3rem; font-weight: 900; color: var(--primary); margin: .5rem 0; }
+.result-msg { font-size: 1.1rem; font-weight: 600; color: var(--neutral); margin-bottom: 1.5rem; }
+.result-breakdown { background: var(--bg); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; font-size: .95rem; }
+.back-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .75rem 1.8rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+.back-btn:hover { background: var(--primary); color: white; }
+.card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(180,83,9,.08); margin-bottom: 1rem; border-top: 4px solid var(--primary); }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-emoji">✊🏽📮</div>
+  <h1>Zumbi, Quilombos e<br>Memória dos Imigrantes</h1>
+  <p>Quiz Interativo · 10 questões · História 5º ano</p>
+</div>
+<div class="container">
+  <div id="quiz-area">
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress" style="width:10%"></div></div>
+    <div class="card">
+      <div class="q-label" id="q-label">Questão 1 de 10</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Próxima questão →</button>
+    </div>
+  </div>
+  <div class="result-card" id="result-card">
+    <div class="result-emoji" id="result-emoji"></div>
+    <div style="font-size:1.1rem;font-weight:700;color:#6b7280;margin-bottom:.3rem">Sua pontuação</div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="result-breakdown" id="result-breakdown"></div>
+    <a class="back-btn" href="../../index.html">← Voltar ao Portal</a>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    q: "Onde está localizado o Monumento Zumbi dos Palmares?",
+    opts: ["Praça da República, Rio de Janeiro", "Praça da Sé, Centro Histórico de Salvador (BA)", "Praça da Liberdade, Belo Horizonte (MG)", "Marco Zero, Recife (PE)"],
+    correct: 1,
+    explanation: "O Monumento Zumbi dos Palmares está na Praça da Sé, no Centro Histórico de Salvador, na Bahia — um importante marco de memória da cultura negra."
+  },
+  {
+    q: "A escultura do Monumento Zumbi dos Palmares foi criada por qual artista?",
+    opts: ["Amir Mandas", "Victor Brecheret", "Márcia Magno", "Aleijadinho"],
+    correct: 2,
+    explanation: "A escultura de Zumbi dos Palmares foi criada pela artista Márcia Magno. O monumento tem 2,10 metros de altura e pesa 300 quilos."
+  },
+  {
+    q: "O que eram os Quilombos?",
+    opts: ["Cidades coloniais construídas pelos portugueses no interior do Brasil", "Locais onde os indígenas guardavam seus artefatos sagrados", "Locais para onde os africanos escravizados fugiam para ter liberdade", "Mercados de troca de produtos no período colonial"],
+    correct: 2,
+    explanation: "Os Quilombos eram locais para onde os africanos escravizados fugiam para ter liberdade. Eram comunidades organizadas de resistência à escravidão."
+  },
+  {
+    q: "Qual era o maior Quilombo do período colonial brasileiro?",
+    opts: ["Quilombo de Zumbi, na Bahia", "Quilombo dos Palmares, em Alagoas", "Quilombo do Pará, no Pará", "Quilombo de Salvador, na Bahia"],
+    correct: 1,
+    explanation: "O Quilombo dos Palmares, localizado em Alagoas, foi o maior quilombo do período colonial brasileiro. Zumbi foi seu maior líder."
+  },
+  {
+    q: "Quais as medidas do Monumento Zumbi dos Palmares?",
+    opts: ["4 metros de altura e 500 quilos", "2,10 metros de altura e 300 quilos", "3,5 metros de altura e 450 quilos", "1,80 metros de altura e 200 quilos"],
+    correct: 1,
+    explanation: "O monumento tem 2,10 metros de altura e pesa 300 quilos. É considerado um símbolo da luta do povo negro e está no Centro Histórico de Salvador."
+  },
+  {
+    q: "O bairro de Santa Felicidade, em Curitiba (PR), guarda a memória de qual grupo de imigrantes?",
+    opts: ["Poloneses", "Alemães", "Ucranianos", "Italianos"],
+    correct: 3,
+    explanation: "Santa Felicidade é um bairro de Curitiba que preserva a memória da imigração italiana no Brasil, com arquitetura, culinária típica e festas tradicionais."
+  },
+  {
+    q: "A arquitetura do bairro de Santa Felicidade é inspirada em qual região da Itália?",
+    opts: ["Sicília", "Vêneto", "Toscana", "Lombardia"],
+    correct: 1,
+    explanation: "A arquitetura do bairro de Santa Felicidade é inspirada na região do Vêneto, na Itália, de onde vieram muitos dos imigrantes que se instalaram ali."
+  },
+  {
+    q: "Como os Correios homenagearam a chegada de grupos de imigrantes ao Brasil?",
+    opts: ["Construindo monumentos em praças públicas das capitais", "Emitindo selos comemorativos", "Nomeando ruas e avenidas com os nomes dos países de origem", "Criando museus dedicados a cada grupo de imigrantes"],
+    correct: 1,
+    explanation: "Os Correios criaram selos comemorativos para honrar os grupos de imigrantes que vieram ao Brasil. Os selos são um tipo de marco de memória oficial."
+  },
+  {
+    q: "Quais grupos de imigrantes foram homenageados pelos Correios com selos comemorativos?",
+    opts: ["Japoneses, chineses, árabes e espanhóis", "Americanos, ingleses, franceses e belgas", "Ucranianos, poloneses, alemães e italianos", "Portugueses, espanhóis, gregos e turcos"],
+    correct: 2,
+    explanation: "Os Correios emitiram selos comemorativos homenageando ucranianos, poloneses, alemães e italianos — grupos de imigrantes que contribuíram para a formação do Brasil."
+  },
+  {
+    q: "Por que o Monumento Zumbi dos Palmares é considerado um marco de memória da cultura negra?",
+    opts: ["Porque foi criado por um artista negro famoso do século XIX", "Porque está na cidade mais populosa do Brasil", "Porque representa a luta e a resistência dos africanos escravizados pela liberdade, sendo Zumbi o maior líder quilombola", "Porque é o monumento mais alto do Brasil"],
+    correct: 2,
+    explanation: "O monumento representa a luta e a resistência do povo negro. Zumbi foi o maior líder quilombola do Brasil, símbolo da resistência à escravidão e da luta pela liberdade."
+  }
+];
+
+let current = 0, score = 0;
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('q-label').textContent = 'Questão ' + (current + 1) + ' de ' + questions.length;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress').style.width = (((current + 1) / questions.length) * 100) + '%';
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = function() { selectAnswer(i); };
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').className = 'next-btn';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  btns[q.correct].classList.add('correct');
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct show';
+    fb.textContent = '✅ Correto! ' + q.explanation;
+  } else {
+    btns[idx].classList.add('wrong');
+    fb.className = 'feedback wrong show';
+    fb.textContent = '❌ Errado. ' + q.explanation;
+  }
+  document.getElementById('next-btn').className = 'next-btn show';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) loadQuestion();
+  else showResult();
+}
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const card = document.getElementById('result-card');
+  card.className = 'result-card show';
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('result-score').textContent = score + '/' + questions.length;
+  var emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Excelente! Você é um verdadeiro guardião da memória!'; }
+  else if (pct >= 70) { emoji = '🌟'; msg = 'Muito bem! Você conhece bem a história de Zumbi e dos imigrantes.'; }
+  else if (pct >= 50) { emoji = '📚'; msg = 'Bom esforço! Releia a HQ e tente novamente.'; }
+  else { emoji = '💪'; msg = 'Continue estudando! A memória dos povos é importante.'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-breakdown').innerHTML = '<strong>Acertos:</strong> ' + score + ' &nbsp;|&nbsp; <strong>Erros:</strong> ' + (questions.length - score) + ' &nbsp;|&nbsp; <strong>Aproveitamento:</strong> ' + pct + '%';
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
