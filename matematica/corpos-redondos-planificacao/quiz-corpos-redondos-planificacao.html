@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Corpos Redondos e Planificação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--mat-bg); color: var(--text); min-height: 100vh; padding: 0 0 60px; }
+
+.header { background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399); color: white; padding: 28px 28px 24px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7); text-decoration: none; margin-bottom: 14px; transition: color .15s; }
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.progress-bar-wrap { background: #fff; padding: 14px 28px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 10; }
+.progress-label { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .08em; }
+.prog-track { background: var(--mat-bg); border-radius: 99px; height: 8px; overflow: hidden; }
+.prog-fill { background: var(--mat); height: 100%; border-radius: 99px; transition: width .4s ease; }
+
+.main { max-width: 680px; margin: 0 auto; padding: 32px 20px 0; }
+
+.q-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; display: none; }
+.q-card.active { display: block; }
+.q-num { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--mat); margin-bottom: 10px; }
+.q-text { font-size: 18px; font-weight: 800; line-height: 1.45; margin-bottom: 22px; color: var(--text); }
+.q-hint { background: #FFF3CD; border-radius: 10px; padding: 10px 14px; font-size: 12px; font-weight: 700; color: #92400E; margin-bottom: 18px; display: flex; align-items: flex-start; gap: 8px; }
+
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn { background: var(--mat-bg); border: 2px solid var(--border); border-radius: 14px; padding: 14px 18px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 700; cursor: pointer; text-align: left; color: var(--text); transition: background .15s, border-color .15s, transform .1s; display: flex; align-items: center; gap: 12px; }
+.opt-btn:hover:not(:disabled) { background: #D1FAE5; border-color: var(--mat); transform: translateX(3px); }
+.opt-btn .opt-letter { width: 28px; height: 28px; border-radius: 50%; background: var(--border); color: var(--mat-dark); font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.opt-btn.correct { background: #D1FAE5; border-color: var(--mat); }
+.opt-btn.correct .opt-letter { background: var(--mat); color: white; }
+.opt-btn.wrong { background: #FEE2E2; border-color: #EF4444; }
+.opt-btn.wrong .opt-letter { background: #EF4444; color: white; }
+.opt-btn:disabled { cursor: default; }
+
+.feedback { border-radius: 12px; padding: 14px 18px; margin-top: 16px; font-size: 14px; font-weight: 700; line-height: 1.5; display: none; }
+.feedback.show { display: block; }
+.feedback.ok { background: #D1FAE5; color: #065F46; border: 2px solid var(--mat-light); }
+.feedback.err { background: #FEE2E2; color: #991B1B; border: 2px solid #FCA5A5; }
+
+.next-btn { display: none; margin-top: 16px; background: var(--mat); color: white; border: none; border-radius: 14px; padding: 14px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s, transform .1s; }
+.next-btn.show { display: block; }
+.next-btn:hover { background: var(--mat-dark); transform: translateY(-2px); }
+
+.result-screen { display: none; text-align: center; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 40px 28px; margin-bottom: 32px; }
+.result-screen.show { display: block; }
+.result-emoji { font-size: 64px; margin-bottom: 16px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 24px; margin-bottom: 8px; color: var(--mat-dark); }
+.result-score { font-size: 52px; font-weight: 900; color: var(--mat); font-family: "Space Mono", monospace; }
+.result-total { font-size: 18px; color: var(--muted); font-weight: 700; margin-bottom: 20px; }
+.result-msg { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.6; margin-bottom: 28px; }
+.restart-btn { background: var(--mat); color: white; border: none; border-radius: 14px; padding: 14px 32px; font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800; cursor: pointer; }
+.restart-btn:hover { background: var(--mat-dark); }
+
+.gabarito-section { margin-top: 32px; text-align: left; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px; }
+.gabarito-item { background: var(--card); border: 2px solid var(--border); border-radius: 14px; padding: 14px 18px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 12px; }
+.gabarito-item.correct-item { border-color: var(--mat-light); }
+.gabarito-item.wrong-item { border-color: #FCA5A5; }
+.gab-icon { font-size: 20px; flex-shrink: 0; }
+.gab-text { font-size: 13px; font-weight: 700; line-height: 1.5; }
+.gab-q { color: var(--muted); margin-bottom: 3px; }
+.gab-a { color: var(--mat-dark); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="back-btn" href="../../index.html">← Voltar ao portal</a>
+  <h1>🌀 QUIZ</h1>
+  <p>Corpos Redondos e Planificação — 10 questões</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label">Questão <span id="q-current">1</span> de 10</div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+</div>
+
+<div class="main">
+
+  <!-- Q1 -->
+  <div class="q-card active" id="q1">
+    <div class="q-num">Questão 1 de 10</div>
+    <div class="q-text">O que diferencia um CORPO REDONDO de um POLIEDRO?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,1,'A')"><span class="opt-letter">A</span>O corpo redondo tem faces planas; o poliedro tem faces curvas</button>
+      <button class="opt-btn" onclick="answer(this,1,'B')"><span class="opt-letter">B</span>O corpo redondo tem superfície curva; o poliedro só tem faces planas</button>
+      <button class="opt-btn" onclick="answer(this,1,'C')"><span class="opt-letter">C</span>Corpo redondo e poliedro são a mesma coisa</button>
+      <button class="opt-btn" onclick="answer(this,1,'D')"><span class="opt-letter">D</span>O poliedro tem mais faces que o corpo redondo</button>
+    </div>
+    <div class="feedback" id="fb1"></div>
+    <button class="next-btn" id="nx1" onclick="nextQ(1)">Próxima questão →</button>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="q2">
+    <div class="q-num">Questão 2 de 10</div>
+    <div class="q-text">Quais são os três corpos redondos estudados no 5º ano?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,2,'A')"><span class="opt-letter">A</span>Cubo, prisma e pirâmide</button>
+      <button class="opt-btn" onclick="answer(this,2,'B')"><span class="opt-letter">B</span>Cilindro, cone e esfera</button>
+      <button class="opt-btn" onclick="answer(this,2,'C')"><span class="opt-letter">C</span>Tetraedro, octaedro e dodecaedro</button>
+      <button class="opt-btn" onclick="answer(this,2,'D')"><span class="opt-letter">D</span>Cilindro, triângulo e esfera</button>
+    </div>
+    <div class="feedback" id="fb2"></div>
+    <button class="next-btn" id="nx2" onclick="nextQ(2)">Próxima questão →</button>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="q3">
+    <div class="q-num">Questão 3 de 10</div>
+    <div class="q-text">Uma lata de refrigerante tem a forma de qual corpo redondo?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,3,'A')"><span class="opt-letter">A</span>Esfera</button>
+      <button class="opt-btn" onclick="answer(this,3,'B')"><span class="opt-letter">B</span>Cone</button>
+      <button class="opt-btn" onclick="answer(this,3,'C')"><span class="opt-letter">C</span>Cilindro</button>
+      <button class="opt-btn" onclick="answer(this,3,'D')"><span class="opt-letter">D</span>Prisma</button>
+    </div>
+    <div class="feedback" id="fb3"></div>
+    <button class="next-btn" id="nx3" onclick="nextQ(3)">Próxima questão →</button>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="q4">
+    <div class="q-num">Questão 4 de 10</div>
+    <div class="q-text">Quantas bases tem um CILINDRO?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,4,'A')"><span class="opt-letter">A</span>Nenhuma</button>
+      <button class="opt-btn" onclick="answer(this,4,'B')"><span class="opt-letter">B</span>1 base circular</button>
+      <button class="opt-btn" onclick="answer(this,4,'C')"><span class="opt-letter">C</span>2 bases circulares paralelas e iguais</button>
+      <button class="opt-btn" onclick="answer(this,4,'D')"><span class="opt-letter">D</span>2 bases quadradas</button>
+    </div>
+    <div class="feedback" id="fb4"></div>
+    <button class="next-btn" id="nx4" onclick="nextQ(4)">Próxima questão →</button>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="q5">
+    <div class="q-num">Questão 5 de 10</div>
+    <div class="q-text">Qual é a planificação do CILINDRO? (o desenho plano que se obtém ao "abrir" o sólido)</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,5,'A')"><span class="opt-letter">A</span>1 retângulo + 2 círculos</button>
+      <button class="opt-btn" onclick="answer(this,5,'B')"><span class="opt-letter">B</span>1 setor circular + 1 círculo</button>
+      <button class="opt-btn" onclick="answer(this,5,'C')"><span class="opt-letter">C</span>2 triângulos + 3 retângulos</button>
+      <button class="opt-btn" onclick="answer(this,5,'D')"><span class="opt-letter">D</span>6 quadrados iguais</button>
+    </div>
+    <div class="feedback" id="fb5"></div>
+    <button class="next-btn" id="nx5" onclick="nextQ(5)">Próxima questão →</button>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="q6">
+    <div class="q-num">Questão 6 de 10</div>
+    <div class="q-text">Uma casquinha de sorvete (com a pontinha) tem a forma de qual corpo redondo?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,6,'A')"><span class="opt-letter">A</span>Cilindro</button>
+      <button class="opt-btn" onclick="answer(this,6,'B')"><span class="opt-letter">B</span>Esfera</button>
+      <button class="opt-btn" onclick="answer(this,6,'C')"><span class="opt-letter">C</span>Cone</button>
+      <button class="opt-btn" onclick="answer(this,6,'D')"><span class="opt-letter">D</span>Pirâmide</button>
+    </div>
+    <div class="feedback" id="fb6"></div>
+    <button class="next-btn" id="nx6" onclick="nextQ(6)">Próxima questão →</button>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-card" id="q7">
+    <div class="q-num">Questão 7 de 10</div>
+    <div class="q-text">A planificação do CONE é formada por quais figuras planas?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,7,'A')"><span class="opt-letter">A</span>1 retângulo + 2 círculos</button>
+      <button class="opt-btn" onclick="answer(this,7,'B')"><span class="opt-letter">B</span>1 setor circular + 1 círculo</button>
+      <button class="opt-btn" onclick="answer(this,7,'C')"><span class="opt-letter">C</span>2 triângulos + 1 retângulo</button>
+      <button class="opt-btn" onclick="answer(this,7,'D')"><span class="opt-letter">D</span>Apenas 1 grande círculo</button>
+    </div>
+    <div class="feedback" id="fb7"></div>
+    <button class="next-btn" id="nx7" onclick="nextQ(7)">Próxima questão →</button>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-card" id="q8">
+    <div class="q-num">Questão 8 de 10</div>
+    <div class="q-text">A ESFERA tem quantas faces planas?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,8,'A')"><span class="opt-letter">A</span>1 face circular na base</button>
+      <button class="opt-btn" onclick="answer(this,8,'B')"><span class="opt-letter">B</span>2 faces circulares</button>
+      <button class="opt-btn" onclick="answer(this,8,'C')"><span class="opt-letter">C</span>6 faces quadradas</button>
+      <button class="opt-btn" onclick="answer(this,8,'D')"><span class="opt-letter">D</span>Nenhuma — a esfera é completamente curva</button>
+    </div>
+    <div class="feedback" id="fb8"></div>
+    <button class="next-btn" id="nx8" onclick="nextQ(8)">Próxima questão →</button>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card" id="q9">
+    <div class="q-num">Questão 9 de 10</div>
+    <div class="q-text">Por que os mapas do mundo sempre distorcem a realidade?</div>
+    <div class="q-hint">💡 Pense: qual é a forma da Terra e o que acontece ao tentar representá-la num papel plano.</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,9,'A')"><span class="opt-letter">A</span>Porque os cartógrafos cometem erros de medição</button>
+      <button class="opt-btn" onclick="answer(this,9,'B')"><span class="opt-letter">B</span>Porque é impossível planificar perfeitamente uma esfera em papel plano</button>
+      <button class="opt-btn" onclick="answer(this,9,'C')"><span class="opt-letter">C</span>Porque o papel encolhe quando impresso</button>
+      <button class="opt-btn" onclick="answer(this,9,'D')"><span class="opt-letter">D</span>Porque a Terra é um cubo por dentro</button>
+    </div>
+    <div class="feedback" id="fb9"></div>
+    <button class="next-btn" id="nx9" onclick="nextQ(9)">Próxima questão →</button>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="q10">
+    <div class="q-num">Questão 10 de 10</div>
+    <div class="q-text">Qual corpo redondo possui UM ápice (ponta), UMA base circular e uma face lateral curva?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,10,'A')"><span class="opt-letter">A</span>Cilindro</button>
+      <button class="opt-btn" onclick="answer(this,10,'B')"><span class="opt-letter">B</span>Cone</button>
+      <button class="opt-btn" onclick="answer(this,10,'C')"><span class="opt-letter">C</span>Esfera</button>
+      <button class="opt-btn" onclick="answer(this,10,'D')"><span class="opt-letter">D</span>Prisma triangular</button>
+    </div>
+    <div class="feedback" id="fb10"></div>
+    <button class="next-btn" id="nx10" onclick="showResult()">Ver resultado →</button>
+  </div>
+
+  <!-- Result -->
+  <div class="result-screen" id="result-screen">
+    <div class="result-emoji" id="res-emoji">🏆</div>
+    <div class="result-title">Resultado Final</div>
+    <div class="result-score" id="res-score">0</div>
+    <div class="result-total">de 10 acertos</div>
+    <div class="result-msg" id="res-msg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Tentar novamente</button>
+    <div class="gabarito-section">
+      <div class="gabarito-title">📋 Gabarito completo</div>
+      <div id="gabarito-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const answers = {
+  1: { correct: 'B', explanation: 'Corpos redondos têm superfície CURVA (cilindro, cone, esfera). Poliedros só têm faces PLANAS (cubo, pirâmide, prisma). Esta é a diferença fundamental.' },
+  2: { correct: 'B', explanation: 'Os três corpos redondos são: CILINDRO (lata), CONE (casquinha) e ESFERA (bola). Cubo, prisma e pirâmide são poliedros — têm faces planas.' },
+  3: { correct: 'C', explanation: 'A lata de refrigerante é um CILINDRO: tem duas bases circulares paralelas iguais ligadas por uma face lateral curva.' },
+  4: { correct: 'C', explanation: 'O cilindro tem DUAS BASES circulares paralelas e iguais. O cone tem apenas 1 base; a esfera não tem nenhuma base plana.' },
+  5: { correct: 'A', explanation: 'Ao "abrir" um cilindro, obtemos: 1 retângulo (a face lateral desenrolada) + 2 círculos (as duas bases). O comprimento do retângulo é igual ao comprimento da circunferência da base.' },
+  6: { correct: 'C', explanation: 'A casquinha de sorvete é um CONE: tem uma base circular (abertura) e afunila até um ápice (pontinha). Se abrir o chapéu de festa, verá um setor circular.' },
+  7: { correct: 'B', explanation: 'A planificação do cone é: 1 SETOR CIRCULAR (a face lateral aplanada, em forma de "fatia de pizza") + 1 CÍRCULO (a base). É diferente do cilindro, que tem retângulo + 2 círculos.' },
+  8: { correct: 'D', explanation: 'A esfera não tem NENHUMA face plana, nenhuma aresta e nenhum vértice. É completamente curva em todas as direções. Por isso é impossível planificá-la perfeitamente.' },
+  9: { correct: 'B', explanation: 'A Terra tem forma (quase) esférica. É matematicamente impossível representar uma esfera perfeitamente num plano sem distorção — sempre haverá deformação em alguma região. Por isso existem diferentes projeções cartográficas.' },
+  10: { correct: 'B', explanation: 'O CONE tem: 1 base circular, 1 face lateral curva e 1 ápice (o ponto no topo). O cilindro tem 2 bases. A esfera não tem base nem ápice.' }
+};
+
+const questions = {
+  1: 'Diferença entre corpo redondo e poliedro?',
+  2: 'Quais são os 3 corpos redondos?',
+  3: 'Lata de refrigerante = qual corpo?',
+  4: 'Quantas bases tem o cilindro?',
+  5: 'Planificação do cilindro?',
+  6: 'Casquinha de sorvete = qual corpo?',
+  7: 'Planificação do cone?',
+  8: 'Quantas faces planas tem a esfera?',
+  9: 'Por que mapas do mundo distorcem?',
+  10: 'Qual tem ápice + 1 base circular?'
+};
+
+let score = 0;
+let userAnswers = {};
+
+function answer(btn, qNum, opt) {
+  const q = document.getElementById('q' + qNum);
+  const btns = q.querySelectorAll('.opt-btn');
+  const fb = document.getElementById('fb' + qNum);
+  const nx = document.getElementById('nx' + qNum);
+  const correct = answers[qNum].correct;
+  btns.forEach(b => b.disabled = true);
+  userAnswers[qNum] = opt;
+  if (opt === correct) {
+    score++;
+    btn.classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.textContent = '✅ Correto! ' + answers[qNum].explanation;
+  } else {
+    btn.classList.add('wrong');
+    btns.forEach(b => { if (b.querySelector('.opt-letter').textContent === correct) b.classList.add('correct'); });
+    fb.className = 'feedback err show';
+    fb.textContent = '❌ Incorreto. ' + answers[qNum].explanation;
+  }
+  nx.classList.add('show');
+}
+
+function nextQ(qNum) {
+  document.getElementById('q' + qNum).classList.remove('active');
+  const next = qNum + 1;
+  if (next <= 10) {
+    document.getElementById('q' + next).classList.add('active');
+    document.getElementById('q-current').textContent = next;
+    document.getElementById('prog-fill').style.width = (next * 10) + '%';
+  }
+}
+
+function showResult() {
+  document.getElementById('q10').classList.remove('active');
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('show');
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('prog-fill').style.width = '100%';
+  let emoji, msg;
+  if (score === 10) { emoji = '🏆'; msg = 'Perfeito! Você domina cilindro, cone e esfera. O Esfe ficaria orgulhoso!'; }
+  else if (score >= 8) { emoji = '🥇'; msg = 'Excelente! Quase tudo certo. Revise as questões que errou no gabarito abaixo.'; }
+  else if (score >= 6) { emoji = '👍'; msg = 'Bom trabalho! Foque nas planificações — o que muda entre cilindro e cone é o ponto central da matéria.'; }
+  else { emoji = '📚'; msg = 'Releia a HQ do Esfe e preste atenção nas planificações do cilindro e do cone. Depois tente de novo!'; }
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-msg').textContent = msg;
+  const gList = document.getElementById('gabarito-list');
+  gList.innerHTML = '';
+  for (let i = 1; i <= 10; i++) {
+    const isOk = userAnswers[i] === answers[i].correct;
+    const item = document.createElement('div');
+    item.className = 'gabarito-item ' + (isOk ? 'correct-item' : 'wrong-item');
+    item.innerHTML = `<div class="gab-icon">${isOk ? '✅' : '❌'}</div><div class="gab-text"><div class="gab-q">Q${i}: ${questions[i]}</div><div class="gab-a">${answers[i].explanation}</div></div>`;
+    gList.appendChild(item);
+  }
+}
+
+function restart() {
+  score = 0; userAnswers = {};
+  for (let i = 1; i <= 10; i++) {
+    const card = document.getElementById('q' + i);
+    card.classList.remove('active');
+    card.querySelectorAll('.opt-btn').forEach(b => { b.disabled = false; b.classList.remove('correct','wrong'); });
+    document.getElementById('fb' + i).className = 'feedback';
+    document.getElementById('fb' + i).textContent = '';
+    document.getElementById('nx' + i).classList.remove('show');
+  }
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('q1').classList.add('active');
+  document.getElementById('q-current').textContent = '1';
+  document.getElementById('prog-fill').style.width = '10%';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reconhecedor de Planificações — Corpos Redondos</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--mat-bg); color: var(--text); min-height: 100vh; padding: 0 0 60px; }
+
+.header { background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399); color: white; padding: 28px 28px 24px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7); text-decoration: none; margin-bottom: 14px; transition: color .15s; }
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.progress-bar-wrap { background: #fff; padding: 14px 28px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 10; }
+.prog-label { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .08em; }
+.prog-track { background: var(--mat-bg); border-radius: 99px; height: 8px; overflow: hidden; }
+.prog-fill { background: var(--mat); height: 100%; border-radius: 99px; transition: width .4s ease; }
+
+.main { max-width: 720px; margin: 0 auto; padding: 32px 20px 0; }
+
+/* Round cards */
+.round { display: none; }
+.round.active { display: block; }
+.round-header { background: var(--card); border: 2px solid var(--border); border-radius: 18px; padding: 22px 24px; margin-bottom: 24px; }
+.round-num { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--mat); margin-bottom: 8px; }
+.round-title { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--mat-dark); margin-bottom: 8px; }
+.round-q { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.5; }
+
+/* Solid display */
+.solid-display { display: flex; justify-content: center; margin: 0 0 28px; }
+.solid-box { background: var(--card); border: 2px solid var(--border); border-radius: 18px; padding: 24px 32px; text-align: center; }
+.solid-box svg { display: block; margin: 0 auto 10px; }
+.solid-name { font-family: "Space Mono", monospace; font-size: 16px; font-weight: 700; color: var(--mat-dark); }
+
+/* Options grid */
+.opts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.plan-opt {
+  background: var(--card); border: 2px solid var(--border); border-radius: 16px;
+  padding: 18px 14px; cursor: pointer; text-align: center;
+  transition: border-color .15s, background .15s, transform .1s;
+  font-family: "Baloo 2", cursive;
+}
+.plan-opt:hover:not(:disabled) { border-color: var(--mat); background: var(--mat-bg); transform: translateY(-3px); }
+.plan-opt svg { display: block; margin: 0 auto 10px; }
+.plan-opt-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.plan-opt.correct-opt { border-color: var(--mat); background: #D1FAE5; }
+.plan-opt.correct-opt .plan-opt-label { color: var(--mat-dark); }
+.plan-opt.wrong-opt { border-color: #EF4444; background: #FEE2E2; }
+.plan-opt:disabled { cursor: default; }
+
+/* Feedback */
+.feedback { border-radius: 12px; padding: 14px 18px; font-size: 14px; font-weight: 700; line-height: 1.5; display: none; margin-bottom: 16px; }
+.feedback.show { display: block; }
+.feedback.ok { background: #D1FAE5; color: #065F46; border: 2px solid var(--mat-light); }
+.feedback.err { background: #FEE2E2; color: #991B1B; border: 2px solid #FCA5A5; }
+
+.next-btn { display: none; background: var(--mat); color: white; border: none; border-radius: 14px; padding: 14px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s, transform .1s; }
+.next-btn.show { display: block; }
+.next-btn:hover { background: var(--mat-dark); transform: translateY(-2px); }
+
+/* Result */
+.result-screen { display: none; text-align: center; background: var(--card); border: 2px solid var(--border); border-radius: 18px; padding: 40px 28px; }
+.result-screen.show { display: block; }
+.result-emoji { font-size: 60px; margin-bottom: 14px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 22px; color: var(--mat-dark); margin-bottom: 8px; }
+.result-score { font-size: 52px; font-weight: 900; color: var(--mat); font-family: "Space Mono", monospace; }
+.result-total { font-size: 16px; color: var(--muted); font-weight: 700; margin-bottom: 18px; }
+.result-msg { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.6; margin-bottom: 24px; }
+.restart-btn { background: var(--mat); color: white; border: none; border-radius: 14px; padding: 14px 32px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.restart-btn:hover { background: var(--mat-dark); }
+
+/* Summary */
+.summary-box { text-align: left; margin-top: 28px; }
+.summary-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 14px; }
+.sum-row { display: flex; align-items: flex-start; gap: 12px; background: #F9FAFB; border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+.sum-icon { font-size: 22px; flex-shrink: 0; }
+.sum-text { font-size: 13px; font-weight: 700; line-height: 1.6; }
+.sum-text b { color: var(--mat-dark); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="back-btn" href="../../index.html">← Voltar ao portal</a>
+  <h1>📐 RECONHECEDOR DE PLANIFICAÇÕES</h1>
+  <p>Corpos Redondos — identifique a planificação correta de cada sólido</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="prog-label">Questão <span id="q-cur">1</span> de 3</div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:33%"></div></div>
+</div>
+
+<div class="main">
+
+  <!-- ROUND 1: CILINDRO -->
+  <div class="round active" id="round-1">
+    <div class="round-header">
+      <div class="round-num">Questão 1 de 3</div>
+      <div class="round-title">🥫 Cilindro</div>
+      <div class="round-q">Qual das imagens abaixo é a planificação (desenho plano) do CILINDRO?</div>
+    </div>
+    <div class="solid-display">
+      <div class="solid-box">
+        <!-- Cilindro SVG -->
+        <svg width="90" height="110" viewBox="0 0 90 110">
+          <ellipse cx="45" cy="22" rx="38" ry="12" fill="#A7F3D0" stroke="#059669" stroke-width="2"/>
+          <rect x="7" y="22" width="76" height="66" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+          <ellipse cx="45" cy="88" rx="38" ry="12" fill="#6EE7B7" stroke="#059669" stroke-width="2"/>
+        </svg>
+        <div class="solid-name">Cilindro</div>
+      </div>
+    </div>
+    <div class="opts-grid">
+      <!-- Opção A: 1 retângulo + 2 círculos (CORRETA) -->
+      <button class="plan-opt" id="r1-A" onclick="answerRound(1,'A','A')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <rect x="10" y="30" width="110" height="50" rx="4" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+          <ellipse cx="30" cy="15" rx="15" ry="10" fill="#A7F3D0" stroke="#059669" stroke-width="2"/>
+          <ellipse cx="100" cy="15" rx="15" ry="10" fill="#A7F3D0" stroke="#059669" stroke-width="2"/>
+        </svg>
+        <div class="plan-opt-label">A) Retângulo + 2 círculos</div>
+      </button>
+      <!-- Opção B: setor + círculo (do cone) -->
+      <button class="plan-opt" id="r1-B" onclick="answerRound(1,'B','A')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <path d="M65,50 L25,20 A45,45,0,0,1,105,20 Z" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>
+          <ellipse cx="65" cy="78" rx="22" ry="10" fill="#FCD34D" stroke="#D97706" stroke-width="2"/>
+        </svg>
+        <div class="plan-opt-label">B) Setor circular + círculo</div>
+      </button>
+      <!-- Opção C: pirâmide planificação -->
+      <button class="plan-opt" id="r1-C" onclick="answerRound(1,'C','A')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <rect x="35" y="30" width="60" height="40" rx="4" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+          <polygon points="65,5 35,30 95,30" fill="#BAE6FD" stroke="#0284C7" stroke-width="2"/>
+          <polygon points="65,85 35,70 95,70" fill="#BAE6FD" stroke="#0284C7" stroke-width="2"/>
+        </svg>
+        <div class="plan-opt-label">C) Triângulos + retângulo</div>
+      </button>
+    </div>
+    <div class="feedback" id="fb-1"></div>
+    <button class="next-btn" id="nx-1" onclick="nextRound(1)">Próxima questão →</button>
+  </div>
+
+  <!-- ROUND 2: CONE -->
+  <div class="round" id="round-2">
+    <div class="round-header">
+      <div class="round-num">Questão 2 de 3</div>
+      <div class="round-title">🍦 Cone</div>
+      <div class="round-q">Qual das imagens abaixo é a planificação do CONE?</div>
+    </div>
+    <div class="solid-display">
+      <div class="solid-box">
+        <!-- Cone SVG -->
+        <svg width="90" height="110" viewBox="0 0 90 110">
+          <polygon points="45,5 5,90 85,90" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>
+          <ellipse cx="45" cy="90" rx="40" ry="12" fill="#FCD34D" stroke="#D97706" stroke-width="2"/>
+          <circle cx="45" cy="5" r="3" fill="#D97706"/>
+        </svg>
+        <div class="solid-name">Cone</div>
+      </div>
+    </div>
+    <div class="opts-grid">
+      <!-- Opção A: retângulo + 2 círculos (cilindro) -->
+      <button class="plan-opt" id="r2-A" onclick="answerRound(2,'A','B')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <rect x="10" y="30" width="110" height="50" rx="4" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+          <ellipse cx="30" cy="15" rx="15" ry="10" fill="#A7F3D0" stroke="#059669" stroke-width="2"/>
+          <ellipse cx="100" cy="15" rx="15" ry="10" fill="#A7F3D0" stroke="#059669" stroke-width="2"/>
+        </svg>
+        <div class="plan-opt-label">A) Retângulo + 2 círculos</div>
+      </button>
+      <!-- Opção B: setor + círculo (CORRETA) -->
+      <button class="plan-opt" id="r2-B" onclick="answerRound(2,'B','B')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <path d="M65,50 L15,15 A60,60,0,0,1,115,15 Z" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>
+          <ellipse cx="65" cy="80" rx="22" ry="10" fill="#FCD34D" stroke="#D97706" stroke-width="2"/>
+        </svg>
+        <div class="plan-opt-label">B) Setor circular + círculo</div>
+      </button>
+      <!-- Opção C: 6 quadrados (cubo) -->
+      <button class="plan-opt" id="r2-C" onclick="answerRound(2,'C','B')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <rect x="5" y="30" width="30" height="30" fill="#F3F0FF" stroke="#7C3AED" stroke-width="2"/>
+          <rect x="35" y="30" width="30" height="30" fill="#F3F0FF" stroke="#7C3AED" stroke-width="2"/>
+          <rect x="65" y="30" width="30" height="30" fill="#F3F0FF" stroke="#7C3AED" stroke-width="2"/>
+          <rect x="95" y="30" width="30" height="30" fill="#F3F0FF" stroke="#7C3AED" stroke-width="2"/>
+          <rect x="35" y="0" width="30" height="30" fill="#F3F0FF" stroke="#7C3AED" stroke-width="2"/>
+          <rect x="35" y="60" width="30" height="30" fill="#F3F0FF" stroke="#7C3AED" stroke-width="2"/>
+        </svg>
+        <div class="plan-opt-label">C) 6 quadrados (cubo)</div>
+      </button>
+    </div>
+    <div class="feedback" id="fb-2"></div>
+    <button class="next-btn" id="nx-2" onclick="nextRound(2)">Próxima questão →</button>
+  </div>
+
+  <!-- ROUND 3: ESFERA -->
+  <div class="round" id="round-3">
+    <div class="round-header">
+      <div class="round-num">Questão 3 de 3</div>
+      <div class="round-title">⚽ Esfera</div>
+      <div class="round-q">A esfera pode ser planificada perfeitamente em papel plano?</div>
+    </div>
+    <div class="solid-display">
+      <div class="solid-box">
+        <!-- Esfera SVG -->
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" fill="#A7F3D0" stroke="#059669" stroke-width="2"/>
+          <ellipse cx="45" cy="45" rx="20" ry="38" fill="none" stroke="#34D399" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <ellipse cx="45" cy="45" rx="38" ry="12" fill="none" stroke="#34D399" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <ellipse cx="45" cy="45" rx="38" ry="22" fill="none" stroke="#34D399" stroke-width="1" stroke-dasharray="4,4"/>
+        </svg>
+        <div class="solid-name">Esfera</div>
+      </div>
+    </div>
+    <div class="opts-grid">
+      <!-- Opção A: Não (CORRETA) -->
+      <button class="plan-opt" id="r3-A" onclick="answerRound(3,'A','A')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <circle cx="65" cy="45" r="35" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/>
+          <line x1="40" y1="20" x2="90" y2="70" stroke="#EF4444" stroke-width="4" stroke-linecap="round"/>
+          <line x1="90" y1="20" x2="40" y2="70" stroke="#EF4444" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+        <div class="plan-opt-label">A) Não — é impossível planificar a esfera perfeitamente</div>
+      </button>
+      <!-- Opção B: Sim, triangulada -->
+      <button class="plan-opt" id="r3-B" onclick="answerRound(3,'B','A')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <polygon points="65,5 10,85 120,85" fill="#FDE68A" stroke="#D97706" stroke-width="1.5"/>
+          <line x1="65" y1="5" x2="65" y2="85" stroke="#D97706" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="10" y1="85" x2="120" y2="85" stroke="#D97706" stroke-width="1" stroke-dasharray="3,3"/>
+          <polygon points="37,45 65,5 65,85" fill="#FCD34D" stroke="#D97706" stroke-width="1"/>
+          <polygon points="93,45 65,5 65,85" fill="#FDE68A" stroke="#D97706" stroke-width="1"/>
+        </svg>
+        <div class="plan-opt-label">B) Sim, é formada por triângulos</div>
+      </button>
+      <!-- Opção C: Sim, é um grande círculo -->
+      <button class="plan-opt" id="r3-C" onclick="answerRound(3,'C','A')">
+        <svg width="130" height="90" viewBox="0 0 130 90">
+          <circle cx="65" cy="45" r="38" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+        </svg>
+        <div class="plan-opt-label">C) Sim, é um grande círculo</div>
+      </button>
+    </div>
+    <div class="feedback" id="fb-3"></div>
+    <button class="next-btn" id="nx-3" onclick="showResult()">Ver resultado →</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-screen" id="result-screen">
+    <div class="result-emoji" id="res-emoji">🏆</div>
+    <div class="result-title">Planificações Dominadas!</div>
+    <div class="result-score" id="res-score">0</div>
+    <div class="result-total">de 3 acertos</div>
+    <div class="result-msg" id="res-msg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Tentar novamente</button>
+    <div class="summary-box">
+      <div class="summary-title">📋 Resumo das Planificações</div>
+      <div class="sum-row">
+        <div class="sum-icon">🥫</div>
+        <div class="sum-text"><b>Cilindro →</b> 1 retângulo (face lateral) + 2 círculos (bases). O comprimento do retângulo = comprimento da circunferência da base.</div>
+      </div>
+      <div class="sum-row">
+        <div class="sum-icon">🍦</div>
+        <div class="sum-text"><b>Cone →</b> 1 setor circular (face lateral, em forma de "fatia de pizza") + 1 círculo (base). A ponta do setor corresponde ao ápice.</div>
+      </div>
+      <div class="sum-row">
+        <div class="sum-icon">⚽</div>
+        <div class="sum-text"><b>Esfera →</b> Não tem planificação plana perfeita. É matematicamente impossível "achatar" uma esfera sem distorcer ou rasgar. Por isso os mapas do mundo sempre distorcem!</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score = 0;
+let answers = {};
+
+function answerRound(roundNum, opt, correctOpt) {
+  answers[roundNum] = opt;
+  const round = document.getElementById('round-' + roundNum);
+  const allOpts = round.querySelectorAll('.plan-opt');
+  allOpts.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('fb-' + roundNum);
+  const nx = document.getElementById('nx-' + roundNum);
+  const clickedBtn = document.getElementById('r' + roundNum + '-' + opt);
+  const correctBtn = document.getElementById('r' + roundNum + '-' + correctOpt);
+
+  const explanations = {
+    1: { ok: '✅ Correto! O cilindro "abre" em 1 retângulo (a faixa lateral enrolada) + 2 círculos (as tampas). Pense numa lata de sardinha desmontada.', err: '❌ Essa é a planificação de outro sólido. O cilindro produz 1 retângulo + 2 círculos — a faixa lateral é reta, não em setor.' },
+    2: { ok: '✅ Correto! O cone "abre" em 1 setor circular (como uma fatia de pizza aberta) + 1 círculo (a base). O setor aparece porque a lateral "afunila" até o ápice.', err: '❌ Essa não é a planificação do cone. O cone abre em setor circular + círculo — diferente do cilindro, que abre em retângulo + 2 círculos.' },
+    3: { ok: '✅ Correto! A esfera é o único corpo geométrico que não pode ser planificado perfeitamente. É por isso que os mapas do mundo sempre distorcem — a Terra é (quase) esférica!', err: '❌ A esfera NÃO tem planificação plana perfeita. É matematicamente impossível "abrir" uma esfera em papel plano sem dobras ou rasgos. Triângulos e círculos são aproximações, não planificações exatas.' }
+  };
+
+  if (opt === correctOpt) {
+    score++;
+    clickedBtn.classList.add('correct-opt');
+    fb.className = 'feedback ok show';
+    fb.textContent = explanations[roundNum].ok;
+  } else {
+    clickedBtn.classList.add('wrong-opt');
+    correctBtn.classList.add('correct-opt');
+    fb.className = 'feedback err show';
+    fb.textContent = explanations[roundNum].err;
+  }
+  nx.classList.add('show');
+}
+
+function nextRound(roundNum) {
+  document.getElementById('round-' + roundNum).classList.remove('active');
+  const next = roundNum + 1;
+  document.getElementById('round-' + next).classList.add('active');
+  document.getElementById('q-cur').textContent = next;
+  document.getElementById('prog-fill').style.width = (next === 2 ? '66' : '100') + '%';
+  window.scrollTo(0, 0);
+}
+
+function showResult() {
+  document.getElementById('round-3').classList.remove('active');
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('show');
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('prog-fill').style.width = '100%';
+  let emoji, msg;
+  if (score === 3) { emoji = '🏆'; msg = 'Perfeito! Você identificou todas as planificações corretamente. Cilindro, cone e o caso especial da esfera — dominados!'; }
+  else if (score === 2) { emoji = '👍'; msg = 'Quase lá! Duas certas. Releia o resumo abaixo para fixar a planificação que errou.'; }
+  else { emoji = '📚'; msg = 'Releia a HQ do Esfe e foque nas diferenças: cilindro = retângulo + 2 círculos; cone = setor + círculo; esfera = não planifica!'; }
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-msg').textContent = msg;
+  rs.scrollIntoView({ behavior: 'smooth' });
+}
+
+function restart() {
+  score = 0; answers = {};
+  for (let i = 1; i <= 3; i++) {
+    const round = document.getElementById('round-' + i);
+    round.classList.remove('active');
+    round.querySelectorAll('.plan-opt').forEach(b => { b.disabled = false; b.classList.remove('correct-opt','wrong-opt'); });
+    document.getElementById('fb-' + i).className = 'feedback';
+    document.getElementById('fb-' + i).textContent = '';
+    document.getElementById('nx-' + i).classList.remove('show');
+  }
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('round-1').classList.add('active');
+  document.getElementById('q-cur').textContent = '1';
+  document.getElementById('prog-fill').style.width = '33%';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

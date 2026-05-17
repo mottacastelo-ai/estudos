@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Corpos Redondos e Planificação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--mat-bg); color: var(--text); min-height: 100vh; padding: 0 0 60px; }
+
+.header { background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399); color: white; padding: 28px 28px 24px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7); text-decoration: none; margin-bottom: 14px; transition: color .15s; }
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.main { max-width: 860px; margin: 0 auto; padding: 28px 16px 0; }
+
+.instrucoes { background: var(--card); border: 2px solid var(--border); border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.5; }
+.instrucoes b { color: var(--text); }
+
+.canvas-wrap { background: var(--card); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; position: relative; margin-bottom: 20px; user-select: none; }
+#mind-canvas { display: block; width: 100%; }
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+.action-btn { padding: 11px 22px; border-radius: 12px; border: 2px solid; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; transition: all .15s; }
+.btn-gab { background: var(--mat-bg); border-color: var(--mat); color: var(--mat); }
+.btn-gab:hover { background: var(--mat); color: white; }
+.btn-reset { background: #FEF3C7; border-color: #D97706; color: #92400E; }
+.btn-reset:hover { background: #D97706; color: white; }
+
+.gabarito-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+.gabarito-overlay.show { display: flex; }
+.gab-box { background: var(--card); border-radius: 20px; max-width: 660px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 28px; }
+.gab-box-title { font-family: "Space Mono", monospace; font-size: 16px; color: var(--mat-dark); margin-bottom: 20px; }
+.gab-close { float: right; background: #FEE2E2; border: none; border-radius: 8px; padding: 6px 14px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800; cursor: pointer; color: #991B1B; margin-top: -4px; }
+.gab-section { margin-bottom: 18px; }
+.gab-section-title { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; padding: 6px 12px; border-radius: 8px; display: inline-block; }
+.gs-c { background: #D1FAE5; color: #065F46; }
+.gs-cil { background: #E0F2FE; color: #0369A1; }
+.gs-con { background: #FEF3C7; color: #B45309; }
+.gs-esf { background: #F5F3FF; color: #6B21A8; }
+.gab-items { display: flex; flex-direction: column; gap: 8px; }
+.gab-item { background: #F9FAFB; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 700; line-height: 1.5; }
+.gab-item b { color: var(--mat-dark); }
+.gab-item.sub { margin-left: 16px; font-size: 12px; font-weight: 600; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="back-btn" href="../../index.html">← Voltar ao portal</a>
+  <h1>🗺️ MAPA MENTAL</h1>
+  <p>Corpos Redondos e Planificação — arraste os balões e organize!</p>
+</div>
+
+<div class="main">
+  <div class="instrucoes">
+    <span style="font-size:20px;flex-shrink:0">✋</span>
+    <div><b>Como usar:</b> Arraste os balões para organizar o mapa mental. Tente montar a estrutura de cabeça antes de ver o gabarito.</div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="mind-canvas" height="620"></canvas>
+  </div>
+
+  <div class="btn-row">
+    <button class="action-btn btn-gab" onclick="toggleGab()">📋 Ver Gabarito</button>
+    <button class="action-btn btn-reset" onclick="resetNodes()">🔄 Resetar posições</button>
+  </div>
+</div>
+
+<div class="gabarito-overlay" id="gab-overlay" onclick="closeGabOutside(event)">
+  <div class="gab-box">
+    <div class="gab-box-title">📋 Gabarito — Corpos Redondos e Planificação
+      <button class="gab-close" onclick="toggleGab()">✕ Fechar</button>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title gs-c">🌀 Corpos Redondos — Conceito</div>
+      <div class="gab-items">
+        <div class="gab-item"><b>Corpo Redondo:</b> sólido geométrico com superfície (total ou parcialmente) CURVA.</div>
+        <div class="gab-item"><b>Diferença poliedro:</b> poliedro tem apenas faces planas; corpo redondo tem superfície curva.</div>
+        <div class="gab-item"><b>Os 3 corpos redondos:</b> cilindro, cone e esfera.</div>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title gs-cil">🥫 Cilindro</div>
+      <div class="gab-items">
+        <div class="gab-item"><b>Bases:</b> 2 círculos paralelos e iguais.</div>
+        <div class="gab-item"><b>Face lateral:</b> 1 superfície curva (retangular quando planificada).</div>
+        <div class="gab-item"><b>Planificação:</b> 1 retângulo + 2 círculos.</div>
+        <div class="gab-item sub">→ Exemplos: lata de refrigerante, rolo de papel toalha, tambor.</div>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title gs-con">🍦 Cone</div>
+      <div class="gab-items">
+        <div class="gab-item"><b>Base:</b> 1 círculo.</div>
+        <div class="gab-item"><b>Face lateral:</b> 1 superfície curva que converge para o ápice.</div>
+        <div class="gab-item"><b>Ápice:</b> o ponto no topo do cone.</div>
+        <div class="gab-item"><b>Planificação:</b> 1 setor circular + 1 círculo.</div>
+        <div class="gab-item sub">→ Exemplos: casquinha de sorvete, chapéu de mágico, cone de trânsito.</div>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title gs-esf">⚽ Esfera</div>
+      <div class="gab-items">
+        <div class="gab-item"><b>Faces planas:</b> NENHUMA.</div>
+        <div class="gab-item"><b>Arestas:</b> NENHUMA.</div>
+        <div class="gab-item"><b>Vértices:</b> NENHUM.</div>
+        <div class="gab-item"><b>Planificação:</b> IMPOSSÍVEL perfeitamente — sempre haverá distorção.</div>
+        <div class="gab-item sub">→ Por isso mapas do mundo distorcem: a Terra é (quase) esférica.</div>
+        <div class="gab-item sub">→ Exemplos: bola de futebol, laranja, globo terrestre.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('mind-canvas');
+const ctx = canvas.getContext('2d');
+
+function setCanvasSize() {
+  const w = canvas.parentElement.clientWidth;
+  canvas.width = w;
+  canvas.height = 620;
+  draw();
+}
+
+const colors = {
+  center: { bg: '#064E3B', text: '#ffffff', border: '#34D399' },
+  conceito: { bg: '#059669', text: '#ffffff', border: '#34D399' },
+  cil: { bg: '#0284C7', text: '#ffffff', border: '#7DD3FC' },
+  con: { bg: '#D97706', text: '#ffffff', border: '#FCD34D' },
+  esf: { bg: '#7C3AED', text: '#ffffff', border: '#C4B5FD' },
+  leafC: { bg: '#F0FDF4', text: '#064E3B', border: '#86EFAC' },
+  leafCil: { bg: '#E0F2FE', text: '#0369A1', border: '#7DD3FC' },
+  leafCon: { bg: '#FFFBEB', text: '#92400E', border: '#FDE68A' },
+  leafEsf: { bg: '#F5F3FF', text: '#6B21A8', border: '#C4B5FD' },
+};
+
+let nodes = [];
+
+function makeNodes(W, H) {
+  const cx = W / 2, cy = H / 2;
+  return [
+    // Center
+    { id: 'c', label: '🌀 CORPOS\nREDONDOS', x: cx, y: cy, w: 120, h: 52, color: colors.center, bold: true },
+
+    // Branch: conceito (top)
+    { id: 'b0', label: '🔵 Conceito', x: cx, y: cy - 180, w: 110, h: 38, color: colors.conceito },
+    { id: 'b0a', label: 'Superfície curva', x: cx - 130, y: cy - 230, w: 130, h: 36, color: colors.leafC },
+    { id: 'b0b', label: 'Não é poliedro', x: cx + 130, y: cy - 230, w: 120, h: 36, color: colors.leafC },
+
+    // Branch: cilindro (left)
+    { id: 'b1', label: '🥫 Cilindro', x: cx - 220, y: cy - 50, w: 110, h: 40, color: colors.cil },
+    { id: 'b1a', label: '2 bases circulares\nparalelas', x: cx - 360, y: cy - 110, w: 148, h: 44, color: colors.leafCil },
+    { id: 'b1b', label: '1 face lateral\ncurva', x: cx - 370, y: cy - 50, w: 132, h: 44, color: colors.leafCil },
+    { id: 'b1c', label: 'Planificação:\nretângulo + 2 círculos', x: cx - 370, y: cy + 20, w: 162, h: 44, color: colors.leafCil },
+
+    // Branch: cone (right)
+    { id: 'b2', label: '🍦 Cone', x: cx + 215, y: cy - 50, w: 100, h: 40, color: colors.con },
+    { id: 'b2a', label: '1 base circular', x: cx + 348, y: cy - 110, w: 128, h: 36, color: colors.leafCon },
+    { id: 'b2b', label: 'Ápice no topo', x: cx + 352, y: cy - 55, w: 122, h: 36, color: colors.leafCon },
+    { id: 'b2c', label: 'Planificação:\nsetor + círculo', x: cx + 348, y: cy + 5, w: 148, h: 44, color: colors.leafCon },
+
+    // Branch: esfera (bottom)
+    { id: 'b3', label: '⚽ Esfera', x: cx, y: cy + 175, w: 105, h: 40, color: colors.esf },
+    { id: 'b3a', label: '0 faces / 0 arestas\n0 vértices', x: cx - 155, y: cy + 250, w: 148, h: 44, color: colors.leafEsf },
+    { id: 'b3b', label: 'Sem planificação\nperfeita', x: cx + 40, y: cy + 255, w: 148, h: 44, color: colors.leafEsf },
+    { id: 'b3c', label: 'Mapas distorcem\npor isso!', x: cx + 195, y: cy + 200, w: 138, h: 44, color: colors.leafEsf },
+  ];
+}
+
+const edges = [
+  ['c','b0'],['c','b1'],['c','b2'],['c','b3'],
+  ['b0','b0a'],['b0','b0b'],
+  ['b1','b1a'],['b1','b1b'],['b1','b1c'],
+  ['b2','b2a'],['b2','b2b'],['b2','b2c'],
+  ['b3','b3a'],['b3','b3b'],['b3','b3c'],
+];
+
+function getNode(id) { return nodes.find(n => n.id === id); }
+
+function draw() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = 'rgba(5,150,105,.06)';
+  for (let x = 20; x < W; x += 30) for (let y = 20; y < H; y += 30) { ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI*2); ctx.fill(); }
+
+  edges.forEach(([aid, bid]) => {
+    const a = getNode(aid), b = getNode(bid);
+    if (!a || !b) return;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.bezierCurveTo((a.x+b.x)/2, a.y, (a.x+b.x)/2, b.y, b.x, b.y);
+    ctx.strokeStyle = b.color.border;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  });
+
+  nodes.forEach(n => {
+    const r = 12, x = n.x - n.w/2, y = n.y - n.h/2;
+    ctx.shadowColor = 'rgba(0,0,0,.12)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
+    ctx.beginPath(); ctx.roundRect(x, y, n.w, n.h, r); ctx.fillStyle = n.color.bg; ctx.fill();
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+    ctx.beginPath(); ctx.roundRect(x, y, n.w, n.h, r); ctx.strokeStyle = n.color.border; ctx.lineWidth = 2; ctx.stroke();
+    const lines = n.label.split('\n');
+    ctx.fillStyle = n.color.text; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const fontSize = n.bold ? 13 : 11;
+    ctx.font = (n.bold ? '800' : '700') + ' ' + fontSize + 'px "Baloo 2"';
+    const lineH = fontSize + 4, totalH = lines.length * lineH;
+    lines.forEach((line, i) => ctx.fillText(line, n.x, n.y - totalH/2 + i*lineH + lineH/2));
+  });
+}
+
+let dragging = null, dx = 0, dy = 0;
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width / rect.width, sy = canvas.height / rect.height;
+  if (e.touches) return { x: (e.touches[0].clientX - rect.left)*sx, y: (e.touches[0].clientY - rect.top)*sy };
+  return { x: (e.clientX - rect.left)*sx, y: (e.clientY - rect.top)*sy };
+}
+function hitNode(px, py) {
+  for (let i = nodes.length-1; i >= 0; i--) {
+    const n = nodes[i];
+    if (px >= n.x-n.w/2 && px <= n.x+n.w/2 && py >= n.y-n.h/2 && py <= n.y+n.h/2) return n;
+  }
+  return null;
+}
+canvas.addEventListener('mousedown', e => { const p = getPos(e); const n = hitNode(p.x, p.y); if (n) { dragging = n; dx = p.x-n.x; dy = p.y-n.y; } });
+canvas.addEventListener('mousemove', e => { if (!dragging) return; const p = getPos(e); dragging.x = p.x-dx; dragging.y = p.y-dy; draw(); });
+canvas.addEventListener('mouseup', () => { dragging = null; });
+canvas.addEventListener('mouseleave', () => { dragging = null; });
+canvas.addEventListener('touchstart', e => { e.preventDefault(); const p = getPos(e); const n = hitNode(p.x, p.y); if (n) { dragging = n; dx = p.x-n.x; dy = p.y-n.y; } }, {passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!dragging) return; const p = getPos(e); dragging.x = p.x-dx; dragging.y = p.y-dy; draw(); }, {passive:false});
+canvas.addEventListener('touchend', () => { dragging = null; });
+
+function resetNodes() { nodes = makeNodes(canvas.width, canvas.height); draw(); }
+function toggleGab() { document.getElementById('gab-overlay').classList.toggle('show'); }
+function closeGabOutside(e) { if (e.target === document.getElementById('gab-overlay')) toggleGab(); }
+
+window.addEventListener('resize', () => { setCanvasSize(); nodes = makeNodes(canvas.width, canvas.height); draw(); });
+setCanvasSize();
+nodes = makeNodes(canvas.width, canvas.height);
+draw();
+</script>
+</body>
+</html>

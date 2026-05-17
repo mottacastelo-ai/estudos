@@ -363,12 +363,13 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
     <span class="d-icon">🔢</span>
     <span class="d-name">Matemática</span>
-    <span class="d-count">11</span>
+    <span class="d-count">14</span>
   </button>
   <div class="theme-sub" id="sub-mat">
     <button class="theme-link" onclick="showTheme('mat','tabuada')">✖️ Tabuada</button>
     <button class="theme-link" onclick="showTheme('mat','multiplicacao-divisao')">🧮 Multiplicação e Divisão</button>
     <button class="theme-link" onclick="showTheme('mat','poliedros-prismas-piramides')">🏛️ Poliedros, Prismas e Pirâmides</button>
+    <button class="theme-link" onclick="showTheme('mat','corpos-redondos-planificacao')">🌀 Corpos Redondos e Planificação</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-geo" onclick="showDisc('geo')">
@@ -419,8 +420,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>19</span>temas</div>
-        <div class="hstat"><span>84</span>atividades</div>
+        <div class="hstat"><span>20</span>temas</div>
+        <div class="hstat"><span>87</span>atividades</div>
       </div>
     </div>
     <div class="home-body">
@@ -441,9 +442,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Matemática</div>
           <div class="dhc-desc">Cálculo, raciocínio lógico e resolução de problemas</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#ECFDF5;color:#065F46">3 temas</span>
-            <span class="chip" style="background:#ECFDF5;color:#065F46">11 atividades</span>
-            <span class="chip" style="background:#FEF3C7;color:#92400E">2 HQs</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">4 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">14 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">3 HQs</span>
           </div>
         </button>
         <button class="disc-home-card geo" onclick="showDisc('geo')">
@@ -978,6 +979,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn mat-tab active" onclick="showTheme('mat','tabuada')">✖️ Tabuada</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','multiplicacao-divisao')">🧮 Multiplicação e Divisão</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','poliedros-prismas-piramides')">🏛️ Poliedros, Prismas e Pirâmides</button>
+        <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','corpos-redondos-planificacao')">🌀 Corpos Redondos e Planificação</button>
       </div>
 
       <!-- TEMA: TABUADA -->
@@ -1134,6 +1136,55 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <div class="sched">
           <div class="sched-row"><div class="sched-day mat">Dia 1</div><div class="sched-acts"><span class="sched-act mat">📖 Ler HQ do Poli</span><span class="sched-act mat">❓ Quiz</span></div></div>
           <div class="sched-row"><div class="sched-day mat">Dia 2</div><div class="sched-acts"><span class="sched-act mat">🔷 Classificador de Sólidos</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 3</div><div class="sched-acts"><span class="sched-act mat">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: CORPOS REDONDOS E PLANIFICAÇÃO -->
+      <div class="theme-content" id="theme-mat-corpos-redondos-planificacao">
+        <div class="start-banner blue">
+          <div class="start-banner-icon">🌀</div>
+          <div>
+            <h3>Como usar essas atividades</h3>
+            <p>Leia a HQ do Esfe para entender cilindro, cone e esfera. Depois faça o Quiz, identifique as planificações e organize o Mapa Mental como síntese final.</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="matematica/corpos-redondos-planificacao/hq-corpos-redondos-planificacao.png" alt="HQ Corpos Redondos com Esfe" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div style="display:none;align-items:center;justify-content:center;padding:40px;color:#6B7280;font-weight:700;font-size:14px;gap:10px">
+            <span>🖼️</span><span>HQ em breve — gere as imagens com o prompt do Esfe!</span>
+          </div>
+          <div class="hq-caption"><span>📖</span><span>O Mundo das Curvas — 4 páginas · Personagens: Bia, Esfe, Cilindro e Cone · Tema: Corpos Redondos e Planificação</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card mat" href="matematica/corpos-redondos-planificacao/quiz-corpos-redondos-planificacao.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz</div>
+            <div class="act-desc">10 questões sobre cilindro, cone, esfera, planificações e a impossibilidade da esfera.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Múltipla Escolha</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card mat" href="matematica/corpos-redondos-planificacao/reconhecedor-planificacoes-corpos-redondos-planificacao.html" target="_blank">
+            <div class="act-icon">📐</div>
+            <div class="act-title">Reconhecedor de Planificações</div>
+            <div class="act-desc">Veja o sólido e escolha a planificação correta. Cilindro, cone e o caso especial da esfera.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Visual</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/corpos-redondos-planificacao/mapa-mental-corpos-redondos-planificacao.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e organize os conceitos de cilindro, cone, esfera e suas planificações.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day mat">Dia 1</div><div class="sched-acts"><span class="sched-act mat">📖 Ler HQ do Esfe</span><span class="sched-act mat">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 2</div><div class="sched-acts"><span class="sched-act mat">📐 Reconhecedor de Planificações</span></div></div>
           <div class="sched-row"><div class="sched-day mat">Dia 3</div><div class="sched-acts"><span class="sched-act mat">🗺️ Mapa Mental — síntese final</span></div></div>
         </div>
       </div>
