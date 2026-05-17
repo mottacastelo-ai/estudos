@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Poliedros, Prismas e Pirâmides</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Baloo 2", cursive;
+  background: var(--mat-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px;
+  transition: color .15s;
+}
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+/* Progress */
+.progress-bar-wrap {
+  background: #fff; padding: 14px 28px;
+  border-bottom: 2px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+}
+.progress-label { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .08em; }
+.prog-track { background: var(--mat-bg); border-radius: 99px; height: 8px; overflow: hidden; }
+.prog-fill { background: var(--mat); height: 100%; border-radius: 99px; transition: width .4s ease; }
+
+/* Main */
+.main { max-width: 680px; margin: 0 auto; padding: 32px 20px 0; }
+
+/* Question card */
+.q-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  margin-bottom: 20px; display: none;
+}
+.q-card.active { display: block; }
+.q-num {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--mat); margin-bottom: 10px;
+}
+.q-text {
+  font-size: 18px; font-weight: 800; line-height: 1.45; margin-bottom: 22px;
+  color: var(--text);
+}
+.q-hint {
+  background: #FFF3CD; border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; font-weight: 700; color: #92400E;
+  margin-bottom: 18px; display: flex; align-items: flex-start; gap: 8px;
+}
+
+/* Options */
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn {
+  background: var(--mat-bg); border: 2px solid var(--border);
+  border-radius: 14px; padding: 14px 18px;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 700;
+  cursor: pointer; text-align: left; color: var(--text);
+  transition: background .15s, border-color .15s, transform .1s;
+  display: flex; align-items: center; gap: 12px;
+}
+.opt-btn:hover:not(:disabled) { background: #D1FAE5; border-color: var(--mat); transform: translateX(3px); }
+.opt-btn .opt-letter {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--border); color: var(--mat-dark);
+  font-size: 12px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.opt-btn.correct { background: #D1FAE5; border-color: var(--mat); }
+.opt-btn.correct .opt-letter { background: var(--mat); color: white; }
+.opt-btn.wrong { background: #FEE2E2; border-color: #EF4444; }
+.opt-btn.wrong .opt-letter { background: #EF4444; color: white; }
+.opt-btn:disabled { cursor: default; }
+
+/* Feedback */
+.feedback {
+  border-radius: 12px; padding: 14px 18px; margin-top: 16px;
+  font-size: 14px; font-weight: 700; line-height: 1.5; display: none;
+}
+.feedback.show { display: block; }
+.feedback.ok { background: #D1FAE5; color: #065F46; border: 2px solid var(--mat-light); }
+.feedback.err { background: #FEE2E2; color: #991B1B; border: 2px solid #FCA5A5; }
+
+/* Next btn */
+.next-btn {
+  display: none; margin-top: 16px;
+  background: var(--mat); color: white;
+  border: none; border-radius: 14px; padding: 14px 28px;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: background .15s, transform .1s;
+}
+.next-btn.show { display: block; }
+.next-btn:hover { background: var(--mat-dark); transform: translateY(-2px); }
+
+/* Result */
+.result-screen {
+  display: none; text-align: center;
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 40px 28px;
+  margin-bottom: 32px;
+}
+.result-screen.show { display: block; }
+.result-emoji { font-size: 64px; margin-bottom: 16px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 24px; margin-bottom: 8px; color: var(--mat-dark); }
+.result-score { font-size: 52px; font-weight: 900; color: var(--mat); font-family: "Space Mono", monospace; }
+.result-total { font-size: 18px; color: var(--muted); font-weight: 700; margin-bottom: 20px; }
+.result-msg { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.6; margin-bottom: 28px; }
+.restart-btn {
+  background: var(--mat); color: white; border: none;
+  border-radius: 14px; padding: 14px 32px;
+  font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800;
+  cursor: pointer; transition: background .15s;
+}
+.restart-btn:hover { background: var(--mat-dark); }
+
+/* Gabarito */
+.gabarito-section { margin-top: 32px; text-align: left; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px; }
+.gabarito-item {
+  background: var(--card); border: 2px solid var(--border); border-radius: 14px;
+  padding: 14px 18px; margin-bottom: 10px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.gabarito-item.correct-item { border-color: var(--mat-light); }
+.gabarito-item.wrong-item { border-color: #FCA5A5; }
+.gab-icon { font-size: 20px; flex-shrink: 0; }
+.gab-text { font-size: 13px; font-weight: 700; line-height: 1.5; }
+.gab-q { color: var(--muted); margin-bottom: 3px; }
+.gab-a { color: var(--mat-dark); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="back-btn" href="../../index.html">← Voltar ao portal</a>
+  <h1>🏛️ QUIZ</h1>
+  <p>Poliedros, Prismas e Pirâmides — 10 questões</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label">Questão <span id="q-current">1</span> de 10</div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+</div>
+
+<div class="main">
+
+  <!-- Q1 -->
+  <div class="q-card active" id="q1">
+    <div class="q-num">Questão 1 de 10</div>
+    <div class="q-text">O que é um POLIEDRO?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,1,'A')"><span class="opt-letter">A</span>Uma figura geométrica espacial formada apenas por faces planas</button>
+      <button class="opt-btn" onclick="answer(this,1,'B')"><span class="opt-letter">B</span>Uma figura bidimensional com ângulos retos</button>
+      <button class="opt-btn" onclick="answer(this,1,'C')"><span class="opt-letter">C</span>Qualquer sólido, mesmo que tenha faces curvas</button>
+      <button class="opt-btn" onclick="answer(this,1,'D')"><span class="opt-letter">D</span>Um polígono com mais de quatro lados</button>
+    </div>
+    <div class="feedback" id="fb1"></div>
+    <button class="next-btn" id="nx1" onclick="nextQ(1)">Próxima questão →</button>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="q2">
+    <div class="q-num">Questão 2 de 10</div>
+    <div class="q-text">Como se chama o ponto onde três ou mais arestas de um poliedro se encontram?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,2,'A')"><span class="opt-letter">A</span>Aresta</button>
+      <button class="opt-btn" onclick="answer(this,2,'B')"><span class="opt-letter">B</span>Face</button>
+      <button class="opt-btn" onclick="answer(this,2,'C')"><span class="opt-letter">C</span>Vértice</button>
+      <button class="opt-btn" onclick="answer(this,2,'D')"><span class="opt-letter">D</span>Diagonal</button>
+    </div>
+    <div class="feedback" id="fb2"></div>
+    <button class="next-btn" id="nx2" onclick="nextQ(2)">Próxima questão →</button>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="q3">
+    <div class="q-num">Questão 3 de 10</div>
+    <div class="q-text">Quantas faces tem um cubo?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,3,'A')"><span class="opt-letter">A</span>4</button>
+      <button class="opt-btn" onclick="answer(this,3,'B')"><span class="opt-letter">B</span>6</button>
+      <button class="opt-btn" onclick="answer(this,3,'C')"><span class="opt-letter">C</span>8</button>
+      <button class="opt-btn" onclick="answer(this,3,'D')"><span class="opt-letter">D</span>12</button>
+    </div>
+    <div class="feedback" id="fb3"></div>
+    <button class="next-btn" id="nx3" onclick="nextQ(3)">Próxima questão →</button>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="q4">
+    <div class="q-num">Questão 4 de 10</div>
+    <div class="q-text">Qual poliedro regular tem 4 faces triangulares — e apenas 4?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,4,'A')"><span class="opt-letter">A</span>Octaedro</button>
+      <button class="opt-btn" onclick="answer(this,4,'B')"><span class="opt-letter">B</span>Tetraedro</button>
+      <button class="opt-btn" onclick="answer(this,4,'C')"><span class="opt-letter">C</span>Icosaedro</button>
+      <button class="opt-btn" onclick="answer(this,4,'D')"><span class="opt-letter">D</span>Dodecaedro</button>
+    </div>
+    <div class="feedback" id="fb4"></div>
+    <button class="next-btn" id="nx4" onclick="nextQ(4)">Próxima questão →</button>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="q5">
+    <div class="q-num">Questão 5 de 10</div>
+    <div class="q-text">Qual é a principal diferença entre um PRISMA e uma PIRÂMIDE?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,5,'A')"><span class="opt-letter">A</span>O prisma tem duas bases paralelas iguais; a pirâmide tem uma base e um ápice</button>
+      <button class="opt-btn" onclick="answer(this,5,'B')"><span class="opt-letter">B</span>O prisma tem faces triangulares; a pirâmide tem faces retangulares</button>
+      <button class="opt-btn" onclick="answer(this,5,'C')"><span class="opt-letter">C</span>O prisma é sempre um cubo; a pirâmide é sempre triangular</button>
+      <button class="opt-btn" onclick="answer(this,5,'D')"><span class="opt-letter">D</span>Não há diferença — prisma e pirâmide são sinônimos</button>
+    </div>
+    <div class="feedback" id="fb5"></div>
+    <button class="next-btn" id="nx5" onclick="nextQ(5)">Próxima questão →</button>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="q6">
+    <div class="q-num">Questão 6 de 10</div>
+    <div class="q-text">Uma pirâmide de base QUADRADA tem quantas faces no total?</div>
+    <div class="q-hint">💡 Lembre: as faces incluem a base e todas as faces laterais.</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,6,'A')"><span class="opt-letter">A</span>4</button>
+      <button class="opt-btn" onclick="answer(this,6,'B')"><span class="opt-letter">B</span>5</button>
+      <button class="opt-btn" onclick="answer(this,6,'C')"><span class="opt-letter">C</span>6</button>
+      <button class="opt-btn" onclick="answer(this,6,'D')"><span class="opt-letter">D</span>8</button>
+    </div>
+    <div class="feedback" id="fb6"></div>
+    <button class="next-btn" id="nx6" onclick="nextQ(6)">Próxima questão →</button>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-card" id="q7">
+    <div class="q-num">Questão 7 de 10</div>
+    <div class="q-text">As faces LATERAIS de um prisma têm qual formato?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,7,'A')"><span class="opt-letter">A</span>Triângulo</button>
+      <button class="opt-btn" onclick="answer(this,7,'B')"><span class="opt-letter">B</span>Pentágono</button>
+      <button class="opt-btn" onclick="answer(this,7,'C')"><span class="opt-letter">C</span>Retângulo</button>
+      <button class="opt-btn" onclick="answer(this,7,'D')"><span class="opt-letter">D</span>Círculo</button>
+    </div>
+    <div class="feedback" id="fb7"></div>
+    <button class="next-btn" id="nx7" onclick="nextQ(7)">Próxima questão →</button>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-card" id="q8">
+    <div class="q-num">Questão 8 de 10</div>
+    <div class="q-text">Qual poliedro regular tem 12 faces em forma de PENTÁGONO?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,8,'A')"><span class="opt-letter">A</span>Icosaedro</button>
+      <button class="opt-btn" onclick="answer(this,8,'B')"><span class="opt-letter">B</span>Octaedro</button>
+      <button class="opt-btn" onclick="answer(this,8,'C')"><span class="opt-letter">C</span>Dodecaedro</button>
+      <button class="opt-btn" onclick="answer(this,8,'D')"><span class="opt-letter">D</span>Tetraedro</button>
+    </div>
+    <div class="feedback" id="fb8"></div>
+    <button class="next-btn" id="nx8" onclick="nextQ(8)">Próxima questão →</button>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card" id="q9">
+    <div class="q-num">Questão 9 de 10</div>
+    <div class="q-text">Um prisma TRIANGULAR tem quantas arestas no total?</div>
+    <div class="q-hint">💡 Pense: 3 arestas na base de cima + 3 arestas na base de baixo + 3 arestas laterais.</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,9,'A')"><span class="opt-letter">A</span>6</button>
+      <button class="opt-btn" onclick="answer(this,9,'B')"><span class="opt-letter">B</span>8</button>
+      <button class="opt-btn" onclick="answer(this,9,'C')"><span class="opt-letter">C</span>9</button>
+      <button class="opt-btn" onclick="answer(this,9,'D')"><span class="opt-letter">D</span>12</button>
+    </div>
+    <div class="feedback" id="fb9"></div>
+    <button class="next-btn" id="nx9" onclick="nextQ(9)">Próxima questão →</button>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="q10">
+    <div class="q-num">Questão 10 de 10</div>
+    <div class="q-text">O cubo pode ser chamado de dois nomes na geometria. Quais são eles?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(this,10,'A')"><span class="opt-letter">A</span>Prisma quadrangular regular e hexaedro regular</button>
+      <button class="opt-btn" onclick="answer(this,10,'B')"><span class="opt-letter">B</span>Pirâmide quadrangular e octaedro</button>
+      <button class="opt-btn" onclick="answer(this,10,'C')"><span class="opt-letter">C</span>Prisma triangular e tetraedro</button>
+      <button class="opt-btn" onclick="answer(this,10,'D')"><span class="opt-letter">D</span>Poliedro regular e pirâmide hexagonal</button>
+    </div>
+    <div class="feedback" id="fb10"></div>
+    <button class="next-btn" id="nx10" onclick="showResult()">Ver resultado →</button>
+  </div>
+
+  <!-- Result -->
+  <div class="result-screen" id="result-screen">
+    <div class="result-emoji" id="res-emoji">🏆</div>
+    <div class="result-title">Resultado Final</div>
+    <div class="result-score" id="res-score">0</div>
+    <div class="result-total">de 10 acertos</div>
+    <div class="result-msg" id="res-msg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Tentar novamente</button>
+    <div class="gabarito-section">
+      <div class="gabarito-title">📋 Gabarito completo</div>
+      <div id="gabarito-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const answers = {
+  1: { correct: 'A', explanation: 'Poliedro é todo sólido geométrico formado exclusivamente por faces PLANAS. Esfera, cone e cilindro têm faces curvas e não são poliedros.' },
+  2: { correct: 'C', explanation: 'O VÉRTICE é o ponto onde três ou mais arestas se encontram. A aresta é o segmento entre duas faces; a face é o polígono plano que compõe o sólido.' },
+  3: { correct: 'B', explanation: 'O cubo tem 6 faces quadradas (topo, base e 4 lados). Confirme com Euler: 6 faces + 8 vértices = 12 arestas + 2 → 14 = 14 ✓' },
+  4: { correct: 'B', explanation: 'O TETRAEDRO regular tem 4 faces triangulares, 6 arestas e 4 vértices. É também uma pirâmide triangular regular. O octaedro tem 8 faces; o icosaedro tem 20.' },
+  5: { correct: 'A', explanation: 'Prisma = 2 bases paralelas e iguais + faces laterais retangulares. Pirâmide = 1 base + faces laterais triangulares que convergem para o ÁPICE.' },
+  6: { correct: 'B', explanation: 'Pirâmide quadrangular: 1 base quadrada + 4 faces triangulares laterais = 5 faces no total. Arestas: 8. Vértices: 5 (4 da base + 1 ápice).' },
+  7: { correct: 'C', explanation: 'As faces laterais de um PRISMA são sempre RETÂNGULOS (ou paralelogramos, em alguns casos). As faces laterais da PIRÂMIDE é que são triângulos.' },
+  8: { correct: 'C', explanation: '"Dodeca" vem do grego e significa 12. O DODECAEDRO regular tem 12 faces pentagonais, 30 arestas e 20 vértices. O icosaedro tem 20 faces triangulares.' },
+  9: { correct: 'C', explanation: 'Prisma triangular: 3 arestas (base inferior) + 3 arestas (base superior) + 3 arestas laterais = 9 arestas. Fórmula geral: 3N, com N=3 lados na base.' },
+  10: { correct: 'A', explanation: 'O cubo é ao mesmo tempo um PRISMA QUADRANGULAR REGULAR (2 bases quadradas paralelas) e um HEXAEDRO REGULAR (poliedro de Platão com 6 faces quadradas iguais).' }
+};
+
+const questions = {
+  1: 'O que é um poliedro?',
+  2: 'Como se chama o ponto onde arestas se encontram?',
+  3: 'Quantas faces tem um cubo?',
+  4: 'Qual poliedro regular tem 4 faces triangulares?',
+  5: 'Diferença entre prisma e pirâmide?',
+  6: 'Pirâmide quadrangular: quantas faces?',
+  7: 'Faces laterais do prisma: qual formato?',
+  8: 'Qual poliedro tem 12 faces pentagonais?',
+  9: 'Prisma triangular: quantas arestas?',
+  10: 'O cubo tem dois nomes. Quais?'
+};
+
+let score = 0;
+let userAnswers = {};
+let current = 1;
+
+function answer(btn, qNum, opt) {
+  const q = document.getElementById('q' + qNum);
+  const btns = q.querySelectorAll('.opt-btn');
+  const fb = document.getElementById('fb' + qNum);
+  const nx = document.getElementById('nx' + qNum);
+  const correct = answers[qNum].correct;
+
+  btns.forEach(b => b.disabled = true);
+  userAnswers[qNum] = opt;
+
+  if (opt === correct) {
+    score++;
+    btn.classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.textContent = '✅ Correto! ' + answers[qNum].explanation;
+  } else {
+    btn.classList.add('wrong');
+    btns.forEach(b => {
+      const letter = b.querySelector('.opt-letter').textContent;
+      if (letter === correct) b.classList.add('correct');
+    });
+    fb.className = 'feedback err show';
+    fb.textContent = '❌ Incorreto. ' + answers[qNum].explanation;
+  }
+  nx.classList.add('show');
+}
+
+function nextQ(qNum) {
+  document.getElementById('q' + qNum).classList.remove('active');
+  const next = qNum + 1;
+  if (next <= 10) {
+    document.getElementById('q' + next).classList.add('active');
+    document.getElementById('q-current').textContent = next;
+    document.getElementById('prog-fill').style.width = (next * 10) + '%';
+  }
+}
+
+function showResult() {
+  document.getElementById('q10').classList.remove('active');
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('show');
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('prog-fill').style.width = '100%';
+
+  let emoji, msg;
+  if (score === 10) { emoji = '🏆'; msg = 'Perfeito! Você dominou todos os conceitos de poliedros, prismas e pirâmides. Poli ficaria orgulhoso!'; }
+  else if (score >= 8) { emoji = '🥇'; msg = 'Excelente! Você conhece muito bem esse tema. Revise as questões que errou e você chegará ao 100%.'; }
+  else if (score >= 6) { emoji = '👍'; msg = 'Bom resultado! Você entende o essencial. Leia a HQ do Poli novamente para reforçar os pontos que escaparam.'; }
+  else if (score >= 4) { emoji = '📚'; msg = 'Continue estudando! Revise a HQ do Poli com atenção, especialmente as diferenças entre prismas e pirâmides.'; }
+  else { emoji = '🔁'; msg = 'Que tal reler a HQ do Poli antes de tentar novamente? Foque nos elementos dos poliedros e nas diferenças entre prismas e pirâmides.'; }
+
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-msg').textContent = msg;
+
+  // Gabarito
+  const gList = document.getElementById('gabarito-list');
+  gList.innerHTML = '';
+  for (let i = 1; i <= 10; i++) {
+    const isOk = userAnswers[i] === answers[i].correct;
+    const item = document.createElement('div');
+    item.className = 'gabarito-item ' + (isOk ? 'correct-item' : 'wrong-item');
+    item.innerHTML = `<div class="gab-icon">${isOk ? '✅' : '❌'}</div>
+      <div class="gab-text">
+        <div class="gab-q">Q${i}: ${questions[i]}</div>
+        <div class="gab-a">${answers[i].explanation}</div>
+      </div>`;
+    gList.appendChild(item);
+  }
+}
+
+function restart() {
+  score = 0;
+  userAnswers = {};
+  current = 1;
+  for (let i = 1; i <= 10; i++) {
+    const card = document.getElementById('q' + i);
+    card.classList.remove('active');
+    card.querySelectorAll('.opt-btn').forEach(b => {
+      b.disabled = false;
+      b.classList.remove('correct', 'wrong');
+    });
+    document.getElementById('fb' + i).className = 'feedback';
+    document.getElementById('fb' + i).textContent = '';
+    document.getElementById('nx' + i).classList.remove('show');
+  }
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('q1').classList.add('active');
+  document.getElementById('q-current').textContent = '1';
+  document.getElementById('prog-fill').style.width = '10%';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador de Sólidos — Poliedros, Prismas e Pirâmides</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --prisma: #0284C7;
+  --prisma-bg: #E0F2FE;
+  --piramide: #D97706;
+  --piramide-bg: #FEF3C7;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Baloo 2", cursive;
+  background: var(--mat-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px;
+  transition: color .15s;
+}
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.main { max-width: 720px; margin: 0 auto; padding: 32px 20px 0; }
+
+.instrucoes {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 18px; padding: 20px 24px; margin-bottom: 28px;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.instrucoes-icon { font-size: 28px; flex-shrink: 0; }
+.instrucoes h3 { font-family: "Space Mono", monospace; font-size: 13px; color: var(--mat-dark); margin-bottom: 6px; }
+.instrucoes p { font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.5; }
+
+/* Score bar */
+.score-bar {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+  background: var(--card); border: 2px solid var(--border); border-radius: 14px;
+  padding: 12px 20px;
+}
+.score-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.score-val { font-family: "Space Mono", monospace; font-size: 22px; font-weight: 700; color: var(--mat); }
+
+/* Sólido card */
+.solido-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 18px; padding: 0; margin-bottom: 16px;
+  overflow: hidden; transition: border-color .3s;
+}
+.solido-card.classified-prisma { border-color: var(--prisma); }
+.solido-card.classified-piramide { border-color: var(--piramide); }
+.solido-card.correct-ans { border-color: var(--mat); }
+.solido-card.wrong-ans { border-color: #EF4444; }
+
+.solido-body {
+  display: flex; align-items: center; gap: 20px;
+  padding: 20px 22px;
+}
+.solido-svg { flex-shrink: 0; }
+.solido-info { flex: 1; min-width: 0; }
+.solido-name { font-family: "Space Mono", monospace; font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.solido-props { font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; }
+.solido-props span { display: block; }
+
+.solido-actions {
+  padding: 14px 22px;
+  border-top: 2px solid var(--border);
+  display: flex; gap: 10px; align-items: center;
+  flex-wrap: wrap;
+}
+.class-label { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-right: 4px; }
+.class-btn {
+  padding: 9px 20px; border-radius: 12px; border: 2px solid;
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all .15s;
+}
+.class-btn.prisma-btn {
+  background: var(--prisma-bg); border-color: var(--prisma); color: var(--prisma);
+}
+.class-btn.prisma-btn:hover:not(:disabled) { background: var(--prisma); color: white; transform: translateY(-2px); }
+.class-btn.prisma-btn.selected { background: var(--prisma); color: white; }
+.class-btn.piramide-btn {
+  background: var(--piramide-bg); border-color: var(--piramide); color: var(--piramide);
+}
+.class-btn.piramide-btn:hover:not(:disabled) { background: var(--piramide); color: white; transform: translateY(-2px); }
+.class-btn.piramide-btn.selected { background: var(--piramide); color: white; }
+.class-btn:disabled { opacity: .7; cursor: default; transform: none !important; }
+
+.feedback-inline {
+  font-size: 13px; font-weight: 700; padding: 8px 14px;
+  border-radius: 10px; display: none;
+}
+.feedback-inline.show { display: inline-flex; align-items: center; gap: 6px; }
+.feedback-inline.ok { background: #D1FAE5; color: #065F46; }
+.feedback-inline.err { background: #FEE2E2; color: #991B1B; }
+
+/* Verify button */
+.verify-wrap { text-align: center; margin: 28px 0 0; }
+.verify-btn {
+  background: var(--mat); color: white; border: none;
+  border-radius: 16px; padding: 16px 40px;
+  font-family: "Baloo 2", cursive; font-size: 17px; font-weight: 800;
+  cursor: pointer; transition: background .15s, transform .1s;
+}
+.verify-btn:hover { background: var(--mat-dark); transform: translateY(-2px); }
+.verify-btn:disabled { opacity: .5; cursor: default; transform: none; }
+
+/* Result */
+.result-screen {
+  display: none; text-align: center;
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 18px; padding: 40px 28px; margin-top: 28px;
+}
+.result-screen.show { display: block; }
+.result-emoji { font-size: 60px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 22px; color: var(--mat-dark); margin-bottom: 6px; }
+.result-score { font-size: 50px; font-weight: 900; color: var(--mat); font-family: "Space Mono", monospace; }
+.result-total { font-size: 16px; color: var(--muted); font-weight: 700; margin-bottom: 18px; }
+.result-msg { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.6; margin-bottom: 24px; }
+.restart-btn {
+  background: var(--mat); color: white; border: none;
+  border-radius: 14px; padding: 14px 32px;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: background .15s;
+}
+.restart-btn:hover { background: var(--mat-dark); }
+
+/* Gabarito */
+.gabarito-box {
+  text-align: left; margin-top: 28px;
+  background: #F9FAFB; border-radius: 14px; padding: 20px;
+}
+.gab-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 14px; }
+.gab-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.gab-row:last-child { border-bottom: none; }
+.gab-icon { font-size: 18px; flex-shrink: 0; }
+.gab-name { font-size: 14px; font-weight: 800; flex: 1; }
+.gab-class {
+  font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px;
+}
+.gab-class.prisma { background: var(--prisma-bg); color: var(--prisma); }
+.gab-class.piramide { background: var(--piramide-bg); color: var(--piramide); }
+.gab-explain { font-size: 12px; color: var(--muted); font-weight: 600; width: 100%; margin-top: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="back-btn" href="../../index.html">← Voltar ao portal</a>
+  <h1>🔷 CLASSIFICADOR DE SÓLIDOS</h1>
+  <p>Poliedros, Prismas e Pirâmides — 6 sólidos para classificar</p>
+</div>
+
+<div class="main">
+
+  <div class="instrucoes">
+    <div class="instrucoes-icon">🎯</div>
+    <div>
+      <h3>Como usar</h3>
+      <p>Leia as propriedades de cada sólido e classifique-o como <strong>Prisma</strong> ou <strong>Pirâmide</strong>. Depois clique em "Verificar" para ver quantos você acertou.</p>
+    </div>
+  </div>
+
+  <div class="score-bar">
+    <div class="score-label">Classificados</div>
+    <div class="score-val"><span id="count-done">0</span>/6</div>
+  </div>
+
+  <!-- Sólido 1: Cubo -->
+  <div class="solido-card" id="card-1">
+    <div class="solido-body">
+      <div class="solido-svg">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <!-- Cubo isométrico -->
+          <polygon points="40,8 72,26 72,54 40,72 8,54 8,26" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+          <polyline points="40,8 40,36" stroke="#059669" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <polyline points="8,26 40,36 72,26" stroke="#059669" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <polyline points="40,36 40,72" stroke="#059669" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <polygon points="40,8 72,26 40,44 8,26" fill="#A7F3D0" stroke="#059669" stroke-width="2"/>
+          <polygon points="40,44 72,26 72,54 40,72" fill="#6EE7B7" stroke="#059669" stroke-width="2"/>
+          <polygon points="40,44 8,26 8,54 40,72" fill="#34D399" stroke="#059669" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="solido-info">
+        <div class="solido-name">🎲 Cubo</div>
+        <div class="solido-props">
+          <span>• 6 faces quadradas iguais</span>
+          <span>• 12 arestas iguais</span>
+          <span>• 8 vértices</span>
+          <span>• Duas bases paralelas e iguais</span>
+        </div>
+      </div>
+    </div>
+    <div class="solido-actions">
+      <span class="class-label">É um:</span>
+      <button class="class-btn prisma-btn" onclick="classify(1,'prisma')">🔷 Prisma</button>
+      <button class="class-btn piramide-btn" onclick="classify(1,'piramide')">🔶 Pirâmide</button>
+      <div class="feedback-inline" id="fb-1"></div>
+    </div>
+  </div>
+
+  <!-- Sólido 2: Pirâmide Quadrangular -->
+  <div class="solido-card" id="card-2">
+    <div class="solido-body">
+      <div class="solido-svg">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <!-- Pirâmide quadrangular -->
+          <polygon points="40,6 68,55 12,55" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+          <polygon points="40,6 68,55 68,65 40,65" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>
+          <polygon points="40,6 12,55 12,65 40,65" fill="#FCD34D" stroke="#D97706" stroke-width="2"/>
+          <polygon points="12,65 68,65 68,55 12,55" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+          <line x1="40" y1="6" x2="40" y2="65" stroke="#D97706" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <circle cx="40" cy="6" r="3" fill="#D97706"/>
+          <text x="42" y="4" fill="#D97706" font-size="8" font-weight="bold">ápice</text>
+        </svg>
+      </div>
+      <div class="solido-info">
+        <div class="solido-name">🏛️ Pirâmide Quadrangular</div>
+        <div class="solido-props">
+          <span>• 1 base quadrada</span>
+          <span>• 4 faces triangulares laterais</span>
+          <span>• 8 arestas</span>
+          <span>• 5 vértices (4 da base + 1 ápice)</span>
+        </div>
+      </div>
+    </div>
+    <div class="solido-actions">
+      <span class="class-label">É um:</span>
+      <button class="class-btn prisma-btn" onclick="classify(2,'prisma')">🔷 Prisma</button>
+      <button class="class-btn piramide-btn" onclick="classify(2,'piramide')">🔶 Pirâmide</button>
+      <div class="feedback-inline" id="fb-2"></div>
+    </div>
+  </div>
+
+  <!-- Sólido 3: Prisma Triangular -->
+  <div class="solido-card" id="card-3">
+    <div class="solido-body">
+      <div class="solido-svg">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <!-- Prisma triangular -->
+          <polygon points="20,60 60,60 60,25 20,25" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+          <polygon points="20,60 60,60 40,10" fill="#BAE6FD" stroke="#0284C7" stroke-width="2"/>
+          <polygon points="20,25 60,25 40,10" fill="#7DD3FC" stroke="#0284C7" stroke-width="2"/>
+          <polygon points="20,60 20,25 40,10" fill="#38BDF8" stroke="#0284C7" stroke-width="2"/>
+          <line x1="20" y1="60" x2="20" y2="25" stroke="#0284C7" stroke-width="1.5" stroke-dasharray="4,3"/>
+        </svg>
+      </div>
+      <div class="solido-info">
+        <div class="solido-name">🔷 Prisma Triangular</div>
+        <div class="solido-props">
+          <span>• 2 bases triangulares paralelas e iguais</span>
+          <span>• 3 faces retangulares laterais</span>
+          <span>• 9 arestas</span>
+          <span>• 6 vértices</span>
+        </div>
+      </div>
+    </div>
+    <div class="solido-actions">
+      <span class="class-label">É um:</span>
+      <button class="class-btn prisma-btn" onclick="classify(3,'prisma')">🔷 Prisma</button>
+      <button class="class-btn piramide-btn" onclick="classify(3,'piramide')">🔶 Pirâmide</button>
+      <div class="feedback-inline" id="fb-3"></div>
+    </div>
+  </div>
+
+  <!-- Sólido 4: Pirâmide Triangular -->
+  <div class="solido-card" id="card-4">
+    <div class="solido-body">
+      <div class="solido-svg">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <!-- Tetraedro / Pirâmide triangular -->
+          <polygon points="40,5 70,65 10,65" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+          <polygon points="40,5 70,65 55,45" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>
+          <polygon points="40,5 10,65 25,45" fill="#FCD34D" stroke="#D97706" stroke-width="2"/>
+          <polygon points="10,65 70,65 55,45 25,45" fill="#F59E0B" stroke="#D97706" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <circle cx="40" cy="5" r="3" fill="#D97706"/>
+        </svg>
+      </div>
+      <div class="solido-info">
+        <div class="solido-name">🔺 Pirâmide Triangular (Tetraedro)</div>
+        <div class="solido-props">
+          <span>• 1 base triangular</span>
+          <span>• 3 faces triangulares laterais</span>
+          <span>• 6 arestas</span>
+          <span>• 4 vértices (3 da base + 1 ápice)</span>
+        </div>
+      </div>
+    </div>
+    <div class="solido-actions">
+      <span class="class-label">É um:</span>
+      <button class="class-btn prisma-btn" onclick="classify(4,'prisma')">🔷 Prisma</button>
+      <button class="class-btn piramide-btn" onclick="classify(4,'piramide')">🔶 Pirâmide</button>
+      <div class="feedback-inline" id="fb-4"></div>
+    </div>
+  </div>
+
+  <!-- Sólido 5: Prisma Hexagonal -->
+  <div class="solido-card" id="card-5">
+    <div class="solido-body">
+      <div class="solido-svg">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <!-- Prisma hexagonal simplificado -->
+          <polygon points="40,15 58,24 58,44 40,53 22,44 22,24" fill="#BAE6FD" stroke="#0284C7" stroke-width="2"/>
+          <polygon points="40,27 58,36 58,56 40,65 22,56 22,36" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+          <line x1="40" y1="15" x2="40" y2="27" stroke="#0284C7" stroke-width="1.5"/>
+          <line x1="58" y1="24" x2="58" y2="36" stroke="#0284C7" stroke-width="1.5"/>
+          <line x1="22" y1="24" x2="22" y2="36" stroke="#0284C7" stroke-width="1.5"/>
+          <line x1="58" y1="44" x2="58" y2="56" stroke="#0284C7" stroke-width="1.5"/>
+          <line x1="22" y1="44" x2="22" y2="56" stroke="#0284C7" stroke-width="1.5"/>
+          <line x1="40" y1="53" x2="40" y2="65" stroke="#0284C7" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="solido-info">
+        <div class="solido-name">⬡ Prisma Hexagonal</div>
+        <div class="solido-props">
+          <span>• 2 bases hexagonais paralelas e iguais</span>
+          <span>• 6 faces retangulares laterais</span>
+          <span>• 18 arestas</span>
+          <span>• 12 vértices</span>
+        </div>
+      </div>
+    </div>
+    <div class="solido-actions">
+      <span class="class-label">É um:</span>
+      <button class="class-btn prisma-btn" onclick="classify(5,'prisma')">🔷 Prisma</button>
+      <button class="class-btn piramide-btn" onclick="classify(5,'piramide')">🔶 Pirâmide</button>
+      <div class="feedback-inline" id="fb-5"></div>
+    </div>
+  </div>
+
+  <!-- Sólido 6: Pirâmide Hexagonal -->
+  <div class="solido-card" id="card-6">
+    <div class="solido-body">
+      <div class="solido-svg">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <!-- Pirâmide hexagonal -->
+          <polygon points="40,8 68,55 12,55" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+          <polygon points="40,8 68,55 60,70 20,70 12,55" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>
+          <polygon points="20,70 60,70 68,55 12,55" fill="#F59E0B" stroke="#D97706" stroke-width="1.5"/>
+          <line x1="40" y1="8" x2="40" y2="70" stroke="#D97706" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="40" cy="8" r="3" fill="#D97706"/>
+          <text x="43" y="7" fill="#D97706" font-size="7" font-weight="bold">ápice</text>
+        </svg>
+      </div>
+      <div class="solido-info">
+        <div class="solido-name">⬡ Pirâmide Hexagonal</div>
+        <div class="solido-props">
+          <span>• 1 base hexagonal</span>
+          <span>• 6 faces triangulares laterais</span>
+          <span>• 12 arestas</span>
+          <span>• 7 vértices (6 da base + 1 ápice)</span>
+        </div>
+      </div>
+    </div>
+    <div class="solido-actions">
+      <span class="class-label">É um:</span>
+      <button class="class-btn prisma-btn" onclick="classify(6,'prisma')">🔷 Prisma</button>
+      <button class="class-btn piramide-btn" onclick="classify(6,'piramide')">🔶 Pirâmide</button>
+      <div class="feedback-inline" id="fb-6"></div>
+    </div>
+  </div>
+
+  <div class="verify-wrap">
+    <button class="verify-btn" id="verify-btn" onclick="verify()" disabled>✅ Verificar classificações</button>
+  </div>
+
+  <!-- Result -->
+  <div class="result-screen" id="result-screen">
+    <div class="result-emoji" id="res-emoji">🏆</div>
+    <div class="result-title">Classificação Concluída!</div>
+    <div class="result-score" id="res-score">0</div>
+    <div class="result-total">de 6 corretos</div>
+    <div class="result-msg" id="res-msg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Tentar novamente</button>
+    <div class="gabarito-box">
+      <div class="gab-title">📋 Gabarito completo</div>
+      <div id="gab-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const correctAnswers = {
+  1: 'prisma',
+  2: 'piramide',
+  3: 'prisma',
+  4: 'piramide',
+  5: 'prisma',
+  6: 'piramide'
+};
+
+const gabarito = {
+  1: { name: '🎲 Cubo', type: 'prisma', reason: 'Tem 2 bases quadradas paralelas e iguais + 4 faces retangulares laterais. É um prisma quadrangular regular.' },
+  2: { name: '🏛️ Pirâmide Quadrangular', type: 'piramide', reason: '1 base quadrada + 4 faces triangulares que convergem para um ápice.' },
+  3: { name: '🔷 Prisma Triangular', type: 'prisma', reason: 'Tem 2 bases triangulares paralelas e iguais + 3 faces retangulares laterais.' },
+  4: { name: '🔺 Pirâmide Triangular (Tetraedro)', type: 'piramide', reason: '1 base triangular + 3 faces triangulares que convergem para um ápice. Com 4 faces iguais, é também um tetraedro regular.' },
+  5: { name: '⬡ Prisma Hexagonal', type: 'prisma', reason: 'Tem 2 bases hexagonais paralelas e iguais + 6 faces retangulares laterais.' },
+  6: { name: '⬡ Pirâmide Hexagonal', type: 'piramide', reason: '1 base hexagonal + 6 faces triangulares que convergem para um único ápice.' }
+};
+
+let userChoices = {};
+let verified = false;
+
+function classify(id, tipo) {
+  if (verified) return;
+
+  userChoices[id] = tipo;
+  const card = document.getElementById('card-' + id);
+  const btns = card.querySelectorAll('.class-btn');
+  btns.forEach(b => b.classList.remove('selected'));
+  card.querySelector('.' + tipo + '-btn').classList.add('selected');
+  card.className = 'solido-card classified-' + tipo;
+
+  document.getElementById('count-done').textContent = Object.keys(userChoices).length;
+
+  // Enable verify when all 6 classified
+  if (Object.keys(userChoices).length === 6) {
+    document.getElementById('verify-btn').disabled = false;
+  }
+}
+
+function verify() {
+  if (verified) return;
+  verified = true;
+  document.getElementById('verify-btn').disabled = true;
+
+  let score = 0;
+  for (let i = 1; i <= 6; i++) {
+    const card = document.getElementById('card-' + i);
+    const btns = card.querySelectorAll('.class-btn');
+    const fb = document.getElementById('fb-' + i);
+    btns.forEach(b => b.disabled = true);
+
+    const isOk = userChoices[i] === correctAnswers[i];
+    if (isOk) {
+      score++;
+      card.className = 'solido-card correct-ans';
+      fb.className = 'feedback-inline ok show';
+      fb.innerHTML = '✅ Correto!';
+    } else {
+      card.className = 'solido-card wrong-ans';
+      fb.className = 'feedback-inline err show';
+      const correctLabel = correctAnswers[i] === 'prisma' ? '🔷 Prisma' : '🔶 Pirâmide';
+      fb.innerHTML = '❌ Era ' + correctLabel;
+    }
+  }
+
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('show');
+  document.getElementById('res-score').textContent = score;
+
+  let emoji, msg;
+  if (score === 6) { emoji = '🏆'; msg = 'Perfeito! Você classificou todos os sólidos corretamente. Você sabe exatamente o que diferencia prismas de pirâmides!'; }
+  else if (score >= 4) { emoji = '👍'; msg = 'Bom trabalho! Você acertou a maioria. Preste atenção nos sólidos que errou — releia as propriedades no gabarito abaixo.'; }
+  else { emoji = '📚'; msg = 'Continue praticando! Lembre: PRISMA tem 2 bases paralelas iguais e faces laterais retangulares. PIRÂMIDE tem 1 base e faces laterais triangulares com ápice.'; }
+
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-msg').textContent = msg;
+
+  const gList = document.getElementById('gab-list');
+  gList.innerHTML = '';
+  for (let i = 1; i <= 6; i++) {
+    const g = gabarito[i];
+    const isOk = userChoices[i] === correctAnswers[i];
+    gList.innerHTML += `
+      <div class="gab-row">
+        <div class="gab-icon">${isOk ? '✅' : '❌'}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
+            <span class="gab-name">${g.name}</span>
+            <span class="gab-class ${g.type}">${g.type === 'prisma' ? '🔷 Prisma' : '🔶 Pirâmide'}</span>
+          </div>
+          <div class="gab-explain">${g.reason}</div>
+        </div>
+      </div>`;
+  }
+
+  rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function restart() {
+  verified = false;
+  userChoices = {};
+  document.getElementById('count-done').textContent = '0';
+  document.getElementById('verify-btn').disabled = true;
+  document.getElementById('result-screen').classList.remove('show');
+
+  for (let i = 1; i <= 6; i++) {
+    const card = document.getElementById('card-' + i);
+    card.className = 'solido-card';
+    const btns = card.querySelectorAll('.class-btn');
+    btns.forEach(b => { b.disabled = false; b.classList.remove('selected'); });
+    const fb = document.getElementById('fb-' + i);
+    fb.className = 'feedback-inline';
+    fb.innerHTML = '';
+  }
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

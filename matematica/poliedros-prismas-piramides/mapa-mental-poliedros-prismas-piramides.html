@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Poliedros, Prismas e Pirâmides</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Baloo 2", cursive;
+  background: var(--mat-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px; transition: color .15s;
+}
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.main { max-width: 860px; margin: 0 auto; padding: 28px 16px 0; }
+
+.instrucoes {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 16px; padding: 16px 20px; margin-bottom: 20px;
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.5;
+}
+.instrucoes b { color: var(--text); }
+
+/* Canvas area */
+.canvas-wrap {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 20px; overflow: hidden; position: relative;
+  margin-bottom: 20px; user-select: none;
+}
+#mind-canvas {
+  display: block;
+  width: 100%;
+}
+
+/* Buttons */
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+.action-btn {
+  padding: 11px 22px; border-radius: 12px; border: 2px solid;
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all .15s;
+}
+.btn-gab {
+  background: var(--mat-bg); border-color: var(--mat); color: var(--mat);
+}
+.btn-gab:hover { background: var(--mat); color: white; }
+.btn-reset {
+  background: #FEF3C7; border-color: #D97706; color: #92400E;
+}
+.btn-reset:hover { background: #D97706; color: white; }
+
+/* Gabarito overlay */
+.gabarito-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.6); z-index: 100;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.gabarito-overlay.show { display: flex; }
+.gab-box {
+  background: var(--card); border-radius: 20px;
+  max-width: 660px; width: 100%; max-height: 88vh; overflow-y: auto;
+  padding: 28px;
+}
+.gab-box-title { font-family: "Space Mono", monospace; font-size: 16px; color: var(--mat-dark); margin-bottom: 20px; }
+.gab-close {
+  float: right; background: #FEE2E2; border: none; border-radius: 8px;
+  padding: 6px 14px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800;
+  cursor: pointer; color: #991B1B; margin-top: -4px;
+}
+.gab-section { margin-bottom: 18px; }
+.gab-section-title {
+  font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: 10px; padding: 6px 12px; border-radius: 8px;
+  display: inline-block;
+}
+.gs-poliedro { background: #D1FAE5; color: #065F46; }
+.gs-regular { background: #FEF3C7; color: #92400E; }
+.gs-prisma { background: #E0F2FE; color: #0369A1; }
+.gs-piramide { background: #FEF3C7; color: #B45309; }
+.gab-items { display: flex; flex-direction: column; gap: 8px; }
+.gab-item {
+  background: #F9FAFB; border-radius: 10px;
+  padding: 10px 14px; font-size: 13px; font-weight: 700; line-height: 1.5;
+}
+.gab-item b { color: var(--mat-dark); }
+.gab-item.sub { margin-left: 16px; font-size: 12px; font-weight: 600; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="back-btn" href="../../index.html">← Voltar ao portal</a>
+  <h1>🗺️ MAPA MENTAL</h1>
+  <p>Poliedros, Prismas e Pirâmides — arraste os balões e organize!</p>
+</div>
+
+<div class="main">
+
+  <div class="instrucoes">
+    <span style="font-size:20px;flex-shrink:0">✋</span>
+    <div><b>Como usar:</b> Arraste os balões para organizar o mapa. Tente montar a estrutura de cabeça antes de ver o gabarito. No celular, use o dedo para arrastar.</div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="mind-canvas" height="620"></canvas>
+  </div>
+
+  <div class="btn-row">
+    <button class="action-btn btn-gab" onclick="toggleGab()">📋 Ver Gabarito</button>
+    <button class="action-btn btn-reset" onclick="resetNodes()">🔄 Resetar posições</button>
+  </div>
+
+</div>
+
+<!-- Gabarito Overlay -->
+<div class="gabarito-overlay" id="gab-overlay" onclick="closeGabOutside(event)">
+  <div class="gab-box">
+    <div class="gab-box-title">📋 Gabarito — Poliedros, Prismas e Pirâmides
+      <button class="gab-close" onclick="toggleGab()">✕ Fechar</button>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title gs-poliedro">🔺 Poliedros — Conceito e Elementos</div>
+      <div class="gab-items">
+        <div class="gab-item"><b>Poliedro:</b> sólido geométrico formado somente por faces PLANAS.</div>
+        <div class="gab-item"><b>Face:</b> cada polígono plano que compõe o sólido.</div>
+        <div class="gab-item sub">→ Cubo: 6 faces; Tetraedro: 4 faces; Octaedro: 8 faces</div>
+        <div class="gab-item"><b>Aresta:</b> segmento de reta onde duas faces se encontram.</div>
+        <div class="gab-item"><b>Vértice:</b> ponto onde três ou mais arestas se juntam.</div>
+        <div class="gab-item"><b>Fórmula de Euler:</b> F + V = A + 2 (faces + vértices = arestas + 2).</div>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title gs-regular">⭐ Poliedros Regulares (Sólidos de Platão)</div>
+      <div class="gab-items">
+        <div class="gab-item"><b>Tetraedro:</b> 4 faces triangulares.</div>
+        <div class="gab-item"><b>Hexaedro (Cubo):</b> 6 faces quadradas.</div>
+        <div class="gab-item"><b>Octaedro:</b> 8 faces triangulares.</div>
+        <div class="gab-item"><b>Dodecaedro:</b> 12 faces pentagonais. ("Dodeca" = 12)</div>
+        <div class="gab-item"><b>Icosaedro:</b> 20 faces triangulares. ("Icosa" = 20)</div>
+        <div class="gab-item sub">→ São apenas 5 no total! Todos com faces iguais, arestas iguais e vértices iguais.</div>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title gs-prisma">🔷 Prismas</div>
+      <div class="gab-items">
+        <div class="gab-item"><b>Prisma:</b> 2 bases paralelas e iguais + faces laterais RETANGULARES.</div>
+        <div class="gab-item"><b>Prisma Triangular:</b> 5 faces · 9 arestas · 6 vértices</div>
+        <div class="gab-item"><b>Prisma Quadrangular (Cubo):</b> 6 faces · 12 arestas · 8 vértices</div>
+        <div class="gab-item"><b>Prisma Hexagonal:</b> 8 faces · 18 arestas · 12 vértices</div>
+        <div class="gab-item sub">→ Fórmula para base com N lados: F = N+2 · A = 3N · V = 2N</div>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title gs-piramide">🔶 Pirâmides</div>
+      <div class="gab-items">
+        <div class="gab-item"><b>Pirâmide:</b> 1 base + faces laterais TRIANGULARES que convergem para o ÁPICE.</div>
+        <div class="gab-item"><b>Pirâmide Triangular (Tetraedro):</b> 4 faces · 6 arestas · 4 vértices</div>
+        <div class="gab-item"><b>Pirâmide Quadrangular:</b> 5 faces · 8 arestas · 5 vértices</div>
+        <div class="gab-item"><b>Pirâmide Hexagonal:</b> 7 faces · 12 arestas · 7 vértices</div>
+        <div class="gab-item sub">→ Pirâmide com N lados na base: F = N+1 · A = 2N · V = N+1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('mind-canvas');
+const ctx = canvas.getContext('2d');
+
+// Responsive sizing
+function setCanvasSize() {
+  const w = canvas.parentElement.clientWidth;
+  canvas.width = w;
+  canvas.height = 620;
+  draw();
+}
+
+// Color scheme
+const colors = {
+  center: { bg: '#064E3B', text: '#ffffff', border: '#34D399' },
+  poliedros: { bg: '#059669', text: '#ffffff', border: '#34D399' },
+  regular: { bg: '#D97706', text: '#ffffff', border: '#FCD34D' },
+  prisma: { bg: '#0284C7', text: '#ffffff', border: '#7DD3FC' },
+  piramide: { bg: '#9333EA', text: '#ffffff', border: '#C4B5FD' },
+  leaf: { bg: '#F0FDF4', text: '#064E3B', border: '#86EFAC' },
+  leafR: { bg: '#FFFBEB', text: '#92400E', border: '#FDE68A' },
+  leafP: { bg: '#E0F2FE', text: '#0369A1', border: '#7DD3FC' },
+  leafPir: { bg: '#F5F3FF', text: '#6B21A8', border: '#C4B5FD' },
+};
+
+let nodes = [];
+let defaultNodes = [];
+
+function makeNodes(W, H) {
+  const cx = W / 2;
+  const cy = H / 2;
+  return [
+    // Center
+    { id: 'c', label: '🏛️ POLIEDROS\nPRISMAS E\nPIRÂMIDES', x: cx, y: cy, w: 130, h: 58, color: colors.center, bold: true },
+
+    // Branch 1: Poliedros (top-left)
+    { id: 'b1', label: '🔺 Poliedros\nConceito', x: cx - 220, y: cy - 160, w: 120, h: 44, color: colors.poliedros },
+    { id: 'b1a', label: 'Face: polígono plano', x: cx - 360, y: cy - 220, w: 138, h: 36, color: colors.leaf },
+    { id: 'b1b', label: 'Aresta: encontro\nde duas faces', x: cx - 370, y: cy - 165, w: 140, h: 44, color: colors.leaf },
+    { id: 'b1c', label: 'Vértice: encontro\nde três arestas', x: cx - 365, y: cy - 105, w: 140, h: 44, color: colors.leaf },
+    { id: 'b1d', label: 'F + V = A + 2\n(Euler)', x: cx - 220, y: cy - 240, w: 120, h: 44, color: colors.leaf },
+
+    // Branch 2: Poliedros Regulares (top-right)
+    { id: 'b2', label: '⭐ Poliedros\nRegulares', x: cx + 220, y: cy - 160, w: 120, h: 44, color: colors.regular },
+    { id: 'b2a', label: 'Tetraedro — 4F', x: cx + 355, y: cy - 235, w: 118, h: 36, color: colors.leafR },
+    { id: 'b2b', label: 'Hexaedro — 6F', x: cx + 360, y: cy - 185, w: 118, h: 36, color: colors.leafR },
+    { id: 'b2c', label: 'Octaedro — 8F', x: cx + 360, y: cy - 135, w: 118, h: 36, color: colors.leafR },
+    { id: 'b2d', label: 'Dodecaedro — 12F', x: cx + 364, y: cy - 85, w: 128, h: 36, color: colors.leafR },
+    { id: 'b2e', label: 'Icosaedro — 20F', x: cx + 360, y: cy - 35, w: 122, h: 36, color: colors.leafR },
+
+    // Branch 3: Prismas (bottom-left)
+    { id: 'b3', label: '🔷 Prismas', x: cx - 220, y: cy + 155, w: 110, h: 40, color: colors.prisma },
+    { id: 'b3a', label: '2 bases paralelas\ne iguais', x: cx - 360, y: cy + 100, w: 138, h: 44, color: colors.leafP },
+    { id: 'b3b', label: 'Faces laterais\nretangulares', x: cx - 365, y: cy + 160, w: 138, h: 44, color: colors.leafP },
+    { id: 'b3c', label: 'Tipos: triangular,\nquadrangular, hexagonal', x: cx - 210, y: cy + 240, w: 158, h: 44, color: colors.leafP },
+
+    // Branch 4: Pirâmides (bottom-right)
+    { id: 'b4', label: '🔶 Pirâmides', x: cx + 215, y: cy + 155, w: 115, h: 40, color: colors.piramide },
+    { id: 'b4a', label: '1 base poligonal', x: cx + 350, y: cy + 100, w: 130, h: 36, color: colors.leafPir },
+    { id: 'b4b', label: 'Faces laterais\ntriangulares', x: cx + 358, y: cy + 155, w: 130, h: 44, color: colors.leafPir },
+    { id: 'b4c', label: 'Ápice: vértice\nsuperior único', x: cx + 355, y: cy + 215, w: 132, h: 44, color: colors.leafPir },
+    { id: 'b4d', label: 'Tipos: triangular,\nquadrangular, hexagonal', x: cx + 210, y: cy + 240, w: 158, h: 44, color: colors.leafPir },
+  ];
+}
+
+function initNodes() {
+  const W = canvas.width, H = canvas.height;
+  nodes = makeNodes(W, H);
+  defaultNodes = makeNodes(W, H);
+}
+
+// Edges: [from_id, to_id]
+const edges = [
+  ['c','b1'],['c','b2'],['c','b3'],['c','b4'],
+  ['b1','b1a'],['b1','b1b'],['b1','b1c'],['b1','b1d'],
+  ['b2','b2a'],['b2','b2b'],['b2','b2c'],['b2','b2d'],['b2','b2e'],
+  ['b3','b3a'],['b3','b3b'],['b3','b3c'],
+  ['b4','b4a'],['b4','b4b'],['b4','b4c'],['b4','b4d'],
+];
+
+function getNode(id) { return nodes.find(n => n.id === id); }
+
+function draw() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background grid dots
+  ctx.fillStyle = 'rgba(5,150,105,.06)';
+  for (let x = 20; x < W; x += 30) {
+    for (let y = 20; y < H; y += 30) {
+      ctx.beginPath();
+      ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Draw edges
+  edges.forEach(([aid, bid]) => {
+    const a = getNode(aid), b = getNode(bid);
+    if (!a || !b) return;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.bezierCurveTo(
+      (a.x + b.x) / 2, a.y,
+      (a.x + b.x) / 2, b.y,
+      b.x, b.y
+    );
+    ctx.strokeStyle = b.color.border;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const r = 12;
+    const x = n.x - n.w / 2;
+    const y = n.y - n.h / 2;
+
+    // Shadow
+    ctx.shadowColor = 'rgba(0,0,0,.12)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 3;
+
+    // Rounded rect
+    ctx.beginPath();
+    ctx.roundRect(x, y, n.w, n.h, r);
+    ctx.fillStyle = n.color.bg;
+    ctx.fill();
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Border
+    ctx.beginPath();
+    ctx.roundRect(x, y, n.w, n.h, r);
+    ctx.strokeStyle = n.color.border;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Text
+    const lines = n.label.split('\n');
+    ctx.fillStyle = n.color.text;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const fontSize = n.bold ? 13 : 11;
+    ctx.font = (n.bold ? '800' : '700') + ' ' + fontSize + 'px "Baloo 2"';
+
+    const lineH = fontSize + 4;
+    const totalH = lines.length * lineH;
+    lines.forEach((line, i) => {
+      const ly = n.y - totalH / 2 + i * lineH + lineH / 2;
+      ctx.fillText(line, n.x, ly);
+    });
+  });
+}
+
+// Drag logic
+let dragging = null, dx = 0, dy = 0;
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  if (e.touches) {
+    return {
+      x: (e.touches[0].clientX - rect.left) * scaleX,
+      y: (e.touches[0].clientY - rect.top) * scaleY
+    };
+  }
+  return {
+    x: (e.clientX - rect.left) * scaleX,
+    y: (e.clientY - rect.top) * scaleY
+  };
+}
+
+function hitNode(px, py) {
+  // Check in reverse so top nodes get priority
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    if (px >= n.x - n.w/2 && px <= n.x + n.w/2 &&
+        py >= n.y - n.h/2 && py <= n.y + n.h/2) {
+      return n;
+    }
+  }
+  return null;
+}
+
+canvas.addEventListener('mousedown', e => {
+  const p = getPos(e);
+  const n = hitNode(p.x, p.y);
+  if (n) { dragging = n; dx = p.x - n.x; dy = p.y - n.y; }
+});
+canvas.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const p = getPos(e);
+  dragging.x = p.x - dx;
+  dragging.y = p.y - dy;
+  draw();
+});
+canvas.addEventListener('mouseup', () => { dragging = null; });
+canvas.addEventListener('mouseleave', () => { dragging = null; });
+
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const p = getPos(e);
+  const n = hitNode(p.x, p.y);
+  if (n) { dragging = n; dx = p.x - n.x; dy = p.y - n.y; }
+}, { passive: false });
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (!dragging) return;
+  const p = getPos(e);
+  dragging.x = p.x - dx;
+  dragging.y = p.y - dy;
+  draw();
+}, { passive: false });
+canvas.addEventListener('touchend', () => { dragging = null; });
+
+function resetNodes() {
+  const W = canvas.width, H = canvas.height;
+  nodes = makeNodes(W, H);
+  draw();
+}
+
+function toggleGab() {
+  document.getElementById('gab-overlay').classList.toggle('show');
+}
+function closeGabOutside(e) {
+  if (e.target === document.getElementById('gab-overlay')) toggleGab();
+}
+
+// Init
+window.addEventListener('resize', () => { setCanvasSize(); initNodes(); draw(); });
+setCanvasSize();
+initNodes();
+draw();
+</script>
+</body>
+</html>
