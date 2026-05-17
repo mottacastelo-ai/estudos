@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construtor de Expressões — Multiplicação e Divisão</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #059669; --light: #34D399; --bg: #ECFDF5; --dark: #064E3B; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: #1A2E1A; min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 20px 24px; text-align: center;
+}
+.header h1 { font-family: "Space Mono", monospace; font-size: 20px; margin-bottom: 4px; }
+.header p { font-size: 13px; opacity: .85; font-weight: 600; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 20px; }
+
+.instructions {
+  background: white; border-radius: 16px; padding: 18px 20px; margin-bottom: 20px;
+  border-left: 4px solid var(--primary);
+  box-shadow: 0 2px 10px rgba(5,150,105,.08);
+}
+.instructions h3 { font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+.instructions p { font-size: 13px; font-weight: 600; color: #374151; line-height: 1.6; }
+
+.hierarchy-legend {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.hl-item {
+  background: white; border-radius: 12px; padding: 10px 14px;
+  font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06); flex: 1; min-width: 140px;
+}
+.hl-badge {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900; flex-shrink: 0;
+}
+.hl-badge.par { background: #DBEAFE; color: #1D4ED8; }
+.hl-badge.col { background: #D1FAE5; color: #059669; }
+.hl-badge.cha { background: #FEF9C3; color: #D97706; }
+
+.exercise-card {
+  background: white; border-radius: 20px; padding: 28px;
+  box-shadow: 0 2px 14px rgba(5,150,105,.1); margin-bottom: 20px;
+  border-top: 4px solid var(--primary);
+}
+.ex-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.ex-num { font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: .08em; }
+.ex-score { font-family: "Space Mono", monospace; font-size: 13px; color: var(--dark); font-weight: 700; }
+
+.expr-display {
+  font-family: "Space Mono", monospace;
+  background: #F0FDF4; border: 2px solid #A7F3D0;
+  border-radius: 12px; padding: 16px 20px;
+  font-size: 20px; color: var(--dark);
+  text-align: center; margin-bottom: 20px; letter-spacing: 2px;
+}
+.expr-display .par { color: #1D4ED8; font-weight: 900; }
+.expr-display .col { color: #059669; font-weight: 900; }
+.expr-display .cha { color: #D97706; font-weight: 900; }
+
+.step-instruction {
+  background: #FEF9C3; border-radius: 10px; padding: 10px 14px;
+  font-size: 13px; font-weight: 700; color: #78350F;
+  margin-bottom: 16px; text-align: center;
+}
+
+.step-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.step-btn {
+  padding: 12px 18px; border: 2px solid #D1FAE5; border-radius: 14px;
+  background: white; cursor: pointer; font-family: "Space Mono", monospace;
+  font-size: 13px; font-weight: 700; color: #1A2E1A;
+  transition: all .18s; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  flex: 1; min-width: 120px;
+}
+.step-btn:hover:not(:disabled) { border-color: var(--primary); background: #ECFDF5; transform: translateY(-2px); }
+.step-btn:disabled { opacity: .5; cursor: default; transform: none; }
+.step-btn.done { border-color: var(--primary); background: #D1FAE5; }
+.step-btn-order { font-size: 10px; font-weight: 900; color: var(--primary); }
+.step-btn-label { font-size: 11px; color: #6B7280; font-weight: 700; }
+
+.steps-done {
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;
+}
+.step-result {
+  display: flex; align-items: center; gap: 12px;
+  background: #F0FDF4; border-radius: 12px; padding: 10px 16px;
+  font-family: "Space Mono", monospace; font-size: 14px;
+}
+.sr-icon { font-size: 18px; }
+.sr-text { flex: 1; color: var(--dark); }
+
+.answer-area { margin-top: 16px; }
+.answer-label { font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+.answer-row { display: flex; gap: 10px; align-items: center; }
+.answer-input {
+  font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700;
+  width: 100px; padding: 10px 14px; border: 2px solid #A7F3D0;
+  border-radius: 12px; text-align: center; color: var(--dark);
+  background: #F0FDF4; outline: none;
+}
+.answer-input:focus { border-color: var(--primary); }
+.check-btn {
+  padding: 12px 22px; border: none; border-radius: 12px;
+  background: var(--primary); color: white;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: background .18s;
+}
+.check-btn:hover { background: var(--dark); }
+
+.answer-feedback {
+  margin-top: 12px; padding: 12px 16px; border-radius: 12px;
+  font-size: 13px; font-weight: 700; display: none;
+}
+.answer-feedback.show { display: block; }
+.answer-feedback.ok  { background: #D1FAE5; color: #064E3B; border-left: 4px solid #059669; }
+.answer-feedback.err { background: #FEE2E2; color: #7F1D1D; border-left: 4px solid #EF4444; }
+
+.nav-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+.nav-btn {
+  padding: 12px 24px; border: 2px solid var(--primary); border-radius: 14px;
+  background: white; color: var(--primary);
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all .18s;
+}
+.nav-btn:hover { background: var(--primary); color: white; }
+.nav-btn.primary { background: var(--primary); color: white; }
+.nav-btn.primary:hover { background: var(--dark); }
+
+.back-link {
+  display: block; text-align: center; margin-top: 20px;
+  color: var(--primary); font-weight: 800; font-size: 14px;
+  text-decoration: none;
+}
+.back-link:hover { text-decoration: underline; }
+
+.final-score {
+  background: white; border-radius: 20px; padding: 36px 24px;
+  text-align: center; box-shadow: 0 4px 20px rgba(5,150,105,.15);
+  border-top: 5px solid var(--primary); display: none;
+}
+.final-score.show { display: block; }
+.fs-icon { font-size: 56px; margin-bottom: 12px; }
+.fs-num { font-family: "Space Mono", monospace; font-size: 44px; color: var(--primary); }
+.fs-label { font-size: 14px; color: #6B7280; margin-bottom: 16px; font-weight: 700; }
+.fs-msg { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧮 Construtor de Expressões</h1>
+  <p>Resolva expressões numéricas passo a passo · Multiplicação e Divisão · 5º Ano</p>
+</div>
+
+<div class="container">
+
+  <div class="instructions">
+    <h3>📋 Como funciona?</h3>
+    <p>Cada rodada mostra uma expressão numérica. Clique nos PASSOS na ordem correta de resolução (parênteses → colchetes → chaves → multiplicação → adição/subtração). <strong>Resolva cada passo no papel</strong> e confirme digitando o resultado final!</p>
+  </div>
+
+  <div class="hierarchy-legend">
+    <div class="hl-item"><div class="hl-badge par">( )</div><div>1º Parênteses</div></div>
+    <div class="hl-item"><div class="hl-badge col">[ ]</div><div>2º Colchetes</div></div>
+    <div class="hl-item"><div class="hl-badge cha">{ }</div><div>3º Chaves</div></div>
+  </div>
+
+  <div class="exercise-card" id="ex-card">
+    <div class="ex-header">
+      <div class="ex-num" id="ex-num">Exercício 1 de 5</div>
+      <div class="ex-score" id="ex-score">✓ 0 certos</div>
+    </div>
+
+    <div class="expr-display" id="expr-display"></div>
+    <div class="step-instruction" id="step-instruction">✏️ Resolva no papel, depois clique os passos na ordem correta!</div>
+
+    <div class="step-buttons" id="step-buttons"></div>
+    <div class="steps-done" id="steps-done"></div>
+
+    <div class="answer-area" id="answer-area" style="display:none">
+      <div class="answer-label">✏️ Resolva no papel e escreva o resultado final:</div>
+      <div class="answer-row">
+        <input class="answer-input" type="number" id="answer-input" placeholder="?">
+        <button class="check-btn" onclick="checkAnswer()">Conferir</button>
+      </div>
+      <div class="answer-feedback" id="answer-feedback"></div>
+    </div>
+
+    <div class="nav-row" id="nav-row" style="display:none">
+      <button class="nav-btn primary" onclick="nextEx()">Próximo →</button>
+    </div>
+  </div>
+
+  <div class="final-score" id="final-score">
+    <div class="fs-icon" id="fs-icon">🏆</div>
+    <div class="fs-num" id="fs-num">0/5</div>
+    <div class="fs-label">expressões resolvidas corretamente</div>
+    <div class="fs-msg" id="fs-msg"></div>
+    <button class="nav-btn primary" onclick="restart()" style="margin-right:10px">🔄 Recomeçar</button>
+    <a class="back-link" href="../../index.html" style="display:inline-block;margin-top:0">← Voltar ao Portal</a>
+  </div>
+
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+</div>
+
+<script>
+// Each exercise: display HTML, steps in ORDER (must click in this order), final answer
+const exercises = [
+  {
+    display: '<span class="par">(</span>3 + 5<span class="par">)</span> × 4',
+    steps: [
+      { label: '(3 + 5)', desc: 'Parênteses ( )', result: 8, explanation: '3 + 5 = 8' },
+      { label: '8 × 4', desc: 'Multiplicação ×', result: 32, explanation: '8 × 4 = 32' }
+    ],
+    answer: 32,
+    feedback_ok: 'Excelente! (3 + 5) × 4 → primeiro os parênteses: 8 × 4 = 32.',
+    feedback_err: 'Resolva no papel: 1º (3+5)=8, 2º 8×4=32. Resultado: 32.'
+  },
+  {
+    display: '<span class="col">[</span>4 × <span class="par">(</span>6 - 2<span class="par">)</span><span class="col">]</span> + 10',
+    steps: [
+      { label: '(6 - 2)', desc: 'Parênteses ( )', result: 4, explanation: '6 − 2 = 4' },
+      { label: '4 × 4', desc: 'Multiplicação [ ]', result: 16, explanation: '4 × 4 = 16' },
+      { label: '16 + 10', desc: 'Adição +', result: 26, explanation: '16 + 10 = 26' }
+    ],
+    answer: 26,
+    feedback_ok: 'Muito bem! Parênteses → colchetes → adição: (6−2)=4, 4×4=16, 16+10=26.',
+    feedback_err: 'Passo a passo: (6−2)=4, [4×4]=[16], 16+10=26.'
+  },
+  {
+    display: '<span class="cha">{</span><span class="col">[</span>3 × <span class="par">(</span>4 + 2<span class="par">)</span><span class="col">]</span> ÷ 2<span class="cha">}</span>',
+    steps: [
+      { label: '(4 + 2)', desc: 'Parênteses ( )', result: 6, explanation: '4 + 2 = 6' },
+      { label: '[3 × 6]', desc: 'Colchetes [ ]', result: 18, explanation: '3 × 6 = 18' },
+      { label: '{18 ÷ 2}', desc: 'Chaves { }', result: 9, explanation: '18 ÷ 2 = 9' }
+    ],
+    answer: 9,
+    feedback_ok: 'Perfeito! (4+2)=6, [3×6]=[18], {18÷2}=9. Hierarquia correta!',
+    feedback_err: 'Passo a passo: (4+2)=6, [3×6]=18, {18÷2}=9.'
+  },
+  {
+    display: '20 - <span class="par">(</span>3 × 4<span class="par">)</span> + <span class="col">[</span>8 ÷ 2<span class="col">]</span>',
+    steps: [
+      { label: '(3 × 4)', desc: 'Parênteses ( )', result: 12, explanation: '3 × 4 = 12' },
+      { label: '[8 ÷ 2]', desc: 'Colchetes [ ]', result: 4, explanation: '8 ÷ 2 = 4' },
+      { label: '20 - 12 + 4', desc: 'Adição/Subtração', result: 12, explanation: '20 − 12 = 8, depois 8 + 4 = 12' }
+    ],
+    answer: 12,
+    feedback_ok: 'Ótimo! (3×4)=12, [8÷2]=4, depois 20−12+4=12.',
+    feedback_err: 'Passo a passo: (3×4)=12, [8÷2]=4, 20−12+4=12.'
+  },
+  {
+    display: '<span class="cha">{</span><span class="col">[</span><span class="par">(</span>5 + 3<span class="par">)</span> × 2<span class="col">]</span> - 6<span class="cha">}</span> ÷ 5',
+    steps: [
+      { label: '(5 + 3)', desc: 'Parênteses ( )', result: 8, explanation: '5 + 3 = 8' },
+      { label: '[8 × 2]', desc: 'Colchetes [ ]', result: 16, explanation: '8 × 2 = 16' },
+      { label: '{16 - 6}', desc: 'Chaves { }', result: 10, explanation: '16 − 6 = 10' },
+      { label: '10 ÷ 5', desc: 'Divisão ÷', result: 2, explanation: '10 ÷ 5 = 2' }
+    ],
+    answer: 2,
+    feedback_ok: 'Excelente! Hierarquia completa: (5+3)=8, [8×2]=16, {16−6}=10, 10÷5=2.',
+    feedback_err: 'Passo a passo: (5+3)=8, [8×2]=16, {16−6}=10, 10÷5=2.'
+  }
+];
+
+let exIdx = 0, stepsDone = 0, score = 0, exAnswered = false;
+
+function renderEx() {
+  const ex = exercises[exIdx];
+  stepsDone = 0; exAnswered = false;
+  document.getElementById('ex-num').textContent = `Exercício ${exIdx+1} de ${exercises.length}`;
+  document.getElementById('ex-score').textContent = `✓ ${score} certos`;
+  document.getElementById('expr-display').innerHTML = ex.display;
+  document.getElementById('steps-done').innerHTML = '';
+  document.getElementById('answer-area').style.display = 'none';
+  document.getElementById('nav-row').style.display = 'none';
+  document.getElementById('answer-feedback').className = 'answer-feedback';
+  document.getElementById('answer-input').value = '';
+
+  // Build step buttons (shuffled for presentation but we track order)
+  const sb = document.getElementById('step-buttons');
+  sb.innerHTML = '';
+  ex.steps.forEach((step, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'step-btn';
+    btn.id = `sbtn-${i}`;
+    btn.innerHTML = `<span style="font-size:14px">${step.label}</span><span class="step-btn-label">${step.desc}</span>`;
+    btn.onclick = () => clickStep(i, btn);
+    sb.appendChild(btn);
+  });
+  updateStepInstruction();
+}
+
+function updateStepInstruction() {
+  const ex = exercises[exIdx];
+  if (stepsDone < ex.steps.length) {
+    document.getElementById('step-instruction').textContent = `Passo ${stepsDone+1} de ${ex.steps.length}: Qual parte resolver agora? ✏️`;
+  }
+}
+
+function clickStep(idx, btn) {
+  if (exAnswered) return;
+  const ex = exercises[exIdx];
+  if (idx === stepsDone) {
+    // Correct step
+    btn.classList.add('done');
+    btn.disabled = true;
+    const step = ex.steps[idx];
+    const sd = document.getElementById('steps-done');
+    const div = document.createElement('div');
+    div.className = 'step-result';
+    div.innerHTML = `<span class="sr-icon">✅</span><span class="sr-text">Passo ${idx+1}: ${step.label} = <strong>${step.result}</strong> &nbsp;<span style="color:#6B7280;font-size:12px">(${step.explanation})</span></span>`;
+    sd.appendChild(div);
+    stepsDone++;
+    updateStepInstruction();
+    if (stepsDone === ex.steps.length) {
+      document.getElementById('step-instruction').textContent = '✏️ Agora calcule o resultado FINAL no papel e escreva abaixo:';
+      document.getElementById('answer-area').style.display = 'block';
+      setTimeout(() => document.getElementById('answer-input').focus(), 100);
+    }
+  } else {
+    // Wrong step — flash red briefly
+    btn.style.borderColor = '#EF4444';
+    btn.style.background = '#FEE2E2';
+    setTimeout(() => { btn.style.borderColor = ''; btn.style.background = ''; }, 600);
+    // Show a hint
+    const sd = document.getElementById('steps-done');
+    const hint = document.createElement('div');
+    hint.className = 'step-result';
+    hint.style.background = '#FEF9C3';
+    const expectedStep = ex.steps[stepsDone];
+    hint.innerHTML = `<span class="sr-icon">💡</span><span class="sr-text" style="color:#78350F">Verifique a hierarquia! O próximo passo deve ser: <strong>${expectedStep.desc}</strong></span>`;
+    sd.appendChild(hint);
+    setTimeout(() => hint.remove(), 2500);
+  }
+}
+
+function checkAnswer() {
+  if (exAnswered) return;
+  const ex = exercises[exIdx];
+  const val = parseInt(document.getElementById('answer-input').value);
+  const fb = document.getElementById('answer-feedback');
+  exAnswered = true;
+  if (val === ex.answer) {
+    score++;
+    fb.className = 'answer-feedback ok show';
+    fb.textContent = '✅ ' + ex.feedback_ok;
+    document.getElementById('ex-score').textContent = `✓ ${score} certos`;
+  } else {
+    fb.className = 'answer-feedback err show';
+    fb.textContent = `❌ ${ex.feedback_err} Resultado correto: ${ex.answer}`;
+  }
+  document.getElementById('nav-row').style.display = 'flex';
+}
+
+function nextEx() {
+  exIdx++;
+  if (exIdx >= exercises.length) { showFinal(); return; }
+  renderEx();
+}
+
+function showFinal() {
+  document.getElementById('ex-card').style.display = 'none';
+  const fs = document.getElementById('final-score');
+  fs.classList.add('show');
+  document.getElementById('fs-num').textContent = `${score}/${exercises.length}`;
+  const pct = score/exercises.length;
+  let icon, msg;
+  if (pct >= .8)      { icon='🏆'; msg='Excelente! Você domina a hierarquia das expressões numéricas!'; }
+  else if (pct >= .6) { icon='🌟'; msg='Muito bom! Continue praticando a ordem de resolução.'; }
+  else                { icon='💪'; msg='Pratique mais! Lembre: 1º parênteses, 2º colchetes, 3º chaves.'; }
+  document.getElementById('fs-icon').textContent = icon;
+  document.getElementById('fs-msg').textContent = msg;
+}
+
+function restart() {
+  exIdx = 0; score = 0;
+  document.getElementById('ex-card').style.display = 'block';
+  document.getElementById('final-score').classList.remove('show');
+  renderEx();
+}
+
+renderEx();
+</script>
+</body>
+</html>

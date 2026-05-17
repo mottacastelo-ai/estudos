@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Multiplicação e Divisão</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #059669; --light: #34D399; --bg: #ECFDF5; --dark: #064E3B; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: #1A2E1A; min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 20px 24px; text-align: center;
+}
+.header h1 { font-family: "Space Mono", monospace; font-size: 20px; margin-bottom: 4px; }
+.header p { font-size: 13px; opacity: .85; font-weight: 600; }
+
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+.instructions {
+  background: white; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px;
+  border-left: 4px solid var(--primary); font-size: 13px; font-weight: 600; color: #374151;
+  line-height: 1.6;
+}
+.instructions strong { color: var(--dark); }
+
+.controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.ctrl-btn {
+  padding: 9px 18px; border: 2px solid var(--primary); border-radius: 12px;
+  background: white; color: var(--primary);
+  font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800;
+  cursor: pointer; transition: all .18s;
+}
+.ctrl-btn:hover { background: var(--primary); color: white; }
+.ctrl-btn.active { background: var(--primary); color: white; }
+
+#map-canvas {
+  background: white; border-radius: 20px;
+  box-shadow: 0 2px 14px rgba(5,150,105,.1); border: 2px solid #D1FAE5;
+  position: relative; overflow: hidden;
+  min-height: 540px; margin-bottom: 20px; cursor: default;
+  touch-action: none;
+}
+
+svg#connections {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; pointer-events: none; z-index: 1;
+}
+
+.node {
+  position: absolute; border-radius: 16px; padding: 10px 16px;
+  font-weight: 800; cursor: grab; user-select: none; z-index: 10;
+  box-shadow: 0 3px 10px rgba(0,0,0,.12); transition: box-shadow .18s;
+  text-align: center; min-width: 100px; max-width: 160px; font-size: 13px;
+  line-height: 1.4;
+}
+.node:active { cursor: grabbing; box-shadow: 0 6px 20px rgba(0,0,0,.2); z-index: 20; }
+.node.central { font-size: 16px; font-weight: 900; min-width: 130px; border-radius: 20px; }
+
+/* Colors */
+.nc-central { background: #064E3B; color: white; }
+.nc-mult    { background: #D1FAE5; color: #064E3B; border: 2px solid #059669; }
+.nc-div     { background: #DBEAFE; color: #1D4ED8; border: 2px solid #3B82F6; }
+.nc-expr    { background: #FEF9C3; color: #78350F; border: 2px solid #EAB308; }
+.nc-desc    { background: #F3E8FF; color: #6D28D9; border: 2px solid #8B5CF6; }
+.nc-sub-mult{ background: #ECFDF5; color: #064E3B; border: 2px dashed #34D399; }
+.nc-sub-div { background: #EFF6FF; color: #1D4ED8; border: 2px dashed #93C5FD; }
+.nc-sub-expr{ background: #FFFBEB; color: #78350F; border: 2px dashed #FCD34D; }
+.nc-sub-desc{ background: #F5F3FF; color: #6D28D9; border: 2px dashed #C4B5FD; }
+
+.gabarito-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.6); z-index: 1000;
+  align-items: center; justify-content: center;
+}
+.gabarito-overlay.show { display: flex; }
+.gabarito-box {
+  background: white; border-radius: 24px; padding: 32px;
+  max-width: 560px; width: 90%; max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 8px 40px rgba(0,0,0,.3);
+}
+.gabarito-box h2 { font-family: "Space Mono", monospace; font-size: 18px; color: var(--dark); margin-bottom: 20px; }
+.g-block { margin-bottom: 18px; }
+.g-block h3 { font-size: 14px; font-weight: 800; margin-bottom: 8px; padding: 6px 12px; border-radius: 8px; }
+.g-block.mult h3 { background: #D1FAE5; color: #064E3B; }
+.g-block.div  h3 { background: #DBEAFE; color: #1D4ED8; }
+.g-block.expr h3 { background: #FEF9C3; color: #78350F; }
+.g-block.desc h3 { background: #F3E8FF; color: #6D28D9; }
+.g-items { display: flex; flex-wrap: wrap; gap: 6px; }
+.g-item { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #F4F2FF; color: #5B21B6; }
+.close-gab {
+  margin-top: 20px; padding: 12px 28px; border: none; border-radius: 14px;
+  background: var(--primary); color: white;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; width: 100%;
+}
+
+.back-link {
+  display: block; text-align: center; margin-top: 10px;
+  color: var(--primary); font-weight: 800; font-size: 14px; text-decoration: none;
+}
+.back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🗺️ Mapa Mental</h1>
+  <p>Multiplicação, Divisão, Expressões e Termo Desconhecido · 5º Ano</p>
+</div>
+
+<div class="container">
+  <div class="instructions">
+    <strong>Como usar:</strong> Arraste os balões para organizar o mapa mental. Conecte os conceitos na sua cabeça: o centro tem as OPERAÇÕES, e cada ramo traz os conceitos relacionados. Quando terminar, clique em <strong>Ver Gabarito</strong> para comparar!
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" onclick="resetPositions()">🔄 Reorganizar</button>
+    <button class="ctrl-btn" onclick="showGabarito()">📖 Ver Gabarito</button>
+  </div>
+
+  <div id="map-canvas">
+    <svg id="connections"></svg>
+  </div>
+
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+</div>
+
+<!-- Gabarito overlay -->
+<div class="gabarito-overlay" id="gabarito" onclick="closeGabarito(event)">
+  <div class="gabarito-box">
+    <h2>📖 Gabarito — Mapa Mental</h2>
+
+    <div class="g-block mult">
+      <h3>🟢 Multiplicação</h3>
+      <div class="g-items">
+        <span class="g-item">Fator × Fator = Produto</span>
+        <span class="g-item">Comutativa: a×b = b×a</span>
+        <span class="g-item">Associativa: (a×b)×c = a×(b×c)</span>
+        <span class="g-item">Distributiva: a×(b+c) = a×b + a×c</span>
+        <span class="g-item">Elemento neutro: a×1 = a</span>
+        <span class="g-item">Dobro (×2) / Triplo (×3) / Quádruplo (×4)</span>
+        <span class="g-item">Quíntuplo (×5) / Sêxtuplo (×6)</span>
+        <span class="g-item">Multiplicar por 10: acrescenta 1 zero</span>
+      </div>
+    </div>
+
+    <div class="g-block div">
+      <h3>🔵 Divisão</h3>
+      <div class="g-items">
+        <span class="g-item">Dividendo ÷ Divisor = Quociente + Resto</span>
+        <span class="g-item">Divisão exata: resto = 0</span>
+        <span class="g-item">Divisão não exata: resto ≠ 0</span>
+        <span class="g-item">Verificação: quociente×divisor+resto = dividendo</span>
+        <span class="g-item">Relação inversa com multiplicação</span>
+      </div>
+    </div>
+
+    <div class="g-block expr">
+      <h3>🟡 Expressões Numéricas</h3>
+      <div class="g-items">
+        <span class="g-item">Multiplicação antes de adição/subtração</span>
+        <span class="g-item">1º Parênteses ( )</span>
+        <span class="g-item">2º Colchetes [ ]</span>
+        <span class="g-item">3º Chaves { }</span>
+      </div>
+    </div>
+
+    <div class="g-block desc">
+      <h3>🟣 Termo Desconhecido</h3>
+      <div class="g-items">
+        <span class="g-item">Sentença matemática com □</span>
+        <span class="g-item">Usar operação inversa</span>
+        <span class="g-item">Ex: □×6=48 → 48÷6=8</span>
+      </div>
+    </div>
+
+    <button class="close-gab" onclick="closeGabarito()">Fechar Gabarito</button>
+  </div>
+</div>
+
+<script>
+// Node definitions
+const nodes = [
+  { id: 'central', text: '➗✖️\nOperações', cls: 'nc-central central', px: 50, py: 46 },
+  // Multiplication branch
+  { id: 'mult', text: '✖️ Multiplicação', cls: 'nc-mult', px: 10, py: 30 },
+  { id: 'fator', text: 'Fator × Fator\n= Produto', cls: 'nc-sub-mult', px: 2, py: 10 },
+  { id: 'prop', text: 'Propriedades\n(comutativa, associativa,\ndistributiva)', cls: 'nc-sub-mult', px: 2, py: 52 },
+  { id: 'dobro', text: 'Dobro, Triplo,\nQuádruplo...\nSêxtuplo', cls: 'nc-sub-mult', px: 22, py: 10 },
+  // Division branch
+  { id: 'div', text: '➗ Divisão', cls: 'nc-div', px: 72, py: 30 },
+  { id: 'termos', text: 'Dividendo ÷ Divisor\n= Quociente + Resto', cls: 'nc-sub-div', px: 78, py: 10 },
+  { id: 'exata', text: 'Divisão exata\nvs. não exata', cls: 'nc-sub-div', px: 78, py: 50 },
+  { id: 'verif', text: 'Verificação:\nq×d+r=dividendo', cls: 'nc-sub-div', px: 62, py: 12 },
+  // Expressions branch
+  { id: 'expr', text: '🧮 Expressões\nNuméricas', cls: 'nc-expr', px: 30, py: 72 },
+  { id: 'hier1', text: '× antes de + e −', cls: 'nc-sub-expr', px: 10, py: 82 },
+  { id: 'hier2', text: '1º ( )  2º [ ]  3º { }', cls: 'nc-sub-expr', px: 30, py: 88 },
+  // Unknown term branch
+  { id: 'desc', text: '❓ Termo\nDesconhecido', cls: 'nc-desc', px: 68, py: 72 },
+  { id: 'sentenca', text: 'Sentença com □', cls: 'nc-sub-desc', px: 82, py: 82 },
+  { id: 'inversa', text: 'Operação\nInversa', cls: 'nc-sub-desc', px: 68, py: 88 },
+];
+
+// Connection pairs (by id)
+const connections = [
+  ['central','mult'], ['central','div'], ['central','expr'], ['central','desc'],
+  ['mult','fator'], ['mult','prop'], ['mult','dobro'],
+  ['div','termos'], ['div','exata'], ['div','verif'],
+  ['expr','hier1'], ['expr','hier2'],
+  ['desc','sentenca'], ['desc','inversa'],
+];
+
+// Connection colors
+const connColors = {
+  mult:'#059669', fator:'#059669', prop:'#059669', dobro:'#059669',
+  div:'#3B82F6', termos:'#3B82F6', exata:'#3B82F6', verif:'#3B82F6',
+  expr:'#D97706', hier1:'#D97706', hier2:'#D97706',
+  desc:'#7C3AED', sentenca:'#7C3AED', inversa:'#7C3AED',
+  central:'#064E3B'
+};
+
+let nodeEls = {}, dragging = null, dragOffX = 0, dragOffY = 0;
+const canvas = document.getElementById('map-canvas');
+const svg = document.getElementById('connections');
+
+function getColor(a, b) {
+  if (a === 'central' || b === 'central') return connColors[a === 'central' ? b : a] || '#059669';
+  return connColors[b] || '#059669';
+}
+
+function createNodes() {
+  const W = canvas.offsetWidth || 700, H = canvas.offsetHeight || 540;
+  nodes.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'node ' + n.cls;
+    el.id = 'node-' + n.id;
+    el.innerHTML = n.text.replace(/\n/g,'<br>');
+    const x = Math.round(n.px/100 * W);
+    const y = Math.round(n.py/100 * H);
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    el.style.transform = 'translate(-50%,-50%)';
+    canvas.appendChild(el);
+    nodeEls[n.id] = el;
+
+    // Drag
+    el.addEventListener('mousedown', e => startDrag(e, n.id));
+    el.addEventListener('touchstart', e => startDragT(e, n.id), {passive:false});
+  });
+  drawConnections();
+}
+
+function getCenter(id) {
+  const el = nodeEls[id];
+  const cr = canvas.getBoundingClientRect();
+  const er = el.getBoundingClientRect();
+  return {
+    x: er.left - cr.left + er.width/2,
+    y: er.top  - cr.top  + er.height/2
+  };
+}
+
+function drawConnections() {
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = '';
+  connections.forEach(([a,b]) => {
+    const ca = getCenter(a), cb = getCenter(b);
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', ca.x); line.setAttribute('y1', ca.y);
+    line.setAttribute('x2', cb.x); line.setAttribute('y2', cb.y);
+    line.setAttribute('stroke', getColor(a,b));
+    line.setAttribute('stroke-width', a==='central'||b==='central' ? 3 : 2);
+    line.setAttribute('stroke-dasharray', a==='central'||b==='central' ? '' : '5,4');
+    line.setAttribute('opacity', '.7');
+    svg.appendChild(line);
+  });
+}
+
+function startDrag(e, id) {
+  e.preventDefault();
+  dragging = id;
+  const el = nodeEls[id];
+  const cr = canvas.getBoundingClientRect();
+  dragOffX = e.clientX - cr.left - parseInt(el.style.left);
+  dragOffY = e.clientY - cr.top  - parseInt(el.style.top);
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('mouseup', stopDrag);
+}
+function onDrag(e) {
+  if (!dragging) return;
+  const el = nodeEls[dragging];
+  const cr = canvas.getBoundingClientRect();
+  let x = e.clientX - cr.left - dragOffX;
+  let y = e.clientY - cr.top  - dragOffY;
+  x = Math.max(0, Math.min(cr.width, x));
+  y = Math.max(0, Math.min(cr.height, y));
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+  drawConnections();
+}
+function stopDrag() {
+  dragging = null;
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('mouseup', stopDrag);
+}
+
+function startDragT(e, id) {
+  e.preventDefault();
+  const touch = e.touches[0];
+  dragging = id;
+  const el = nodeEls[id];
+  const cr = canvas.getBoundingClientRect();
+  dragOffX = touch.clientX - cr.left - parseInt(el.style.left);
+  dragOffY = touch.clientY - cr.top  - parseInt(el.style.top);
+  document.addEventListener('touchmove', onDragT, {passive:false});
+  document.addEventListener('touchend', stopDragT);
+}
+function onDragT(e) {
+  if (!dragging) return; e.preventDefault();
+  const touch = e.touches[0];
+  const el = nodeEls[dragging];
+  const cr = canvas.getBoundingClientRect();
+  let x = touch.clientX - cr.left - dragOffX;
+  let y = touch.clientY - cr.top  - dragOffY;
+  x = Math.max(0, Math.min(cr.width, x));
+  y = Math.max(0, Math.min(cr.height, y));
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+  drawConnections();
+}
+function stopDragT() {
+  dragging = null;
+  document.removeEventListener('touchmove', onDragT);
+  document.removeEventListener('touchend', stopDragT);
+}
+
+function resetPositions() {
+  const W = canvas.offsetWidth || 700, H = canvas.offsetHeight || 540;
+  nodes.forEach(n => {
+    const el = nodeEls[n.id];
+    el.style.left = Math.round(n.px/100*W) + 'px';
+    el.style.top  = Math.round(n.py/100*H) + 'px';
+  });
+  drawConnections();
+}
+
+function showGabarito() { document.getElementById('gabarito').classList.add('show'); }
+function closeGabarito(e) {
+  if (!e || e.target === document.getElementById('gabarito') || e.currentTarget.tagName === 'BUTTON') {
+    document.getElementById('gabarito').classList.remove('show');
+  }
+}
+
+window.addEventListener('resize', () => { drawConnections(); });
+window.addEventListener('load', () => { createNodes(); });
+</script>
+</body>
+</html>

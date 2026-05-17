@@ -363,10 +363,11 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
     <span class="d-icon">🔢</span>
     <span class="d-name">Matemática</span>
-    <span class="d-count">4</span>
+    <span class="d-count">8</span>
   </button>
   <div class="theme-sub" id="sub-mat">
     <button class="theme-link" onclick="showTheme('mat','tabuada')">✖️ Tabuada</button>
+    <button class="theme-link" onclick="showTheme('mat','multiplicacao-divisao')">🧮 Multiplicação e Divisão</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-geo" onclick="showDisc('geo')">
@@ -417,8 +418,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>17</span>temas</div>
-        <div class="hstat"><span>77</span>atividades</div>
+        <div class="hstat"><span>18</span>temas</div>
+        <div class="hstat"><span>81</span>atividades</div>
       </div>
     </div>
     <div class="home-body">
@@ -439,8 +440,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Matemática</div>
           <div class="dhc-desc">Cálculo, raciocínio lógico e resolução de problemas</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#F3F0FF;color:#5B21B6">1 tema</span>
-            <span class="chip" style="background:#ECFDF5;color:#065F46">4 atividades</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">2 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">8 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">1 HQ</span>
           </div>
         </button>
         <button class="disc-home-card geo" onclick="showDisc('geo')">
@@ -973,6 +975,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <div class="disc-body">
       <div class="theme-tabs">
         <button class="theme-tab-btn mat-tab active" onclick="showTheme('mat','tabuada')">✖️ Tabuada</button>
+        <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','multiplicacao-divisao')">🧮 Multiplicação e Divisão</button>
       </div>
 
       <!-- TEMA: TABUADA -->
@@ -1029,6 +1032,61 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><div class="sched-day mat">Dia 5</div><div class="sched-acts"><span class="sched-act mat">⚔️ Batalha — contra o tempo</span></div></div>
         </div>
       </div>
+
+      <!-- TEMA: MULTIPLICAÇÃO E DIVISÃO -->
+      <div class="theme-content" id="theme-mat-multiplicacao-divisao">
+        <div class="start-banner blue">
+          <div class="start-banner-icon">🤖</div>
+          <div>
+            <h3>Como usar essas atividades</h3>
+            <p>Leia a HQ do Calco para entender o conteúdo. Depois <strong>resolva os problemas e contas no papel</strong> — use a tela para conferir as respostas.</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="matematica/multiplicacao-divisao/hq-multiplicacao-divisao.png" alt="HQ Multiplicação e Divisão com Calco">
+          <div class="hq-caption"><span>📖</span><span>O Segredo das Operações — 4 páginas · Personagens: Bia e Calco · Tema: Multiplicação, Divisão, Expressões e Termo Desconhecido</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card mat" href="matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html" target="_blank">
+            <div class="act-icon">🔗</div>
+            <div class="act-title">Associador de Termos</div>
+            <div class="act-desc">Conecte cada termo (fator, produto, dividendo, quociente...) à sua definição. 2 rodadas, 11 pares.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Vocabulário</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card mat" href="matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html" target="_blank">
+            <div class="act-icon">🧮</div>
+            <div class="act-title">Construtor de Expressões</div>
+            <div class="act-desc">Clique os passos na ordem certa (parênteses → colchetes → chaves). Resolva cada passo no papel e confira o resultado.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Papel + Tela</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/multiplicacao-divisao/resolvedor-problemas-multiplicacao-divisao.html" target="_blank">
+            <div class="act-icon">📐</div>
+            <div class="act-title">Resolvedor de Problemas</div>
+            <div class="act-desc">6 problemas contextualizados. Resolva no papel e escreva a resposta completa — não só o número!</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Papel + Tela</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e organize os conceitos de multiplicação, divisão, expressões e termo desconhecido. Compare com o gabarito.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day mat">Dia 1</div><div class="sched-acts"><span class="sched-act mat">📖 Ler HQ do Calco</span><span class="sched-act mat">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 2</div><div class="sched-acts"><span class="sched-act mat">🧮 Construtor de Expressões</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 3</div><div class="sched-acts"><span class="sched-act mat">📐 Resolvedor de Problemas</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 4</div><div class="sched-acts"><span class="sched-act mat">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
     </div>
   </div>
 

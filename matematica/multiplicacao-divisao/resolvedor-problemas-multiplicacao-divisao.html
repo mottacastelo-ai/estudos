@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resolvedor de Problemas — Multiplicação e Divisão</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #059669; --light: #34D399; --bg: #ECFDF5; --dark: #064E3B; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: #1A2E1A; min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 20px 24px; text-align: center;
+}
+.header h1 { font-family: "Space Mono", monospace; font-size: 20px; margin-bottom: 4px; }
+.header p { font-size: 13px; opacity: .85; font-weight: 600; }
+
+.container { max-width: 680px; margin: 0 auto; padding: 20px; }
+
+.banner {
+  background: #FEF9C3; border: 2px solid #EAB308;
+  border-radius: 14px; padding: 14px 18px; margin-bottom: 20px;
+  font-size: 13px; font-weight: 700; color: #78350F;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.banner-icon { font-size: 28px; flex-shrink: 0; }
+
+.progress-area { margin-bottom: 20px; }
+.progress-bar { background: #D1FAE5; border-radius: 20px; height: 8px; margin-bottom: 6px; }
+.progress-fill { background: var(--primary); border-radius: 20px; height: 8px; transition: width .4s; }
+.progress-label { font-size: 12px; font-weight: 800; color: var(--primary); }
+
+.problem-card {
+  background: white; border-radius: 20px; padding: 28px;
+  box-shadow: 0 2px 14px rgba(5,150,105,.1);
+  border-top: 4px solid var(--primary); margin-bottom: 16px;
+}
+.p-tag {
+  display: inline-block; font-size: 10px; font-weight: 900;
+  padding: 3px 12px; border-radius: 20px; margin-bottom: 14px;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.tag-mult { background: #D1FAE5; color: #064E3B; }
+.tag-div  { background: #DBEAFE; color: #1D4ED8; }
+.tag-rest { background: #FEF9C3; color: #D97706; }
+.tag-desc { background: #F3E8FF; color: #6D28D9; }
+.tag-misto{ background: #FCE7F3; color: #BE185D; }
+
+.p-text {
+  font-size: 16px; font-weight: 700; line-height: 1.65; margin-bottom: 20px;
+  padding: 16px; background: #F0FDF4; border-radius: 12px; border-left: 4px solid var(--light);
+}
+
+.paper-hint {
+  background: #FEF9C3; border-radius: 10px; padding: 10px 14px;
+  font-size: 13px; font-weight: 700; color: #78350F;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+}
+
+.answer-template {
+  background: #F0FDF4; border: 2px dashed #A7F3D0;
+  border-radius: 14px; padding: 18px 20px; margin-bottom: 16px;
+}
+.at-label { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+.at-sentence {
+  font-size: 16px; font-weight: 700; color: var(--dark); line-height: 1.8;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+}
+.at-input {
+  font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700;
+  border: none; border-bottom: 3px solid var(--primary);
+  background: transparent; color: var(--dark);
+  text-align: center; outline: none; min-width: 80px; padding: 2px 6px;
+}
+.at-input:focus { border-bottom-color: var(--light); }
+
+/* For problems with TWO blanks */
+.at-input.small { min-width: 50px; }
+
+.check-btn {
+  padding: 13px 28px; border: none; border-radius: 14px;
+  background: var(--primary); color: white;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: background .18s; width: 100%;
+}
+.check-btn:hover { background: var(--dark); }
+
+.feedback-box {
+  margin-top: 14px; padding: 14px 18px; border-radius: 14px;
+  font-size: 14px; font-weight: 700; line-height: 1.6; display: none;
+}
+.feedback-box.show { display: block; }
+.feedback-box.ok  { background: #D1FAE5; color: #064E3B; border-left: 4px solid #059669; }
+.feedback-box.err { background: #FEE2E2; color: #7F1D1D; border-left: 4px solid #EF4444; }
+
+.next-btn {
+  margin-top: 14px; padding: 13px 28px; border: 2px solid var(--primary);
+  border-radius: 14px; background: var(--primary); color: white;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; width: 100%; display: none; transition: background .18s;
+}
+.next-btn.show { display: block; }
+.next-btn:hover { background: var(--dark); }
+
+/* Result */
+.result-card {
+  background: white; border-radius: 24px; padding: 40px 24px;
+  text-align: center; box-shadow: 0 4px 24px rgba(5,150,105,.15);
+  border-top: 5px solid var(--primary); display: none;
+}
+.result-card.show { display: block; }
+.r-icon { font-size: 60px; margin-bottom: 14px; }
+.r-score { font-family: "Space Mono", monospace; font-size: 46px; color: var(--primary); }
+.r-label { font-size: 14px; color: #6B7280; font-weight: 700; margin-bottom: 10px; }
+.r-msg { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 24px; }
+.retry-btn {
+  padding: 14px 32px; border: none; border-radius: 16px;
+  background: var(--primary); color: white;
+  font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800;
+  cursor: pointer; margin-right: 10px;
+}
+.back-btn {
+  padding: 13px 24px; border: 2px solid var(--primary); border-radius: 16px;
+  background: white; color: var(--primary);
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800;
+  cursor: pointer; text-decoration: none; display: inline-block;
+}
+
+.back-link {
+  display: block; text-align: center; margin-top: 20px;
+  color: var(--primary); font-weight: 800; font-size: 14px; text-decoration: none;
+}
+.back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📐 Resolvedor de Problemas</h1>
+  <p>6 problemas de multiplicação, divisão e mais · 5º Ano</p>
+</div>
+
+<div class="container">
+  <div class="banner">
+    <div class="banner-icon">✏️</div>
+    <div><strong>Leia o problema, resolva no papel</strong> e escreva a resposta completa no campo abaixo. Lembre-se: a resposta de um problema não é só o número!</div>
+  </div>
+
+  <div class="progress-area">
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:16.66%"></div></div>
+    <div class="progress-label" id="prog-label">Problema 1 de 6</div>
+  </div>
+
+  <div id="problem-area">
+    <div class="problem-card">
+      <div class="p-tag" id="p-tag">Multiplicação</div>
+      <div class="p-text" id="p-text"></div>
+      <div class="paper-hint">✏️ Resolva no papel antes de escrever a resposta!</div>
+      <div class="answer-template">
+        <div class="at-label">📝 Escreva sua resposta:</div>
+        <div class="at-sentence" id="at-sentence"></div>
+      </div>
+      <button class="check-btn" onclick="checkProblem()">Conferir resposta</button>
+      <div class="feedback-box" id="feedback-box"></div>
+      <button class="next-btn" id="next-btn" onclick="nextProblem()">Próximo problema →</button>
+    </div>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="r-icon" id="r-icon">🏆</div>
+    <div class="r-score" id="r-score">0/6</div>
+    <div class="r-label">respostas corretas</div>
+    <div class="r-msg" id="r-msg"></div>
+    <button class="retry-btn" onclick="restart()">🔄 Tentar Novamente</button>
+    <a class="back-btn" href="../../index.html">← Voltar ao Portal</a>
+  </div>
+
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+</div>
+
+<script>
+// Problems: type, text, answer template (parts), answers (array of integers), feedback
+const problems = [
+  {
+    tag: 'Multiplicação', tagClass: 'tag-mult',
+    text: 'Uma caixa tem 24 laranjas. O mercado recebeu 7 caixas. Quantas laranjas o mercado recebeu ao todo?',
+    template: ['Há ', null, ' laranjas no total.'],
+    answers: [168],
+    operation: '24 × 7 = 168',
+    feedback_ok: '✅ Correto! Há 168 laranjas no total. Operação: 24 × 7 = 168.',
+    feedback_err: '❌ Operação: 24 × 7 = 168. Há 168 laranjas no total. Não esqueça de responder com o contexto completo!'
+  },
+  {
+    tag: 'Divisão', tagClass: 'tag-div',
+    text: '48 alunos foram divididos em grupos iguais de 6 pessoas. Quantos grupos foram formados?',
+    template: ['Foram formados ', null, ' grupos.'],
+    answers: [8],
+    operation: '48 ÷ 6 = 8',
+    feedback_ok: '✅ Correto! Foram formados 8 grupos. Operação: 48 ÷ 6 = 8.',
+    feedback_err: '❌ Operação: 48 ÷ 6 = 8. Foram formados 8 grupos.'
+  },
+  {
+    tag: 'Divisão com Resto', tagClass: 'tag-rest',
+    text: 'A professora tem 65 chocolates para distribuir igualmente entre 8 crianças. Quantos chocolates cada criança recebe e quantos sobram?',
+    template: ['Cada criança recebe ', null, ' chocolates e sobram ', null, '.'],
+    answers: [8, 1],
+    operation: '65 ÷ 8 = 8, resto 1 (verificação: 8×8+1=65 ✓)',
+    feedback_ok: '✅ Correto! Cada criança recebe 8 chocolates e sobra 1. Verificação: 8×8+1=65 ✓',
+    feedback_err: '❌ 65 ÷ 8 = 8, resto 1. Cada criança recebe 8 chocolates e sobram 1.'
+  },
+  {
+    tag: 'Multiplicação', tagClass: 'tag-mult',
+    text: 'Uma fazenda tem 12 fileiras de laranjeiras, com 28 laranjeiras em cada fileira. Quantas laranjeiras há na fazenda?',
+    template: ['Há ', null, ' laranjeiras na fazenda.'],
+    answers: [336],
+    operation: '12 × 28 = 336',
+    feedback_ok: '✅ Correto! Há 336 laranjeiras na fazenda. Operação: 12 × 28 = 336.',
+    feedback_err: '❌ Operação: 12 × 28 = 336. Há 336 laranjeiras na fazenda.'
+  },
+  {
+    tag: 'Termo Desconhecido', tagClass: 'tag-desc',
+    text: 'Um número multiplicado por 9 dá 108. Qual é esse número?',
+    template: ['O número desconhecido é ', null, '.'],
+    answers: [12],
+    operation: '□ × 9 = 108 → 108 ÷ 9 = 12 (operação inversa)',
+    feedback_ok: '✅ Correto! □ × 9 = 108 → use a operação inversa: 108 ÷ 9 = 12.',
+    feedback_err: '❌ Para descobrir o termo desconhecido, use a operação inversa: 108 ÷ 9 = 12.'
+  },
+  {
+    tag: 'Divisão — Interpretação do Resto', tagClass: 'tag-rest',
+    text: 'Uma escola precisa transportar 130 alunos em ônibus que cabem 18 pessoas. Quantos ônibus serão necessários?',
+    template: ['Serão necessários ', null, ' ônibus.'],
+    answers: [8],
+    operation: '130 ÷ 18 = 7, resto 4. Como sobram 4 alunos, precisa de mais 1 ônibus → 7 + 1 = 8',
+    feedback_ok: '✅ Correto! 130 ÷ 18 = 7 ônibus com resto 4 alunos. Como sobram 4 alunos, é necessário mais 1 ônibus. Total: 8 ônibus.',
+    feedback_err: '❌ 130 ÷ 18 = 7, resto 4. O resto indica que precisamos de mais 1 ônibus para os 4 alunos restantes. Total: 8 ônibus.'
+  }
+];
+
+let idx = 0, score = 0, answered = false;
+const inputs = [];
+
+function renderProblem() {
+  const p = problems[idx];
+  answered = false;
+  inputs.length = 0;
+
+  document.getElementById('prog-fill').style.width = ((idx+1)/problems.length*100)+'%';
+  document.getElementById('prog-label').textContent = `Problema ${idx+1} de ${problems.length}`;
+
+  const tag = document.getElementById('p-tag');
+  tag.textContent = p.tag;
+  tag.className = 'p-tag ' + p.tagClass;
+  document.getElementById('p-text').textContent = p.text;
+
+  const sentence = document.getElementById('at-sentence');
+  sentence.innerHTML = '';
+  p.template.forEach((part, i) => {
+    if (part === null) {
+      const inp = document.createElement('input');
+      inp.className = 'at-input' + (p.answers.length > 1 ? ' small' : '');
+      inp.type = 'number';
+      inp.placeholder = '?';
+      inp.id = `inp-${i}`;
+      sentence.appendChild(inp);
+      inputs.push(inp);
+    } else {
+      const span = document.createElement('span');
+      span.textContent = part;
+      sentence.appendChild(span);
+    }
+  });
+
+  document.getElementById('feedback-box').className = 'feedback-box';
+  document.getElementById('feedback-box').textContent = '';
+  document.getElementById('next-btn').className = 'next-btn';
+  document.getElementById('next-btn').textContent = idx < problems.length-1 ? 'Próximo problema →' : 'Ver Resultado →';
+
+  if (inputs.length > 0) inputs[0].focus();
+}
+
+function checkProblem() {
+  if (answered) return;
+  const p = problems[idx];
+  const vals = inputs.map(inp => parseInt(inp.value));
+  const allCorrect = vals.length === p.answers.length && vals.every((v, i) => v === p.answers[i]);
+
+  answered = true;
+  const fb = document.getElementById('feedback-box');
+  if (allCorrect) {
+    score++;
+    fb.className = 'feedback-box ok show';
+    fb.innerHTML = p.feedback_ok + `<br><small style="opacity:.7;margin-top:6px;display:block">Operação: ${p.operation}</small>`;
+    inputs.forEach(inp => { inp.style.color = '#059669'; inp.style.borderBottomColor = '#059669'; inp.readOnly = true; });
+  } else {
+    fb.className = 'feedback-box err show';
+    fb.innerHTML = p.feedback_err + `<br><small style="opacity:.7;margin-top:6px;display:block">Operação: ${p.operation}</small>`;
+    inputs.forEach(inp => { inp.readOnly = true; });
+  }
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function nextProblem() {
+  idx++;
+  if (idx >= problems.length) { showResult(); return; }
+  renderProblem();
+}
+
+function showResult() {
+  document.getElementById('problem-area').style.display = 'none';
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  document.getElementById('r-score').textContent = `${score}/6`;
+  const pct = score/6;
+  let icon, msg;
+  if (pct >= .83)     { icon='🏆'; msg='Excelente! Você sabe resolver problemas e escrever respostas completas!'; }
+  else if (pct >= .5) { icon='🌟'; msg='Muito bom! Pratique mais — lembre-se: a resposta tem que ter contexto, não só o número.'; }
+  else                { icon='📚'; msg='Continue praticando! Use a operação inversa para termos desconhecidos e interprete sempre o resto.'; }
+  document.getElementById('r-icon').textContent = icon;
+  document.getElementById('r-msg').textContent = msg;
+}
+
+function restart() {
+  idx = 0; score = 0;
+  document.getElementById('problem-area').style.display = 'block';
+  document.getElementById('result-card').classList.remove('show');
+  renderProblem();
+}
+
+renderProblem();
+</script>
+</body>
+</html>

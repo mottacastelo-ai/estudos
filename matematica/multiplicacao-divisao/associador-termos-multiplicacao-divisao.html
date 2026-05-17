@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Associador de Termos — Multiplicação e Divisão</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #059669; --light: #34D399; --bg: #ECFDF5; --dark: #064E3B; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: #1A2E1A; min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 20px 24px; text-align: center;
+}
+.header h1 { font-family: "Space Mono", monospace; font-size: 20px; margin-bottom: 4px; }
+.header p  { font-size: 13px; opacity: .85; font-weight: 600; }
+
+.container { max-width: 760px; margin: 0 auto; padding: 20px; }
+
+.round-badge {
+  text-align: center; margin-bottom: 16px;
+}
+.round-badge span {
+  display: inline-block; background: white;
+  border: 2px solid var(--primary); border-radius: 20px;
+  padding: 5px 20px; font-size: 13px; font-weight: 800; color: var(--primary);
+}
+
+.instructions {
+  background: white; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px;
+  border-left: 4px solid var(--primary); font-size: 13px; font-weight: 600;
+  color: #374151; line-height: 1.6;
+}
+
+.score-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 18px;
+}
+.score-label { font-size: 12px; font-weight: 800; color: var(--primary); }
+.score-dots { display: flex; gap: 6px; }
+.dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid #A7F3D0; background: white;
+  transition: all .25s;
+}
+.dot.correct { background: var(--primary); border-color: var(--primary); }
+.dot.wrong   { background: #EF4444; border-color: #EF4444; }
+
+.board {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 20px;
+}
+
+.col-label {
+  font-size: 10px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--primary); margin-bottom: 8px;
+  text-align: center;
+}
+
+.terms-col, .defs-col { display: flex; flex-direction: column; gap: 8px; }
+
+.term-btn, .def-btn {
+  padding: 12px 14px; border-radius: 14px; border: 2px solid #D1FAE5;
+  background: white; cursor: pointer; font-family: "Baloo 2", cursive;
+  font-size: 13px; font-weight: 700; text-align: center; line-height: 1.4;
+  transition: all .18s; color: #1A2E1A; position: relative;
+  min-height: 52px; display: flex; align-items: center; justify-content: center;
+}
+.term-btn { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; }
+
+.term-btn:hover:not(:disabled), .def-btn:hover:not(:disabled) {
+  border-color: var(--primary); background: #ECFDF5; transform: translateY(-1px);
+}
+.term-btn.selected { border-color: var(--primary); background: #D1FAE5; box-shadow: 0 0 0 3px rgba(5,150,105,.2); }
+.term-btn.correct, .def-btn.correct { border-color: #059669; background: #D1FAE5; color: #064E3B; cursor: default; }
+.term-btn.wrong, .def-btn.wrong { border-color: #EF4444; background: #FEE2E2; }
+.term-btn:disabled, .def-btn:disabled { cursor: default; transform: none; }
+
+.match-num {
+  position: absolute; top: -8px; right: -8px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--primary); color: white;
+  font-size: 10px; font-weight: 900;
+  display: none; align-items: center; justify-content: center;
+}
+.term-btn.correct .match-num, .def-btn.correct .match-num { display: flex; }
+
+.feedback-toast {
+  text-align: center; padding: 10px 16px; border-radius: 12px;
+  font-size: 13px; font-weight: 800; margin-bottom: 14px;
+  min-height: 40px; display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.toast-ok  { background: #D1FAE5; color: #064E3B; }
+.toast-err { background: #FEE2E2; color: #7F1D1D; }
+.toast-empty { background: transparent; }
+
+.next-btn {
+  width: 100%; padding: 14px; border: none; border-radius: 16px;
+  background: var(--primary); color: white;
+  font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800;
+  cursor: pointer; display: none; transition: background .18s;
+}
+.next-btn.show { display: block; }
+.next-btn:hover { background: var(--dark); }
+
+/* Result */
+.result-card {
+  background: white; border-radius: 24px; padding: 40px 24px;
+  text-align: center; box-shadow: 0 4px 24px rgba(5,150,105,.15);
+  border-top: 5px solid var(--primary); display: none;
+}
+.result-card.show { display: block; }
+.r-icon  { font-size: 60px; margin-bottom: 14px; }
+.r-score { font-family: "Space Mono", monospace; font-size: 46px; color: var(--primary); }
+.r-label { font-size: 14px; color: #6B7280; font-weight: 700; margin-bottom: 10px; }
+.r-msg   { font-size: 15px; font-weight: 700; line-height: 1.5; margin-bottom: 24px; }
+.r-pairs { text-align: left; background: #F0FDF4; border-radius: 14px; padding: 16px; margin-bottom: 24px; }
+.r-pairs h3 { font-size: 12px; font-weight: 900; text-transform: uppercase; color: var(--primary); letter-spacing: .08em; margin-bottom: 12px; }
+.r-pair { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; font-size: 13px; font-weight: 700; }
+.r-pair-term { font-family: "Space Mono", monospace; font-size: 11px; color: var(--dark); min-width: 160px; }
+.r-pair-def  { color: #374151; font-weight: 600; }
+.retry-btn {
+  padding: 14px 32px; border: none; border-radius: 16px;
+  background: var(--primary); color: white;
+  font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800;
+  cursor: pointer; margin-right: 10px;
+}
+.back-btn {
+  padding: 13px 24px; border: 2px solid var(--primary); border-radius: 16px;
+  background: white; color: var(--primary);
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800;
+  cursor: pointer; text-decoration: none; display: inline-block;
+}
+.back-link {
+  display: block; text-align: center; margin-top: 20px;
+  color: var(--primary); font-weight: 800; font-size: 14px; text-decoration: none;
+}
+.back-link:hover { text-decoration: underline; }
+
+@media (max-width: 500px) {
+  .board { grid-template-columns: 1fr; }
+  .defs-col { margin-top: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🔗 Associador de Termos</h1>
+  <p>Conecte cada termo à sua definição · Multiplicação e Divisão · 5º Ano</p>
+</div>
+
+<div class="container">
+
+  <div class="instructions" id="instructions">
+    <strong>Como funciona:</strong> Clique em um <strong>termo</strong> (coluna esquerda) para selecioná-lo, depois clique na <strong>definição</strong> correspondente (coluna direita). Se acertar, ambos ficam verdes. Se errar, tente de novo!
+  </div>
+
+  <div id="game-area">
+    <div class="round-badge"><span id="round-label">Rodada 1 de 2 — Multiplicação</span></div>
+    <div class="score-row">
+      <div class="score-label" id="score-label">0 de 5 acertados</div>
+      <div class="score-dots" id="score-dots"></div>
+    </div>
+    <div class="board">
+      <div>
+        <div class="col-label">Termos</div>
+        <div class="terms-col" id="terms-col"></div>
+      </div>
+      <div>
+        <div class="col-label">Definições</div>
+        <div class="defs-col" id="defs-col"></div>
+      </div>
+    </div>
+    <div class="feedback-toast toast-empty" id="toast"></div>
+    <button class="next-btn" id="next-btn" onclick="nextRound()"></button>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="r-icon" id="r-icon">🏆</div>
+    <div class="r-score" id="r-score">10/10</div>
+    <div class="r-label">termos associados corretamente</div>
+    <div class="r-msg" id="r-msg"></div>
+    <div class="r-pairs" id="r-pairs"></div>
+    <button class="retry-btn" onclick="restart()">🔄 Recomeçar</button>
+    <a class="back-btn" href="../../index.html">← Voltar ao Portal</a>
+  </div>
+
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+</div>
+
+<script>
+const rounds = [
+  {
+    label: 'Rodada 1 de 2 — Multiplicação',
+    pairs: [
+      { term: 'Fator',                  def: 'Os números que multiplicamos: ex. 4 e 6 em 4 × 6 = 24' },
+      { term: 'Produto',                def: 'O resultado de uma multiplicação' },
+      { term: 'Prop. Comutativa',       def: 'a × b = b × a — a ordem dos fatores não altera o produto' },
+      { term: 'Sêxtuplo',               def: 'Multiplicar por 6' },
+      { term: 'Elemento Neutro (×)',    def: 'Qualquer número multiplicado por 1 permanece igual: a × 1 = a' },
+    ]
+  },
+  {
+    label: 'Rodada 2 de 2 — Divisão, Expressões e Termo Desconhecido',
+    pairs: [
+      { term: 'Dividendo',              def: 'O número que está sendo dividido' },
+      { term: 'Divisor',               def: 'O número pelo qual dividimos' },
+      { term: 'Quociente',             def: 'O resultado de uma divisão' },
+      { term: 'Resto',                 def: 'O que sobra numa divisão não exata' },
+      { term: 'Parênteses ( )',        def: 'Resolve-se PRIMEIRO nas expressões numéricas' },
+      { term: 'Termo Desconhecido',    def: 'O □ numa sentença matemática — descoberto pela operação inversa' },
+    ]
+  }
+];
+
+let roundIdx = 0, selectedTerm = null, matched = 0, totalCorrect = 0, totalPairs = 0;
+let termEls = {}, defEls = {}, matchCount = 0;
+
+// Compute totalPairs
+rounds.forEach(r => totalPairs += r.pairs.length);
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function renderRound() {
+  const round = rounds[roundIdx];
+  matched = 0; selectedTerm = null; matchCount = 0;
+  termEls = {}; defEls = {};
+
+  document.getElementById('round-label').textContent = round.label;
+  updateScoreRow();
+
+  // Dots
+  const dots = document.getElementById('score-dots');
+  dots.innerHTML = '';
+  round.pairs.forEach(() => {
+    const d = document.createElement('div'); d.className = 'dot'; dots.appendChild(d);
+  });
+
+  // Terms column
+  const tc = document.getElementById('terms-col');
+  tc.innerHTML = '';
+  round.pairs.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'term-btn';
+    btn.innerHTML = `<span>${p.term}</span><span class="match-num" id="mn-t-${i}"></span>`;
+    btn.dataset.idx = i;
+    btn.onclick = () => selectTerm(i, btn);
+    tc.appendChild(btn);
+    termEls[i] = btn;
+  });
+
+  // Definitions column (shuffled)
+  const dc = document.getElementById('defs-col');
+  dc.innerHTML = '';
+  const shuffled = shuffle(round.pairs.map((p,i) => ({...p, origIdx: i})));
+  shuffled.forEach((p, si) => {
+    const btn = document.createElement('button');
+    btn.className = 'def-btn';
+    btn.innerHTML = `<span>${p.def}</span><span class="match-num" id="mn-d-${p.origIdx}"></span>`;
+    btn.dataset.origIdx = p.origIdx;
+    btn.onclick = () => attemptMatch(p.origIdx, btn);
+    dc.appendChild(btn);
+    defEls[p.origIdx] = btn;
+  });
+
+  setToast('', 'toast-empty');
+  const nb = document.getElementById('next-btn');
+  nb.classList.remove('show');
+  nb.textContent = roundIdx < rounds.length-1 ? 'Próxima rodada →' : 'Ver Resultado →';
+}
+
+function updateScoreRow() {
+  const round = rounds[roundIdx];
+  document.getElementById('score-label').textContent = `${matched} de ${round.pairs.length} acertados`;
+}
+
+function selectTerm(idx, btn) {
+  if (termEls[idx].classList.contains('correct')) return;
+  // Deselect previous
+  if (selectedTerm !== null && termEls[selectedTerm]) {
+    termEls[selectedTerm].classList.remove('selected');
+  }
+  selectedTerm = idx;
+  btn.classList.add('selected');
+  setToast('Agora clique na definição correspondente!', 'toast-ok');
+}
+
+function attemptMatch(defOrigIdx, defBtn) {
+  if (defBtn.classList.contains('correct')) return;
+  if (selectedTerm === null) {
+    setToast('Primeiro clique em um termo da coluna esquerda!', 'toast-err');
+    return;
+  }
+
+  const isCorrect = selectedTerm === defOrigIdx;
+  const termBtn = termEls[selectedTerm];
+
+  if (isCorrect) {
+    matchCount++;
+    matched++;
+    totalCorrect++;
+
+    termBtn.classList.remove('selected');
+    termBtn.classList.add('correct');
+    termBtn.disabled = true;
+    defBtn.classList.add('correct');
+    defBtn.disabled = true;
+
+    // Set match numbers
+    document.getElementById(`mn-t-${selectedTerm}`).textContent = matchCount;
+    document.getElementById(`mn-d-${defOrigIdx}`).textContent = matchCount;
+
+    // Update dot
+    const dots = document.getElementById('score-dots').children;
+    if (dots[matched-1]) dots[matched-1].classList.add('correct');
+
+    updateScoreRow();
+    setToast(`✅ Correto! "${rounds[roundIdx].pairs[selectedTerm].term}" → "${rounds[roundIdx].pairs[selectedTerm].def}"`, 'toast-ok');
+    selectedTerm = null;
+
+    if (matched === rounds[roundIdx].pairs.length) {
+      setTimeout(() => {
+        setToast(`🎉 Rodada completa! ${matched} de ${rounds[roundIdx].pairs.length} acertos!`, 'toast-ok');
+        document.getElementById('next-btn').classList.add('show');
+      }, 400);
+    }
+  } else {
+    // Wrong
+    termBtn.classList.add('wrong');
+    defBtn.classList.add('wrong');
+    setToast(`❌ Não é esse! Tente outra definição para "${rounds[roundIdx].pairs[selectedTerm].term}".`, 'toast-err');
+
+    // Update dot as wrong (but don't lock — they can retry)
+    setTimeout(() => {
+      termBtn.classList.remove('wrong', 'selected');
+      defBtn.classList.remove('wrong');
+      selectedTerm = null;
+    }, 800);
+  }
+}
+
+function setToast(msg, cls) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'feedback-toast ' + cls;
+}
+
+function nextRound() {
+  roundIdx++;
+  if (roundIdx >= rounds.length) { showResult(); return; }
+  renderRound();
+}
+
+function showResult() {
+  document.getElementById('game-area').style.display = 'none';
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+
+  document.getElementById('r-score').textContent = `${totalCorrect}/${totalPairs}`;
+
+  const pct = totalCorrect / totalPairs;
+  let icon, msg;
+  if (pct >= .9)      { icon='🏆'; msg='Excelente! Você domina o vocabulário de multiplicação e divisão!'; }
+  else if (pct >= .7) { icon='🌟'; msg='Muito bom! Revise os termos que errou — eles aparecem nas provas!'; }
+  else                { icon='📚'; msg='Continue praticando! Releia a HQ do Calco e tente novamente.'; }
+  document.getElementById('r-icon').textContent = icon;
+  document.getElementById('r-msg').textContent = msg;
+
+  // Build gabarito
+  const rp = document.getElementById('r-pairs');
+  rp.innerHTML = '<h3>📋 Todos os termos e definições</h3>';
+  rounds.forEach(round => {
+    round.pairs.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'r-pair';
+      div.innerHTML = `<span class="r-pair-term">${p.term}</span><span class="r-pair-def">→ ${p.def}</span>`;
+      rp.appendChild(div);
+    });
+  });
+}
+
+function restart() {
+  roundIdx = 0; totalCorrect = 0;
+  document.getElementById('game-area').style.display = 'block';
+  document.getElementById('result-card').classList.remove('show');
+  renderRound();
+}
+
+renderRound();
+</script>
+</body>
+</html>
