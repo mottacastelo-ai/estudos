@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão do Detetive Primo — Números Primos, Compostos e Fatoração</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #059669;
+    --light: #34D399;
+    --bg: #ECFDF5;
+    --dark: #064E3B;
+    --border: #D1FAE5;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --card: #fff;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Baloo 2', cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .header {
+    background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+    color: white; padding: 28px 28px 24px;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+    text-decoration: none; margin-bottom: 14px; transition: color .2s;
+  }
+  .back-btn:hover { color: #fff; }
+  .header h1 { font-family: 'Space Mono', monospace; font-size: 22px; margin-bottom: 4px; }
+  .header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  /* Fase tabs */
+  .phase-bar {
+    display: flex; gap: 6px; margin-bottom: 24px;
+    background: var(--card); border-radius: 14px;
+    padding: 6px; border: 1.5px solid var(--border);
+  }
+  .phase-tab {
+    flex: 1; padding: 10px 6px; border-radius: 10px;
+    border: none; background: transparent;
+    font-family: 'Baloo 2', cursive; font-size: 13px; font-weight: 700;
+    color: var(--muted); cursor: pointer; transition: all .2s; text-align: center;
+  }
+  .phase-tab.active {
+    background: var(--primary); color: white;
+    box-shadow: 0 2px 10px rgba(5,150,105,.3);
+  }
+  .phase-tab.completed { background: var(--bg); color: var(--primary); }
+
+  /* Detetive intro */
+  .detective-intro {
+    background: var(--card); border-radius: var(--radius);
+    padding: 20px 24px; border: 1.5px solid var(--border);
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 20px; box-shadow: 0 4px 16px rgba(5,150,105,.07);
+  }
+  .detective-avatar {
+    font-size: 40px; flex-shrink: 0;
+    background: var(--bg); border-radius: 50%;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--border);
+  }
+  .detective-speech { flex: 1; }
+  .detective-name {
+    font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    color: var(--primary); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px;
+  }
+  .detective-text { font-size: 15px; font-weight: 600; line-height: 1.5; }
+
+  /* Score da fase */
+  .phase-score {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; font-weight: 700; color: var(--dark);
+    margin-bottom: 16px;
+  }
+  .score-badge {
+    background: var(--primary); color: white;
+    border-radius: 99px; padding: 4px 14px;
+    font-family: 'Space Mono', monospace; font-size: 13px;
+  }
+
+  /* Fase 1 — Identificar */
+  .identify-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (min-width: 480px) { .identify-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .number-card {
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: 14px; padding: 16px 10px; text-align: center;
+    transition: all .2s; cursor: pointer;
+  }
+  .number-card:hover:not(.answered) { border-color: var(--primary); transform: translateY(-2px); }
+  .number-card .num-display {
+    font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700;
+    color: var(--dark); margin-bottom: 10px;
+  }
+  .num-btns { display: flex; flex-direction: column; gap: 6px; }
+  .num-btn {
+    padding: 6px 4px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--bg); font-family: 'Baloo 2', cursive;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    transition: all .15s; color: var(--text);
+  }
+  .num-btn:hover:not(:disabled) { border-color: var(--primary); background: #D1FAE5; color: var(--dark); }
+  .num-btn:disabled { cursor: default; }
+  .num-btn.correct-pick { background: #059669; color: white; border-color: #059669; }
+  .num-btn.wrong-pick { background: #EF4444; color: white; border-color: #EF4444; }
+  .number-card.answered { opacity: .8; }
+  .num-check { font-size: 18px; margin-top: 6px; height: 24px; }
+
+  /* Fase 2 — Fatorar */
+  .factor-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1.5px solid var(--border); padding: 28px 24px;
+    margin-bottom: 16px; box-shadow: 0 4px 16px rgba(5,150,105,.07);
+  }
+  .factor-number {
+    font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;
+    color: var(--primary); text-align: center; margin-bottom: 20px;
+  }
+  .factor-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .factor-row {
+    display: flex; align-items: center; gap: 8px; justify-content: center;
+  }
+  .factor-input {
+    width: 72px; height: 42px; border-radius: 8px;
+    border: 2px solid var(--border); background: var(--bg);
+    text-align: center; font-family: 'Space Mono', monospace;
+    font-size: 16px; font-weight: 700; color: var(--dark);
+    outline: none; transition: border-color .2s;
+  }
+  .factor-input:focus { border-color: var(--primary); }
+  .factor-input.correct-input { border-color: #059669; background: #D1FAE5; color: var(--dark); }
+  .factor-input.wrong-input { border-color: #EF4444; background: #FEE2E2; color: #7F1D1D; }
+  .factor-sep { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: var(--muted); }
+  .factor-eq { font-family: 'Space Mono', monospace; font-size: 18px; color: var(--muted); }
+  .factor-fixed {
+    font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700;
+    color: var(--dark); background: var(--bg); border-radius: 8px;
+    padding: 8px 16px; border: 2px solid var(--border);
+    min-width: 72px; text-align: center;
+  }
+
+  .verify-step-btn {
+    width: 100%; padding: 12px;
+    background: var(--primary); color: white; border: none;
+    border-radius: 10px; font-family: 'Baloo 2', cursive;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+    transition: background .2s; margin-top: 4px;
+  }
+  .verify-step-btn:hover { background: var(--dark); }
+
+  /* Fase 3 — Representação fatorada */
+  .repr-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1.5px solid var(--border); padding: 28px 24px;
+    margin-bottom: 16px; box-shadow: 0 4px 16px rgba(5,150,105,.07);
+  }
+  .repr-number {
+    font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;
+    color: var(--primary); text-align: center; margin-bottom: 8px;
+  }
+  .repr-prompt { font-size: 15px; font-weight: 600; text-align: center; color: var(--muted); margin-bottom: 20px; }
+  .repr-input-wrap {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;
+  }
+  .repr-eq { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: var(--dark); }
+  .repr-input {
+    border: 2px solid var(--border); border-radius: 10px;
+    background: var(--bg); font-family: 'Space Mono', monospace;
+    font-size: 16px; font-weight: 700; color: var(--dark);
+    padding: 10px 14px; outline: none; width: 200px;
+    text-align: center; transition: border-color .2s;
+  }
+  .repr-input:focus { border-color: var(--primary); }
+  .repr-hint { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 16px; }
+
+  /* Feedback genérico */
+  .feedback-box {
+    border-radius: 12px; padding: 14px 18px;
+    display: none; align-items: flex-start; gap: 10px;
+    font-size: 14px; font-weight: 600; line-height: 1.5;
+    margin-bottom: 16px; animation: fadeIn .3s ease;
+  }
+  .feedback-box.correct { background: #D1FAE5; color: var(--dark); border: 1.5px solid #6EE7B7; display: flex; }
+  .feedback-box.wrong { background: #FEE2E2; color: #7F1D1D; border: 1.5px solid #FCA5A5; display: flex; }
+  .fb-icon { font-size: 20px; flex-shrink: 0; }
+
+  /* Troféu */
+  .trophy-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; animation: fadeIn .2s ease;
+    display: none;
+  }
+  .trophy-popup {
+    background: var(--card); border-radius: 24px;
+    padding: 40px 36px; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25); max-width: 340px; width: 90%;
+    animation: popIn .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  .trophy-emoji { font-size: 72px; margin-bottom: 12px; }
+  .trophy-title { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .trophy-msg { font-size: 15px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+  .trophy-btn {
+    background: var(--primary); color: white; border: none;
+    border-radius: 12px; padding: 14px 32px;
+    font-family: 'Baloo 2', cursive; font-size: 16px; font-weight: 800;
+    cursor: pointer; transition: background .2s;
+  }
+  .trophy-btn:hover { background: var(--dark); }
+
+  /* Tela final */
+  .final-screen {
+    background: var(--card); border-radius: var(--radius);
+    padding: 40px 28px; text-align: center;
+    border: 1.5px solid var(--border);
+    box-shadow: 0 4px 24px rgba(5,150,105,.1);
+    display: none; animation: popIn .4s ease;
+  }
+  .final-emoji { font-size: 64px; margin-bottom: 16px; }
+  .final-score { font-family: 'Space Mono', monospace; font-size: 42px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .final-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .final-msg { font-size: 15px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+  .replay-btn {
+    background: var(--primary); color: white; border: none;
+    border-radius: 12px; padding: 14px 32px;
+    font-family: 'Baloo 2', cursive; font-size: 16px; font-weight: 800;
+    cursor: pointer; margin-bottom: 12px; transition: background .2s;
+  }
+  .replay-btn:hover { background: var(--dark); }
+  .portal-link { display: block; color: var(--primary); text-decoration: none; font-weight: 700; font-size: 14px; margin-top: 8px; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  @keyframes popIn { from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>🔍🔢 Missão do Detetive Primo</h1>
+  <p>Números Primos, Compostos e Fatoração — 5º Ano</p>
+</div>
+
+<div class="container">
+  <div class="phase-bar">
+    <button class="phase-tab active" id="tab-1">🔎 Fase 1<br><small>Identificar</small></button>
+    <button class="phase-tab" id="tab-2">🔢 Fase 2<br><small>Fatorar</small></button>
+    <button class="phase-tab" id="tab-3">✍️ Fase 3<br><small>Representar</small></button>
+  </div>
+
+  <!-- ========== FASE 1 ========== -->
+  <div id="phase-1">
+    <div class="detective-intro">
+      <div class="detective-avatar">🔍</div>
+      <div class="detective-speech">
+        <div class="detective-name">Detetive Primo</div>
+        <div class="detective-text">Missão 1: Identifique cada número! É primo (exatamente 2 divisores), composto (mais de 2 divisores) ou não é nenhum dos dois?</div>
+      </div>
+    </div>
+    <div class="phase-score">
+      <span>Acertos da Fase 1</span>
+      <span class="score-badge" id="score-p1">0 / 8</span>
+    </div>
+    <div class="identify-grid" id="identify-grid"></div>
+    <button class="verify-step-btn" id="p1-advance-btn" style="display:none" onclick="advancePhase(2)">Avançar para Fase 2 →</button>
+  </div>
+
+  <!-- ========== FASE 2 ========== -->
+  <div id="phase-2" style="display:none">
+    <div class="detective-intro">
+      <div class="detective-avatar">🔍</div>
+      <div class="detective-speech">
+        <div class="detective-name">Detetive Primo</div>
+        <div class="detective-text">Missão 2: Complete a fatoração passo a passo! Divida pelo menor primo divisor até o quociente ser 1.</div>
+      </div>
+    </div>
+    <div class="phase-score">
+      <span>Acertos da Fase 2</span>
+      <span class="score-badge" id="score-p2">0 / 3</span>
+    </div>
+    <div id="factor-problems"></div>
+    <button class="verify-step-btn" id="p2-advance-btn" style="display:none" onclick="advancePhase(3)">Avançar para Fase 3 →</button>
+  </div>
+
+  <!-- ========== FASE 3 ========== -->
+  <div id="phase-3" style="display:none">
+    <div class="detective-intro">
+      <div class="detective-avatar">🔍</div>
+      <div class="detective-speech">
+        <div class="detective-name">Detetive Primo</div>
+        <div class="detective-text">Missão Final: Escreva a representação fatorada com expoentes! Use × para multiplicação e ^ para expoentes (ex: 2^3 × 5).</div>
+      </div>
+    </div>
+    <div class="phase-score">
+      <span>Acertos da Fase 3</span>
+      <span class="score-badge" id="score-p3">0 / 3</span>
+    </div>
+    <div id="repr-problems"></div>
+    <button class="verify-step-btn" id="p3-finish-btn" style="display:none" onclick="showFinal()">Ver resultado final →</button>
+  </div>
+
+  <!-- Tela final -->
+  <div class="final-screen" id="final-screen">
+    <div class="final-emoji" id="final-emoji"></div>
+    <div class="final-score" id="final-score"></div>
+    <div class="final-title" id="final-title"></div>
+    <div class="final-msg" id="final-msg"></div>
+    <button class="replay-btn" onclick="restart()">Jogar novamente</button>
+    <a href="../../index.html" class="portal-link">← Voltar ao Portal</a>
+  </div>
+</div>
+
+<!-- Troféu overlay -->
+<div class="trophy-overlay" id="trophy-overlay">
+  <div class="trophy-popup">
+    <div class="trophy-emoji">🏆</div>
+    <div class="trophy-title" id="trophy-title">Fase concluída!</div>
+    <div class="trophy-msg" id="trophy-msg">Parabéns! Continue na próxima fase.</div>
+    <button class="trophy-btn" id="trophy-btn">Continuar</button>
+  </div>
+</div>
+
+<script>
+// ========== DADOS ==========
+const identifyData = [
+  { n: 1,   correct: 'Nenhum',   hint: 'O número 1 não é primo nem composto — tem apenas 1 divisor.' },
+  { n: 2,   correct: 'Primo',    hint: 'O 2 é o único número par primo! Divisores: 1 e 2.' },
+  { n: 13,  correct: 'Primo',    hint: '13 só é divisível por 1 e por 13 — exatamente 2 divisores.' },
+  { n: 15,  correct: 'Composto', hint: '15 = 3 × 5. Divisores: 1, 3, 5, 15 — mais de 2 divisores.' },
+  { n: 29,  correct: 'Primo',    hint: '29 não é divisível por 2, 3, 5. Como 5² = 25 < 29 e 7 > √29, é primo.' },
+  { n: 57,  correct: 'Composto', hint: '57 = 3 × 19. Divisores: 1, 3, 19, 57 — é composto.' },
+  { n: 89,  correct: 'Primo',    hint: '89 ÷ 2, 3, 5, 7 não são exatos. Como 7² < 89 < 11², paramos. 89 é primo!' },
+  { n: 100, correct: 'Composto', hint: '100 = 2² × 5². Divisores: 1, 2, 4, 5, 10, 20, 25, 50, 100 — composto.' }
+];
+
+const factorData = [
+  {
+    n: 40,
+    steps: [
+      { dividend: 40, divisor: 2, quotient: 20 },
+      { dividend: 20, divisor: 2, quotient: 10 },
+      { dividend: 10, divisor: 2, quotient: 5  },
+      { dividend: 5,  divisor: 5, quotient: 1  }
+    ],
+    result: '2³ × 5'
+  },
+  {
+    n: 256,
+    steps: [
+      { dividend: 256, divisor: 2, quotient: 128 },
+      { dividend: 128, divisor: 2, quotient: 64  },
+      { dividend: 64,  divisor: 2, quotient: 32  },
+      { dividend: 32,  divisor: 2, quotient: 16  },
+      { dividend: 16,  divisor: 2, quotient: 8   },
+      { dividend: 8,   divisor: 2, quotient: 4   },
+      { dividend: 4,   divisor: 2, quotient: 2   },
+      { dividend: 2,   divisor: 2, quotient: 1   }
+    ],
+    result: '2⁸'
+  },
+  {
+    n: 210,
+    steps: [
+      { dividend: 210, divisor: 2, quotient: 105 },
+      { dividend: 105, divisor: 3, quotient: 35  },
+      { dividend: 35,  divisor: 5, quotient: 7   },
+      { dividend: 7,   divisor: 7, quotient: 1   }
+    ],
+    result: '2 × 3 × 5 × 7'
+  }
+];
+
+const reprData = [
+  {
+    n: 360,
+    acceptable: ['2^3 × 3^2 × 5', '2³ × 3² × 5', '2^3×3^2×5', '2³×3²×5'],
+    display: '2³ × 3² × 5',
+    hint: '360 = 2×180 = 2×2×90 = 2×2×2×45 = 2×2×2×3×15 = 2×2×2×3×3×5'
+  },
+  {
+    n: 2000,
+    acceptable: ['2^4 × 5^3', '2⁴ × 5³', '2^4×5^3', '2⁴×5³'],
+    display: '2⁴ × 5³',
+    hint: '2000 = 2×1000 = 2×2×500 = 2×2×2×250 = 2×2×2×2×125 = 2⁴×5³'
+  },
+  {
+    n: 235,
+    acceptable: ['5 × 47', '5×47'],
+    display: '5 × 47',
+    hint: '235 ÷ 5 = 47. O 47 é primo (47 ÷ 2, 3, 5, 7 não exatos; 7² = 49 > 47 → parar).'
+  }
+];
+
+// ========== ESTADO ==========
+let p1Score = 0, p1Answered = 0;
+let p2Score = 0, p2Answered = 0;
+let p3Score = 0, p3Answered = 0;
+let trophyCallback = null;
+
+// ========== FASE 1 ==========
+function renderPhase1() {
+  const grid = document.getElementById('identify-grid');
+  grid.innerHTML = '';
+  identifyData.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'number-card';
+    card.id = `num-card-${i}`;
+    card.innerHTML = `
+      <div class="num-display">${item.n}</div>
+      <div class="num-btns">
+        <button class="num-btn" onclick="pickIdentify(${i},'Primo')">Primo</button>
+        <button class="num-btn" onclick="pickIdentify(${i},'Composto')">Composto</button>
+        <button class="num-btn" onclick="pickIdentify(${i},'Nenhum')">Nenhum dos dois</button>
+      </div>
+      <div class="num-check" id="check-${i}"></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function pickIdentify(idx, choice) {
+  const item = identifyData[idx];
+  const card = document.getElementById(`num-card-${idx}`);
+  if (card.classList.contains('answered')) return;
+  card.classList.add('answered');
+  const btns = card.querySelectorAll('.num-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const choiceMap = { 'Primo': 0, 'Composto': 1, 'Nenhum': 2 };
+  const ci = choiceMap[choice];
+  if (ci !== undefined) btns[ci].classList.add(choice === item.correct || (choice === 'Nenhum' && item.correct === 'Nenhum') ? 'correct-pick' : 'wrong-pick');
+
+  // Mark correct button
+  const correctMap = { 'Primo': 0, 'Composto': 1, 'Nenhum': 2 };
+  btns[correctMap[item.correct]].classList.add('correct-pick');
+
+  const isCorrect = choice === item.correct;
+  document.getElementById(`check-${idx}`).textContent = isCorrect ? '✅' : '❌';
+  if (isCorrect) p1Score++;
+  p1Answered++;
+  document.getElementById('score-p1').textContent = `${p1Score} / 8`;
+
+  if (p1Answered === identifyData.length) {
+    setTimeout(() => {
+      showTrophy(
+        'Fase 1 Concluída!',
+        `Você acertou ${p1Score} de 8 números. ${p1Score >= 6 ? 'Excelente trabalho!' : 'Continue praticando!'}`,
+        () => { document.getElementById('p1-advance-btn').style.display = 'block'; }
+      );
+    }, 600);
+  }
+}
+
+// ========== FASE 2 ==========
+function renderPhase2() {
+  const container = document.getElementById('factor-problems');
+  container.innerHTML = '';
+  factorData.forEach((prob, pi) => {
+    const card = document.createElement('div');
+    card.className = 'factor-card';
+    card.id = `fcard-${pi}`;
+
+    let stepsHtml = '';
+    prob.steps.forEach((step, si) => {
+      const isLast = si === prob.steps.length - 1;
+      // Esconder divisor e quociente (inputs), manter dividendo
+      stepsHtml += `
+        <div class="factor-row" id="frow-${pi}-${si}">
+          <div class="factor-fixed">${step.dividend}</div>
+          <div class="factor-sep">÷</div>
+          <input class="factor-input" id="fdiv-${pi}-${si}" type="number" min="1" placeholder="?" />
+          <div class="factor-eq">=</div>
+          <input class="factor-input" id="fquot-${pi}-${si}" type="number" min="1" placeholder="?" />
+        </div>`;
+    });
+
+    card.innerHTML = `
+      <div class="factor-number">${prob.n}</div>
+      <div class="factor-steps">${stepsHtml}</div>
+      <div class="feedback-box" id="ffb-${pi}">
+        <span class="fb-icon">✓</span>
+        <div id="ffb-text-${pi}"></div>
+      </div>
+      <button class="verify-step-btn" onclick="checkFactor(${pi})">Verificar fatoração de ${prob.n}</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function checkFactor(pi) {
+  const prob = factorData[pi];
+  let allCorrect = true;
+  prob.steps.forEach((step, si) => {
+    const divInput = document.getElementById(`fdiv-${pi}-${si}`);
+    const quotInput = document.getElementById(`fquot-${pi}-${si}`);
+    const dv = parseInt(divInput.value);
+    const qv = parseInt(quotInput.value);
+    const dcOk = dv === step.divisor;
+    const qcOk = qv === step.quotient;
+    divInput.className = 'factor-input ' + (dcOk ? 'correct-input' : 'wrong-input');
+    quotInput.className = 'factor-input ' + (qcOk ? 'correct-input' : 'wrong-input');
+    divInput.disabled = true;
+    quotInput.disabled = true;
+    if (!dcOk || !qcOk) allCorrect = false;
+  });
+
+  const fb = document.getElementById(`ffb-${pi}`);
+  const fbt = document.getElementById(`ffb-text-${pi}`);
+  if (allCorrect) {
+    fb.className = 'feedback-box correct';
+    fbt.innerHTML = `✓ Perfeito! Representação fatorada: <strong>${prob.n} = ${prob.result}</strong>`;
+    p2Score++;
+  } else {
+    fb.className = 'feedback-box wrong';
+    fbt.innerHTML = `✗ Alguns valores estão errados. A representação fatorada correta é: <strong>${prob.n} = ${prob.result}</strong>`;
+  }
+  p2Answered++;
+  document.getElementById('score-p2').textContent = `${p2Score} / 3`;
+
+  // Desabilitar botão
+  const btn = document.querySelector(`#fcard-${pi} .verify-step-btn`);
+  if (btn) btn.disabled = true;
+
+  if (p2Answered === factorData.length) {
+    setTimeout(() => {
+      showTrophy(
+        'Fase 2 Concluída!',
+        `Você fatorou ${p2Score} de 3 números corretamente. ${p2Score >= 2 ? 'Excelente!' : 'A chave é dividir pelo menor primo divisor!'}`,
+        () => { document.getElementById('p2-advance-btn').style.display = 'block'; }
+      );
+    }, 600);
+  }
+}
+
+// ========== FASE 3 ==========
+function renderPhase3() {
+  const container = document.getElementById('repr-problems');
+  container.innerHTML = '';
+  reprData.forEach((prob, pi) => {
+    const card = document.createElement('div');
+    card.className = 'repr-card';
+    card.id = `rcard-${pi}`;
+    card.innerHTML = `
+      <div class="repr-number">${prob.n}</div>
+      <div class="repr-prompt">Escreva a representação fatorada:</div>
+      <div class="repr-input-wrap">
+        <div class="repr-eq">${prob.n} =</div>
+        <input class="repr-input" id="rinput-${pi}" type="text" placeholder="ex: 2^3 × 5" />
+      </div>
+      <div class="repr-hint">Use ^ para expoente e × para multiplicação. Ex: 2^4 × 5^2</div>
+      <div class="feedback-box" id="rfb-${pi}">
+        <span class="fb-icon"></span>
+        <div id="rfb-text-${pi}"></div>
+      </div>
+      <button class="verify-step-btn" onclick="checkRepr(${pi})">Verificar representação de ${prob.n}</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function normalize(s) {
+  return s.trim().toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[×x*]/g, '×')
+    .replace(/²/g, '^2').replace(/³/g, '^3').replace(/⁴/g, '^4')
+    .replace(/⁵/g, '^5').replace(/⁶/g, '^6').replace(/⁷/g, '^7')
+    .replace(/⁸/g, '^8').replace(/⁹/g, '^9');
+}
+
+function checkRepr(pi) {
+  const prob = reprData[pi];
+  const input = document.getElementById(`rinput-${pi}`);
+  const val = input.value;
+  const normVal = normalize(val);
+  const isCorrect = prob.acceptable.some(a => normalize(a) === normVal);
+
+  const fb = document.getElementById(`rfb-${pi}`);
+  const fbt = document.getElementById(`rfb-text-${pi}`);
+  input.disabled = true;
+
+  if (isCorrect) {
+    fb.className = 'feedback-box correct';
+    fbt.innerHTML = `✓ Correto! <strong>${prob.n} = ${prob.display}</strong>`;
+    input.className = 'repr-input correct-input';
+    p3Score++;
+  } else {
+    fb.className = 'feedback-box wrong';
+    fbt.innerHTML = `✗ A representação fatorada correta é <strong>${prob.n} = ${prob.display}</strong>. Dica: ${prob.hint}`;
+    input.style.borderColor = '#EF4444';
+    input.style.background = '#FEE2E2';
+  }
+  p3Answered++;
+  document.getElementById('score-p3').textContent = `${p3Score} / 3`;
+
+  const btn = document.querySelector(`#rcard-${pi} .verify-step-btn`);
+  if (btn) btn.disabled = true;
+
+  if (p3Answered === reprData.length) {
+    setTimeout(() => {
+      showTrophy(
+        'Missão Completa!',
+        `Fase 3 concluída! ${p3Score} de 3 representações corretas. Clique para ver o resultado final!`,
+        () => { document.getElementById('p3-finish-btn').style.display = 'block'; }
+      );
+    }, 600);
+  }
+}
+
+// ========== TROFÉU ==========
+function showTrophy(title, msg, callback) {
+  document.getElementById('trophy-title').textContent = title;
+  document.getElementById('trophy-msg').textContent = msg;
+  trophyCallback = callback;
+  const overlay = document.getElementById('trophy-overlay');
+  overlay.style.display = 'flex';
+  document.getElementById('trophy-btn').onclick = () => {
+    overlay.style.display = 'none';
+    if (trophyCallback) trophyCallback();
+  };
+}
+
+// ========== AVANÇAR FASE ==========
+function advancePhase(n) {
+  // Esconder fases anteriores
+  document.getElementById('phase-1').style.display = 'none';
+  document.getElementById('phase-2').style.display = 'none';
+  document.getElementById('phase-3').style.display = 'none';
+
+  // Marcar tab
+  for (let i = 1; i <= 3; i++) {
+    const tab = document.getElementById(`tab-${i}`);
+    tab.className = 'phase-tab';
+    if (i < n) tab.classList.add('completed');
+    else if (i === n) tab.classList.add('active');
+  }
+
+  if (n === 2) { document.getElementById('phase-2').style.display = 'block'; renderPhase2(); }
+  if (n === 3) { document.getElementById('phase-3').style.display = 'block'; renderPhase3(); }
+}
+
+// ========== TELA FINAL ==========
+function showFinal() {
+  document.getElementById('phase-3').style.display = 'none';
+  const total = p1Score + p2Score + p3Score;
+  const maxTotal = 14;
+  const pct = total / maxTotal;
+
+  let emoji, title, msg;
+  if (pct >= .9) {
+    emoji = '🏆'; title = 'Detetive Primo Expert!';
+    msg = `Incrível! ${total} de ${maxTotal} pontos. Você domina números primos, compostos e fatoração!`;
+  } else if (pct >= .7) {
+    emoji = '🌟'; title = 'Excelente Detetive!';
+    msg = `${total} de ${maxTotal} pontos. Muito bem! Revise os pontos em que errou para dominar 100%.`;
+  } else if (pct >= .5) {
+    emoji = '💪'; title = 'Bom trabalho!';
+    msg = `${total} de ${maxTotal} pontos. Continue praticando fatoração e identificação de números primos.`;
+  } else {
+    emoji = '📚'; title = 'Continue estudando!';
+    msg = `${total} de ${maxTotal} pontos. Revise: primo tem 2 divisores, composto tem mais de 2, e o 1 não é nenhum deles.`;
+  }
+
+  const fs = document.getElementById('final-screen');
+  fs.style.display = 'block';
+  document.getElementById('final-emoji').textContent = emoji;
+  document.getElementById('final-score').textContent = `${total}/${maxTotal}`;
+  document.getElementById('final-title').textContent = title;
+  document.getElementById('final-msg').textContent = msg;
+
+  for (let i = 1; i <= 3; i++) {
+    const tab = document.getElementById(`tab-${i}`);
+    tab.className = 'phase-tab completed';
+  }
+}
+
+function restart() {
+  p1Score = 0; p1Answered = 0;
+  p2Score = 0; p2Answered = 0;
+  p3Score = 0; p3Answered = 0;
+  document.getElementById('final-screen').style.display = 'none';
+  document.getElementById('phase-1').style.display = 'block';
+  document.getElementById('phase-2').style.display = 'none';
+  document.getElementById('phase-3').style.display = 'none';
+  document.getElementById('p1-advance-btn').style.display = 'none';
+  document.getElementById('p2-advance-btn').style.display = 'none';
+  document.getElementById('p3-finish-btn').style.display = 'none';
+  document.getElementById('score-p1').textContent = '0 / 8';
+  document.getElementById('score-p2').textContent = '0 / 3';
+  document.getElementById('score-p3').textContent = '0 / 3';
+  for (let i = 1; i <= 3; i++) {
+    const tab = document.getElementById(`tab-${i}`);
+    tab.className = 'phase-tab';
+    if (i === 1) tab.classList.add('active');
+  }
+  renderPhase1();
+}
+
+renderPhase1();
+</script>
+</body>
+</html>

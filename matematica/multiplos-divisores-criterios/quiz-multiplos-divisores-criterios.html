@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Múltiplos, Divisores e Critérios de Divisibilidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #059669;
+  --light: #34D399;
+  --bg: #ECFDF5;
+  --dark: #064E3B;
+  --border: #D1FAE5;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white;
+  padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px;
+  transition: color .2s;
+}
+.back-btn:hover { color: #fff; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.container { max-width: 680px; margin: 0 auto; padding: 24px 16px 48px; }
+
+/* Barra de progresso */
+.progress-wrap { margin-bottom: 24px; }
+.progress-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { background: #D1FAE5; border-radius: 99px; height: 10px; overflow: hidden; }
+.prog-fill { background: linear-gradient(90deg, var(--primary), var(--light)); height: 100%; border-radius: 99px; transition: width .4s ease; }
+
+/* Placar */
+.score-bar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 16px; }
+.score-chip { background: var(--dark); color: #fff; font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 99px; }
+
+/* Card de questão */
+.question-card {
+  background: var(--card); border-radius: var(--radius);
+  border: 2px solid var(--border);
+  padding: 28px 24px 24px;
+  box-shadow: 0 2px 12px rgba(5,150,105,.07);
+  animation: fadeIn .3s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+
+.q-number { font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.q-text { font-size: 18px; font-weight: 700; line-height: 1.4; margin-bottom: 20px; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option-btn {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-family: "Baloo 2", cursive;
+  font-size: 16px; font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: all .15s;
+  display: flex; align-items: center; gap: 10px;
+}
+.option-btn:hover:not(:disabled) { border-color: var(--primary); background: #fff; transform: translateX(4px); }
+.option-btn.correct { background: #D1FAE5; border-color: #059669; color: #064E3B; }
+.option-btn.wrong { background: #FEE2E2; border-color: #DC2626; color: #7F1D1D; }
+.option-btn:disabled { cursor: default; }
+.opt-letter { width: 28px; height: 28px; border-radius: 50%; background: var(--border); font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.option-btn.correct .opt-letter { background: #059669; color: #fff; }
+.option-btn.wrong .opt-letter { background: #DC2626; color: #fff; }
+
+/* Feedback */
+.feedback {
+  margin-top: 16px; border-radius: 12px; padding: 14px 18px;
+  display: flex; align-items: flex-start; gap: 10px;
+  animation: fadeIn .25s ease;
+}
+.feedback.correct { background: #D1FAE5; border: 2px solid #059669; }
+.feedback.wrong { background: #FEE2E2; border: 2px solid #EF4444; }
+.feedback-icon { font-size: 20px; flex-shrink: 0; line-height: 1.3; }
+.feedback-text { font-size: 14px; font-weight: 600; line-height: 1.5; }
+.feedback.correct .feedback-text { color: #064E3B; }
+.feedback.wrong .feedback-text { color: #7F1D1D; }
+
+.next-btn {
+  margin-top: 20px; width: 100%;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 12px;
+  padding: 15px; font-family: "Baloo 2", cursive;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.next-btn:hover { background: var(--dark); transform: translateY(-1px); }
+
+/* Tela final */
+.result-card {
+  background: var(--card); border-radius: var(--radius);
+  border: 2px solid var(--border);
+  padding: 40px 28px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(5,150,105,.1);
+  animation: fadeIn .4s ease;
+}
+.result-emoji { font-size: 64px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 22px; color: var(--dark); margin-bottom: 8px; }
+.result-score { font-size: 48px; font-weight: 900; color: var(--primary); margin-bottom: 4px; }
+.result-msg { font-size: 16px; font-weight: 600; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+.restart-btn {
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 12px;
+  padding: 15px 36px; font-family: "Baloo 2", cursive;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  transition: background .15s;
+}
+.restart-btn:hover { background: var(--dark); }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>🖩 Quiz Interativo</h1>
+  <p>Múltiplos, Divisores e Critérios de Divisibilidade — 5º Ano</p>
+</div>
+
+<div class="container">
+  <div class="score-bar">
+    <div class="score-chip" id="score-display">⭐ 0 pts</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="prog-label">Questão 1 de 10</div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="quiz-area"></div>
+  <div id="result-area" class="hidden"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Qual sequência representa corretamente M(4) — o conjunto dos múltiplos de 4?",
+    opts: ["1, 2, 3, 4", "0, 4, 8, 12, 16, …", "2, 4, 6, 8", "4, 8, 9, 12"],
+    correct: 1,
+    feedback: "Correto! M(4) = {0, 4, 8, 12, 16, …}. O múltiplo de n é o produto de n por qualquer número natural (0, 1, 2, 3…). Zero é múltiplo de qualquer número.",
+    feedbackWrong: "Atenção! M(4) = {0, 4, 8, 12, 16, …}. Cada múltiplo é obtido somando 4 ao termo anterior. Lembrar: zero é múltiplo de qualquer número!"
+  },
+  {
+    q: "Qual é o conjunto D(12) — os divisores de 12?",
+    opts: ["{1, 2, 4, 6, 12}", "{1, 2, 3, 4, 6, 12}", "{2, 3, 4, 6}", "{1, 2, 12}"],
+    correct: 1,
+    feedback: "Perfeito! D(12) = {1, 2, 3, 4, 6, 12}. Um divisor de n é um número que divide n com resto zero (divisão exata). Todo número é divisor de si mesmo, e 1 é divisor de qualquer número.",
+    feedbackWrong: "Veja: D(12) = {1, 2, 3, 4, 6, 12}. Divisor de n é o número que divide n com resto zero (divisão exata). Confira: 12÷1=12, 12÷2=6, 12÷3=4, 12÷4=3, 12÷6=2, 12÷12=1 — todos com resto zero!"
+  },
+  {
+    q: "Zero é divisor de qual número?",
+    opts: ["De 0 (zero)", "De 10", "De qualquer número", "De nenhum número"],
+    correct: 3,
+    feedback: "Correto! Zero NÃO é divisor de nenhum número. Lembrar: divisor é o número que divide com resto zero, e divisão por zero não existe em matemática.",
+    feedbackWrong: "Atenção! Zero NÃO é divisor de nenhum número — divisão por zero não existe. Cuidado para não confundir: zero É múltiplo de qualquer número, mas não é divisor de nenhum."
+  },
+  {
+    q: "O número 156 é divisível por 2? Qual critério de divisibilidade justifica a resposta?",
+    opts: [
+      "Sim, porque a soma dos algarismos é 12",
+      "Sim, porque termina em 6 (número par)",
+      "Não, porque é ímpar",
+      "Sim, porque termina em 5"
+    ],
+    correct: 1,
+    feedback: "Certo! Pelo critério de divisibilidade por 2: um número é divisível por 2 quando termina em 0, 2, 4, 6 ou 8 (número par). 156 termina em 6, logo é divisível por 2.",
+    feedbackWrong: "Pelo critério de divisibilidade por 2: um número é divisível por 2 quando termina em 0, 2, 4, 6 ou 8 (número par). 156 termina em 6 → é divisível por 2!"
+  },
+  {
+    q: "O número 4.381 é divisível por 3?",
+    opts: [
+      "Sim, porque termina em 1",
+      "Sim, porque a soma dos algarismos dá 16",
+      "Não, porque a soma dos algarismos (4+3+8+1=16) não é divisível por 3",
+      "Não, porque termina em 1"
+    ],
+    correct: 2,
+    feedback: "Correto! Pelo critério de divisibilidade por 3: um número é divisível por 3 quando a soma dos algarismos é divisível por 3. A soma de 4+3+8+1 = 16, e 16 não é divisível por 3 → portanto 4.381 NÃO é divisível por 3.",
+    feedbackWrong: "Critério por 3: um número é divisível por 3 quando a soma dos algarismos é divisível por 3. 4+3+8+1 = 16. Como 16 ÷ 3 = 5 com resto 1 (não é exato), 4.381 NÃO é divisível por 3."
+  },
+  {
+    q: "Qual é o maior divisor do número 35?",
+    opts: ["5", "7", "35", "175"],
+    correct: 2,
+    feedback: "Certo! D(35) = {1, 5, 7, 35}. O maior divisor de qualquer número é sempre o próprio número, pois todo número é divisor de si mesmo.",
+    feedbackWrong: "Todo número é divisor de si mesmo! D(35) = {1, 5, 7, 35}. Logo, o maior divisor de 35 é o próprio 35."
+  },
+  {
+    q: "O número 786 é divisível por 5?",
+    opts: [
+      "Sim, porque termina em 6",
+      "Não, porque não termina em 0 ou 5",
+      "Sim, porque a soma dos algarismos é divisível",
+      "Não, porque é ímpar"
+    ],
+    correct: 1,
+    feedback: "Correto! Pelo critério de divisibilidade por 5: um número é divisível por 5 quando termina em 0 ou 5. O número 786 termina em 6, então NÃO é divisível por 5.",
+    feedbackWrong: "Critério por 5: um número é divisível por 5 quando termina em 0 ou 5. 786 termina em 6 → NÃO é divisível por 5."
+  },
+  {
+    q: "Quais são os divisores comuns de 18 e 24? (Divisores comuns pertencem a D(18) e D(24) simultaneamente.)",
+    opts: ["{1, 2, 3, 6}", "{4, 6, 9}", "{2, 3, 4}", "{6, 12}"],
+    correct: 0,
+    feedback: "Perfeito! D(18) = {1, 2, 3, 6, 9, 18} e D(24) = {1, 2, 3, 4, 6, 8, 12, 24}. Os divisores comuns são os que pertencem aos dois conjuntos simultaneamente: {1, 2, 3, 6}.",
+    feedbackWrong: "D(18) = {1, 2, 3, 6, 9, 18} e D(24) = {1, 2, 3, 4, 6, 8, 12, 24}. Divisores comuns são os que pertencem a D(18) E D(24) ao mesmo tempo: {1, 2, 3, 6}."
+  },
+  {
+    q: "Um número é divisível por 6 quando…",
+    opts: [
+      "Termina em 6",
+      "É divisível por 2 E por 3 ao mesmo tempo",
+      "A soma dos algarismos é igual a 6",
+      "É par e termina em 0"
+    ],
+    correct: 1,
+    feedback: "Exatamente! Critério de divisibilidade por 6: o número deve ser divisível por 2 E por 3 ao mesmo tempo. Exemplo: 126 — termina em 6 (divisível por 2) e 1+2+6=9 (divisível por 3) → 126 é divisível por 6!",
+    feedbackWrong: "Critério por 6: um número é divisível por 6 quando é divisível por 2 E por 3 ao mesmo tempo. Não basta apenas terminar em 6 ou ter soma 6."
+  },
+  {
+    q: "Quais são os três primeiros múltiplos NÃO NULOS de 7?",
+    opts: ["7, 14, 21", "1, 7, 14", "7, 14, 28", "0, 7, 14"],
+    correct: 0,
+    feedback: "Correto! Os múltiplos de 7 são: 0, 7, 14, 21, 28, … Os três primeiros não nulos são 7, 14 e 21. Cada próximo múltiplo = termo anterior + 7.",
+    feedbackWrong: "M(7) = {0, 7, 14, 21, 28, …}. O zero é múltiplo, mas o enunciado pede os não nulos → os três primeiros são 7, 14 e 21."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function renderQuestion() {
+  const q = questions[current];
+  answered = false;
+
+  document.getElementById("prog-label").textContent = `Questão ${current + 1} de ${questions.length}`;
+  document.getElementById("prog-fill").style.width = `${(current / questions.length) * 100}%`;
+
+  const letters = ["A", "B", "C", "D"];
+  const html = `
+    <div class="question-card">
+      <div class="q-number">Questão ${current + 1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="options">
+        ${q.opts.map((opt, i) => `
+          <button class="option-btn" onclick="answer(${i})">
+            <span class="opt-letter">${letters[i]}</span>
+            ${opt}
+          </button>
+        `).join("")}
+      </div>
+      <div id="feedback-area"></div>
+      <button class="next-btn hidden" id="next-btn" onclick="nextQuestion()">
+        ${current === questions.length - 1 ? "Ver resultado →" : "Próxima questão →"}
+      </button>
+    </div>
+  `;
+  document.getElementById("quiz-area").innerHTML = html;
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const buttons = document.querySelectorAll(".option-btn");
+  const isCorrect = idx === q.correct;
+
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add("correct");
+    if (i === idx && !isCorrect) btn.classList.add("wrong");
+  });
+
+  if (isCorrect) score += 10;
+  document.getElementById("score-display").textContent = `⭐ ${score} pts`;
+
+  const feedbackEl = document.getElementById("feedback-area");
+  feedbackEl.innerHTML = `
+    <div class="feedback ${isCorrect ? "correct" : "wrong"}">
+      <span class="feedback-icon">${isCorrect ? "✓" : "✗"}</span>
+      <div class="feedback-text">${isCorrect ? q.feedback : q.feedbackWrong}</div>
+    </div>
+  `;
+
+  document.getElementById("next-btn").classList.remove("hidden");
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById("prog-label").textContent = `Questão ${questions.length} de ${questions.length}`;
+  document.getElementById("prog-fill").style.width = "100%";
+  document.getElementById("quiz-area").classList.add("hidden");
+
+  const pct = (score / 100) * 100;
+  let emoji, msg;
+  if (pct >= 90) { emoji = "🏆"; msg = "Incrível! Você domina múltiplos, divisores e critérios de divisibilidade!"; }
+  else if (pct >= 70) { emoji = "⭐"; msg = "Muito bem! Você está quase dominando o tema. Revise as questões que errou!"; }
+  else if (pct >= 50) { emoji = "💪"; msg = "Bom esforço! Continue praticando — você vai melhorar!"; }
+  else { emoji = "📖"; msg = "Vamos revisar? Releia os conceitos de divisor e múltiplo e tente novamente!"; }
+
+  document.getElementById("result-area").innerHTML = `
+    <div class="result-card">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-title">Resultado Final</div>
+      <div class="result-score">${score}/100</div>
+      <div class="result-msg">${msg}</div>
+      <button class="restart-btn" onclick="restart()">🔄 Jogar novamente</button>
+    </div>
+  `;
+  document.getElementById("result-area").classList.remove("hidden");
+}
+
+function restart() {
+  current = 0;
+  score = 0;
+  document.getElementById("score-display").textContent = "⭐ 0 pts";
+  document.getElementById("result-area").classList.add("hidden");
+  document.getElementById("quiz-area").classList.remove("hidden");
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

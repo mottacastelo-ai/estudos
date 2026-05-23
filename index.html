@@ -363,13 +363,16 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
     <span class="d-icon">🔢</span>
     <span class="d-name">Matemática</span>
-    <span class="d-count">14</span>
+    <span class="d-count">26</span>
   </button>
   <div class="theme-sub" id="sub-mat">
     <button class="theme-link" onclick="showTheme('mat','tabuada')">✖️ Tabuada</button>
     <button class="theme-link" onclick="showTheme('mat','multiplicacao-divisao')">🧮 Multiplicação e Divisão</button>
     <button class="theme-link" onclick="showTheme('mat','poliedros-prismas-piramides')">🏛️ Poliedros, Prismas e Pirâmides</button>
     <button class="theme-link" onclick="showTheme('mat','corpos-redondos-planificacao')">🌀 Corpos Redondos e Planificação</button>
+    <button class="theme-link" onclick="showTheme('mat','multiplos-divisores-criterios')">🔢 Múltiplos e Divisores</button>
+    <button class="theme-link" onclick="showTheme('mat','primos-compostos-fatoracao')">🔍 Primos e Fatoração</button>
+    <button class="theme-link" onclick="showTheme('mat','mdc-mmc-problemas')">📐 mdc e mmc</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-geo" onclick="showDisc('geo')">
@@ -420,8 +423,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>20</span>temas</div>
-        <div class="hstat"><span>87</span>atividades</div>
+        <div class="hstat"><span>23</span>temas</div>
+        <div class="hstat"><span>99</span>atividades</div>
       </div>
     </div>
     <div class="home-body">
@@ -442,8 +445,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Matemática</div>
           <div class="dhc-desc">Cálculo, raciocínio lógico e resolução de problemas</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#ECFDF5;color:#065F46">4 temas</span>
-            <span class="chip" style="background:#ECFDF5;color:#065F46">14 atividades</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">7 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">26 atividades</span>
             <span class="chip" style="background:#FEF3C7;color:#92400E">3 HQs</span>
           </div>
         </button>
@@ -980,6 +983,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','multiplicacao-divisao')">🧮 Multiplicação e Divisão</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','poliedros-prismas-piramides')">🏛️ Poliedros, Prismas e Pirâmides</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','corpos-redondos-planificacao')">🌀 Corpos Redondos e Planificação</button>
+        <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','multiplos-divisores-criterios')">🔢 Múltiplos e Divisores</button>
+        <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','primos-compostos-fatoracao')">🔍 Primos e Fatoração</button>
+        <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','mdc-mmc-problemas')">📐 mdc e mmc</button>
       </div>
 
       <!-- TEMA: TABUADA -->
@@ -1186,6 +1192,177 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><div class="sched-day mat">Dia 1</div><div class="sched-acts"><span class="sched-act mat">📖 Ler HQ do Esfe</span><span class="sched-act mat">❓ Quiz</span></div></div>
           <div class="sched-row"><div class="sched-day mat">Dia 2</div><div class="sched-acts"><span class="sched-act mat">📐 Reconhecedor de Planificações</span></div></div>
           <div class="sched-row"><div class="sched-day mat">Dia 3</div><div class="sched-acts"><span class="sched-act mat">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: MÚLTIPLOS, DIVISORES E CRITÉRIOS DE DIVISIBILIDADE -->
+      <div class="theme-content" id="theme-mat-multiplos-divisores-criterios">
+        <div class="start-banner blue">
+          <div class="start-banner-icon">🖩</div>
+          <div>
+            <h3>Como usar essas atividades</h3>
+            <p>Leia a HQ da Divi para entender múltiplos e divisores. Faça o Quiz, pratique os critérios no Associador e complete o Mapa Mental como síntese final.</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="matematica/multiplos-divisores-criterios/hq-multiplos-divisores-criterios.png" alt="HQ Múltiplos, Divisores e Critérios com Divi" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div style="display:none;align-items:center;justify-content:center;padding:40px;color:#6B7280;font-weight:700;font-size:14px;gap:10px">
+            <span>🖼️</span><span>HQ em breve — gere as imagens com o prompt da Divi!</span>
+          </div>
+          <div class="hq-caption"><span>📖</span><span>A Sequência de Divi — 4 páginas · Personagens: Bia e Divi · Tema: Múltiplos, Divisores e Critérios de Divisibilidade</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card mat" href="matematica/multiplos-divisores-criterios/quiz-multiplos-divisores-criterios.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre múltiplos, divisores, critérios de divisibilidade por 2, 3, 5, 6, 9 e 10.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Múltipla Escolha</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card mat" href="matematica/multiplos-divisores-criterios/domino-multiplos-divisores-criterios.html" target="_blank">
+            <div class="act-icon">🎯</div>
+            <div class="act-title">Associador de Critérios</div>
+            <div class="act-desc">Dado um número, marque todos os critérios de divisibilidade que se aplicam. Feedback com a regra exata do livro.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Critérios</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/multiplos-divisores-criterios/complete-lacuna-multiplos-divisores-criterios.html" target="_blank">
+            <div class="act-icon">✏️</div>
+            <div class="act-title">Complete a Lacuna</div>
+            <div class="act-desc">Complete conjuntos de múltiplos, conjuntos de divisores e as regras dos critérios. 3 seções progressivas.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Completar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/multiplos-divisores-criterios/mapa-mental-multiplos-divisores-criterios.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte múltiplos, divisores, critérios de divisibilidade e suas regras. Compare com o gabarito.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day mat">Dia 1</div><div class="sched-acts"><span class="sched-act mat">📖 Ler HQ da Divi</span><span class="sched-act mat">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 2</div><div class="sched-acts"><span class="sched-act mat">🎯 Associador de Critérios</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 3</div><div class="sched-acts"><span class="sched-act mat">✏️ Complete a Lacuna</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 4</div><div class="sched-acts"><span class="sched-act mat">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: NÚMEROS PRIMOS, COMPOSTOS E FATORAÇÃO -->
+      <div class="theme-content" id="theme-mat-primos-compostos-fatoracao">
+        <div class="start-banner blue">
+          <div class="start-banner-icon">🔍</div>
+          <div>
+            <h3>Como usar essas atividades</h3>
+            <p>Leia a HQ do Primo para entender primos, compostos e fatoração. Faça o Quiz, ordene as etapas da fatoração, complete a Missão e organize o Mapa Mental como síntese.</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="matematica/primos-compostos-fatoracao/hq-primos-compostos-fatoracao.png" alt="HQ Primos, Compostos e Fatoração com Primo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div style="display:none;align-items:center;justify-content:center;padding:40px;color:#6B7280;font-weight:700;font-size:14px;gap:10px">
+            <span>🖼️</span><span>HQ em breve — gere as imagens com o prompt do Primo!</span>
+          </div>
+          <div class="hq-caption"><span>📖</span><span>O Detetive dos Números — 4 páginas · Personagens: Bia e Primo · Tema: Primos, Compostos, Crivo de Eratóstenes e Fatoração</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card mat" href="matematica/primos-compostos-fatoracao/quiz-primos-compostos-fatoracao.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre primos, compostos, o número 1, representação fatorada e expoentes.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Múltipla Escolha</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card mat" href="matematica/primos-compostos-fatoracao/ordenacao-primos-compostos-fatoracao.html" target="_blank">
+            <div class="act-icon">🔀</div>
+            <div class="act-title">Ordene a Fatoração</div>
+            <div class="act-desc">3 rodadas: arraste as etapas do processo de fatoração na ordem correta para 90, 60 e 120.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Ordenação</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/primos-compostos-fatoracao/missao-primos-compostos-fatoracao.html" target="_blank">
+            <div class="act-icon">🎖️</div>
+            <div class="act-title">Missão do Detetive Primo</div>
+            <div class="act-desc">3 fases: identifique primos e compostos, complete a fatoração passo a passo e escreva a representação fatorada com expoentes.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Missão</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/primos-compostos-fatoracao/mapa-mental-primos-compostos-fatoracao.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e organize primos, compostos, Crivo de Eratóstenes, representação fatorada e expoentes. Compare com o gabarito.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day mat">Dia 1</div><div class="sched-acts"><span class="sched-act mat">📖 Ler HQ do Primo</span><span class="sched-act mat">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 2</div><div class="sched-acts"><span class="sched-act mat">🔀 Ordene a Fatoração</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 3</div><div class="sched-acts"><span class="sched-act mat">🎖️ Missão do Detetive Primo</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 4</div><div class="sched-acts"><span class="sched-act mat">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: MDC, MMC E PROBLEMAS -->
+      <div class="theme-content" id="theme-mat-mdc-mmc-problemas">
+        <div class="start-banner blue">
+          <div class="start-banner-icon">📐</div>
+          <div>
+            <h3>Como usar essas atividades</h3>
+            <p>Leia a HQ do Máx e Mín para entender mdc e mmc. Faça o Quiz, crie as fatorações no Criador, resolva os problemas no Transformador e finalize com o Mapa Mental.</p>
+          </div>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="matematica/mdc-mmc-problemas/hq-mdc-mmc-problemas.png" alt="HQ mdc, mmc e Problemas com Máx e Mín" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div style="display:none;align-items:center;justify-content:center;padding:40px;color:#6B7280;font-weight:700;font-size:14px;gap:10px">
+            <span>🖼️</span><span>HQ em breve — gere as imagens com o prompt do Máx e Mín!</span>
+          </div>
+          <div class="hq-caption"><span>📖</span><span>Os Irmãos Máx e Mín — 4 páginas · Personagens: Bia, Máx e Mín · Tema: Máximo Divisor Comum, Mínimo Múltiplo Comum e Problemas</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card mat" href="matematica/mdc-mmc-problemas/quiz-mdc-mmc-problemas.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre mdc, mmc, cálculo por fatoração, menores/maiores expoentes e quando usar cada um.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Múltipla Escolha</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card mat" href="matematica/mdc-mmc-problemas/criador-mdc-mmc-problemas.html" target="_blank">
+            <div class="act-icon">🛠️</div>
+            <div class="act-title">Criador de Fatoração</div>
+            <div class="act-desc">3 exemplos progressivos: fatore cada número, identifique fatores comuns e calcule mdc e mmc passo a passo.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Construção</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/mdc-mmc-problemas/transformador-mdc-mmc-problemas.html" target="_blank">
+            <div class="act-icon">🔄</div>
+            <div class="act-title">Transformador de Problemas</div>
+            <div class="act-desc">6 problemas do livro: decida se é mdc ou mmc, resolva e compare com a solução passo a passo.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Problemas</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/mdc-mmc-problemas/mapa-mental-mdc-mmc-problemas.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e organize mdc, mmc, intersecção, menores/maiores expoentes e quando usar cada um. Compare com o gabarito.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day mat">Dia 1</div><div class="sched-acts"><span class="sched-act mat">📖 Ler HQ do Máx e Mín</span><span class="sched-act mat">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 2</div><div class="sched-acts"><span class="sched-act mat">🛠️ Criador de Fatoração</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 3</div><div class="sched-acts"><span class="sched-act mat">🔄 Transformador de Problemas</span></div></div>
+          <div class="sched-row"><div class="sched-day mat">Dia 4</div><div class="sched-acts"><span class="sched-act mat">🗺️ Mapa Mental — síntese final</span></div></div>
         </div>
       </div>
 

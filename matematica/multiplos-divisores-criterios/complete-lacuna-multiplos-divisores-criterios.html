@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete a Lacuna — Múltiplos, Divisores e Critérios de Divisibilidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #059669;
+  --light: #34D399;
+  --bg: #ECFDF5;
+  --dark: #064E3B;
+  --border: #D1FAE5;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px; transition: color .2s;
+}
+.back-btn:hover { color: #fff; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 24px 16px 48px; }
+
+/* Barra de progresso geral */
+.progress-wrap { margin-bottom: 24px; }
+.progress-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { background: #D1FAE5; border-radius: 99px; height: 10px; overflow: hidden; }
+.prog-fill { background: linear-gradient(90deg, var(--primary), var(--light)); height: 100%; border-radius: 99px; transition: width .5s ease; }
+
+.score-bar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 20px; }
+.score-chip { background: var(--dark); color: #fff; font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 99px; }
+
+/* Seções */
+.section-card {
+  background: var(--card); border-radius: var(--radius); border: 2px solid var(--border);
+  padding: 26px 24px 20px; margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(5,150,105,.07);
+}
+.section-badge {
+  display: inline-block; background: var(--dark); color: #fff;
+  font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700;
+  padding: 4px 12px; border-radius: 99px; margin-bottom: 12px; letter-spacing: .5px;
+}
+.section-title { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 16px; }
+
+/* Exercícios inline (preenchimento em sequência) */
+.exercise { margin-bottom: 20px; }
+.ex-label { font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
+.ex-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  font-size: 17px; font-weight: 700; line-height: 2;
+}
+.ex-text { color: var(--text); }
+.ex-punct { color: var(--primary); font-weight: 800; }
+
+/* Input de lacuna */
+.blank {
+  display: inline-block;
+  min-width: 56px; height: 38px;
+  border: 2px solid var(--primary); border-radius: 8px;
+  background: var(--bg);
+  font-family: "Space Mono", monospace; font-size: 15px; font-weight: 700;
+  color: var(--text); text-align: center;
+  padding: 0 8px;
+  outline: none; transition: border-color .15s, background .15s;
+}
+.blank:focus { border-color: var(--dark); background: #fff; }
+.blank.correct { background: #D1FAE5; border-color: #059669; color: #064E3B; }
+.blank.wrong { background: #FEE2E2; border-color: #DC2626; color: #7F1D1D; }
+.blank:disabled { cursor: default; }
+
+/* Input de texto longo */
+.blank-text {
+  display: block; width: 100%;
+  border: 2px solid var(--primary); border-radius: 10px;
+  background: var(--bg);
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 600;
+  color: var(--text); padding: 10px 14px;
+  outline: none; margin-top: 8px; resize: none;
+  transition: border-color .15s, background .15s;
+}
+.blank-text:focus { border-color: var(--dark); background: #fff; }
+.blank-text.correct { background: #D1FAE5; border-color: #059669; color: #064E3B; }
+.blank-text.wrong { background: #FEE2E2; border-color: #DC2626; color: #7F1D1D; }
+.blank-text:disabled { cursor: default; }
+
+/* Feedback linha */
+.line-feedback {
+  font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 8px; margin-top: 6px; display: none;
+}
+.line-feedback.show { display: block; }
+.line-feedback.ok { background: #D1FAE5; color: #064E3B; }
+.line-feedback.err { background: #FEE2E2; color: #7F1D1D; }
+
+/* Botão verificar seção */
+.check-btn {
+  margin-top: 8px; background: var(--primary); color: #fff;
+  border: none; border-radius: 12px;
+  padding: 13px 28px; font-family: "Baloo 2", cursive;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.check-btn:hover { background: var(--dark); transform: translateY(-1px); }
+.check-btn:disabled { opacity: .5; cursor: default; transform: none; }
+
+/* Feedback de seção */
+.section-feedback {
+  margin-top: 16px; border-radius: 12px; padding: 14px 18px;
+  display: none; animation: fadeIn .25s ease;
+}
+.section-feedback.show { display: flex; align-items: flex-start; gap: 10px; }
+.section-feedback.all-ok { background: #D1FAE5; border: 2px solid #059669; }
+.section-feedback.partial { background: #FEF3C7; border: 2px solid #D97706; }
+.sf-icon { font-size: 20px; flex-shrink: 0; }
+.sf-text { font-size: 14px; font-weight: 600; line-height: 1.5; }
+.all-ok .sf-text { color: #064E3B; }
+.partial .sf-text { color: #78350F; }
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+
+/* Botão final */
+.finish-btn {
+  width: 100%; background: var(--dark); color: #fff;
+  border: none; border-radius: 12px;
+  padding: 16px; font-family: "Baloo 2", cursive;
+  font-size: 18px; font-weight: 800; cursor: pointer;
+  transition: background .15s; margin-top: 8px;
+}
+.finish-btn:hover { background: var(--primary); }
+
+/* Resultado */
+.result-card {
+  background: var(--card); border-radius: var(--radius); border: 2px solid var(--border);
+  padding: 40px 28px; text-align: center;
+  box-shadow: 0 4px 24px rgba(5,150,105,.1);
+  animation: fadeIn .4s ease;
+}
+.result-emoji { font-size: 64px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 22px; color: var(--dark); margin-bottom: 8px; }
+.result-score { font-size: 48px; font-weight: 900; color: var(--primary); margin-bottom: 4px; }
+.result-max { font-size: 16px; color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+.result-msg { font-size: 16px; font-weight: 600; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+.restart-btn {
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 12px;
+  padding: 15px 36px; font-family: "Baloo 2", cursive;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  transition: background .15s;
+}
+.restart-btn:hover { background: var(--dark); }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>🖩 Complete a Lacuna</h1>
+  <p>Múltiplos, Divisores e Critérios de Divisibilidade — 5º Ano</p>
+</div>
+
+<div class="container">
+  <div class="score-bar">
+    <div class="score-chip" id="score-display">⭐ 0 pts</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="prog-label">Complete as 3 seções</div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="all-sections">
+
+    <!-- SEÇÃO A: Múltiplos -->
+    <div class="section-card" id="sec-a">
+      <span class="section-badge">SEÇÃO A — Múltiplos</span>
+      <div class="section-title">Complete os conjuntos de múltiplos</div>
+
+      <div class="exercise">
+        <div class="ex-label">1. Complete M(3) = {0, 3, <span style="color:var(--muted)">___</span>, <span style="color:var(--muted)">___</span>, 12, <span style="color:var(--muted)">___</span>}</div>
+        <div class="ex-row">
+          <span class="ex-text">M(3) = {0, 3,</span>
+          <input class="blank" id="a1" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="a2" type="text" maxlength="4" placeholder="?">
+          <span class="ex-text">, 12,</span>
+          <input class="blank" id="a3" type="text" maxlength="4" placeholder="?">
+          <span class="ex-text">, …}</span>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-label">2. Complete M(7) = {0, 7, <span style="color:var(--muted)">___</span>, 21, <span style="color:var(--muted)">___</span>, <span style="color:var(--muted)">___</span>}</div>
+        <div class="ex-row">
+          <span class="ex-text">M(7) = {0, 7,</span>
+          <input class="blank" id="a4" type="text" maxlength="4" placeholder="?">
+          <span class="ex-text">, 21,</span>
+          <input class="blank" id="a5" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="a6" type="text" maxlength="4" placeholder="?">
+          <span class="ex-text">, …}</span>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-label">3. Complete a afirmação:</div>
+        <div class="ex-row">
+          <span class="ex-text">Zero é múltiplo de</span>
+          <input class="blank" id="a7" type="text" maxlength="20" placeholder="??" style="min-width:120px">
+          <span class="ex-text">número.</span>
+        </div>
+      </div>
+
+      <button class="check-btn" id="check-a" onclick="checkA()">Verificar Seção A</button>
+      <div class="section-feedback" id="fb-a">
+        <span class="sf-icon" id="fb-a-icon"></span>
+        <div class="sf-text" id="fb-a-text"></div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO B: Divisores -->
+    <div class="section-card" id="sec-b">
+      <span class="section-badge">SEÇÃO B — Divisores</span>
+      <div class="section-title">Complete os conjuntos de divisores</div>
+
+      <div class="exercise">
+        <div class="ex-label">4. Escreva D(24) — todos os divisores de 24 (números que dividem 24 com resto zero):</div>
+        <div class="ex-row">
+          <span class="ex-text">D(24) = {</span>
+          <input class="blank" id="b1" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="b2" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="b3" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="b4" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="b5" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="b6" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="b7" type="text" maxlength="4" placeholder="?">
+          <span class="ex-punct">,</span>
+          <input class="blank" id="b8" type="text" maxlength="4" placeholder="?">
+          <span class="ex-text">}</span>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-label">5. Complete a afirmação:</div>
+        <div class="ex-row">
+          <span class="ex-text">O conjunto dos divisores de um número é sempre</span>
+          <input class="blank" id="b9" type="text" maxlength="10" placeholder="??" style="min-width:80px">
+          <span class="ex-text">(finito ou infinito?).</span>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-label">6. Complete a afirmação:</div>
+        <div class="ex-row">
+          <span class="ex-text">Fator e divisor são</span>
+          <input class="blank" id="b10" type="text" maxlength="12" placeholder="??" style="min-width:100px">
+          <span class="ex-text">em matemática.</span>
+        </div>
+      </div>
+
+      <button class="check-btn" id="check-b" onclick="checkB()">Verificar Seção B</button>
+      <div class="section-feedback" id="fb-b">
+        <span class="sf-icon" id="fb-b-icon"></span>
+        <div class="sf-text" id="fb-b-text"></div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO C: Critérios -->
+    <div class="section-card" id="sec-c">
+      <span class="section-badge">SEÇÃO C — Critérios de Divisibilidade</span>
+      <div class="section-title">Complete as regras e aplique os critérios</div>
+
+      <div class="exercise">
+        <div class="ex-label">7. Um número é divisível por 9 quando…</div>
+        <textarea class="blank-text" id="c1" rows="2" placeholder="Escreva a regra do critério de divisibilidade por 9..."></textarea>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-label">8. O número 309 é divisível por 3 porque…</div>
+        <textarea class="blank-text" id="c2" rows="2" placeholder="Explique usando a soma dos algarismos..."></textarea>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-label">9. Para um número ser divisível por 6, ele deve ser divisível por</div>
+        <div class="ex-row">
+          <input class="blank" id="c3" type="text" maxlength="2" placeholder="?">
+          <span class="ex-text">e por</span>
+          <input class="blank" id="c4" type="text" maxlength="2" placeholder="?">
+          <span class="ex-text">ao mesmo tempo.</span>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-label">10. Complete: um número é divisível por 10 quando termina em</div>
+        <div class="ex-row">
+          <input class="blank" id="c5" type="text" maxlength="2" placeholder="?">
+          <span class="ex-text">.</span>
+        </div>
+      </div>
+
+      <button class="check-btn" id="check-c" onclick="checkC()">Verificar Seção C</button>
+      <div class="section-feedback" id="fb-c">
+        <span class="sf-icon" id="fb-c-icon"></span>
+        <div class="sf-text" id="fb-c-text"></div>
+      </div>
+    </div>
+
+    <button class="finish-btn hidden" id="finish-btn" onclick="showResult()">
+      🏁 Ver resultado final
+    </button>
+
+  </div>
+
+  <div id="result-area" class="hidden"></div>
+</div>
+
+<script>
+let sectionsDone = 0;
+let totalScore = 0;
+
+function norm(str) { return str.trim().toLowerCase().replace(/\s+/g, " "); }
+function isNum(inp, val) { return parseInt(inp.trim()) === val; }
+
+function markField(id, ok) {
+  const el = document.getElementById(id);
+  el.classList.remove("correct", "wrong");
+  el.classList.add(ok ? "correct" : "wrong");
+  el.disabled = true;
+}
+
+// ---- SEÇÃO A ----
+function checkA() {
+  document.getElementById("check-a").disabled = true;
+  let pts = 0;
+
+  const a1ok = isNum(document.getElementById("a1").value, 6);
+  const a2ok = isNum(document.getElementById("a2").value, 9);
+  const a3ok = isNum(document.getElementById("a3").value, 15);
+  const a4ok = isNum(document.getElementById("a4").value, 14);
+  const a5ok = isNum(document.getElementById("a5").value, 28);
+  const a6ok = isNum(document.getElementById("a6").value, 35);
+  const a7v = norm(document.getElementById("a7").value);
+  const a7ok = a7v === "qualquer" || a7v === "todo" || a7v === "qualquer" || a7v.includes("qualquer");
+
+  [["a1",a1ok],["a2",a2ok],["a3",a3ok],["a4",a4ok],["a5",a5ok],["a6",a6ok],["a7",a7ok]].forEach(([id,ok]) => {
+    markField(id, ok);
+    if (ok) pts++;
+  });
+
+  totalScore += pts;
+  document.getElementById("score-display").textContent = `⭐ ${totalScore} pts`;
+
+  const total = 7;
+  const fb = document.getElementById("fb-a");
+  if (pts === total) {
+    fb.className = "section-feedback show all-ok";
+    document.getElementById("fb-a-icon").textContent = "✓";
+    document.getElementById("fb-a-text").innerHTML = `Seção A perfeita! M(3) = {0, 3, <strong>6, 9</strong>, 12, <strong>15</strong>, …} e M(7) = {0, 7, <strong>14</strong>, 21, <strong>28, 35</strong>, …}. Lembrar: múltiplo de n = produto de n por qualquer número natural; o próximo múltiplo = termo anterior + n.`;
+  } else {
+    fb.className = "section-feedback show partial";
+    document.getElementById("fb-a-icon").textContent = "!";
+    document.getElementById("fb-a-text").innerHTML = `Você acertou ${pts}/${total}. M(3) = {0, 3, <strong>6, 9</strong>, 12, <strong>15</strong>, …} | M(7) = {0, 7, <strong>14</strong>, 21, <strong>28, 35</strong>, …}. Zero é múltiplo de <strong>qualquer</strong> número.`;
+  }
+
+  sectionsDone++;
+  updateProgress();
+}
+
+// ---- SEÇÃO B ----
+function checkB() {
+  document.getElementById("check-b").disabled = true;
+  // D(24) = {1, 2, 3, 4, 6, 8, 12, 24}
+  const d24 = [1, 2, 3, 4, 6, 8, 12, 24];
+  const ids = ["b1","b2","b3","b4","b5","b6","b7","b8"];
+  let pts = 0;
+
+  ids.forEach((id, i) => {
+    const ok = isNum(document.getElementById(id).value, d24[i]);
+    markField(id, ok);
+    if (ok) pts++;
+  });
+
+  const b9v = norm(document.getElementById("b9").value);
+  const b9ok = b9v === "finito" || b9v.includes("finito");
+  markField("b9", b9ok);
+  if (b9ok) pts++;
+
+  const b10v = norm(document.getElementById("b10").value);
+  const b10ok = b10v === "sinônimos" || b10v.includes("sin") || b10v.includes("iguais") || b10v.includes("mesmo");
+  markField("b10", b10ok);
+  if (b10ok) pts++;
+
+  totalScore += pts;
+  document.getElementById("score-display").textContent = `⭐ ${totalScore} pts`;
+
+  const total = 10;
+  const fb = document.getElementById("fb-b");
+  if (pts >= total - 1) {
+    fb.className = "section-feedback show all-ok";
+    document.getElementById("fb-b-icon").textContent = "✓";
+    document.getElementById("fb-b-text").innerHTML = `Seção B excelente! D(24) = {<strong>1, 2, 3, 4, 6, 8, 12, 24</strong>}. O conjunto dos divisores é sempre <strong>finito</strong>. Fator e divisor são <strong>sinônimos</strong> em matemática.`;
+  } else {
+    fb.className = "section-feedback show partial";
+    document.getElementById("fb-b-icon").textContent = "!";
+    document.getElementById("fb-b-text").innerHTML = `Você acertou ${pts}/${total}. D(24) = {<strong>1, 2, 3, 4, 6, 8, 12, 24</strong>} — divisor é o número que divide com <strong>resto zero</strong>. O conjunto de divisores é <strong>finito</strong>. Fator e divisor são <strong>sinônimos</strong> em matemática.`;
+  }
+
+  sectionsDone++;
+  updateProgress();
+}
+
+// ---- SEÇÃO C ----
+function checkC() {
+  document.getElementById("check-c").disabled = true;
+  let pts = 0;
+
+  // c1: divisibilidade por 9 = soma dos algarismos divisível por 9
+  const c1v = norm(document.getElementById("c1").value);
+  const c1ok = c1v.includes("soma") && c1v.includes("9");
+  document.getElementById("c1").classList.add(c1ok ? "correct" : "wrong");
+  document.getElementById("c1").disabled = true;
+  if (c1ok) pts++;
+
+  // c2: 309 divisível por 3 porque 3+0+9=12 divisível por 3
+  const c2v = norm(document.getElementById("c2").value);
+  const c2ok = (c2v.includes("soma") || c2v.includes("3+0+9") || c2v.includes("3 + 0 + 9")) && c2v.includes("3");
+  document.getElementById("c2").classList.add(c2ok ? "correct" : "wrong");
+  document.getElementById("c2").disabled = true;
+  if (c2ok) pts++;
+
+  const c3ok = norm(document.getElementById("c3").value) === "2";
+  const c4ok = norm(document.getElementById("c4").value) === "3";
+  const c5ok = norm(document.getElementById("c5").value) === "0";
+  [["c3",c3ok],["c4",c4ok],["c5",c5ok]].forEach(([id,ok]) => { markField(id, ok); if (ok) pts++; });
+
+  totalScore += pts;
+  document.getElementById("score-display").textContent = `⭐ ${totalScore} pts`;
+
+  const total = 5;
+  const fb = document.getElementById("fb-c");
+  if (pts >= total - 1) {
+    fb.className = "section-feedback show all-ok";
+    document.getElementById("fb-c-icon").textContent = "✓";
+    document.getElementById("fb-c-text").innerHTML = `Seção C perfeita! Por 9: <strong>a soma dos algarismos deve ser divisível por 9</strong>. 309: 3+0+9=12 ÷ 3 = 4 (exato) → divisível por 3 ✓. Por 6: divisível por <strong>2 E por 3</strong>. Por 10: termina em <strong>0</strong>.`;
+  } else {
+    fb.className = "section-feedback show partial";
+    document.getElementById("fb-c-icon").textContent = "!";
+    document.getElementById("fb-c-text").innerHTML = `Você acertou ${pts}/${total}. Por 9: <strong>soma dos algarismos divisível por 9</strong>. 309: 3+0+9=12, e 12÷3=4 (exato) → ÷ por 3 ✓. Por 6: precisa ser ÷ por <strong>2</strong> e por <strong>3</strong>. Por 10: termina em <strong>0</strong>.`;
+  }
+
+  sectionsDone++;
+  updateProgress();
+  document.getElementById("finish-btn").classList.remove("hidden");
+}
+
+function updateProgress() {
+  const pct = (sectionsDone / 3) * 100;
+  document.getElementById("prog-fill").style.width = pct + "%";
+  document.getElementById("prog-label").textContent = `${sectionsDone} de 3 seções concluídas`;
+}
+
+function showResult() {
+  document.getElementById("all-sections").classList.add("hidden");
+  const pct = (totalScore / 22) * 100; // 22 = máximo possível (7+10+5)
+  let emoji, msg;
+  if (pct >= 90) { emoji = "🏆"; msg = "Parabéns! Você dominou múltiplos, divisores e critérios com maestria!"; }
+  else if (pct >= 70) { emoji = "⭐"; msg = "Muito bem! Revise os pontos que deixou em branco e tente novamente!"; }
+  else if (pct >= 50) { emoji = "💪"; msg = "Bom esforço! Continue praticando os conceitos de divisor e múltiplo!"; }
+  else { emoji = "📖"; msg = "Revise o conteúdo com o Divi e tente preencher as lacunas de novo!"; }
+
+  document.getElementById("result-area").innerHTML = `
+    <div class="result-card">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-title">Resultado Final</div>
+      <div class="result-score">${totalScore}</div>
+      <div class="result-max">de até 22 pontos</div>
+      <div class="result-msg">${msg}</div>
+      <button class="restart-btn" onclick="location.reload()">🔄 Tentar novamente</button>
+    </div>
+  `;
+  document.getElementById("result-area").classList.remove("hidden");
+}
+</script>
+</body>
+</html>

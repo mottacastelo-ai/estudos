@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — mdc, mmc e Problemas</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Baloo 2", cursive;
+  background: var(--mat-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 40px;
+}
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px; transition: color .15s;
+}
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.main { max-width: 820px; margin: 0 auto; padding: 24px 16px 0; }
+
+/* Instruções */
+.instructions {
+  background: #fff; border: 2px solid var(--border); border-radius: 14px;
+  padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 12px;
+  align-items: flex-start;
+}
+.inst-icon { font-size: 22px; flex-shrink: 0; }
+.inst-text { font-size: 13px; font-weight: 700; color: var(--muted); line-height: 1.5; }
+.inst-text strong { color: var(--text); }
+
+/* Área do canvas */
+.canvas-wrap {
+  background: #fff; border: 2px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; position: relative; margin-bottom: 20px;
+  touch-action: none;
+}
+#mapCanvas {
+  display: block; width: 100%;
+  /* height set by JS */
+}
+
+/* Nós do mapa — sobrepostos ao canvas */
+.node {
+  position: absolute;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-family: "Baloo 2", cursive;
+  font-weight: 800;
+  text-align: center;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: box-shadow .15s, transform .1s;
+  line-height: 1.3;
+  z-index: 5;
+}
+.node:active { cursor: grabbing; }
+.node.dragging { box-shadow: 0 8px 24px rgba(0,0,0,.18); transform: scale(1.05); z-index: 20; }
+.node.center {
+  background: linear-gradient(135deg, #064E3B, #059669);
+  color: #fff; font-size: 15px;
+  border: 3px solid #34D399;
+  cursor: default;
+  pointer-events: none;
+}
+.node.branch {
+  background: #fff; color: var(--text);
+  border: 2px solid var(--border); font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.node.branch:hover { border-color: var(--mat); }
+
+/* Gabarito overlay */
+.node.gabarito-mdc { background: #D1FAE5; border-color: #34D399; color: #065F46; }
+.node.gabarito-mmc { background: #FEF3C7; border-color: #F59E0B; color: #78350F; }
+.node.gabarito-shared { background: #EDE9FE; border-color: #7C3AED; color: #4C1D95; }
+
+/* Linha de conexão no gabarito */
+.gab-line-mdc { stroke: #34D399; }
+.gab-line-mmc { stroke: #F59E0B; }
+.gab-line-shared { stroke: #7C3AED; }
+
+/* Legenda do gabarito */
+.legend {
+  display: none; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+}
+.legend.visible { display: flex; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; }
+.leg-dot { width: 14px; height: 14px; border-radius: 50%; }
+
+/* Botões de controle */
+.controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.btn-gab {
+  flex: 1; min-width: 130px; padding: 14px 18px; background: var(--mat); color: #fff;
+  border: none; border-radius: 12px; font-family: "Baloo 2", cursive;
+  font-size: 14px; font-weight: 800; cursor: pointer; transition: background .15s;
+}
+.btn-gab:hover { background: #047857; }
+.btn-reset {
+  padding: 14px 18px; background: #fff; color: var(--mat);
+  border: 2px solid var(--border); border-radius: 12px;
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all .15s;
+}
+.btn-reset:hover { border-color: var(--mat); background: var(--mat-bg); }
+
+/* Painel do gabarito */
+.gab-panel {
+  display: none; background: #fff; border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 24px; margin-top: 16px;
+}
+.gab-panel.visible { display: block; animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.gab-title { font-family: "Space Mono", monospace; font-size: 14px; font-weight: 700; color: var(--mat); margin-bottom: 16px; }
+.gab-section { margin-bottom: 16px; }
+.gab-section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 8px; }
+.gab-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.gab-chip {
+  padding: 6px 14px; border-radius: 99px; font-size: 13px; font-weight: 800;
+  border: 2px solid;
+}
+.gab-chip.mdc { background: #D1FAE5; border-color: #34D399; color: #065F46; }
+.gab-chip.mmc { background: #FEF3C7; border-color: #F59E0B; color: #78350F; }
+.gab-chip.shared { background: #EDE9FE; border-color: #7C3AED; color: #4C1D95; }
+.gab-chip.central { background: linear-gradient(135deg,#064E3B,#059669); color:#fff; border-color:#34D399; }
+.gab-arrow { font-size: 18px; margin: 0 4px; }
+
+/* Score */
+.score-row {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.score-box {
+  background: var(--mat-bg); border: 2px solid var(--border); border-radius: 12px;
+  padding: 10px 16px; font-family: "Space Mono", monospace;
+  font-size: 13px; font-weight: 700; color: var(--mat);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>📐🔢 Mapa Mental</h1>
+  <p>mdc, mmc e Problemas — 5º Ano</p>
+</div>
+
+<div class="main">
+
+  <div class="instructions">
+    <span class="inst-icon">👆</span>
+    <div class="inst-text">
+      <strong>Organize os conceitos!</strong> Arraste os nós para perto do conceito a que pertencem: 📐 <strong>mdc</strong> (verde), 🔢 <strong>mmc</strong> (amarelo) ou ambos (roxo). Depois clique em <strong>Ver Gabarito</strong> para conferir.
+    </div>
+  </div>
+
+  <!-- Legenda (aparece com gabarito) -->
+  <div class="legend" id="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#34D399"></div> Conectado ao mdc</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#F59E0B"></div> Conectado ao mmc</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#7C3AED"></div> Conectado a ambos</div>
+  </div>
+
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="mapCanvas"></canvas>
+    <!-- Nós injetados por JS -->
+  </div>
+
+  <div class="controls">
+    <button class="btn-gab" id="btnGab" onclick="toggleGabarito()">Ver Gabarito 👁</button>
+    <button class="btn-reset" onclick="resetMap()">🔄 Reposicionar</button>
+  </div>
+
+  <div class="gab-panel" id="gabPanel">
+    <div class="gab-title">Gabarito — Conexões corretas do Mapa Mental</div>
+
+    <div class="gab-section">
+      <div class="gab-section-title">📐 Nó central mdc (Máximo Divisor Comum)</div>
+      <div class="gab-chips">
+        <span class="gab-chip central">mdc e mmc</span>
+        <span class="gab-arrow">→</span>
+        <span class="gab-chip mdc">mdc</span>
+        <span class="gab-chip mdc">Fatores Comuns</span>
+        <span class="gab-chip mdc">Menores Expoentes</span>
+        <span class="gab-chip mdc">Problemas com mdc</span>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title">🔢 Nó central mmc (Mínimo Múltiplo Comum)</div>
+      <div class="gab-chips">
+        <span class="gab-chip central">mdc e mmc</span>
+        <span class="gab-arrow">→</span>
+        <span class="gab-chip mmc">mmc</span>
+        <span class="gab-chip mmc">Todos os Fatores</span>
+        <span class="gab-chip mmc">Maiores Expoentes</span>
+        <span class="gab-chip mmc">Problemas com mmc</span>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title">🟣 Conectado a ambos</div>
+      <div class="gab-chips">
+        <span class="gab-chip central">mdc e mmc</span>
+        <span class="gab-arrow">→</span>
+        <span class="gab-chip shared">Intersecção ∩</span>
+        <span class="gab-chip shared">Primos entre si (mdc=1)</span>
+        <span class="gab-chip shared">Fatores Primos</span>
+      </div>
+    </div>
+
+    <div class="gab-section">
+      <div class="gab-section-title">📖 O que significa cada conceito</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.8;">
+        • <strong>mdc</strong>: maior valor da intersecção ∩ dos conjuntos de <em>divisores</em><br>
+        • <strong>mmc</strong>: menor valor (≠0) da intersecção ∩ dos conjuntos de <em>múltiplos</em><br>
+        • <strong>Fatores Comuns</strong>: bases que aparecem em <em>todos</em> os números → usamos no mdc<br>
+        • <strong>Menores Expoentes</strong>: para mdc, pegar o menor expoente de cada base comum<br>
+        • <strong>Maiores Expoentes</strong>: para mmc, pegar o maior expoente de cada base<br>
+        • <strong>Todos os Fatores</strong>: mmc usa fatores comuns E não-comuns<br>
+        • <strong>Primos entre si</strong>: mdc=1 → mmc = produto dos números<br>
+        • <strong>Intersecção ∩</strong>: símbolo que indica o que é comum entre conjuntos
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── Definição dos nós ───────────────────────────────────────────────────────
+const nodeData = [
+  { id: 'center', label: 'mdc e mmc', type: 'center', w: 130, h: 56 },
+  { id: 'mdc',    label: 'mdc\n(Máx. Divisor Comum)', type: 'branch', group: 'mdc', w: 148, h: 52 },
+  { id: 'mmc',    label: 'mmc\n(Mín. Múltiplo Comum)', type: 'branch', group: 'mmc', w: 152, h: 52 },
+  { id: 'inters', label: 'Intersecção ∩', type: 'branch', group: 'shared', w: 136, h: 44 },
+  { id: 'fatcom', label: 'Fatores Comuns', type: 'branch', group: 'mdc', w: 130, h: 44 },
+  { id: 'menexp', label: 'Menores Expoentes\n(→ mdc)', type: 'branch', group: 'mdc', w: 148, h: 52 },
+  { id: 'todfat', label: 'Todos os Fatores\nPrimos', type: 'branch', group: 'mmc', w: 140, h: 52 },
+  { id: 'maiexp', label: 'Maiores Expoentes\n(→ mmc)', type: 'branch', group: 'mmc', w: 148, h: 52 },
+  { id: 'primos', label: 'Primos entre si\n(mdc = 1)', type: 'branch', group: 'shared', w: 136, h: 52 },
+  { id: 'probmdc', label: 'Problemas\ncom mdc', type: 'branch', group: 'mdc', w: 120, h: 52 },
+  { id: 'probmmc', label: 'Problemas\ncom mmc', type: 'branch', group: 'mmc', w: 120, h: 52 },
+];
+
+// Posições iniciais (embaralhadas — não revelam o gabarito)
+const initialPositions = {
+  center:  { x: 0.50, y: 0.47 },
+  mdc:     { x: 0.15, y: 0.08 },
+  mmc:     { x: 0.72, y: 0.08 },
+  inters:  { x: 0.50, y: 0.08 },
+  fatcom:  { x: 0.10, y: 0.38 },
+  menexp:  { x: 0.10, y: 0.62 },
+  todfat:  { x: 0.76, y: 0.38 },
+  maiexp:  { x: 0.76, y: 0.62 },
+  primos:  { x: 0.50, y: 0.82 },
+  probmdc: { x: 0.24, y: 0.82 },
+  probmmc: { x: 0.72, y: 0.82 },
+};
+
+// Conexões do gabarito
+const gabConnections = [
+  { from: 'center', to: 'mdc',     group: 'mdc' },
+  { from: 'center', to: 'mmc',     group: 'mmc' },
+  { from: 'center', to: 'inters',  group: 'shared' },
+  { from: 'mdc',    to: 'fatcom',  group: 'mdc' },
+  { from: 'mdc',    to: 'menexp',  group: 'mdc' },
+  { from: 'mdc',    to: 'probmdc', group: 'mdc' },
+  { from: 'mmc',    to: 'todfat',  group: 'mmc' },
+  { from: 'mmc',    to: 'maiexp',  group: 'mmc' },
+  { from: 'mmc',    to: 'probmmc', group: 'mmc' },
+  { from: 'center', to: 'primos',  group: 'shared' },
+];
+
+// ─── Estado ────────────────────────────────────────────────────────────────
+let nodes = {};
+let gabVisible = false;
+let canvasW = 0, canvasH = 0;
+const CANVAS_ASPECT = 1.55;
+
+// ─── Init ──────────────────────────────────────────────────────────────────
+function init() {
+  const wrap = document.getElementById('canvasWrap');
+  canvasW = wrap.clientWidth || 700;
+  canvasH = Math.round(canvasW / CANVAS_ASPECT);
+  const canvas = document.getElementById('mapCanvas');
+  canvas.width = canvasW;
+  canvas.height = canvasH;
+  canvas.style.height = canvasH + 'px';
+  wrap.style.height = canvasH + 'px';
+
+  // Remove existing node elements
+  wrap.querySelectorAll('.node').forEach(el => el.remove());
+
+  // Create node elements
+  nodeData.forEach(nd => {
+    const el = document.createElement('div');
+    el.className = 'node ' + nd.type;
+    el.id = 'node-' + nd.id;
+    el.innerHTML = nd.label.replace(/\n/g, '<br>');
+    el.style.width = nd.w + 'px';
+    const pos = initialPositions[nd.id];
+    const x = pos.x * canvasW - nd.w / 2;
+    const y = pos.y * canvasH - (nd.h || 48) / 2;
+    el.style.left = clampX(x, nd.w) + 'px';
+    el.style.top  = clampY(y, nd.h || 48) + 'px';
+    nodes[nd.id] = { el, x: parseFloat(el.style.left), y: parseFloat(el.style.top), w: nd.w, h: nd.h || 48, id: nd.id, group: nd.group };
+
+    if (nd.type !== 'center') {
+      makeDraggable(el, nd.id);
+    }
+    wrap.appendChild(el);
+  });
+
+  drawLines();
+}
+
+function clampX(x, w) { return Math.max(4, Math.min(canvasW - w - 4, x)); }
+function clampY(y, h) { return Math.max(4, Math.min(canvasH - h - 4, y)); }
+
+// ─── Drag ──────────────────────────────────────────────────────────────────
+function makeDraggable(el, id) {
+  let startX, startY, startEl, isDragging = false;
+
+  function onStart(ex, ey) {
+    isDragging = true;
+    startX = ex - nodes[id].x;
+    startY = ey - nodes[id].y;
+    el.classList.add('dragging');
+  }
+  function onMove(ex, ey) {
+    if (!isDragging) return;
+    const nx = clampX(ex - startX, nodes[id].w);
+    const ny = clampY(ey - startY, nodes[id].h);
+    nodes[id].x = nx;
+    nodes[id].y = ny;
+    el.style.left = nx + 'px';
+    el.style.top  = ny + 'px';
+    drawLines();
+  }
+  function onEnd() {
+    isDragging = false;
+    el.classList.remove('dragging');
+  }
+
+  // Mouse
+  el.addEventListener('mousedown', e => {
+    e.preventDefault();
+    onStart(e.clientX - document.getElementById('canvasWrap').getBoundingClientRect().left,
+            e.clientY - document.getElementById('canvasWrap').getBoundingClientRect().top);
+  });
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    onMove(e.clientX - document.getElementById('canvasWrap').getBoundingClientRect().left,
+           e.clientY - document.getElementById('canvasWrap').getBoundingClientRect().top);
+  });
+  document.addEventListener('mouseup', onEnd);
+
+  // Touch
+  el.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    onStart(t.clientX - document.getElementById('canvasWrap').getBoundingClientRect().left,
+            t.clientY - document.getElementById('canvasWrap').getBoundingClientRect().top);
+  }, { passive: false });
+  document.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    onMove(t.clientX - document.getElementById('canvasWrap').getBoundingClientRect().left,
+           t.clientY - document.getElementById('canvasWrap').getBoundingClientRect().top);
+  }, { passive: false });
+  document.addEventListener('touchend', onEnd);
+}
+
+// ─── Draw ──────────────────────────────────────────────────────────────────
+function getCenter(id) {
+  const n = nodes[id];
+  return { x: n.x + n.w / 2, y: n.y + n.h / 2 };
+}
+
+function drawLines() {
+  const canvas = document.getElementById('mapCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvasW, canvasH);
+
+  if (gabVisible) {
+    // Draw gabarito lines
+    gabConnections.forEach(conn => {
+      const a = getCenter(conn.from);
+      const b = getCenter(conn.to);
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      if (conn.group === 'mdc')    ctx.strokeStyle = '#34D399';
+      else if (conn.group === 'mmc') ctx.strokeStyle = '#F59E0B';
+      else ctx.strokeStyle = '#7C3AED';
+      ctx.stroke();
+    });
+
+    // Update node classes
+    nodeData.forEach(nd => {
+      if (nd.type === 'center') return;
+      const el = document.getElementById('node-' + nd.id);
+      el.classList.remove('gabarito-mdc','gabarito-mmc','gabarito-shared');
+      if (nd.group === 'mdc')    el.classList.add('gabarito-mdc');
+      else if (nd.group === 'mmc') el.classList.add('gabarito-mmc');
+      else if (nd.group === 'shared') el.classList.add('gabarito-shared');
+    });
+  } else {
+    // Draw neutral lines from center to all branch nodes
+    const center = getCenter('center');
+    nodeData.forEach(nd => {
+      if (nd.type === 'center') return;
+      const b = getCenter(nd.id);
+      ctx.beginPath();
+      ctx.moveTo(center.x, center.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#D1FAE5';
+      ctx.setLineDash([6, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+    // Remove gabarito classes
+    nodeData.forEach(nd => {
+      if (nd.type === 'center') return;
+      const el = document.getElementById('node-' + nd.id);
+      el.classList.remove('gabarito-mdc','gabarito-mmc','gabarito-shared');
+    });
+  }
+}
+
+// ─── Gabarito ──────────────────────────────────────────────────────────────
+function toggleGabarito() {
+  gabVisible = !gabVisible;
+  document.getElementById('btnGab').textContent = gabVisible ? 'Ocultar Gabarito 🙈' : 'Ver Gabarito 👁';
+  document.getElementById('gabPanel').classList.toggle('visible', gabVisible);
+  document.getElementById('legend').classList.toggle('visible', gabVisible);
+  if (gabVisible) animateToGabarito();
+  else drawLines();
+}
+
+// Anima nós para posições do gabarito
+const gabPositions = {
+  center:  { x: 0.50, y: 0.47 },
+  mdc:     { x: 0.22, y: 0.20 },
+  mmc:     { x: 0.78, y: 0.20 },
+  inters:  { x: 0.50, y: 0.12 },
+  fatcom:  { x: 0.12, y: 0.45 },
+  menexp:  { x: 0.15, y: 0.68 },
+  todfat:  { x: 0.85, y: 0.45 },
+  maiexp:  { x: 0.82, y: 0.68 },
+  primos:  { x: 0.50, y: 0.88 },
+  probmdc: { x: 0.25, y: 0.88 },
+  probmmc: { x: 0.75, y: 0.88 },
+};
+
+function animateToGabarito() {
+  const duration = 600;
+  const start = performance.now();
+  const startPos = {};
+  nodeData.forEach(nd => {
+    startPos[nd.id] = { x: nodes[nd.id].x, y: nodes[nd.id].y };
+  });
+
+  function frame(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+    nodeData.forEach(nd => {
+      const gp = gabPositions[nd.id];
+      const tx = clampX(gp.x * canvasW - nd.w / 2, nd.w);
+      const ty = clampY(gp.y * canvasH - (nd.h || 48) / 2, nd.h || 48);
+      const nx = startPos[nd.id].x + (tx - startPos[nd.id].x) * ease;
+      const ny = startPos[nd.id].y + (ty - startPos[nd.id].y) * ease;
+      nodes[nd.id].x = nx;
+      nodes[nd.id].y = ny;
+      document.getElementById('node-' + nd.id).style.left = nx + 'px';
+      document.getElementById('node-' + nd.id).style.top  = ny + 'px';
+    });
+    drawLines();
+    if (t < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function resetMap() {
+  gabVisible = false;
+  document.getElementById('btnGab').textContent = 'Ver Gabarito 👁';
+  document.getElementById('gabPanel').classList.remove('visible');
+  document.getElementById('legend').classList.remove('visible');
+  init();
+}
+
+// ─── Responsive resize ─────────────────────────────────────────────────────
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(init, 150);
+});
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

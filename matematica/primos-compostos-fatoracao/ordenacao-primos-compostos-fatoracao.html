@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordene a Fatoração — Números Primos, Compostos e Fatoração</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #059669;
+    --light: #34D399;
+    --bg: #ECFDF5;
+    --dark: #064E3B;
+    --border: #D1FAE5;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --card: #fff;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Baloo 2', cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .header {
+    background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+    color: white; padding: 28px 28px 24px;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+    text-decoration: none; margin-bottom: 14px; transition: color .2s;
+  }
+  .back-btn:hover { color: #fff; }
+  .header h1 { font-family: 'Space Mono', monospace; font-size: 22px; margin-bottom: 4px; }
+  .header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  /* Progresso de rodadas */
+  .rounds-track {
+    display: flex; gap: 8px; margin-bottom: 24px; justify-content: center;
+  }
+  .round-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2.5px solid var(--border);
+    background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+    color: var(--muted); transition: all .3s;
+  }
+  .round-dot.active { border-color: var(--primary); color: var(--primary); background: var(--bg); }
+  .round-dot.done { background: var(--primary); border-color: var(--primary); color: white; }
+
+  /* Enunciado */
+  .q-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 28px 24px; border: 1.5px solid var(--border);
+    box-shadow: 0 4px 24px rgba(5,150,105,.08); margin-bottom: 20px;
+  }
+  .round-label {
+    font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    color: var(--primary); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px;
+  }
+  .q-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .q-subtitle { font-size: 14px; color: var(--muted); font-weight: 600; }
+
+  /* Instruções */
+  .hint {
+    background: #F0FDF4; border: 1.5px dashed var(--light);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 13px; color: var(--dark); font-weight: 600; margin-bottom: 20px;
+  }
+
+  /* Zona de destino */
+  .drop-zone {
+    min-height: 56px; border-radius: 12px;
+    border: 2px dashed var(--border);
+    background: #F9FAFB;
+    padding: 8px; margin-bottom: 6px;
+    display: flex; align-items: center;
+    transition: background .2s, border-color .2s;
+    position: relative;
+  }
+  .drop-zone.drag-over { background: #D1FAE5; border-color: var(--primary); }
+  .drop-zone .slot-num {
+    font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
+    color: var(--muted); position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .drop-zone.has-item .slot-num { display: none; }
+  .drop-zone.correct-slot { background: #D1FAE5; border-color: #059669; }
+  .drop-zone.wrong-slot { background: #FEE2E2; border-color: #EF4444; }
+
+  /* Cards arrastáveis */
+  .drag-pool {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    padding: 16px; background: var(--card);
+    border-radius: 14px; border: 1.5px solid var(--border);
+    margin-bottom: 20px; min-height: 70px;
+  }
+  .drag-card {
+    background: var(--dark); color: white;
+    border-radius: 10px; padding: 10px 16px;
+    font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700;
+    cursor: grab; user-select: none;
+    transition: transform .15s, box-shadow .15s, opacity .2s;
+    touch-action: none;
+  }
+  .drag-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(5,150,105,.25); }
+  .drag-card.dragging { opacity: .4; cursor: grabbing; }
+  .drag-card.placed { background: #059669; }
+  .drag-card.result-label { background: var(--primary); font-size: 15px; padding: 10px 20px; }
+
+  /* Slots de destino com label */
+  .slots-list { margin-bottom: 20px; }
+  .slot-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .slot-index {
+    font-family: 'Space Mono', monospace; font-weight: 700;
+    font-size: 13px; color: var(--muted); width: 24px; flex-shrink: 0;
+    text-align: right;
+  }
+
+  /* Botão verificar */
+  .check-btn {
+    width: 100%; padding: 14px;
+    background: var(--primary); color: white; border: none;
+    border-radius: 12px; font-family: 'Baloo 2', cursive;
+    font-size: 16px; font-weight: 800; cursor: pointer;
+    transition: background .2s, transform .15s; margin-bottom: 12px;
+  }
+  .check-btn:hover { background: var(--dark); transform: translateY(-1px); }
+  .check-btn:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+
+  /* Feedback de rodada */
+  .round-feedback {
+    border-radius: 14px; padding: 16px 20px;
+    font-size: 15px; font-weight: 700; text-align: center;
+    display: none; margin-bottom: 16px; animation: popIn .3s ease;
+  }
+  .round-feedback.perfect { background: #D1FAE5; color: var(--dark); border: 2px solid #6EE7B7; }
+  .round-feedback.partial { background: #FEF3C7; color: #78350F; border: 2px solid #FCD34D; }
+
+  /* Representação fatorada */
+  .factored-result {
+    background: var(--dark); color: white;
+    border-radius: 12px; padding: 16px 20px;
+    font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700;
+    text-align: center; margin-bottom: 16px;
+    display: none; animation: fadeIn .4s ease;
+  }
+  .factored-label { font-size: 11px; opacity: .7; margin-bottom: 6px; letter-spacing: .1em; }
+
+  /* Próxima rodada */
+  .next-round-btn {
+    width: 100%; padding: 14px;
+    background: var(--primary); color: white; border: none;
+    border-radius: 12px; font-family: 'Baloo 2', cursive;
+    font-size: 16px; font-weight: 800; cursor: pointer;
+    display: none; margin-bottom: 12px;
+    transition: background .2s;
+  }
+  .next-round-btn:hover { background: var(--dark); }
+
+  /* Resultado final */
+  .final-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 40px 28px; text-align: center;
+    border: 1.5px solid var(--border);
+    box-shadow: 0 4px 24px rgba(5,150,105,.1);
+    display: none; animation: popIn .4s ease;
+  }
+  .final-emoji { font-size: 64px; margin-bottom: 16px; }
+  .final-score { font-family: 'Space Mono', monospace; font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .final-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .final-msg { font-size: 15px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+  .replay-btn {
+    background: var(--primary); color: white; border: none;
+    border-radius: 12px; padding: 14px 32px;
+    font-family: 'Baloo 2', cursive; font-size: 16px; font-weight: 800;
+    cursor: pointer; margin-bottom: 12px; transition: background .2s;
+  }
+  .replay-btn:hover { background: var(--dark); }
+  .portal-link {
+    display: block; color: var(--primary); text-decoration: none;
+    font-weight: 700; font-size: 14px; margin-top: 8px;
+  }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes popIn { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:scale(1); } }
+
+  @media (max-width: 480px) {
+    .drag-card { font-size: 12px; padding: 8px 12px; }
+    .q-title { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>🔍🔢 Ordene a Fatoração</h1>
+  <p>Números Primos, Compostos e Fatoração — 5º Ano</p>
+</div>
+
+<div class="container">
+  <div class="rounds-track">
+    <div class="round-dot active" id="dot-0">1</div>
+    <div class="round-dot" id="dot-1">2</div>
+    <div class="round-dot" id="dot-2">3</div>
+  </div>
+
+  <div id="game-area">
+    <div class="q-card">
+      <div class="round-label" id="round-label">Rodada 1 de 3</div>
+      <div class="q-title" id="q-title">Fatorar o número 90</div>
+      <div class="q-subtitle" id="q-subtitle">Coloque os passos da fatoração na ordem correta</div>
+    </div>
+
+    <div class="hint">💡 Dica: Na fatoração, dividimos pelo menor primo divisor repetidamente até o quociente ser 1.</div>
+
+    <div class="drag-pool" id="drag-pool"></div>
+
+    <div class="slots-list" id="slots-list"></div>
+
+    <div class="round-feedback" id="round-feedback"></div>
+    <div class="factored-result" id="factored-result">
+      <div class="factored-label">REPRESENTAÇÃO FATORADA</div>
+      <div id="factored-text"></div>
+    </div>
+
+    <button class="check-btn" id="check-btn" onclick="checkOrder()">Verificar ordem</button>
+    <button class="next-round-btn" id="next-round-btn" onclick="nextRound()">Próxima rodada →</button>
+  </div>
+
+  <div class="final-card" id="final-card">
+    <div class="final-emoji" id="final-emoji"></div>
+    <div class="final-score" id="final-score"></div>
+    <div class="final-title" id="final-title"></div>
+    <div class="final-msg" id="final-msg"></div>
+    <button class="replay-btn" onclick="restart()">Jogar novamente</button>
+    <a href="../../index.html" class="portal-link">← Voltar ao Portal</a>
+  </div>
+</div>
+
+<script>
+const rounds = [
+  {
+    number: 90,
+    steps: [
+      "90 ÷ 2 = 45",
+      "45 ÷ 3 = 15",
+      "15 ÷ 3 = 5",
+      "5 ÷ 5 = 1"
+    ],
+    result: "90 = 2 × 3² × 5",
+    explanation: "Dividimos por 2 (único par primo), depois por 3 duas vezes e por 5. Os expoentes aparecem quando o mesmo fator se repete: 3 × 3 = 3²."
+  },
+  {
+    number: 60,
+    steps: [
+      "60 ÷ 2 = 30",
+      "30 ÷ 2 = 15",
+      "15 ÷ 3 = 5",
+      "5 ÷ 5 = 1"
+    ],
+    result: "60 = 2² × 3 × 5",
+    explanation: "60 divide por 2 duas vezes (60→30→15), depois por 3 e por 5. Resultado: 2² × 3 × 5."
+  },
+  {
+    number: 120,
+    steps: [
+      "120 ÷ 2 = 60",
+      "60 ÷ 2 = 30",
+      "30 ÷ 2 = 15",
+      "15 ÷ 3 = 5",
+      "5 ÷ 5 = 1"
+    ],
+    result: "120 = 2³ × 3 × 5",
+    explanation: "120 divide por 2 três vezes (120→60→30→15), depois por 3 e por 5. Resultado: 2³ × 3 × 5."
+  }
+];
+
+let currentRound = 0;
+let scores = [0, 0, 0];
+let slots = [];
+let dragSrc = null;
+let dragSrcParent = null;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderRound() {
+  const r = rounds[currentRound];
+  document.getElementById('round-label').textContent = `Rodada ${currentRound + 1} de ${rounds.length}`;
+  document.getElementById('q-title').textContent = `Fatorar o número ${r.number}`;
+  document.getElementById('round-feedback').style.display = 'none';
+  document.getElementById('factored-result').style.display = 'none';
+  document.getElementById('next-round-btn').style.display = 'none';
+  document.getElementById('check-btn').style.display = 'block';
+  document.getElementById('check-btn').disabled = false;
+  document.getElementById('check-btn').textContent = 'Verificar ordem';
+
+  // Atualizar dots
+  for (let i = 0; i < rounds.length; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.className = 'round-dot';
+    if (i < currentRound) dot.classList.add('done');
+    else if (i === currentRound) dot.classList.add('active');
+  }
+
+  slots = new Array(r.steps.length).fill(null);
+  const shuffled = shuffle(r.steps);
+
+  // Pool
+  const pool = document.getElementById('drag-pool');
+  pool.innerHTML = '';
+  shuffled.forEach((step, i) => {
+    const card = createDragCard(step, `pool-${i}`);
+    pool.appendChild(card);
+  });
+
+  // Slots
+  const slotsList = document.getElementById('slots-list');
+  slotsList.innerHTML = '';
+  r.steps.forEach((_, i) => {
+    const row = document.createElement('div');
+    row.className = 'slot-row';
+    row.innerHTML = `<div class="slot-index">${i + 1}.</div>`;
+    const zone = document.createElement('div');
+    zone.className = 'drop-zone';
+    zone.dataset.idx = i;
+    zone.innerHTML = `<span class="slot-num">Arraste aqui</span>`;
+    setupDropZone(zone);
+    row.appendChild(zone);
+    slotsList.appendChild(row);
+  });
+}
+
+function createDragCard(text, id) {
+  const card = document.createElement('div');
+  card.className = 'drag-card';
+  card.id = id;
+  card.textContent = text;
+  card.draggable = true;
+  card.dataset.value = text;
+
+  card.addEventListener('dragstart', e => {
+    dragSrc = card;
+    dragSrcParent = card.parentElement;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => card.classList.add('dragging'), 0);
+  });
+  card.addEventListener('dragend', () => card.classList.remove('dragging'));
+
+  // Touch
+  let touchStartX, touchStartY;
+  card.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    touchStartX = t.clientX; touchStartY = t.clientY;
+    dragSrc = card; dragSrcParent = card.parentElement;
+  }, {passive: true});
+  card.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    card.style.position = 'fixed';
+    card.style.zIndex = 9999;
+    card.style.left = (t.clientX - 60) + 'px';
+    card.style.top = (t.clientY - 20) + 'px';
+    card.style.opacity = '.7';
+  }, {passive: false});
+  card.addEventListener('touchend', e => {
+    card.style.position = '';
+    card.style.zIndex = '';
+    card.style.left = '';
+    card.style.top = '';
+    card.style.opacity = '';
+    const t = e.changedTouches[0];
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const zone = el && el.closest('.drop-zone');
+    if (zone) dropOnZone(zone);
+    dragSrc = null;
+  });
+
+  return card;
+}
+
+function setupDropZone(zone) {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    dropOnZone(zone);
+  });
+}
+
+function dropOnZone(zone) {
+  if (!dragSrc) return;
+  const idx = parseInt(zone.dataset.idx);
+
+  // Se já tem card, devolve ao pool
+  if (zone.children.length > 0 && !zone.querySelector('.slot-num')) {
+    const existing = zone.querySelector('.drag-card');
+    if (existing) {
+      existing.remove();
+      document.getElementById('drag-pool').appendChild(createDragCard(existing.dataset.value, 'pool-' + Date.now()));
+    }
+  }
+
+  // Remover do pai atual
+  dragSrc.parentElement.removeChild(dragSrc);
+  dragSrc.style.position = '';
+
+  // Se o pai era um slot, limpar esse slot
+  if (dragSrcParent && dragSrcParent.classList.contains('drop-zone')) {
+    dragSrcParent.classList.remove('has-item');
+    const num = document.createElement('span');
+    num.className = 'slot-num';
+    num.textContent = 'Arraste aqui';
+    dragSrcParent.appendChild(num);
+  }
+
+  // Colocar no novo slot
+  zone.innerHTML = '';
+  zone.classList.add('has-item');
+  zone.appendChild(dragSrc);
+  slots[idx] = dragSrc.dataset.value;
+  dragSrc = null;
+}
+
+function checkOrder() {
+  const r = rounds[currentRound];
+  const slotZones = document.querySelectorAll('.drop-zone');
+  let correct = 0;
+  let allFilled = true;
+
+  slotZones.forEach((zone, i) => {
+    const card = zone.querySelector('.drag-card');
+    if (!card) { allFilled = false; return; }
+    if (card.dataset.value === r.steps[i]) {
+      zone.classList.add('correct-slot');
+      card.style.background = '#059669';
+      correct++;
+    } else {
+      zone.classList.add('wrong-slot');
+      card.style.background = '#EF4444';
+    }
+  });
+
+  if (!allFilled) {
+    const fb = document.getElementById('round-feedback');
+    fb.className = 'round-feedback partial';
+    fb.textContent = '⚠️ Preencha todos os espaços antes de verificar!';
+    fb.style.display = 'block';
+    return;
+  }
+
+  scores[currentRound] = correct;
+  const pct = correct / r.steps.length;
+
+  const fb = document.getElementById('round-feedback');
+  if (pct === 1) {
+    fb.className = 'round-feedback perfect';
+    fb.innerHTML = `🏆 Perfeito! Todos os ${r.steps.length} passos na ordem certa!`;
+  } else {
+    fb.className = 'round-feedback partial';
+    fb.innerHTML = `⚡ ${correct} de ${r.steps.length} passos corretos. Veja a ordem certa abaixo.`;
+  }
+  fb.style.display = 'block';
+
+  // Mostrar resultado fatorado
+  const fr = document.getElementById('factored-result');
+  document.getElementById('factored-text').textContent = r.result;
+  fr.style.display = 'block';
+
+  document.getElementById('check-btn').style.display = 'none';
+
+  const nextBtn = document.getElementById('next-round-btn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = currentRound < rounds.length - 1 ? 'Próxima rodada →' : 'Ver resultado final →';
+}
+
+function nextRound() {
+  currentRound++;
+  if (currentRound >= rounds.length) {
+    showFinal();
+  } else {
+    renderRound();
+  }
+}
+
+function showFinal() {
+  document.getElementById('game-area').style.display = 'none';
+  const fc = document.getElementById('final-card');
+  fc.style.display = 'block';
+
+  const total = scores.reduce((a, b) => a + b, 0);
+  const maxTotal = rounds.reduce((a, r) => a + r.steps.length, 0);
+  const pct = total / maxTotal;
+
+  let emoji, title, msg;
+  if (pct === 1) {
+    emoji = '🏆'; title = 'Fatoração perfeita!';
+    msg = 'Você domina o processo de decomposição em fatores primos. O Detetive Primo está orgulhoso!';
+  } else if (pct >= .7) {
+    emoji = '🌟'; title = 'Muito bem!';
+    msg = 'Você entende bem o processo de fatoração. Lembre-se: sempre divida pelo menor primo divisor!';
+  } else {
+    emoji = '💪'; title = 'Continue praticando!';
+    msg = 'Revise: na fatoração dividimos pelo menor primo divisor, sucessivamente, até o quociente ser 1.';
+  }
+
+  document.getElementById('final-emoji').textContent = emoji;
+  document.getElementById('final-score').textContent = `${total}/${maxTotal}`;
+  document.getElementById('final-title').textContent = title;
+  document.getElementById('final-msg').textContent = msg;
+
+  for (let i = 0; i < rounds.length; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.className = 'round-dot done';
+  }
+}
+
+function restart() {
+  currentRound = 0; scores = [0, 0, 0];
+  document.getElementById('final-card').style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+  renderRound();
+}
+
+renderRound();
+</script>
+</body>
+</html>

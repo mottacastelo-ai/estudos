@@ -1,274 +1,193 @@
-# Contexto do Projeto Educacional - Portal Interativo de Aprendizagem
+# Contexto do Projeto Educacional — Portal Interativo de Aprendizagem
 
-## Visão Geral
-
-Portal web educacional construído como uma aplicação de página única (SPA) destinada ao aprendizado do 5º ano, fundamentado em metodologia de aprendizagem ativa. O projeto combina gamificação, narrativas transmídia e práticas pedagógicas baseadas em pesquisa científica para criar experiências de aprendizagem progressivas.
-
-**Objetivo principal:** Suportar o desenvolvimento acadêmico do filho (5º ano) através de atividades interativas fundamentadas em princípios de aprendizagem ativa.
-
-**Potencial futuro:** Adaptação comercial da plataforma para público mais amplo.
+**Última atualização:** 2026-05-22 (baseado no estado atual do repositório GitHub)
 
 ---
 
-## Fundamentação Teórica
+## Visão Geral
 
-O projeto repousa sobre três pilares científicos comprovados:
+Portal web educacional construído como aplicação de página única (SPA) para o aprendizado do André (5º ano). Fundamentado em metodologia de aprendizagem ativa (Roediger & Karpicke, 2006; Mayer, 2009) e estruturado na Pirâmide de Aprendizagem de Glasser: cada tema começa com uma HQ, avança por atividades de retrieval practice e culmina em tarefas de criação.
 
-### 1. **Prática Retrieval (Recuperação de Memória)**
-- **Referência:** Roediger & Karpicke (2006) - "The Power of Testing Memory: Basic Research and Implications for Educational Practice"
-- **Aplicação:** Cada tema inclui atividades de recuperação progressiva, desde reconhecimento até free recall
-- **Racional:** Estudantes que praticam recuperação consolidam conhecimento de forma mais durável do que aqueles que apenas releem conteúdo
-
-### 2. **Teoria Cognitiva da Aprendizagem Multimídia**
-- **Referência:** Mayer (2009) - "Multimedia Learning"
-- **Aplicação:** Integração de imagens (HQs), texto narrativo e atividades interativas no mesmo ambiente
-- **Racional:** Combinação estratégica de modalidades reduz carga cognitiva e melhora retenção
-
-### 3. **Pirâmide de Aprendizagem de Glasser**
-- **Aplicação:** Progressão de atividades do simples (leitura/observação passiva via HQ) até complexo (criação/produção)
-- **Sequência típica:**
-  - 10% - Leitura/Observação passiva (HQ de introdução)
-  - 20% - Audição (narrativa integrada)
-  - 30% - Observação visual + atividades
-  - 50% - Discussão/Interpretação (atividades variadas)
-  - 70% - Prática/Aplicação (retrieval practice)
-  - 90% - Ensino a outros / Criação (atividades de síntese)
+- **Repositório:** [github.com/mottacastelo-ai/estudos](https://github.com/mottacastelo-ai/estudos)
+- **Pasta local:** `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos`
+- **Potencial futuro:** Adaptação comercial para público mais amplo
 
 ---
 
 ## Infraestrutura Técnica
 
 ### Hospedagem & Deploy
-- **Repositório & Hospedagem:** GitHub (github.com/mottacastelo-ai/estudos)
-- **Workflow de Deploy:**
-  1. Editar arquivos localmente (`C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos`)
-  2. Commit e push via GitHub Desktop (manual)
-  3. GitHub publica automaticamente via GitHub Pages
-- **URL ao vivo:** Configurada via GitHub Pages
+- **Repositório & Hospedagem:** GitHub Pages
+- **Workflow de deploy:**
+  1. Editar arquivos localmente
+  2. Commit + push via GitHub Desktop (**manual**, ~30 segundos)
+  3. GitHub Pages publica automaticamente após o push
+- **⚠️ Nota:** o processo **não é inteiramente automático** — commit e push são passos manuais obrigatórios
+
+> O `README.md` no repositório ainda menciona Netlify, mas o deploy é feito exclusivamente via **GitHub Pages**.
 
 ### Estrutura de Arquivos
 
+Os arquivos estão organizados em **subdiretórios por disciplina** (mudança em relação ao estado inicial, quando tudo ficava na raiz):
+
 ```
 estudos/
-├── index.html                        # Aplicação SPA principal
-├── README.md                         # Convenções e guia de desenvolvimento
-├── referencias/                      # Documentação e referências do projeto
-│   ├── CONTEXTO_PROJETO.md
-│   ├── temas-existentes.md
-│   ├── atividades-por-disciplina.md
-│   └── index-template-snippets.md
-├── portugues/                        # Disciplina → Tema
+├── index.html                  ← SPA principal
+├── README.md                   ← documentação (desatualizada em relação ao estado real)
+├── canonicas_ref.html          ← referência visual de personagens canônicos
+├── versao canonica Bia.png
+├── versao canonica Bia com fundo.png
+├── versao canonica prepo.png
+├── portugues/
 │   ├── preposicoes/
 │   ├── texto-teatral/
 │   ├── tempos-verbais/
 │   ├── letra-l/
 │   ├── variacao-linguistica/
 │   ├── pontuacao/
-│   ├── texto-instrucional/
-│   └── entonacao/
+│   ├── entonacao/
+│   └── texto-instrucional/
 ├── matematica/
-│   └── tabuada/
+│   ├── tabuada/
+│   ├── multiplicacao-divisao/
+│   ├── corpos-redondos-planificacao/
+│   └── poliedros-prismas-piramides/
 ├── ciencias/
-│   ├── lixo-que-produzimos/
 │   ├── caminho-do-lixo/
+│   ├── lixo-que-produzimos/
 │   └── tecnologia-agropecuaria/
 ├── historia/
-│   ├── marcos-memoria/
-│   ├── calendarios-povos/
+│   ├── pais-de-contrastes/
 │   ├── diversidade-cultural/
-│   └── pais-de-contrastes/
-└── [disc-folder]/[slug]/             # Padrão geral: cada tema em sua subpasta
-    ├── hq-[slug].png                 # HQ montada (páginas unidas verticalmente)
-    ├── hq-[slug]-prompt.md           # Prompt usado para gerar a HQ
-    ├── quiz-[slug].html              # Atividade principal
-    └── mapa-mental-[slug].html       # Atividade de mapa mental (quando aplicável)
+│   ├── marcos-memoria/
+│   ├── memoria-negra-imigrantes/
+│   └── calendarios-povos/
+└── referencias/
+    └── (arquivos de referência do projeto: temas-existentes.md, etc.)
 ```
 
-**Nota:** imagens canônicas de personagens (`versao canonica *.png`) permanecem na raiz do projeto para que a skill hq-generator as localize via `os.listdir()`.
-
-### Versionamento
-- **Ferramenta:** GitHub Desktop
-- **Fluxo:** Trabalho local → Commit → Push → Auto-deploy GitHub Pages
-- **Nota importante:** Commit e push são passos manuais que levam ~30 segundos; o deploy via GitHub Pages é automático
+Dentro de cada subdiretório de tema ficam: HQ (`.png`), atividades (`.html`) e prompt HQ (`.md`).
 
 ---
 
-## Organização Pedagógica
+## Estado Atual — Disciplinas e Temas
 
-### Estrutura por Disciplina
+### 📝 Português — 8 temas
 
-#### **Português (8 temas completados)** — pasta: `portugues/`
+| Tema | Slug | Personagem(ns) principal(is) |
+|---|---|---|
+| Preposições | `preposicoes` | Prepo (robô roxo) |
+| Texto Teatral | `texto-teatral` | Prof. Teatrão |
+| Tempos Verbais | `tempos-verbais` | Verbão |
+| Letra ℓ e U | `letra-l` | Elinho |
+| Variação Linguística | `variacao-linguistica` | Zé e Das Graças |
+| Pontuação Expressiva | `pontuacao` | ?, !, . (personagens pontuação) |
+| Entonação | `entonacao` | Toni (onda sonora animada) |
+| Texto Instrucional | `texto-instrucional` | — |
 
-1. **Preposições** (`preposicoes/`)
-   - Personagem principal: Prepo (robô roxo mascote)
-   - Arco: HQ → atividades de reconhecimento → mapeamento visual
-   - Foco: Aprendizagem visual e prática de posicionamento
+### 🔢 Matemática — 4 temas
 
-2. **Texto Teatral** (`texto-teatral/`)
-   - Novo personagem: Prof. Teatrão (professor dramático com lenço colorido)
-   - Arco: HQ teatral → identificação de elementos dramáticos → criação de diálogos
-   - Foco: Estrutura narrativa e expressão
+| Tema | Slug |
+|---|---|
+| Tabuada | `tabuada` |
+| Multiplicação e Divisão | `multiplicacao-divisao` |
+| Corpos Redondos e Planificação | `corpos-redondos-planificacao` |
+| Poliedros: Prismas e Pirâmides | `poliedros-prismas-piramides` |
 
-3. **Tempos Verbais** (`tempos-verbais/`)
-   - Novo personagem: Verbão (letra animada com 3 versões de roupa: passado/presente/futuro)
-   - Arco: HQ com viagem temporal → conjugação → produção de narrativas em tempos diferentes
-   - Foco: Flexibilidade verbal e consciência temporal
+### 🔬 Ciências — 3 temas
 
-4. **Letra ℓ e U** (`letra-l/`)
-   - Novo personagem: Elinho (letra animada estilo cowboy/surfista)
-   - Arco: HQ → atividades de discriminação visual → escrita criativa com foco no som
-   - Foco: Fonética e discriminação visual-auditiva
+| Tema | Slug |
+|---|---|
+| Caminho do Lixo | `caminho-do-lixo` |
+| O Lixo que Produzimos | `lixo-que-produzimos` |
+| Tecnologia Agropecuária | `tecnologia-agropecuaria` |
 
-5. **Variação Linguística** (`variacao-linguistica/`)
-   - Novos personagens: Zé e Das Graças (fantoches)
-   - Arco: HQ com diálogos regionais → identificação de variantes → criação de diálogos inclusivos
-   - Foco: Conscientização sociolinguística
+### 📜 História — 5 temas
 
-6. **Pontuação** (`pontuacao/`)
-   - Novos personagens: Interrogação (? azul, curioso), Exclamação (! vermelho-laranja, musculoso), Ponto (. cinza, calmo)
-   - Arco: HQ com personagens pontuação → interpretação de sentimentos → uso criativo em contextos
-   - Foco: Pontuação como instrumento expressivo, não apenas gramatical
+| Tema | Slug |
+|---|---|
+| País de Contrastes | `pais-de-contrastes` |
+| Diversidade Cultural | `diversidade-cultural` |
+| Marcos e Memória | `marcos-memoria` |
+| Memória Negra e Imigrantes | `memoria-negra-imigrantes` |
+| Calendários dos Povos | `calendarios-povos` |
 
-7. **Texto Instrucional** (`texto-instrucional/`)
-   - Foco: Identificação de estrutura e linguagem de textos instrucionais
-
-8. **Entonação** (`entonacao/`)
-   - Foco: Prosódia e leitura expressiva
-
-#### **Matemática (1 tema completado)** — pasta: `matematica/`
-
-1. **Tabuada** (`tabuada/`)
-   - Arco: HQ → reconhecimento de padrões → fluência em retrieval → criação de jogos próprios
-   - Foco: Automaticidade combinada com compreensão conceitual
-
-#### **Ciências (3 temas completados)** — pasta: `ciencias/`
-
-1. **Lixo que Produzimos** (`lixo-que-produzimos/`)
-   - Foco: Tipos de resíduos, consumo consciente e separação de lixo
-
-2. **Caminho do Lixo** (`caminho-do-lixo/`)
-   - Foco: Destinação final dos resíduos, reciclagem e impacto ambiental
-
-3. **Tecnologia Agropecuária** (`tecnologia-agropecuaria/`)
-   - Foco: Uso de tecnologia na produção agrícola e pecuária brasileira
-
-#### **História (4 temas completados)** — pasta: `historia/`
-
-1. **Marcos da Memória** (`marcos-memoria/`)
-   - Foco: Lugares e objetos como registros da memória coletiva e individual
-
-2. **Calendários dos Povos** (`calendarios-povos/`)
-   - Foco: Diferentes formas de medir e organizar o tempo em culturas diversas
-
-3. **Diversidade Cultural** (`diversidade-cultural/`)
-   - Foco: Pluralidade cultural brasileira e identidade nacional
-
-4. **País de Contrastes** (`pais-de-contrastes/`)
-   - Foco: Desigualdades regionais e sociais no Brasil
+**Total atual: 4 disciplinas · 20 temas**
 
 ---
 
-## Padrões de Design
+## Personagens Recorrentes das HQs
 
-### Continuidade Narrativa
-- **Prepo** aparece em múltiplos temas, proporcionando coesão narrativa
-- **Bia** (menina 11 anos, cabelos pretos cacheados, uniforme azul) é a protagonista frequente
-- Cada novo tema introduz novo personagem, mantendo interesse narrativo
-- Todos os personagens dialogam com o aprendiz, criando ilusão de interação social
+| Personagem | Descrição |
+|---|---|
+| **Prepo** | Robô roxo — mascote do portal; aparece em múltiplos temas |
+| **Bia** | Menina de 11 anos, cabelo cacheado preto, uniforme azul; protagonista frequente |
+| **Prof. Teatrão** | Professor dramático com cachecol colorido (Texto Teatral) |
+| **Verbão** | Letra animada com 3 versões de roupa: passado/presente/futuro (Tempos Verbais) |
+| **Elinho** | Letra ℓ animada, versões cowboy e surfista (Letra ℓ e U) |
+| **Zé e Das Graças** | Fantoches para variação linguística (Variação Linguística) |
+| **?, !, .** | Pontuações animadas: ? azul/curioso, ! vermelho-laranja/musculoso, . cinza/calmo |
+| **Toni** | Onda sonora animada (Entonação) |
 
-### Paleta de Cores por Disciplina
-Documentada em `README.md`:
-- **Português:** Tons quentes (roxo, laranja, vermelho para personagens; variações em atividades)
-- **Matemática:** Tons frios (azul, verde para estrutura; acentos amarelos para destaque)
-- Consistência visual facilita navegação mental entre temas
-
-### Variação de Tipos de Atividade
-**Princípio crítico:** Cada tema usa tipos de atividade diferentes para evitar repetição pedagógica e manter engajamento.
-
-Exemplos de tipos já implementados:
-- Reconhecimento múltipla escolha
-- Arrastar e soltar (drag-and-drop)
-- Mapeamento visual
-- Preenchimento de lacunas
-- Criação livre de conteúdo
-- Ordenação
-- Pareamento de conceitos
-- Jogo em tempo real
+Cada novo tema pode introduzir um personagem adicional que seja metáfora visual do conteúdo.
 
 ---
 
-## Fluxo de Desenvolvimento para Novos Temas
+## Paleta de Cores por Disciplina
 
-### 1. Geração de Prompt HQ (Comic Strip)
-- Criar arquivo `.md` com descrição detalhada do cenário, personagens, mensagem pedagógica
-- Incluir referências de personagens existentes ou novos
-- Especificar tom (lúdico, dramático, investigativo, etc.)
-
-### 2. Design de Atividades (Retrieval Practice → Creation)
-- Primeiro: atividades de reconhecimento (prática retrieval básica)
-- Intermediário: aplicação em contextos variados
-- Final: síntese e criação pelo aprendiz
-
-### 3. Implementação Técnica
-- Adicionar estrutura HTML no `index.html`
-- Integrar com sidebar de navegação
-- Aplicar paleta de cores da disciplina
-- Garantir responsividade mobile
-
-### 4. Deploy
-- Commit + Push via GitHub Desktop
-- GitHub Pages publica automaticamente
-- Teste em navegador
+| Disciplina | Código CSS | Cor primária | Cor clara | Bg |
+|---|---|---|---|---|
+| Português | `port` | `#7C3AED` | `#A78BFA` | `#F3F0FF` |
+| Matemática | `mat` | `#059669` | `#34D399` | `#ECFDF5` |
+| Ciências | `cien` | `#0284C7` | `#38BDF8` | `#F0F9FF` |
+| História | `hist` | `#B45309` | `#F59E0B` | `#FFFBEB` |
+| Geografia | `geo` | `#15803D` | `#4ADE80` | `#F0FDF4` |
 
 ---
 
-## Convenções de Nomenclatura
+## Fundamentação Pedagógica
 
-Conforme `README.md`:
-- **Temas:** kebab-case em IDs HTML, título completo em labels
-- **Arquivos:** snake_case para assets (hq_preposicoes.png, atividade_tabuada_01.js)
-- **Cores:** Variáveis CSS nomeadas por disciplina (--cor-português-primária, --cor-matemática-secundária)
+| Pilar | Referência | Aplicação |
+|---|---|---|
+| Retrieval practice | Roediger & Karpicke (2006) | Atividades de recuperação progressiva em cada tema |
+| Aprendizagem multimídia | Mayer (2009) | Integração de HQs, texto e atividades interativas |
+| Pirâmide de Glasser | — | Progressão HQ → retrieval → aplicação → criação |
+| Spaced repetition | — | Sistema Leitner nos flashcards da tabuada |
+| Gamificação | Plass, Homer & Kinzer (2015) | Pontuação, medalhas e feedback imediato |
 
----
-
-## Workflow Preferido de Entrega
-
-**Formato:** ZIP com arquivos novos/alterados (não projeto completo)
-
-Quando adicionar novo tema:
-- Incluir arquivo `.md` com prompt HQ
-- Incluir código HTML da seção
-- Incluir assets (imagens, SVGs)
-- Incluir lógica de atividades (CSS + JavaScript)
+**Sequência obrigatória por tema:** prompt HQ → geração das imagens (Léo no ChatGPT) → colagem → atividades HTML → atualização do `index.html`
 
 ---
 
-## Próximas Prioridades
+## Convenção de Nomenclatura
 
-### Curto Prazo
-- Novos temas em Português conforme currículo avança (ex.: Adjetivos, Verbos Transitivos/Intransitivos, Concordância)
-- Novos temas em Matemática (ex.: Frações, Geometria, Problemas de Múltiplas Etapas)
+```
+Arquivos de atividade:  [tipo]-[slug-do-tema].html
+Arquivo HQ:             hq-[slug-do-tema].png
+Prompt HQ:              hq-[slug-do-tema]-prompt.md
 
-### Médio Prazo
-- Implementação de sistema de progresso (tracking de atividades completadas)
-- Feedback adaptativo baseado em performance
-- Sistema de recompensas gamificadas (badges, pontos)
-
-### Longo Prazo
-- Exploração de comercialização para público mais amplo
-- Possível integração com LMS educacionais
-- Adaptação para outras séries e disciplinas
+Tipos reconhecidos: quiz / complete-lacuna / caca-erro / ordenacao / criador /
+classificador / transformador / flashcards / treino / batalha / domino /
+missao / frases / mapa-mental
+```
 
 ---
 
 ## Princípios Reitores
 
-1. **Fundamentação científica:** Toda prática pedagógica deve estar ancorada em pesquisa validada
-2. **Variedade:** Diferentes tipos de atividade mantêm engajamento e evitam fadiga cognitiva
-3. **Progressão clara:** HQ → Retrieval → Aplicação → Criação
-4. **Narrativa continua:** Personagens e história facilitam imersão e transfer de aprendizagem
-5. **Qualidade sobre quantidade:** Melhor ter 6 temas bem construídos do que 12 superficiais
-6. **Iteração:** Feedback do aprendiz informa refinamento contínuo
+1. **Termos técnicos do livro são obrigatórios** — usar o nome exato do livro (ex.: "pretérito perfeito", não só "passado"). O André precisa reconhecer o termo na prova.
+2. **Proibido introduzir conteúdo fora do escopo das fotos** — nenhum conceito que não esteja nas fotos enviadas pode aparecer nas atividades.
+3. **Variedade de tipos de atividade** — nenhum tipo deve se repetir entre temas da mesma disciplina.
+4. **Qualidade sobre quantidade** — preferir temas bem construídos a muitos temas superficiais.
+5. **Narrativa contínua** — personagens recorrentes facilitam imersão e transferência de aprendizagem.
+
+---
+
+## Workflow de Entrega (Cowork)
+
+- **Cowork** edita `index.html` diretamente e salva todos os arquivos na pasta da disciplina correspondente (`portugues/`, `matematica/`, etc.) — **sem subpastas adicionais dentro do tema, sem ZIPs**
+- O arquivo `hq-[slug].png` **não é colocado pelo Cowork** — Léo o copia manualmente para a pasta do tema após baixar da colagem
+- Fallback Claude.ai: ZIP com `index.html` completo já atualizado + todos os arquivos de atividade
 
 ---
 
@@ -276,8 +195,4 @@ Quando adicionar novo tema:
 
 - **Responsável:** Léo Motta
 - **Repositório:** github.com/mottacastelo-ai/estudos
-- **Pasta local:** C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos
-
----
-
-**Última atualização:** 11 de Maio de 2026 — Reorganização para estrutura por disciplina/tema; adicionadas seções de Ciências e História.
+- **Pasta local:** `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos`

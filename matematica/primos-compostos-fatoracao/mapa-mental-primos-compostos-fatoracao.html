@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Números Primos, Compostos e Fatoração</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #059669;
+    --light: #34D399;
+    --bg: #ECFDF5;
+    --dark: #064E3B;
+    --border: #D1FAE5;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --card: #fff;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Baloo 2', cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .header {
+    background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+    color: white; padding: 28px 28px 24px;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+    text-decoration: none; margin-bottom: 14px; transition: color .2s;
+  }
+  .back-btn:hover { color: #fff; }
+  .header h1 { font-family: 'Space Mono', monospace; font-size: 22px; margin-bottom: 4px; }
+  .header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+  .toolbar {
+    display: flex; gap: 10px; padding: 14px 16px;
+    background: var(--card); border-bottom: 1.5px solid var(--border);
+    flex-wrap: wrap; align-items: center;
+  }
+  .toolbar-btn {
+    padding: 8px 18px; border-radius: 10px; border: 2px solid var(--border);
+    background: var(--bg); font-family: 'Baloo 2', cursive;
+    font-size: 13px; font-weight: 800; cursor: pointer; color: var(--dark);
+    transition: all .18s;
+  }
+  .toolbar-btn:hover { border-color: var(--primary); background: #D1FAE5; }
+  .toolbar-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
+  .toolbar-btn.primary:hover { background: var(--dark); }
+  .toolbar-hint {
+    font-size: 12px; color: var(--muted); font-weight: 600;
+    flex: 1; text-align: right; min-width: 160px;
+  }
+
+  /* Canvas area */
+  .map-container {
+    position: relative; width: 100%; overflow: hidden;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle, #A7F3D0 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  #map-svg {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; pointer-events: none; z-index: 1;
+  }
+
+  /* Nós */
+  .node {
+    position: absolute; border-radius: 14px;
+    padding: 10px 14px; cursor: grab;
+    user-select: none; touch-action: none;
+    font-weight: 700; font-size: 13px;
+    text-align: center; line-height: 1.35;
+    z-index: 10; transition: box-shadow .15s, transform .1s;
+    border: 2px solid transparent;
+    min-width: 110px; max-width: 160px;
+  }
+  .node:hover { transform: scale(1.04); }
+  .node.dragging { cursor: grabbing; box-shadow: 0 12px 36px rgba(0,0,0,.18) !important; z-index: 20; }
+
+  .node-central {
+    background: var(--dark); color: white;
+    border-color: var(--light);
+    font-family: 'Space Mono', monospace; font-size: 13px;
+    font-weight: 700; box-shadow: 0 4px 20px rgba(5,150,105,.35);
+    padding: 14px 18px; min-width: 150px;
+  }
+  .node-cat {
+    background: var(--primary); color: white;
+    border-color: var(--light);
+    box-shadow: 0 3px 12px rgba(5,150,105,.25);
+    font-size: 13px;
+  }
+  .node-leaf {
+    background: var(--card); color: var(--dark);
+    border-color: var(--border);
+    box-shadow: 0 2px 8px rgba(5,150,105,.1);
+    font-size: 12px;
+  }
+  .node-special {
+    background: #FEF3C7; color: #78350F;
+    border-color: #FCD34D;
+    box-shadow: 0 2px 8px rgba(245,158,11,.15);
+    font-size: 12px;
+  }
+
+  /* Gabarito overlay */
+  .gabarito-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.55);
+    z-index: 100; display: none; align-items: flex-start;
+    justify-content: center; padding: 20px 16px; overflow-y: auto;
+  }
+  .gabarito-box {
+    background: var(--card); border-radius: 20px;
+    padding: 32px 24px; max-width: 540px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    animation: popIn .3s ease;
+    margin: auto;
+  }
+  .gabarito-title {
+    font-family: 'Space Mono', monospace; font-size: 18px;
+    font-weight: 700; color: var(--dark); margin-bottom: 4px;
+  }
+  .gabarito-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .gabarito-tree { display: flex; flex-direction: column; gap: 6px; }
+  .g-branch {
+    display: flex; gap: 8px; align-items: flex-start;
+    padding: 10px 14px; border-radius: 12px;
+    background: var(--bg); border: 1.5px solid var(--border);
+  }
+  .g-icon { font-size: 18px; flex-shrink: 0; }
+  .g-content {}
+  .g-label { font-weight: 800; font-size: 14px; color: var(--dark); }
+  .g-desc { font-size: 13px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+  .g-children { margin-top: 8px; padding-left: 16px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .g-chip {
+    background: var(--dark); color: white;
+    border-radius: 99px; padding: 3px 12px;
+    font-size: 12px; font-weight: 700;
+    font-family: 'Space Mono', monospace;
+  }
+  .g-chip.leaf { background: var(--primary); }
+  .g-chip.special { background: #F59E0B; color: white; }
+  .gabarito-close {
+    width: 100%; margin-top: 20px; padding: 12px;
+    background: var(--primary); color: white; border: none;
+    border-radius: 12px; font-family: 'Baloo 2', cursive;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+    transition: background .2s;
+  }
+  .gabarito-close:hover { background: var(--dark); }
+
+  @keyframes popIn { from { opacity:0; transform: scale(.92) translateY(16px); } to { opacity:1; transform: none; } }
+
+  @media (max-width: 600px) {
+    .node { font-size: 11px; min-width: 90px; max-width: 130px; padding: 8px 10px; }
+    .node-central { font-size: 11px; min-width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>🔍🔢 Mapa Mental</h1>
+  <p>Números Primos, Compostos e Fatoração — 5º Ano</p>
+</div>
+
+<div class="toolbar">
+  <button class="toolbar-btn" onclick="resetPositions()">↺ Reorganizar</button>
+  <button class="toolbar-btn primary" onclick="showGabarito()">Ver Gabarito</button>
+  <div class="toolbar-hint">Arraste os nós para montar seu mapa</div>
+</div>
+
+<div class="map-container" id="map-container">
+  <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  <!-- Nós inseridos via JS -->
+</div>
+
+<!-- Gabarito -->
+<div class="gabarito-overlay" id="gabarito-overlay" onclick="hideGabarito(event)">
+  <div class="gabarito-box">
+    <div class="gabarito-title">Gabarito — Mapa Mental</div>
+    <div class="gabarito-sub">Estrutura completa do tema com conceitos e conexões</div>
+    <div class="gabarito-tree">
+
+      <div class="g-branch">
+        <div class="g-icon">🔢</div>
+        <div class="g-content">
+          <div class="g-label">Número Primo</div>
+          <div class="g-desc">Número natural maior que 1 com exatamente 2 divisores: 1 e ele mesmo.</div>
+          <div class="g-children">
+            <span class="g-chip leaf">2, 3, 5, 7, 11…</span>
+            <span class="g-chip special">Único par primo: 2</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="g-branch">
+        <div class="g-icon">🔩</div>
+        <div class="g-content">
+          <div class="g-label">Número Composto</div>
+          <div class="g-desc">Número natural com mais de 2 divisores — sempre pode ser decomposto em fatores primos.</div>
+          <div class="g-children">
+            <span class="g-chip leaf">4, 6, 8, 9, 10…</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="g-branch">
+        <div class="g-icon">⚠️</div>
+        <div class="g-content">
+          <div class="g-label">O número 1</div>
+          <div class="g-desc">NÃO é primo nem composto — tem apenas 1 divisor (ele mesmo).</div>
+        </div>
+      </div>
+
+      <div class="g-branch">
+        <div class="g-icon">🤝</div>
+        <div class="g-content">
+          <div class="g-label">Números Primos Entre Si</div>
+          <div class="g-desc">Dois números que têm apenas 1 como divisor comum (mdc = 1). Ex: 8 e 25.</div>
+          <div class="g-children">
+            <span class="g-chip leaf">Naturais consecutivos são sempre primos entre si</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="g-branch">
+        <div class="g-icon">🏺</div>
+        <div class="g-content">
+          <div class="g-label">Crivo de Eratóstenes</div>
+          <div class="g-desc">Método de "peneira" criado por Eratóstenes (273–192 a.C.) para encontrar todos os primos até 100.</div>
+        </div>
+      </div>
+
+      <div class="g-branch">
+        <div class="g-icon">🔣</div>
+        <div class="g-content">
+          <div class="g-label">Representação Fatorada</div>
+          <div class="g-desc">Todo número composto como produto de fatores primos. Fatores repetidos usam expoentes.</div>
+          <div class="g-children">
+            <span class="g-chip leaf">90 = 2 × 3² × 5</span>
+            <span class="g-chip leaf">400 = 2⁴ × 5²</span>
+            <span class="g-chip leaf">2000 = 2⁴ × 5³</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="g-branch">
+        <div class="g-icon">📐</div>
+        <div class="g-content">
+          <div class="g-label">Expoentes na Fatoração</div>
+          <div class="g-desc">Quando um fator primo se repete, usamos expoentes na representação fatorada. Ex: 3 × 3 = 3².</div>
+        </div>
+      </div>
+
+      <div class="g-branch">
+        <div class="g-icon">📋</div>
+        <div class="g-content">
+          <div class="g-label">Determinação dos Divisores</div>
+          <div class="g-desc">A partir da representação fatorada é possível encontrar todos os divisores sistematicamente.</div>
+          <div class="g-children">
+            <span class="g-chip leaf">D(90) = {1,2,3,5,6,9,10,15,18,30,45,90}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <button class="gabarito-close" onclick="hideGabarito()">Fechar Gabarito</button>
+  </div>
+</div>
+
+<script>
+// ========== DEFINIÇÃO DOS NÓS ==========
+const nodes = [
+  { id: 'central', label: 'Números Primos\ne Compostos', type: 'central', connects: [] },
+  { id: 'primo',     label: 'Número Primo\n(2 divisores)', type: 'cat',     connects: ['central'] },
+  { id: 'composto',  label: 'Número Composto\n(> 2 divisores)', type: 'cat', connects: ['central'] },
+  { id: 'um',        label: 'O número 1\n(nem primo\nnem composto)', type: 'special', connects: ['central'] },
+  { id: 'par',       label: 'Único par primo: 2', type: 'leaf', connects: ['primo'] },
+  { id: 'exemplos',  label: '2, 3, 5, 7, 11,\n13, 17, 19…', type: 'leaf', connects: ['primo'] },
+  { id: 'primos-si', label: 'Primos entre si\n(mdc = 1)', type: 'cat', connects: ['central'] },
+  { id: 'consecutivos', label: 'Naturais consecutivos\nsão sempre\nprimos entre si', type: 'leaf', connects: ['primos-si'] },
+  { id: 'crivo',     label: 'Crivo de\nEratóstenes', type: 'cat', connects: ['central'] },
+  { id: 'fatoracao', label: 'Representação\nFatorada', type: 'cat', connects: ['composto'] },
+  { id: 'expoentes', label: 'Expoentes\nna fatoração', type: 'leaf', connects: ['fatoracao'] },
+  { id: 'ex90',      label: '90 = 2 × 3² × 5', type: 'leaf', connects: ['fatoracao'] },
+  { id: 'divisores', label: 'Determinação\ndos Divisores', type: 'cat', connects: ['fatoracao'] },
+  { id: 'd90',       label: 'D(90): 12\nelementos', type: 'leaf', connects: ['divisores'] },
+];
+
+// ========== POSIÇÕES INICIAIS (layout radial) ==========
+// Calculadas dinamicamente após montar o container
+function getDefaultPositions(W, H) {
+  const cx = W / 2;
+  const cy = H / 2;
+  const r1 = Math.min(W, H) * 0.28;
+  const r2 = Math.min(W, H) * 0.46;
+
+  return {
+    central:      { x: cx - 75, y: cy - 30 },
+    primo:        { x: cx - r1 * 1.1 - 60, y: cy - r1 * 0.3 - 20 },
+    composto:     { x: cx + r1 * 0.6,       y: cy - r1 * 0.9 - 20 },
+    um:           { x: cx + r1 * 0.3,       y: cy + r1 * 0.9 },
+    primos_si:    { x: cx - r1 * 0.4 - 60,  y: cy + r1 * 0.9 },
+    crivo:        { x: cx - r1 * 1.1 - 50,  y: cy + r1 * 0.5 },
+    par:          { x: cx - r2 * 1.1 - 50,  y: cy - r2 * 0.6 - 10 },
+    exemplos:     { x: cx - r2 * 1.2 - 50,  y: cy + r2 * 0.1 },
+    consecutivos: { x: cx - r2 * 0.6 - 60,  y: cy + r2 * 0.95 },
+    fatoracao:    { x: cx + r1 * 1.1,        y: cy - r1 * 0.1 - 20 },
+    expoentes:    { x: cx + r2 * 1.05,       y: cy - r2 * 0.55 },
+    ex90:         { x: cx + r2 * 1.1,        y: cy + r2 * 0.1 },
+    divisores:    { x: cx + r2 * 0.8,        y: cy + r2 * 0.7 },
+    d90:          { x: cx + r2 * 1.0,        y: cy + r2 * 1.0 },
+    'primos-si':  { x: cx - r1 * 0.4 - 60,  y: cy + r1 * 0.9 },
+  };
+}
+
+// ========== ESTADO ==========
+let positions = {};
+let dragging = null;
+let dragOffX = 0, dragOffY = 0;
+const nodeEls = {};
+const MAP_HEIGHT = 620;
+
+// ========== RENDER ==========
+function buildMap() {
+  const container = document.getElementById('map-container');
+  container.style.height = MAP_HEIGHT + 'px';
+  container.innerHTML = '<svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>';
+
+  const W = container.offsetWidth || 700;
+  const defs = getDefaultPositions(W, MAP_HEIGHT);
+
+  nodes.forEach(n => {
+    const key = n.id.replace(/-/g, '_');
+    const def = defs[n.id] || defs[key] || { x: W / 2, y: MAP_HEIGHT / 2 };
+    if (!positions[n.id]) positions[n.id] = { ...def };
+  });
+
+  nodes.forEach(n => {
+    const el = document.createElement('div');
+    el.className = `node node-${n.type}`;
+    el.id = `node-${n.id}`;
+    el.textContent = n.label;
+    el.style.left = positions[n.id].x + 'px';
+    el.style.top  = positions[n.id].y + 'px';
+
+    // Mouse drag
+    el.addEventListener('mousedown', e => startDrag(e, n.id));
+    // Touch drag
+    el.addEventListener('touchstart', e => startTouchDrag(e, n.id), { passive: false });
+
+    container.appendChild(el);
+    nodeEls[n.id] = el;
+  });
+
+  drawConnections();
+}
+
+function drawConnections() {
+  const svg = document.getElementById('map-svg');
+  if (!svg) return;
+  svg.innerHTML = '';
+
+  // Definir gradiente e marcador de seta
+  svg.innerHTML = `
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#34D399" />
+      </marker>
+    </defs>`;
+
+  nodes.forEach(n => {
+    n.connects.forEach(targetId => {
+      const src = getCenterOf(n.id);
+      const tgt = getCenterOf(targetId);
+      if (!src || !tgt) return;
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', src.x);
+      line.setAttribute('y1', src.y);
+      line.setAttribute('x2', tgt.x);
+      line.setAttribute('y2', tgt.y);
+      line.setAttribute('stroke', n.type === 'leaf' || n.type === 'special' ? '#A7F3D0' : '#34D399');
+      line.setAttribute('stroke-width', n.id === 'central' ? '3' : '2');
+      line.setAttribute('stroke-dasharray', n.type === 'leaf' ? '5,4' : 'none');
+      line.setAttribute('opacity', '0.8');
+      line.setAttribute('marker-end', 'url(#arrow)');
+      svg.appendChild(line);
+    });
+  });
+}
+
+function getCenterOf(id) {
+  const el = nodeEls[id];
+  const pos = positions[id];
+  if (!el || !pos) return null;
+  return {
+    x: pos.x + el.offsetWidth / 2,
+    y: pos.y + el.offsetHeight / 2
+  };
+}
+
+// ========== DRAG (Mouse) ==========
+function startDrag(e, id) {
+  e.preventDefault();
+  dragging = id;
+  const el = nodeEls[id];
+  el.classList.add('dragging');
+  dragOffX = e.clientX - positions[id].x;
+  dragOffY = e.clientY - positions[id].y;
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', stopDrag);
+}
+
+function onMouseMove(e) {
+  if (!dragging) return;
+  const container = document.getElementById('map-container');
+  const rect = container.getBoundingClientRect();
+  const el = nodeEls[dragging];
+  const nx = Math.max(0, Math.min(e.clientX - dragOffX, container.offsetWidth - el.offsetWidth));
+  const ny = Math.max(0, Math.min(e.clientY - dragOffY, MAP_HEIGHT - el.offsetHeight));
+  positions[dragging].x = nx;
+  positions[dragging].y = ny;
+  el.style.left = nx + 'px';
+  el.style.top  = ny + 'px';
+  drawConnections();
+}
+
+function stopDrag() {
+  if (!dragging) return;
+  nodeEls[dragging].classList.remove('dragging');
+  dragging = null;
+  document.removeEventListener('mousemove', onMouseMove);
+  document.removeEventListener('mouseup', stopDrag);
+}
+
+// ========== DRAG (Touch) ==========
+function startTouchDrag(e, id) {
+  e.preventDefault();
+  dragging = id;
+  const el = nodeEls[id];
+  el.classList.add('dragging');
+  const t = e.touches[0];
+  dragOffX = t.clientX - positions[id].x;
+  dragOffY = t.clientY - positions[id].y;
+
+  document.addEventListener('touchmove', onTouchMove, { passive: false });
+  document.addEventListener('touchend', stopTouchDrag);
+}
+
+function onTouchMove(e) {
+  if (!dragging) return;
+  e.preventDefault();
+  const container = document.getElementById('map-container');
+  const el = nodeEls[dragging];
+  const t = e.touches[0];
+  const nx = Math.max(0, Math.min(t.clientX - dragOffX, container.offsetWidth - el.offsetWidth));
+  const ny = Math.max(0, Math.min(t.clientY - dragOffY, MAP_HEIGHT - el.offsetHeight));
+  positions[dragging].x = nx;
+  positions[dragging].y = ny;
+  el.style.left = nx + 'px';
+  el.style.top  = ny + 'px';
+  drawConnections();
+}
+
+function stopTouchDrag() {
+  if (!dragging) return;
+  nodeEls[dragging].classList.remove('dragging');
+  dragging = null;
+  document.removeEventListener('touchmove', onTouchMove);
+  document.removeEventListener('touchend', stopTouchDrag);
+}
+
+// ========== RESET ==========
+function resetPositions() {
+  positions = {};
+  buildMap();
+}
+
+// ========== GABARITO ==========
+function showGabarito() {
+  document.getElementById('gabarito-overlay').style.display = 'flex';
+}
+function hideGabarito(e) {
+  if (!e || e.target === document.getElementById('gabarito-overlay')) {
+    document.getElementById('gabarito-overlay').style.display = 'none';
+  }
+}
+
+// ========== INIT ==========
+window.addEventListener('load', () => {
+  buildMap();
+  window.addEventListener('resize', () => {
+    positions = {};
+    buildMap();
+  });
+});
+</script>
+</body>
+</html>

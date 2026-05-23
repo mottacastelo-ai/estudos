@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criador de Fatoração — mdc, mmc e Problemas</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Baloo 2", cursive;
+  background: var(--mat-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px; transition: color .15s;
+}
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+.main { max-width: 720px; margin: 0 auto; padding: 28px 20px 0; }
+
+/* Exercício selector */
+.ex-tabs { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+.ex-tab {
+  flex: 1; min-width: 120px; padding: 12px 8px; border: 2px solid var(--border);
+  border-radius: 12px; background: #fff; cursor: pointer;
+  font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800;
+  color: var(--muted); text-align: center; transition: all .15s;
+}
+.ex-tab.active { background: var(--mat); border-color: var(--mat); color: #fff; }
+.ex-tab.done { border-color: var(--mat-light); color: var(--mat); background: var(--mat-bg); }
+
+/* Card de exercício */
+.ex-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 28px; display: none; }
+.ex-card.active { display: block; animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.ex-title { font-family: "Space Mono", monospace; font-size: 15px; font-weight: 700; color: var(--mat); margin-bottom: 6px; }
+.ex-desc { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 20px; }
+
+/* Etapas */
+.step-indicator { display: flex; gap: 8px; margin-bottom: 24px; }
+.step-dot {
+  flex: 1; height: 6px; border-radius: 99px; background: var(--border); transition: background .3s;
+}
+.step-dot.active { background: var(--mat); }
+.step-dot.done { background: var(--mat-light); }
+
+.step { display: none; }
+.step.active { display: block; animation: fadeIn .2s ease; }
+
+.step-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--mat); margin-bottom: 14px; }
+.step-title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 18px; line-height: 1.4; }
+
+/* Campos de fatoração */
+.factor-rows { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.factor-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.factor-num {
+  font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700;
+  color: var(--mat); min-width: 48px;
+}
+.factor-eq { font-size: 16px; font-weight: 700; color: var(--muted); }
+.factor-input {
+  flex: 1; min-width: 160px; padding: 10px 14px; border: 2px solid var(--border);
+  border-radius: 10px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 700;
+  color: var(--text); background: #fff; outline: none; transition: border-color .15s;
+}
+.factor-input:focus { border-color: var(--mat); }
+.factor-input.ok  { border-color: #34D399; background: #D1FAE5; }
+.factor-input.err { border-color: #FCA5A5; background: #FEE2E2; }
+.factor-hint { font-size: 12px; font-weight: 700; color: var(--muted); }
+
+/* Seleção de fatores (etapa 2) */
+.factored-display { background: var(--mat-bg); border: 2px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+.factored-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.factored-row:last-child { margin-bottom: 0; }
+.factored-num { font-family: "Space Mono", monospace; font-size: 15px; font-weight: 700; color: var(--mat); min-width: 40px; }
+.factor-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.fchip {
+  padding: 5px 12px; border: 2px solid var(--border); border-radius: 99px;
+  font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700;
+  background: #fff; color: var(--text); cursor: pointer; transition: all .15s;
+  user-select: none;
+}
+.fchip.selected-mdc { background: #D1FAE5; border-color: #34D399; color: #065F46; }
+.fchip.selected-mmc { background: #FEF3C7; border-color: #F59E0B; color: #78350F; }
+
+.selection-info { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 16px; }
+
+/* Resultado final (etapa 3) */
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.calc-box { background: var(--mat-bg); border: 2px solid var(--border); border-radius: 12px; padding: 16px; }
+.calc-box-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--mat); margin-bottom: 8px; }
+.calc-box-input {
+  width: 100%; padding: 10px 14px; border: 2px solid var(--border);
+  border-radius: 10px; font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700;
+  color: var(--text); background: #fff; outline: none; text-align: center;
+  transition: border-color .15s;
+}
+.calc-box-input:focus { border-color: var(--mat); }
+.calc-box-input.ok  { border-color: #34D399; background: #D1FAE5; }
+.calc-box-input.err { border-color: #FCA5A5; background: #FEE2E2; }
+
+/* Feedback */
+.feedback {
+  border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;
+  display: none; align-items: flex-start; gap: 10px;
+}
+.feedback.visible { display: flex; }
+.feedback.correct { background: #D1FAE5; border: 2px solid #34D399; }
+.feedback.wrong   { background: #FEE2E2; border: 2px solid #FCA5A5; }
+.feedback-icon { font-size: 20px; flex-shrink: 0; }
+.feedback-text { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; }
+
+/* Botões */
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-primary {
+  flex: 1; padding: 14px 20px; background: var(--mat); color: #fff;
+  border: none; border-radius: 12px; font-family: "Baloo 2", cursive;
+  font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s;
+  min-height: 52px;
+}
+.btn-primary:hover { background: #047857; }
+.btn-secondary {
+  padding: 14px 20px; background: #fff; color: var(--mat);
+  border: 2px solid var(--border); border-radius: 12px;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all .15s; min-height: 52px;
+}
+.btn-secondary:hover { border-color: var(--mat); background: var(--mat-bg); }
+
+/* Score final */
+.completion-banner {
+  background: linear-gradient(135deg, #064E3B, #059669); color: white;
+  border-radius: var(--radius); padding: 28px; text-align: center; margin-top: 20px;
+  display: none;
+}
+.completion-banner.visible { display: block; animation: fadeIn .3s ease; }
+.comp-trophy { font-size: 48px; margin-bottom: 8px; }
+.comp-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.comp-sub { font-size: 14px; font-weight: 600; opacity: .85; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>📐🔢 Criador de Fatoração</h1>
+  <p>mdc, mmc e Problemas — 5º Ano</p>
+</div>
+
+<div class="main">
+
+  <div class="ex-tabs">
+    <div class="ex-tab active" id="tab0" onclick="selectEx(0)">Exemplo 1<br><small>(12, 18)</small></div>
+    <div class="ex-tab" id="tab1" onclick="selectEx(1)">Exemplo 2<br><small>(60, 12, 30)</small></div>
+    <div class="ex-tab" id="tab2" onclick="selectEx(2)">Exemplo 3<br><small>(90, 150)</small></div>
+  </div>
+
+  <!-- EXERCÍCIO 0: (12, 18) -->
+  <div class="ex-card active" id="ex0">
+    <div class="ex-title">Exemplo 1 — Números: 12 e 18</div>
+    <div class="ex-desc">Vamos calcular mdc(12, 18) e mmc(12, 18) passo a passo.</div>
+    <div class="step-indicator">
+      <div class="step-dot active" id="ex0-dot0"></div>
+      <div class="step-dot" id="ex0-dot1"></div>
+      <div class="step-dot" id="ex0-dot2"></div>
+    </div>
+
+    <!-- Etapa 1 -->
+    <div class="step active" id="ex0-step0">
+      <div class="step-label">Etapa 1 — Fatorar</div>
+      <div class="step-title">Decompõe cada número em fatores primos.<br>Escreva no formato: 2² × 3 (use ^ para expoente, ex: 2^2 × 3)</div>
+      <div class="factor-rows">
+        <div class="factor-row">
+          <div class="factor-num">12 =</div>
+          <input class="factor-input" id="ex0-f0" placeholder="ex: 2^2 × 3" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="factor-row">
+          <div class="factor-num">18 =</div>
+          <input class="factor-input" id="ex0-f1" placeholder="ex: 2 × 3^2" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+      <div class="feedback" id="ex0-fb0"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="checkFators(0,0)">Verificar fatoração ✓</button>
+      </div>
+    </div>
+
+    <!-- Etapa 2 -->
+    <div class="step" id="ex0-step1">
+      <div class="step-label">Etapa 2 — Identificar fatores</div>
+      <div class="step-title">Aqui estão as decomposições. Clique nos fatores COMUNS com menores expoentes para o mdc.</div>
+      <div class="factored-display">
+        <div class="factored-row"><div class="factored-num">12 =</div><div class="factor-chips" id="ex0-chips0"></div></div>
+        <div class="factored-row"><div class="factored-num">18 =</div><div class="factor-chips" id="ex0-chips1"></div></div>
+      </div>
+      <div class="selection-info" id="ex0-selinfo">Clique nos fatores selecionados: <strong id="ex0-sel">nenhum</strong></div>
+      <div class="feedback" id="ex0-fb1"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="checkSelection(0)">Verificar seleção ✓</button>
+      </div>
+    </div>
+
+    <!-- Etapa 3 -->
+    <div class="step" id="ex0-step2">
+      <div class="step-label">Etapa 3 — Calcular</div>
+      <div class="step-title">Agora calcule mdc(12, 18) e mmc(12, 18) e escreva os resultados.</div>
+      <div class="calc-grid">
+        <div class="calc-box">
+          <div class="calc-box-label">mdc(12, 18)</div>
+          <input class="calc-box-input" id="ex0-mdc" placeholder="?" type="number" min="1">
+        </div>
+        <div class="calc-box">
+          <div class="calc-box-label">mmc(12, 18)</div>
+          <input class="calc-box-input" id="ex0-mmc" placeholder="?" type="number" min="1">
+        </div>
+      </div>
+      <div class="feedback" id="ex0-fb2"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="checkResult(0)">Confirmar resultado ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCÍCIO 1: (60, 12, 30) -->
+  <div class="ex-card" id="ex1">
+    <div class="ex-title">Exemplo 2 — Números: 60, 12 e 30</div>
+    <div class="ex-desc">Vamos calcular mdc(60, 12, 30) e mmc(60, 12, 30) passo a passo.</div>
+    <div class="step-indicator">
+      <div class="step-dot active" id="ex1-dot0"></div>
+      <div class="step-dot" id="ex1-dot1"></div>
+      <div class="step-dot" id="ex1-dot2"></div>
+    </div>
+    <div class="step active" id="ex1-step0">
+      <div class="step-label">Etapa 1 — Fatorar</div>
+      <div class="step-title">Decompõe cada número em fatores primos.</div>
+      <div class="factor-rows">
+        <div class="factor-row"><div class="factor-num">60 =</div><input class="factor-input" id="ex1-f0" placeholder="ex: 2^2 × 3 × 5" autocomplete="off" spellcheck="false"></div>
+        <div class="factor-row"><div class="factor-num">12 =</div><input class="factor-input" id="ex1-f1" placeholder="ex: 2^2 × 3" autocomplete="off" spellcheck="false"></div>
+        <div class="factor-row"><div class="factor-num">30 =</div><input class="factor-input" id="ex1-f2" placeholder="ex: 2 × 3 × 5" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <div class="feedback" id="ex1-fb0"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row"><button class="btn-primary" onclick="checkFators(1,0)">Verificar fatoração ✓</button></div>
+    </div>
+    <div class="step" id="ex1-step1">
+      <div class="step-label">Etapa 2 — Identificar fatores comuns</div>
+      <div class="step-title">Clique nos fatores COMUNS com menores expoentes para o mdc(60,12,30).</div>
+      <div class="factored-display">
+        <div class="factored-row"><div class="factored-num">60 =</div><div class="factor-chips" id="ex1-chips0"></div></div>
+        <div class="factored-row"><div class="factored-num">12 =</div><div class="factor-chips" id="ex1-chips1"></div></div>
+        <div class="factored-row"><div class="factored-num">30 =</div><div class="factor-chips" id="ex1-chips2"></div></div>
+      </div>
+      <div class="selection-info" id="ex1-selinfo">Selecionados: <strong id="ex1-sel">nenhum</strong></div>
+      <div class="feedback" id="ex1-fb1"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row"><button class="btn-primary" onclick="checkSelection(1)">Verificar seleção ✓</button></div>
+    </div>
+    <div class="step" id="ex1-step2">
+      <div class="step-label">Etapa 3 — Calcular</div>
+      <div class="step-title">Calcule mdc(60, 12, 30) e mmc(60, 12, 30).</div>
+      <div class="calc-grid">
+        <div class="calc-box"><div class="calc-box-label">mdc(60, 12, 30)</div><input class="calc-box-input" id="ex1-mdc" placeholder="?" type="number" min="1"></div>
+        <div class="calc-box"><div class="calc-box-label">mmc(60, 12, 30)</div><input class="calc-box-input" id="ex1-mmc" placeholder="?" type="number" min="1"></div>
+      </div>
+      <div class="feedback" id="ex1-fb2"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row"><button class="btn-primary" onclick="checkResult(1)">Confirmar resultado ✓</button></div>
+    </div>
+  </div>
+
+  <!-- EXERCÍCIO 2: (90, 150) -->
+  <div class="ex-card" id="ex2">
+    <div class="ex-title">Exemplo 3 — Números: 90 e 150</div>
+    <div class="ex-desc">Vamos calcular mdc(90, 150) e mmc(90, 150) passo a passo.</div>
+    <div class="step-indicator">
+      <div class="step-dot active" id="ex2-dot0"></div>
+      <div class="step-dot" id="ex2-dot1"></div>
+      <div class="step-dot" id="ex2-dot2"></div>
+    </div>
+    <div class="step active" id="ex2-step0">
+      <div class="step-label">Etapa 1 — Fatorar</div>
+      <div class="step-title">Decompõe cada número em fatores primos.</div>
+      <div class="factor-rows">
+        <div class="factor-row"><div class="factor-num">90 =</div><input class="factor-input" id="ex2-f0" placeholder="ex: 2 × 3^2 × 5" autocomplete="off" spellcheck="false"></div>
+        <div class="factor-row"><div class="factor-num">150 =</div><input class="factor-input" id="ex2-f1" placeholder="ex: 2 × 3 × 5^2" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <div class="feedback" id="ex2-fb0"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row"><button class="btn-primary" onclick="checkFators(2,0)">Verificar fatoração ✓</button></div>
+    </div>
+    <div class="step" id="ex2-step1">
+      <div class="step-label">Etapa 2 — Identificar fatores comuns</div>
+      <div class="step-title">Clique nos fatores COMUNS com menores expoentes para o mdc(90,150).</div>
+      <div class="factored-display">
+        <div class="factored-row"><div class="factored-num">90 =</div><div class="factor-chips" id="ex2-chips0"></div></div>
+        <div class="factored-row"><div class="factored-num">150 =</div><div class="factor-chips" id="ex2-chips1"></div></div>
+      </div>
+      <div class="selection-info" id="ex2-selinfo">Selecionados: <strong id="ex2-sel">nenhum</strong></div>
+      <div class="feedback" id="ex2-fb1"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row"><button class="btn-primary" onclick="checkSelection(2)">Verificar seleção ✓</button></div>
+    </div>
+    <div class="step" id="ex2-step2">
+      <div class="step-label">Etapa 3 — Calcular</div>
+      <div class="step-title">Calcule mdc(90, 150) e mmc(90, 150).</div>
+      <div class="calc-grid">
+        <div class="calc-box"><div class="calc-box-label">mdc(90, 150)</div><input class="calc-box-input" id="ex2-mdc" placeholder="?" type="number" min="1"></div>
+        <div class="calc-box"><div class="calc-box-label">mmc(90, 150)</div><input class="calc-box-input" id="ex2-mmc" placeholder="?" type="number" min="1"></div>
+      </div>
+      <div class="feedback" id="ex2-fb2"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+      <div class="btn-row"><button class="btn-primary" onclick="checkResult(2)">Confirmar resultado ✓</button></div>
+    </div>
+  </div>
+
+  <div class="completion-banner" id="completionBanner">
+    <div class="comp-trophy">🏆</div>
+    <div class="comp-title">Você dominou a fatoração!</div>
+    <div class="comp-sub">Calculou mdc e mmc pelos fatores primos com expoentes corretos em todos os exemplos.</div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn-primary" style="max-width:200px" onclick="resetAll()">🔄 Recomeçar</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Dados dos exercícios
+const exercises = [
+  {
+    // (12, 18)
+    nums: [12, 18],
+    factors: ['2^2 × 3', '2 × 3^2'],
+    factorsAlt: [['22x3','2^2x3','2²×3','2^2*3','4x3','2x2x3'], ['2x3^2','2x32','2×3²','2*3^2','2x9','2x3x3']],
+    chips: [
+      [{label:'2²', val:4, base:2, exp:2}, {label:'3', val:3, base:3, exp:1}],
+      [{label:'2', val:2, base:2, exp:1}, {label:'3²', val:9, base:3, exp:2}]
+    ],
+    // para mdc: fator comum com menor expoente: 2^1 * 3^1 = 6
+    mdcChips: ['2','3'],      // base das chips corretas para mdc (menor expoente)
+    mdcVal: 6,
+    mmcVal: 36,
+    mdcExplain: 'Fatores COMUNS: base 2 (menor expoente é 2¹=2) e base 3 (menor expoente é 3¹=3). mdc = 2×3 = 6.',
+    mmcExplain: 'Para mmc: todos os fatores com MAIORES expoentes: 2²×3² = 4×9 = 36.'
+  },
+  {
+    // (60, 12, 30)
+    nums: [60, 12, 30],
+    factors: ['2^2 × 3 × 5', '2^2 × 3', '2 × 3 × 5'],
+    factorsAlt: [
+      ['22x3x5','2^2x3x5','2²×3×5','2x2x3x5','4x3x5'],
+      ['22x3','2^2x3','2²×3','4x3','2x2x3'],
+      ['2x3x5','2×3×5','2*3*5']
+    ],
+    chips: [
+      [{label:'2²', val:4, base:2, exp:2}, {label:'3', val:3, base:3, exp:1}, {label:'5', val:5, base:5, exp:1}],
+      [{label:'2²', val:4, base:2, exp:2}, {label:'3', val:3, base:3, exp:1}],
+      [{label:'2', val:2, base:2, exp:1}, {label:'3', val:3, base:3, exp:1}, {label:'5', val:5, base:5, exp:1}]
+    ],
+    mdcChips: ['2','3'],
+    mdcVal: 6,
+    mmcVal: 60,
+    mdcExplain: 'Fatores comuns aos três: base 2 (menor expoente: 2¹) e base 3 (menor expoente: 3¹). mdc = 2×3 = 6.',
+    mmcExplain: 'Para mmc: 2²×3×5 = 4×3×5 = 60.'
+  },
+  {
+    // (90, 150)
+    nums: [90, 150],
+    factors: ['2 × 3^2 × 5', '2 × 3 × 5^2'],
+    factorsAlt: [
+      ['2x3^2x5','2x32x5','2×3²×5','2x9x5','2*3^2*5'],
+      ['2x3x5^2','2x3x52','2×3×5²','2x3x25','2*3*5^2']
+    ],
+    chips: [
+      [{label:'2', val:2, base:2, exp:1}, {label:'3²', val:9, base:3, exp:2}, {label:'5', val:5, base:5, exp:1}],
+      [{label:'2', val:2, base:2, exp:1}, {label:'3', val:3, base:3, exp:1}, {label:'5²', val:25, base:5, exp:2}]
+    ],
+    mdcChips: ['2','3','5'],
+    mdcVal: 30,
+    mmcVal: 450,
+    mdcExplain: 'Fatores comuns: base 2 (expoente 1), base 3 (menor expoente: 3¹), base 5 (menor expoente: 5¹). mdc = 2×3×5 = 30.',
+    mmcExplain: 'Para mmc: 2¹×3²×5² = 2×9×25 = 450.'
+  }
+];
+
+// Estado
+const state = [
+  { step: 0, done: false },
+  { step: 0, done: false },
+  { step: 0, done: false }
+];
+let currentEx = 0;
+
+function selectEx(idx) {
+  document.getElementById('ex' + currentEx).classList.remove('active');
+  document.getElementById('tab' + currentEx).classList.remove('active');
+  currentEx = idx;
+  document.getElementById('ex' + idx).classList.add('active');
+  document.getElementById('tab' + idx).classList.add('active');
+}
+
+function normInput(s) {
+  return s.toLowerCase().replace(/\s/g,'').replace(/×/g,'x').replace(/\*/g,'x').replace(/²/g,'^2').replace(/³/g,'^3');
+}
+
+function checkFators(exIdx, stepIdx) {
+  const ex = exercises[exIdx];
+  let allOk = true;
+  for (let i = 0; i < ex.nums.length; i++) {
+    const inp = document.getElementById('ex' + exIdx + '-f' + i);
+    const val = normInput(inp.value.trim());
+    const alts = ex.factorsAlt[i].map(a => normInput(a));
+    const ok = alts.includes(val);
+    inp.classList.toggle('ok', ok);
+    inp.classList.toggle('err', !ok);
+    if (!ok) allOk = false;
+  }
+  const fb = document.getElementById('ex' + exIdx + '-fb0');
+  const icon = fb.querySelector('.feedback-icon');
+  const text = fb.querySelector('.feedback-text');
+  if (allOk) {
+    fb.className = 'feedback visible correct';
+    icon.textContent = '✓';
+    text.textContent = 'Fatoração correta! ' + ex.nums.map((n,i) => n + ' = ' + ex.factors[i]).join('; ') + '.';
+    setTimeout(() => goToStep(exIdx, 1), 1200);
+  } else {
+    fb.className = 'feedback visible wrong';
+    icon.textContent = '✗';
+    text.textContent = 'Alguma fatoração está errada. Decompõe cada número por divisores primos (2, 3, 5, 7...). Tente novamente!';
+  }
+}
+
+function goToStep(exIdx, step) {
+  const prev = state[exIdx].step;
+  document.getElementById('ex' + exIdx + '-step' + prev).classList.remove('active');
+  document.getElementById('ex' + exIdx + '-dot' + prev).classList.remove('active');
+  document.getElementById('ex' + exIdx + '-dot' + prev).classList.add('done');
+  state[exIdx].step = step;
+  document.getElementById('ex' + exIdx + '-step' + step).classList.add('active');
+  document.getElementById('ex' + exIdx + '-dot' + step).classList.add('active');
+  if (step === 1) buildChips(exIdx);
+}
+
+function buildChips(exIdx) {
+  const ex = exercises[exIdx];
+  for (let r = 0; r < ex.chips.length; r++) {
+    const container = document.getElementById('ex' + exIdx + '-chips' + r);
+    container.innerHTML = '';
+    ex.chips[r].forEach(chip => {
+      const el = document.createElement('span');
+      el.className = 'fchip';
+      el.textContent = chip.label;
+      el.dataset.base = chip.base;
+      el.dataset.exp = chip.exp;
+      el.dataset.row = r;
+      el.onclick = function() { toggleChip(exIdx, el); };
+      container.appendChild(el);
+    });
+  }
+}
+
+let selectedBases = [[], [], []]; // por exercício
+
+function toggleChip(exIdx, el) {
+  const base = parseInt(el.dataset.base);
+  const idx = selectedBases[exIdx].indexOf(base);
+  if (idx >= 0) {
+    selectedBases[exIdx].splice(idx, 1);
+    // deselect all chips with this base
+    document.querySelectorAll('#ex' + exIdx + ' .fchip').forEach(c => {
+      if (parseInt(c.dataset.base) === base) c.classList.remove('selected-mdc');
+    });
+  } else {
+    selectedBases[exIdx].push(base);
+    // select chip with smallest exponent for this base
+    let smallest = null;
+    document.querySelectorAll('#ex' + exIdx + ' .fchip').forEach(c => {
+      if (parseInt(c.dataset.base) === base) {
+        if (!smallest || parseInt(c.dataset.exp) < parseInt(smallest.dataset.exp)) smallest = c;
+      }
+    });
+    if (smallest) smallest.classList.add('selected-mdc');
+  }
+  const sel = selectedBases[exIdx];
+  document.getElementById('ex' + exIdx + '-sel').textContent = sel.length ? sel.map(b => {
+    // find min exp chip label
+    let minExp = 99, lbl = '';
+    document.querySelectorAll('#ex' + exIdx + ' .fchip').forEach(c => {
+      if (parseInt(c.dataset.base) === b && parseInt(c.dataset.exp) < minExp) { minExp = parseInt(c.dataset.exp); lbl = c.textContent; }
+    });
+    return lbl;
+  }).join(' × ') : 'nenhum';
+}
+
+function checkSelection(exIdx) {
+  const ex = exercises[exIdx];
+  const correctBases = ex.mdcChips.map(Number);
+  const selected = [...selectedBases[exIdx]].sort();
+  const correct = [...correctBases].sort();
+  const ok = JSON.stringify(selected) === JSON.stringify(correct);
+  const fb = document.getElementById('ex' + exIdx + '-fb1');
+  const icon = fb.querySelector('.feedback-icon');
+  const text = fb.querySelector('.feedback-text');
+  if (ok) {
+    fb.className = 'feedback visible correct';
+    icon.textContent = '✓';
+    text.textContent = 'Seleção correta! ' + ex.mdcExplain;
+    setTimeout(() => goToStep(exIdx, 2), 1300);
+  } else {
+    fb.className = 'feedback visible wrong';
+    icon.textContent = '✗';
+    text.textContent = 'Selecione os fatores COMUNS a todos os números, com os MENORES expoentes. ' + ex.mdcExplain;
+  }
+}
+
+function checkResult(exIdx) {
+  const ex = exercises[exIdx];
+  const mdcInput = document.getElementById('ex' + exIdx + '-mdc');
+  const mmcInput = document.getElementById('ex' + exIdx + '-mmc');
+  const mdcVal = parseInt(mdcInput.value);
+  const mmcVal = parseInt(mmcInput.value);
+  const mdcOk = mdcVal === ex.mdcVal;
+  const mmcOk = mmcVal === ex.mmcVal;
+  mdcInput.classList.toggle('ok', mdcOk);
+  mdcInput.classList.toggle('err', !mdcOk);
+  mmcInput.classList.toggle('ok', mmcOk);
+  mmcInput.classList.toggle('err', !mmcOk);
+  const fb = document.getElementById('ex' + exIdx + '-fb2');
+  const icon = fb.querySelector('.feedback-icon');
+  const text = fb.querySelector('.feedback-text');
+  if (mdcOk && mmcOk) {
+    fb.className = 'feedback visible correct';
+    icon.textContent = '✓';
+    text.textContent = 'Perfeito! mdc = ' + ex.mdcVal + ' e mmc = ' + ex.mmcVal + '. ' + ex.mmcExplain;
+    document.getElementById('ex' + exIdx + '-dot2').classList.add('done');
+    state[exIdx].done = true;
+    document.getElementById('tab' + exIdx).classList.add('done');
+    if (state.every(s => s.done)) {
+      setTimeout(() => { document.getElementById('completionBanner').classList.add('visible'); }, 800);
+    }
+  } else {
+    fb.className = 'feedback visible wrong';
+    icon.textContent = '✗';
+    let msg = '';
+    if (!mdcOk) msg += 'mdc incorreto. ' + ex.mdcExplain + ' ';
+    if (!mmcOk) msg += 'mmc incorreto. ' + ex.mmcExplain;
+    text.textContent = msg;
+  }
+}
+
+function resetAll() {
+  selectedBases = [[], [], []];
+  for (let i = 0; i < 3; i++) {
+    state[i].step = 0;
+    state[i].done = false;
+    document.getElementById('tab' + i).classList.remove('done', 'active');
+    const card = document.getElementById('ex' + i);
+    card.classList.remove('active');
+    for (let s = 0; s < 3; s++) {
+      const step = document.getElementById('ex' + i + '-step' + s);
+      step.classList.remove('active');
+      const dot = document.getElementById('ex' + i + '-dot' + s);
+      dot.classList.remove('active', 'done');
+    }
+    document.getElementById('ex' + i + '-step0').classList.add('active');
+    document.getElementById('ex' + i + '-dot0').classList.add('active');
+    // clear inputs
+    const card2 = document.getElementById('ex' + i);
+    card2.querySelectorAll('input').forEach(inp => { inp.value = ''; inp.classList.remove('ok','err'); });
+    card2.querySelectorAll('.feedback').forEach(f => { f.className = 'feedback'; });
+  }
+  document.getElementById('completionBanner').classList.remove('visible');
+  document.getElementById('tab0').classList.add('active');
+  document.getElementById('ex0').classList.add('active');
+  currentEx = 0;
+}
+</script>
+</body>
+</html>

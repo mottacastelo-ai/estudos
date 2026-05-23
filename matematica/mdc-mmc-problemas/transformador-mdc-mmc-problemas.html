@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformador de Problemas — mdc, mmc e Problemas</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Baloo 2", cursive;
+  background: var(--mat-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px; transition: color .15s;
+}
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.progress-bar-wrap {
+  background: #fff; padding: 14px 28px;
+  border-bottom: 2px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+}
+.progress-label { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .08em; }
+.prog-track { background: var(--mat-bg); border-radius: 99px; height: 8px; overflow: hidden; }
+.prog-fill { background: var(--mat); height: 100%; border-radius: 99px; transition: width .4s ease; }
+.score-badge {
+  float: right; font-size: 12px; font-weight: 800; color: var(--mat);
+  background: var(--mat-bg); border: 2px solid var(--border);
+  border-radius: 99px; padding: 2px 12px; margin-top: -2px;
+}
+
+.main { max-width: 720px; margin: 0 auto; padding: 28px 20px 0; }
+
+/* Problema card */
+.prob-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  display: none; margin-bottom: 20px;
+}
+.prob-card.active { display: block; animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.prob-num { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--mat); margin-bottom: 10px; }
+
+.prob-context {
+  background: var(--mat-bg); border-left: 4px solid var(--mat);
+  border-radius: 10px; padding: 16px 18px; margin-bottom: 20px;
+  font-size: 16px; font-weight: 700; line-height: 1.55; color: var(--text);
+}
+.prob-context .emoji { font-size: 24px; display: block; margin-bottom: 8px; }
+
+/* Pergunta de classificação */
+.classify-label { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+.op-btns { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.op-btn {
+  flex: 1; min-width: 120px; padding: 16px 12px; border: 2px solid var(--border);
+  border-radius: 14px; font-family: "Space Mono", monospace; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .15s; background: #fff; color: var(--text);
+  text-align: center; min-height: 64px;
+}
+.op-btn:hover:not(:disabled) { border-color: var(--mat); background: var(--mat-bg); }
+.op-btn.selected-correct { background: #D1FAE5; border-color: #34D399; color: #065F46; }
+.op-btn.selected-wrong   { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; }
+.op-btn:disabled { cursor: default; opacity: .7; }
+
+/* Resposta numérica */
+.answer-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.answer-label { font-size: 15px; font-weight: 800; color: var(--text); flex-shrink: 0; }
+.answer-input {
+  width: 120px; padding: 12px 14px; border: 2px solid var(--border);
+  border-radius: 10px; font-family: "Space Mono", monospace; font-size: 22px; font-weight: 700;
+  color: var(--text); background: #fff; outline: none; text-align: center;
+  transition: border-color .15s;
+}
+.answer-input:focus { border-color: var(--mat); }
+.answer-input.ok  { border-color: #34D399; background: #D1FAE5; color: #065F46; }
+.answer-input.err { border-color: #FCA5A5; background: #FEE2E2; color: #991B1B; }
+.answer-input:disabled { opacity: .7; }
+
+/* Botões de ação */
+.action-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-confirm {
+  flex: 1; padding: 14px 20px; background: var(--mat); color: #fff;
+  border: none; border-radius: 12px; font-family: "Baloo 2", cursive;
+  font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s;
+  min-height: 52px;
+}
+.btn-confirm:hover:not(:disabled) { background: #047857; }
+.btn-confirm:disabled { background: #9CA3AF; cursor: default; }
+.btn-next {
+  padding: 14px 20px; background: #fff; color: var(--mat);
+  border: 2px solid var(--border); border-radius: 12px;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all .15s; min-height: 52px; display: none;
+}
+.btn-next:hover { border-color: var(--mat); background: var(--mat-bg); }
+.btn-next.visible { display: block; }
+
+/* Feedback */
+.feedback {
+  border-radius: 12px; padding: 14px 18px; margin-top: 12px;
+  display: none; align-items: flex-start; gap: 10px;
+}
+.feedback.visible { display: flex; }
+.feedback.correct { background: #D1FAE5; border: 2px solid #34D399; }
+.feedback.wrong   { background: #FEE2E2; border: 2px solid #FCA5A5; }
+.feedback-icon { font-size: 20px; flex-shrink: 0; }
+.feedback-text { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.5; }
+
+/* Passo a passo da solução */
+.solution-steps {
+  margin-top: 12px; background: #F8FAFC; border: 2px solid var(--border);
+  border-radius: 12px; padding: 14px 18px; display: none;
+}
+.solution-steps.visible { display: block; }
+.sol-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--mat); margin-bottom: 10px; }
+.sol-step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.4; }
+.sol-step:last-child { margin-bottom: 0; }
+.sol-num { width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* Fase: só resposta (classificação já confirmada) */
+.phase-answer { display: none; }
+.phase-answer.visible { display: block; }
+
+/* Resultado final */
+.result-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 40px 28px; text-align: center;
+  display: none;
+}
+.result-card.active { display: block; animation: fadeIn .3s ease; }
+.result-trophy { font-size: 64px; margin-bottom: 16px; }
+.result-score { font-family: "Space Mono", monospace; font-size: 52px; font-weight: 700; color: var(--mat); margin-bottom: 8px; }
+.result-msg { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+.result-sub { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 28px; }
+.btn-retry { padding: 14px 28px; border: none; border-radius: 12px; background: var(--mat); color: #fff; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.btn-retry:hover { background: #047857; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>📐🔢 Transformador de Problemas</h1>
+  <p>mdc, mmc e Problemas — 5º Ano</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label">
+    Problema <span id="pNum">1</span> de 6
+    <span class="score-badge">Acertos: <span id="scoreLabel">0</span>/6</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<div class="main">
+
+  <!-- Problema 0 — mdc 1 -->
+  <div class="prob-card active" id="p0">
+    <div class="prob-num">Problema 1 de 6 — Decidir e Resolver</div>
+    <div class="prob-context">
+      <span class="emoji">✏️🧹</span>
+      Você tem 36 lápis e 48 borrachas. Quer distribuir tudo em grupos iguais, com o maior número possível de grupos e sem sobrar nada. <strong>Quantos grupos você vai formar?</strong>
+    </div>
+    <div class="classify-label">1° passo: Qual operação resolve?</div>
+    <div class="op-btns" id="op0">
+      <button class="op-btn" onclick="classifyOp(0,'mdc',true)">📐 mdc</button>
+      <button class="op-btn" onclick="classifyOp(0,'mmc',false)">🔢 mmc</button>
+    </div>
+    <div class="phase-answer" id="phase-ans0">
+      <div class="answer-row">
+        <div class="answer-label">Número de grupos =</div>
+        <input class="answer-input" id="ans0" type="number" min="1" placeholder="?">
+      </div>
+      <div class="action-row">
+        <button class="btn-confirm" id="conf0" onclick="checkAnswer(0, 12, 'mdc(36, 48) = 12. 36=2²×3²; 48=2⁴×3. Fatores comuns com menores expoentes: 2²×3 = 12 grupos.')">Confirmar resposta ✓</button>
+        <button class="btn-next visible" id="next0" onclick="nextP(1)" style="display:none">Próximo →</button>
+      </div>
+    </div>
+    <div class="feedback" id="fb0"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+    <div class="solution-steps" id="sol0">
+      <div class="sol-title">Solução passo a passo</div>
+      <div class="sol-step"><div class="sol-num">1</div>Decomponha: 36 = 2²×3² e 48 = 2⁴×3</div>
+      <div class="sol-step"><div class="sol-num">2</div>Fatores COMUNS: base 2 (menor exp: 2²) e base 3 (menor exp: 3¹)</div>
+      <div class="sol-step"><div class="sol-num">3</div>mdc(36, 48) = 2²×3 = 4×3 = <strong>12 grupos</strong></div>
+    </div>
+  </div>
+
+  <!-- Problema 1 — mdc 2 -->
+  <div class="prob-card" id="p1">
+    <div class="prob-num">Problema 2 de 6 — Decidir e Resolver</div>
+    <div class="prob-context">
+      <span class="emoji">🏟️</span>
+      Uma quadra mede 1440 cm × 840 cm. Queremos cobrir o chão com o maior azulejo quadrado possível, sem cortar nenhum. <strong>Qual é o lado desse azulejo, em cm?</strong>
+    </div>
+    <div class="classify-label">1° passo: Qual operação resolve?</div>
+    <div class="op-btns" id="op1">
+      <button class="op-btn" onclick="classifyOp(1,'mdc',true)">📐 mdc</button>
+      <button class="op-btn" onclick="classifyOp(1,'mmc',false)">🔢 mmc</button>
+    </div>
+    <div class="phase-answer" id="phase-ans1">
+      <div class="answer-row">
+        <div class="answer-label">Lado do azulejo =</div>
+        <input class="answer-input" id="ans1" type="number" min="1" placeholder="?">
+        <span style="font-size:14px;font-weight:700;color:var(--muted)">cm</span>
+      </div>
+      <div class="action-row">
+        <button class="btn-confirm" id="conf1" onclick="checkAnswer(1, 120, 'mdc(1440, 840) = 120 cm. 1440=2⁵×3²×5; 840=2³×3×5×7. Fatores comuns: 2³×3×5 = 120.')">Confirmar ✓</button>
+        <button class="btn-next" id="next1" onclick="nextP(2)">Próximo →</button>
+      </div>
+    </div>
+    <div class="feedback" id="fb1"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+    <div class="solution-steps" id="sol1">
+      <div class="sol-title">Solução passo a passo</div>
+      <div class="sol-step"><div class="sol-num">1</div>1440 = 2⁵×3²×5 e 840 = 2³×3×5×7</div>
+      <div class="sol-step"><div class="sol-num">2</div>Fatores comuns com menores expoentes: 2³×3×5</div>
+      <div class="sol-step"><div class="sol-num">3</div>mdc(1440, 840) = 8×3×5 = <strong>120 cm</strong></div>
+    </div>
+  </div>
+
+  <!-- Problema 2 — mdc 3 -->
+  <div class="prob-card" id="p2">
+    <div class="prob-num">Problema 3 de 6 — Decidir e Resolver</div>
+    <div class="prob-context">
+      <span class="emoji">🔢</span>
+      Dois grupos têm 828 e 621 alunos, respectivamente. Queremos dividi-los pelo menor número possível que seja divisor de ambos, de modo que os quocientes sejam iguais. <strong>Qual é esse divisor?</strong>
+    </div>
+    <div class="classify-label">1° passo: Qual operação resolve?</div>
+    <div class="op-btns" id="op2">
+      <button class="op-btn" onclick="classifyOp(2,'mdc',true)">📐 mdc</button>
+      <button class="op-btn" onclick="classifyOp(2,'mmc',false)">🔢 mmc</button>
+    </div>
+    <div class="phase-answer" id="phase-ans2">
+      <div class="answer-row">
+        <div class="answer-label">O divisor =</div>
+        <input class="answer-input" id="ans2" type="number" min="1" placeholder="?">
+      </div>
+      <div class="action-row">
+        <button class="btn-confirm" id="conf2" onclick="checkAnswer(2, 207, 'mdc(828, 621) = 207. 828=2²×3²×23; 621=3³×23. Fatores comuns: 3²×23 = 207.')">Confirmar ✓</button>
+        <button class="btn-next" id="next2" onclick="nextP(3)">Próximo →</button>
+      </div>
+    </div>
+    <div class="feedback" id="fb2"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+    <div class="solution-steps" id="sol2">
+      <div class="sol-title">Solução passo a passo</div>
+      <div class="sol-step"><div class="sol-num">1</div>828 = 2²×3²×23 e 621 = 3³×23</div>
+      <div class="sol-step"><div class="sol-num">2</div>Fatores comuns: base 3 (menor exp: 3²) e base 23 (exp: 23¹)</div>
+      <div class="sol-step"><div class="sol-num">3</div>mdc(828, 621) = 3²×23 = 9×23 = <strong>207</strong></div>
+    </div>
+  </div>
+
+  <!-- Problema 3 — mmc 1 -->
+  <div class="prob-card" id="p3">
+    <div class="prob-num">Problema 4 de 6 — Decidir e Resolver</div>
+    <div class="prob-context">
+      <span class="emoji">✈️</span>
+      Dois pilotos partem juntos hoje. O piloto Máx viaja a cada 4 dias; o piloto Mín viaja a cada 5 dias. <strong>Daqui a quantos dias os dois viajarão juntos novamente?</strong>
+    </div>
+    <div class="classify-label">1° passo: Qual operação resolve?</div>
+    <div class="op-btns" id="op3">
+      <button class="op-btn" onclick="classifyOp(3,'mdc',false)">📐 mdc</button>
+      <button class="op-btn" onclick="classifyOp(3,'mmc',true)">🔢 mmc</button>
+    </div>
+    <div class="phase-answer" id="phase-ans3">
+      <div class="answer-row">
+        <div class="answer-label">Daqui a =</div>
+        <input class="answer-input" id="ans3" type="number" min="1" placeholder="?">
+        <span style="font-size:14px;font-weight:700;color:var(--muted)">dias</span>
+      </div>
+      <div class="action-row">
+        <button class="btn-confirm" id="conf3" onclick="checkAnswer(3, 20, 'mmc(4, 5) = 20. Como 4 e 5 são primos entre si (mdc=1), o mmc é o produto: 4×5 = 20 dias.')">Confirmar ✓</button>
+        <button class="btn-next" id="next3" onclick="nextP(4)">Próximo →</button>
+      </div>
+    </div>
+    <div class="feedback" id="fb3"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+    <div class="solution-steps" id="sol3">
+      <div class="sol-title">Solução passo a passo</div>
+      <div class="sol-step"><div class="sol-num">1</div>Eventos que se repetem em períodos diferentes → usamos mmc</div>
+      <div class="sol-step"><div class="sol-num">2</div>4 e 5 são primos entre si: mdc(4,5)=1, então mmc = 4×5 = 20</div>
+      <div class="sol-step"><div class="sol-num">3</div>Os pilotos viajam juntos novamente daqui a <strong>20 dias</strong></div>
+    </div>
+  </div>
+
+  <!-- Problema 4 — mmc 2 -->
+  <div class="prob-card" id="p4">
+    <div class="prob-num">Problema 5 de 6 — Decidir e Resolver</div>
+    <div class="prob-context">
+      <span class="emoji">🪵</span>
+      Temos tábuas de 20 mm e tábuas de 42 mm de espessura. Queremos empilhar as duas pilhas até chegarem na mesma altura, usando o menor número de tábuas possível. <strong>Quantas tábuas de 20 mm precisamos?</strong>
+    </div>
+    <div class="classify-label">1° passo: Qual operação resolve?</div>
+    <div class="op-btns" id="op4">
+      <button class="op-btn" onclick="classifyOp(4,'mdc',false)">📐 mdc</button>
+      <button class="op-btn" onclick="classifyOp(4,'mmc',true)">🔢 mmc</button>
+    </div>
+    <div class="phase-answer" id="phase-ans4">
+      <div class="answer-row">
+        <div class="answer-label">Tábuas de 20 mm =</div>
+        <input class="answer-input" id="ans4" type="number" min="1" placeholder="?">
+      </div>
+      <div class="action-row">
+        <button class="btn-confirm" id="conf4" onclick="checkAnswer(4, 21, 'mmc(20, 42) = 420 mm. 420÷20 = 21 tábuas de 20mm. (20=2²×5; 42=2×3×7. mmc=2²×3×5×7=420.)')">Confirmar ✓</button>
+        <button class="btn-next" id="next4" onclick="nextP(5)">Próximo →</button>
+      </div>
+    </div>
+    <div class="feedback" id="fb4"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+    <div class="solution-steps" id="sol4">
+      <div class="sol-title">Solução passo a passo</div>
+      <div class="sol-step"><div class="sol-num">1</div>20 = 2²×5 e 42 = 2×3×7 → mmc = 2²×3×5×7 = 420 mm</div>
+      <div class="sol-step"><div class="sol-num">2</div>Tábuas de 20mm necessárias: 420 ÷ 20 = <strong>21 tábuas</strong></div>
+      <div class="sol-step"><div class="sol-num">3</div>Tábuas de 42mm: 420 ÷ 42 = 10 tábuas (confirmação)</div>
+    </div>
+  </div>
+
+  <!-- Problema 5 — mmc 3 -->
+  <div class="prob-card" id="p5">
+    <div class="prob-num">Problema 6 de 6 — Decidir e Resolver</div>
+    <div class="prob-context">
+      <span class="emoji">🧵</span>
+      Temos barbantes de 36 cm, 54 cm e 60 cm. Queremos cortar todos em pedaços do mesmo tamanho, sem sobrar nada, com o maior comprimento possível por pedaço. <strong>Qual é esse comprimento, em cm?</strong>
+    </div>
+    <div class="classify-label">1° passo: Qual operação resolve?</div>
+    <div class="op-btns" id="op5">
+      <button class="op-btn" onclick="classifyOp(5,'mdc',true)">📐 mdc</button>
+      <button class="op-btn" onclick="classifyOp(5,'mmc',false)">🔢 mmc</button>
+    </div>
+    <div class="phase-answer" id="phase-ans5">
+      <div class="answer-row">
+        <div class="answer-label">Comprimento =</div>
+        <input class="answer-input" id="ans5" type="number" min="1" placeholder="?">
+        <span style="font-size:14px;font-weight:700;color:var(--muted)">cm</span>
+      </div>
+      <div class="action-row">
+        <button class="btn-confirm" id="conf5" onclick="checkAnswer(5, 6, 'mdc(36, 54, 60) = 6 cm. 36=2²×3²; 54=2×3³; 60=2²×3×5. Fatores comuns: 2¹×3¹ = 6.')">Confirmar ✓</button>
+        <button class="btn-next" id="next5" onclick="showResult()">Ver resultado 🏆</button>
+      </div>
+    </div>
+    <div class="feedback" id="fb5"><span class="feedback-icon"></span><div class="feedback-text"></div></div>
+    <div class="solution-steps" id="sol5">
+      <div class="sol-title">Solução passo a passo</div>
+      <div class="sol-step"><div class="sol-num">1</div>36=2²×3²; 54=2×3³; 60=2²×3×5 → fatores comuns: 2¹ e 3¹</div>
+      <div class="sol-step"><div class="sol-num">2</div>mdc(36,54,60) = 2×3 = <strong>6 cm</strong> por pedaço</div>
+      <div class="sol-step"><div class="sol-num">3</div>36÷6=6; 54÷6=9; 60÷6=10 pedaços de cada barbante</div>
+    </div>
+  </div>
+
+  <!-- Resultado -->
+  <div class="result-card" id="result">
+    <div class="result-trophy" id="rTrophy">🏆</div>
+    <div class="result-score" id="rScore">0/6</div>
+    <div class="result-msg" id="rMsg"></div>
+    <div class="result-sub" id="rSub"></div>
+    <button class="btn-retry" onclick="resetAll()">🔄 Tentar novamente</button>
+  </div>
+
+</div>
+
+<script>
+let score = 0;
+let currentP = 0;
+const opSelected = [null, null, null, null, null, null];
+
+function classifyOp(pIdx, op, isCorrect) {
+  const btns = document.querySelectorAll('#op' + pIdx + ' .op-btn');
+  btns.forEach(b => b.disabled = true);
+  const clickedBtn = event.target.closest('.op-btn');
+  if (isCorrect) {
+    clickedBtn.classList.add('selected-correct');
+    opSelected[pIdx] = 'correct';
+  } else {
+    clickedBtn.classList.add('selected-wrong');
+    // highlight correct
+    btns.forEach(b => {
+      if ((op === 'mdc' && b.textContent.includes('mmc')) ||
+          (op === 'mmc' && b.textContent.includes('mdc'))) b.classList.add('selected-correct');
+    });
+    opSelected[pIdx] = 'wrong';
+  }
+  // Show feedback for classification
+  const fb = document.getElementById('fb' + pIdx);
+  const icon = fb.querySelector('.feedback-icon');
+  const text = fb.querySelector('.feedback-text');
+  if (isCorrect) {
+    fb.className = 'feedback visible correct';
+    icon.textContent = '✓';
+    text.textContent = 'Certo! ' + (op === 'mdc' ? 'Usamos mdc quando precisamos dividir em grupos iguais ou encontrar o maior divisor comum.' : 'Usamos mmc quando eventos se repetem em períodos diferentes e queremos saber quando coincidem.');
+  } else {
+    fb.className = 'feedback visible wrong';
+    icon.textContent = '✗';
+    const correct = op === 'mdc' ? 'mmc' : 'mdc';
+    text.textContent = 'Atenção! A operação correta é ' + correct + '. ' + (correct === 'mdc' ? 'Usamos mdc para dividir em grupos iguais ou encontrar o maior tamanho comum.' : 'Usamos mmc para eventos periódicos ou encontrar a menor medida comum.');
+  }
+  // Show answer phase
+  setTimeout(() => {
+    document.getElementById('phase-ans' + pIdx).classList.add('visible');
+    fb.className = 'feedback';
+  }, 900);
+}
+
+function checkAnswer(pIdx, correctVal, explanation) {
+  const inp = document.getElementById('ans' + pIdx);
+  const val = parseInt(inp.value);
+  const ok = val === correctVal;
+  inp.classList.toggle('ok', ok);
+  inp.classList.toggle('err', !ok);
+  inp.disabled = true;
+  document.getElementById('conf' + pIdx).disabled = true;
+  const fb = document.getElementById('fb' + pIdx);
+  const icon = fb.querySelector('.feedback-icon');
+  const text = fb.querySelector('.feedback-text');
+  const opOk = opSelected[pIdx] === 'correct';
+  const sol = document.getElementById('sol' + pIdx);
+  if (ok) {
+    if (opOk) score++;
+    fb.className = 'feedback visible correct';
+    icon.textContent = '✓';
+    text.textContent = 'Resposta correta! ' + explanation;
+    document.getElementById('scoreLabel').textContent = score;
+  } else {
+    fb.className = 'feedback visible wrong';
+    icon.textContent = '✗';
+    text.textContent = 'Resposta incorreta. A resposta certa é ' + correctVal + '. ' + explanation;
+    sol.classList.add('visible');
+  }
+  const nextBtn = document.getElementById('next' + pIdx);
+  nextBtn.style.display = 'block';
+  nextBtn.classList.add('visible');
+}
+
+function nextP(n) {
+  document.getElementById('p' + (n-1)).classList.remove('active');
+  document.getElementById('p' + n).classList.add('active');
+  currentP = n;
+  document.getElementById('pNum').textContent = n + 1;
+  document.getElementById('progFill').style.width = ((n / 6) * 100) + '%';
+}
+
+function showResult() {
+  document.getElementById('p5').classList.remove('active');
+  document.getElementById('progFill').style.width = '100%';
+  const result = document.getElementById('result');
+  result.classList.add('active');
+  const pct = score / 6;
+  let trophy, msg, sub;
+  if (pct === 1)       { trophy = '🏆'; msg = 'Perfeito! Você sabe quando usar mdc e mmc!'; sub = 'Acertou todos os 6 problemas!'; }
+  else if (pct >= 0.8) { trophy = '⭐'; msg = 'Muito bem! Quase perfeito!'; sub = 'Revise os problemas que errou para dominar o tema.'; }
+  else if (pct >= 0.5) { trophy = '👍'; msg = 'Bom trabalho! Continue praticando.'; sub = 'Lembre: mdc = dividir em grupos iguais; mmc = coincidir eventos.'; }
+  else                 { trophy = '📚'; msg = 'Continue estudando!'; sub = 'Revise as dicas: mdc para "maior divisor", mmc para "menor múltiplo em comum".'; }
+  document.getElementById('rTrophy').textContent = trophy;
+  document.getElementById('rScore').textContent = score + '/6';
+  document.getElementById('rMsg').textContent = msg;
+  document.getElementById('rSub').textContent = sub;
+}
+
+function resetAll() {
+  score = 0; currentP = 0;
+  document.getElementById('scoreLabel').textContent = '0';
+  document.getElementById('pNum').textContent = '1';
+  document.getElementById('progFill').style.width = '0%';
+  document.getElementById('result').classList.remove('active');
+  for (let i = 0; i < 6; i++) {
+    opSelected[i] = null;
+    const card = document.getElementById('p' + i);
+    card.classList.remove('active');
+    card.querySelectorAll('.op-btn').forEach(b => { b.disabled = false; b.classList.remove('selected-correct','selected-wrong'); });
+    const ph = document.getElementById('phase-ans' + i);
+    ph.classList.remove('visible');
+    const inp = document.getElementById('ans' + i);
+    inp.value = ''; inp.disabled = false; inp.classList.remove('ok','err');
+    const conf = document.getElementById('conf' + i);
+    conf.disabled = false;
+    const next = document.getElementById('next' + i);
+    next.style.display = 'none'; next.classList.remove('visible');
+    document.getElementById('fb' + i).className = 'feedback';
+    document.getElementById('sol' + i).classList.remove('visible');
+  }
+  document.getElementById('p0').classList.add('active');
+}
+</script>
+</body>
+</html>

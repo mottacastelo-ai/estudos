@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Associador de Critérios — Múltiplos, Divisores e Critérios de Divisibilidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #059669;
+  --light: #34D399;
+  --bg: #ECFDF5;
+  --dark: #064E3B;
+  --border: #D1FAE5;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px; transition: color .2s;
+}
+.back-btn:hover { color: #fff; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.container { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+
+.instructions {
+  background: var(--card); border-radius: var(--radius); border: 2px solid var(--border);
+  padding: 18px 22px; margin-bottom: 24px;
+  font-size: 14px; font-weight: 600; color: var(--dark); line-height: 1.6;
+}
+.instructions strong { color: var(--primary); }
+
+.score-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.score-chip { background: var(--dark); color: #fff; font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 99px; }
+.round-chip { background: var(--border); color: var(--dark); font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 99px; }
+
+/* Cartão de número */
+.number-card {
+  background: var(--card); border-radius: var(--radius); border: 2px solid var(--border);
+  padding: 24px; margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(5,150,105,.07);
+  animation: fadeIn .3s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+
+.num-display {
+  font-family: "Space Mono", monospace; font-size: 56px; font-weight: 700;
+  color: var(--primary); text-align: center; margin-bottom: 8px; line-height: 1;
+}
+.num-question { text-align: center; font-size: 16px; font-weight: 700; color: var(--muted); margin-bottom: 22px; }
+
+/* Grade de critérios */
+.criteria-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+@media (max-width: 440px) { .criteria-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.crit-btn {
+  background: var(--bg); border: 2px solid var(--border); border-radius: 12px;
+  padding: 14px 8px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 700;
+  color: var(--text); cursor: pointer; text-align: center; transition: all .15s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.crit-btn:hover:not(:disabled) { border-color: var(--primary); background: #fff; }
+.crit-btn.selected { background: #D1FAE5; border-color: var(--primary); color: var(--dark); }
+.crit-btn.correct-sel { background: #D1FAE5; border-color: #059669; color: #064E3B; }
+.crit-btn.wrong-sel { background: #FEE2E2; border-color: #DC2626; color: #7F1D1D; }
+.crit-btn.missed { background: #FEF3C7; border-color: #D97706; color: #78350F; }
+.crit-btn:disabled { cursor: default; opacity: .8; }
+.crit-icon { font-size: 20px; }
+.crit-label { font-size: 13px; line-height: 1.2; }
+
+.confirm-btn {
+  margin-top: 18px; width: 100%;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 12px;
+  padding: 15px; font-family: "Baloo 2", cursive;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.confirm-btn:hover { background: var(--dark); transform: translateY(-1px); }
+.confirm-btn:disabled { opacity: .5; cursor: default; transform: none; }
+
+/* Feedback por rodada */
+.round-feedback {
+  border-radius: 12px; padding: 16px 18px; margin-top: 16px;
+  display: none; animation: fadeIn .25s ease;
+}
+.round-feedback.show { display: block; }
+.round-feedback.perfect { background: #D1FAE5; border: 2px solid #059669; }
+.round-feedback.partial { background: #FEF3C7; border: 2px solid #D97706; }
+.round-feedback.none { background: #FEE2E2; border: 2px solid #EF4444; }
+.rf-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.rf-detail { font-size: 13px; font-weight: 600; line-height: 1.6; }
+.perfect .rf-title { color: #064E3B; }
+.partial .rf-title { color: #78350F; }
+.none .rf-title { color: #7F1D1D; }
+
+.next-btn {
+  margin-top: 14px; width: 100%;
+  background: var(--dark); color: #fff;
+  border: none; border-radius: 12px;
+  padding: 14px; font-family: "Baloo 2", cursive;
+  font-size: 16px; font-weight: 800; cursor: pointer; display: none;
+  transition: background .15s;
+}
+.next-btn.show { display: block; }
+.next-btn:hover { background: var(--primary); }
+
+/* Tela final */
+.result-card {
+  background: var(--card); border-radius: var(--radius); border: 2px solid var(--border);
+  padding: 40px 28px; text-align: center;
+  box-shadow: 0 4px 24px rgba(5,150,105,.1);
+  animation: fadeIn .4s ease;
+}
+.result-emoji { font-size: 64px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 22px; color: var(--dark); margin-bottom: 8px; }
+.result-score { font-size: 48px; font-weight: 900; color: var(--primary); margin-bottom: 4px; }
+.result-max { font-size: 16px; color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+.result-msg { font-size: 16px; font-weight: 600; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+.restart-btn {
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 12px;
+  padding: 15px 36px; font-family: "Baloo 2", cursive;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  transition: background .15s;
+}
+.restart-btn:hover { background: var(--dark); }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>🖩 Associador de Critérios</h1>
+  <p>Múltiplos, Divisores e Critérios de Divisibilidade — 5º Ano</p>
+</div>
+
+<div class="container">
+  <div class="instructions">
+    Para cada número exibido, marque <strong>todos</strong> os critérios de divisibilidade que se aplicam a ele.
+    Um número pode ser divisível por vários critérios ao mesmo tempo! Confirme e veja o feedback antes de avançar.
+  </div>
+
+  <div class="score-bar">
+    <div class="round-chip" id="round-display">Número 1 de 6</div>
+    <div class="score-chip" id="score-display">⭐ 0 pts</div>
+  </div>
+
+  <div id="game-area"></div>
+  <div id="result-area" class="hidden"></div>
+</div>
+
+<script>
+// Critérios disponíveis
+const CRITERIA = [
+  { id: 2,  label: "÷ 2",  icon: "2️⃣", rule: "Termina em 0, 2, 4, 6 ou 8" },
+  { id: 3,  label: "÷ 3",  icon: "3️⃣", rule: "Soma dos algarismos ÷ 3" },
+  { id: 5,  label: "÷ 5",  icon: "5️⃣", rule: "Termina em 0 ou 5" },
+  { id: 6,  label: "÷ 6",  icon: "6️⃣", rule: "Divisível por 2 E por 3" },
+  { id: 9,  label: "÷ 9",  icon: "9️⃣", rule: "Soma dos algarismos ÷ 9" },
+  { id: 10, label: "÷ 10", icon: "🔟", rule: "Termina em 0" }
+];
+
+// Números do jogo: [número, divisores corretos, explicação]
+const NUMBERS = [
+  {
+    n: 426,
+    correct: [2, 3, 6],
+    explain: "426 termina em 6 (÷2 ✓). Soma: 4+2+6=12, divisível por 3 (÷3 ✓). Como é ÷2 e ÷3, também é ÷6 ✓. Não termina em 0 ou 5 (÷5 ✗). Soma 12 não é divisível por 9 (÷9 ✗). Não termina em 0 (÷10 ✗)."
+  },
+  {
+    n: 495,
+    correct: [3, 5, 9],
+    explain: "495 termina em 5 (÷5 ✓). Soma: 4+9+5=18, divisível por 3 (÷3 ✓) e por 9 (÷9 ✓). Termina em 5, não em par (÷2 ✗). Não é ÷2, logo não é ÷6 ✗. Não termina em 0 (÷10 ✗)."
+  },
+  {
+    n: 630,
+    correct: [2, 3, 5, 6, 9, 10],
+    explain: "630 termina em 0 (÷2 ✓, ÷5 ✓, ÷10 ✓). Soma: 6+3+0=9, ÷3 ✓ e ÷9 ✓. Como é ÷2 e ÷3, também é ÷6 ✓. Esse número é divisível por TODOS os critérios!"
+  },
+  {
+    n: 4381,
+    correct: [],
+    explain: "4381 termina em 1 (÷2 ✗, ÷5 ✗, ÷10 ✗). Soma: 4+3+8+1=16, não ÷3 ✗, não ÷9 ✗. Como não é ÷2 nem ÷3, também não é ÷6 ✗. 4381 não é divisível por nenhum dos critérios listados!"
+  },
+  {
+    n: 312,
+    correct: [2, 3, 6],
+    explain: "312 termina em 2 (÷2 ✓). Soma: 3+1+2=6, divisível por 3 (÷3 ✓). Como é ÷2 e ÷3, também é ÷6 ✓. Não termina em 0 ou 5 (÷5 ✗). Soma 6 não é ÷9 ✗. Não termina em 0 (÷10 ✗)."
+  },
+  {
+    n: 100,
+    correct: [2, 5, 10],
+    explain: "100 termina em 0 (÷2 ✓, ÷5 ✓, ÷10 ✓). Soma: 1+0+0=1, não ÷3 ✗, não ÷9 ✗. Como não é ÷3, também não é ÷6 ✗."
+  }
+];
+
+let current = 0;
+let totalScore = 0;
+let selected = new Set();
+let confirmed = false;
+
+function renderRound() {
+  confirmed = false;
+  selected = new Set();
+  const item = NUMBERS[current];
+  document.getElementById("round-display").textContent = `Número ${current + 1} de ${NUMBERS.length}`;
+
+  const html = `
+    <div class="number-card">
+      <div class="num-display">${item.n}</div>
+      <div class="num-question">Quais critérios de divisibilidade se aplicam a este número?<br><small style="font-size:12px;opacity:.7">(marque todos que se aplicam)</small></div>
+      <div class="criteria-grid" id="crit-grid">
+        ${CRITERIA.map(c => `
+          <button class="crit-btn" id="btn-${c.id}" onclick="toggleCrit(${c.id})">
+            <span class="crit-icon">${c.icon}</span>
+            <span class="crit-label"><strong>${c.label}</strong><br><span style="font-size:11px;font-weight:600;opacity:.8">${c.rule}</span></span>
+          </button>
+        `).join("")}
+      </div>
+      <button class="confirm-btn" id="confirm-btn" onclick="confirm()">
+        ✓ Confirmar resposta
+      </button>
+      <div class="round-feedback" id="round-feedback">
+        <div class="rf-title" id="rf-title"></div>
+        <div class="rf-detail" id="rf-detail"></div>
+      </div>
+      <button class="next-btn" id="next-btn" onclick="nextRound()">
+        ${current === NUMBERS.length - 1 ? "Ver resultado final →" : "Próximo número →"}
+      </button>
+    </div>
+  `;
+  document.getElementById("game-area").innerHTML = html;
+}
+
+function toggleCrit(id) {
+  if (confirmed) return;
+  if (selected.has(id)) {
+    selected.delete(id);
+    document.getElementById(`btn-${id}`).classList.remove("selected");
+  } else {
+    selected.add(id);
+    document.getElementById(`btn-${id}`).classList.add("selected");
+  }
+}
+
+function confirm() {
+  if (confirmed) return;
+  confirmed = true;
+  const item = NUMBERS[current];
+  const correctSet = new Set(item.correct);
+
+  // Desabilitar botões
+  CRITERIA.forEach(c => {
+    const btn = document.getElementById(`btn-${c.id}`);
+    btn.disabled = true;
+    btn.classList.remove("selected");
+    if (correctSet.has(c.id) && selected.has(c.id)) btn.classList.add("correct-sel");
+    else if (!correctSet.has(c.id) && selected.has(c.id)) btn.classList.add("wrong-sel");
+    else if (correctSet.has(c.id) && !selected.has(c.id)) btn.classList.add("missed");
+  });
+
+  document.getElementById("confirm-btn").disabled = true;
+
+  // Calcular pontos
+  const correctSelections = [...selected].filter(id => correctSet.has(id)).length;
+  const wrongSelections = [...selected].filter(id => !correctSet.has(id)).length;
+  const missed = item.correct.filter(id => !selected.has(id)).length;
+  const maxPoints = Math.max(item.correct.length, 1);
+  const pts = Math.max(0, correctSelections - wrongSelections);
+  const roundScore = Math.round((pts / maxPoints) * 10);
+  totalScore += roundScore;
+
+  document.getElementById("score-display").textContent = `⭐ ${totalScore} pts`;
+
+  // Feedback
+  const fb = document.getElementById("round-feedback");
+  const isNone = item.correct.length === 0;
+  let fbClass, title;
+  if (wrongSelections === 0 && missed === 0) {
+    fbClass = "perfect";
+    title = isNone ? "🎯 Correto! Nenhum critério se aplica!" : "🎯 Perfeito! Você acertou todos!";
+  } else if (correctSelections > 0 || (isNone && wrongSelections > 0)) {
+    fbClass = "partial";
+    title = "🤔 Quase lá! Veja o que ficou errado:";
+  } else {
+    fbClass = "none";
+    title = "💡 Vamos revisar o critério correto:";
+  }
+
+  fb.className = `round-feedback show ${fbClass}`;
+  document.getElementById("rf-title").textContent = title;
+  document.getElementById("rf-detail").textContent = item.explain;
+
+  document.getElementById("next-btn").classList.add("show");
+}
+
+function nextRound() {
+  current++;
+  if (current >= NUMBERS.length) {
+    showResult();
+  } else {
+    renderRound();
+  }
+}
+
+function showResult() {
+  document.getElementById("game-area").classList.add("hidden");
+  const maxScore = NUMBERS.reduce((acc, n) => acc + Math.max(n.correct.length, 1), 0) * 10;
+  // Máximo real: 6 rodadas, cada uma valendo 10 pontos no melhor caso
+  const realMax = NUMBERS.length * 10;
+  const pct = (totalScore / realMax) * 100;
+  let emoji, msg;
+  if (pct >= 90) { emoji = "🏆"; msg = "Você é um expert em critérios de divisibilidade! Divi ficaria orgulhoso!"; }
+  else if (pct >= 70) { emoji = "⭐"; msg = "Muito bem! Você domina a maioria dos critérios. Revise o que errou!"; }
+  else if (pct >= 50) { emoji = "💪"; msg = "Bom esforço! Continue praticando os critérios — você vai melhorar!"; }
+  else { emoji = "📖"; msg = "Revise os critérios de divisibilidade com o Divi e tente novamente!"; }
+
+  document.getElementById("result-area").innerHTML = `
+    <div class="result-card">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-title">Resultado Final</div>
+      <div class="result-score">${totalScore}</div>
+      <div class="result-max">pontos</div>
+      <div class="result-msg">${msg}</div>
+      <button class="restart-btn" onclick="restart()">🔄 Jogar novamente</button>
+    </div>
+  `;
+  document.getElementById("result-area").classList.remove("hidden");
+}
+
+function restart() {
+  current = 0; totalScore = 0;
+  document.getElementById("score-display").textContent = "⭐ 0 pts";
+  document.getElementById("result-area").classList.add("hidden");
+  document.getElementById("game-area").classList.remove("hidden");
+  renderRound();
+}
+
+renderRound();
+</script>
+</body>
+</html>

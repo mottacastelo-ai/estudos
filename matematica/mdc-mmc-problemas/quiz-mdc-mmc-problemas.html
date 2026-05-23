@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — mdc, mmc e Problemas</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mat: #059669;
+  --mat-light: #34D399;
+  --mat-bg: #ECFDF5;
+  --mat-dark: #064E3B;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #D1FAE5;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Baloo 2", cursive;
+  background: var(--mat-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+.header {
+  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+  color: white; padding: 28px 28px 24px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
+  text-decoration: none; margin-bottom: 14px; transition: color .15s;
+}
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+.progress-bar-wrap {
+  background: #fff; padding: 14px 28px;
+  border-bottom: 2px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+}
+.progress-label { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .08em; }
+.prog-track { background: var(--mat-bg); border-radius: 99px; height: 8px; overflow: hidden; }
+.prog-fill { background: var(--mat); height: 100%; border-radius: 99px; transition: width .4s ease; }
+.score-badge {
+  float: right; font-size: 12px; font-weight: 800; color: var(--mat);
+  background: var(--mat-bg); border: 2px solid var(--border);
+  border-radius: 99px; padding: 2px 12px; margin-top: -2px;
+}
+.main { max-width: 680px; margin: 0 auto; padding: 32px 20px 0; }
+.q-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  margin-bottom: 20px; display: none;
+}
+.q-card.active { display: block; animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.q-num {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--mat); margin-bottom: 10px;
+}
+.q-text {
+  font-size: 18px; font-weight: 800; line-height: 1.45; margin-bottom: 22px;
+  color: var(--text);
+}
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn {
+  background: #fff; border: 2px solid var(--border);
+  border-radius: 12px; padding: 14px 18px;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 700;
+  color: var(--text); cursor: pointer; text-align: left;
+  transition: border-color .15s, background .15s;
+  min-height: 52px; display: flex; align-items: center; gap: 10px;
+}
+.opt-btn:hover:not(:disabled) { border-color: var(--mat); background: var(--mat-bg); }
+.opt-btn.correct { background: #D1FAE5; border-color: #34D399; color: #065F46; }
+.opt-btn.wrong   { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; }
+.opt-btn:disabled { cursor: default; }
+.opt-letter {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--mat-bg); color: var(--mat);
+  font-size: 12px; font-weight: 800; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+}
+.opt-btn.correct .opt-letter { background: #34D399; color: #fff; }
+.opt-btn.wrong   .opt-letter { background: #FCA5A5; color: #fff; }
+.feedback {
+  border-radius: 12px; padding: 14px 18px; margin-top: 14px;
+  display: none; align-items: flex-start; gap: 10px;
+}
+.feedback.visible { display: flex; }
+.feedback.correct { background: #D1FAE5; border: 2px solid #34D399; }
+.feedback.wrong   { background: #FEE2E2; border: 2px solid #FCA5A5; }
+.feedback-icon { font-size: 20px; flex-shrink: 0; }
+.feedback-text { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; }
+.next-btn {
+  margin-top: 20px; width: 100%; padding: 16px;
+  background: var(--mat); color: white; border: none; border-radius: 12px;
+  font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800;
+  cursor: pointer; transition: background .15s; display: none;
+}
+.next-btn:hover { background: #047857; }
+.next-btn.visible { display: block; }
+.result-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 40px 28px; text-align: center;
+  display: none;
+}
+.result-card.active { display: block; animation: fadeIn .3s ease; }
+.result-trophy { font-size: 64px; margin-bottom: 16px; }
+.result-score {
+  font-family: "Space Mono", monospace; font-size: 52px; font-weight: 700;
+  color: var(--mat); margin-bottom: 8px;
+}
+.result-msg { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.result-sub { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 32px; }
+.result-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.result-btns button {
+  padding: 14px 28px; border: none; border-radius: 12px;
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: background .15s;
+}
+.btn-retry { background: var(--mat); color: #fff; }
+.btn-retry:hover { background: #047857; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>📐🔢 Quiz — mdc e mmc</h1>
+  <p>mdc, mmc e Problemas — 5º Ano</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label">
+    Questão <span id="qNum">1</span> de 10
+    <span class="score-badge">Acertos: <span id="scoreLabel">0</span>/10</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<div class="main">
+
+  <!-- Q1 -->
+  <div class="q-card active" id="q0">
+    <div class="q-num">Questão 1 de 10</div>
+    <div class="q-text">O mdc (máximo divisor comum) de dois números é sempre…</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(0,0,false)"><span class="opt-letter">A</span> Maior que os dois números</button>
+      <button class="opt-btn" onclick="answer(0,1,true)"><span class="opt-letter">B</span> Um divisor dos dois números</button>
+      <button class="opt-btn" onclick="answer(0,2,false)"><span class="opt-letter">C</span> Um múltiplo dos dois números</button>
+      <button class="opt-btn" onclick="answer(0,3,false)"><span class="opt-letter">D</span> Igual ao menor número</button>
+    </div>
+    <div class="feedback" id="fb0">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next0" onclick="nextQ(1)">Próxima questão →</button>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="q1">
+    <div class="q-num">Questão 2 de 10</div>
+    <div class="q-text">Calcule: mdc(12, 18) = ?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(1,0,true)"><span class="opt-letter">A</span> 6</button>
+      <button class="opt-btn" onclick="answer(1,1,false)"><span class="opt-letter">B</span> 3</button>
+      <button class="opt-btn" onclick="answer(1,2,false)"><span class="opt-letter">C</span> 36</button>
+      <button class="opt-btn" onclick="answer(1,3,false)"><span class="opt-letter">D</span> 12</button>
+    </div>
+    <div class="feedback" id="fb1">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next1" onclick="nextQ(2)">Próxima questão →</button>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="q2">
+    <div class="q-num">Questão 3 de 10</div>
+    <div class="q-text">Para calcular o mdc pela decomposição em fatores primos, usamos os fatores comuns com…</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(2,0,false)"><span class="opt-letter">A</span> Maiores expoentes</button>
+      <button class="opt-btn" onclick="answer(2,1,true)"><span class="opt-letter">B</span> Menores expoentes</button>
+      <button class="opt-btn" onclick="answer(2,2,false)"><span class="opt-letter">C</span> Qualquer expoente, tanto faz</button>
+      <button class="opt-btn" onclick="answer(2,3,false)"><span class="opt-letter">D</span> Expoente zero</button>
+    </div>
+    <div class="feedback" id="fb2">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next2" onclick="nextQ(3)">Próxima questão →</button>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="q3">
+    <div class="q-num">Questão 4 de 10</div>
+    <div class="q-text">O mmc de 5 e 7 (números primos entre si) é:</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(3,0,false)"><span class="opt-letter">A</span> 1</button>
+      <button class="opt-btn" onclick="answer(3,1,true)"><span class="opt-letter">B</span> 35</button>
+      <button class="opt-btn" onclick="answer(3,2,false)"><span class="opt-letter">C</span> 12</button>
+      <button class="opt-btn" onclick="answer(3,3,false)"><span class="opt-letter">D</span> 57</button>
+    </div>
+    <div class="feedback" id="fb3">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next3" onclick="nextQ(4)">Próxima questão →</button>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="q4">
+    <div class="q-num">Questão 5 de 10</div>
+    <div class="q-text">Para calcular o mmc, usamos…</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(4,0,false)"><span class="opt-letter">A</span> Só os fatores comuns</button>
+      <button class="opt-btn" onclick="answer(4,1,true)"><span class="opt-letter">B</span> Todos os fatores primos com maiores expoentes</button>
+      <button class="opt-btn" onclick="answer(4,2,false)"><span class="opt-letter">C</span> Os fatores comuns com menores expoentes</button>
+      <button class="opt-btn" onclick="answer(4,3,false)"><span class="opt-letter">D</span> Só os fatores não-comuns</button>
+    </div>
+    <div class="feedback" id="fb4">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next4" onclick="nextQ(5)">Próxima questão →</button>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="q5">
+    <div class="q-num">Questão 6 de 10</div>
+    <div class="q-text">"Dois ônibus saem juntos e têm intervalos de 12 e 18 minutos. Quando voltam a sair juntos?" Qual operação resolve esse problema?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(5,0,false)"><span class="opt-letter">A</span> mdc(12, 18)</button>
+      <button class="opt-btn" onclick="answer(5,1,true)"><span class="opt-letter">B</span> mmc(12, 18)</button>
+      <button class="opt-btn" onclick="answer(5,2,false)"><span class="opt-letter">C</span> 12 + 18</button>
+      <button class="opt-btn" onclick="answer(5,3,false)"><span class="opt-letter">D</span> 12 × 18</button>
+    </div>
+    <div class="feedback" id="fb5">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next5" onclick="nextQ(6)">Próxima questão →</button>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-card" id="q6">
+    <div class="q-num">Questão 7 de 10</div>
+    <div class="q-text">Calcule: mmc(4, 6) = ?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(6,0,false)"><span class="opt-letter">A</span> 2</button>
+      <button class="opt-btn" onclick="answer(6,1,true)"><span class="opt-letter">B</span> 12</button>
+      <button class="opt-btn" onclick="answer(6,2,false)"><span class="opt-letter">C</span> 24</button>
+      <button class="opt-btn" onclick="answer(6,3,false)"><span class="opt-letter">D</span> 8</button>
+    </div>
+    <div class="feedback" id="fb6">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next6" onclick="nextQ(7)">Próxima questão →</button>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-card" id="q7">
+    <div class="q-num">Questão 8 de 10</div>
+    <div class="q-text">Calcule: mdc(60, 12, 30) = ?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(7,0,false)"><span class="opt-letter">A</span> 3</button>
+      <button class="opt-btn" onclick="answer(7,1,true)"><span class="opt-letter">B</span> 6</button>
+      <button class="opt-btn" onclick="answer(7,2,false)"><span class="opt-letter">C</span> 12</button>
+      <button class="opt-btn" onclick="answer(7,3,false)"><span class="opt-letter">D</span> 30</button>
+    </div>
+    <div class="feedback" id="fb7">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next7" onclick="nextQ(8)">Próxima questão →</button>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card" id="q8">
+    <div class="q-num">Questão 9 de 10</div>
+    <div class="q-text">"Qual o tamanho máximo de azulejos quadrados para cobrir uma parede de 180 cm × 120 cm sem sobrar?" Qual operação resolve esse problema?</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(8,0,false)"><span class="opt-letter">A</span> mmc(180, 120)</button>
+      <button class="opt-btn" onclick="answer(8,1,true)"><span class="opt-letter">B</span> mdc(180, 120)</button>
+      <button class="opt-btn" onclick="answer(8,2,false)"><span class="opt-letter">C</span> 180 + 120</button>
+      <button class="opt-btn" onclick="answer(8,3,false)"><span class="opt-letter">D</span> 180 ÷ 120</button>
+    </div>
+    <div class="feedback" id="fb8">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next8" onclick="nextQ(9)">Próxima questão →</button>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="q9">
+    <div class="q-num">Questão 10 de 10</div>
+    <div class="q-text">Quando mdc(a, b) = 1, dizemos que a e b são…</div>
+    <div class="opts">
+      <button class="opt-btn" onclick="answer(9,0,false)"><span class="opt-letter">A</span> Números compostos</button>
+      <button class="opt-btn" onclick="answer(9,1,false)"><span class="opt-letter">B</span> Múltiplos um do outro</button>
+      <button class="opt-btn" onclick="answer(9,2,true)"><span class="opt-letter">C</span> Primos entre si</button>
+      <button class="opt-btn" onclick="answer(9,3,false)"><span class="opt-letter">D</span> Fatores primos</button>
+    </div>
+    <div class="feedback" id="fb9">
+      <span class="feedback-icon"></span>
+      <div class="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next9" onclick="showResult()">Ver resultado 🏆</button>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="result">
+    <div class="result-trophy" id="rTrophy">🏆</div>
+    <div class="result-score" id="rScore">0/10</div>
+    <div class="result-msg" id="rMsg">Parabéns!</div>
+    <div class="result-sub" id="rSub"></div>
+    <div class="result-btns">
+      <button class="btn-retry" onclick="resetQuiz()">🔄 Tentar novamente</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const feedbacks = [
+  { correct: "Certo! O mdc (máximo divisor comum) é sempre um divisor dos dois números — ele divide os dois exatamente.", wrong: "Não é bem assim. O mdc é um divisor dos dois números, ou seja, divide ambos sem sobrar resto." },
+  { correct: "Correto! D(12) = {1,2,3,4,6,12} e D(18) = {1,2,3,6,9,18}. A intersecção ∩ desses conjuntos é {1,2,3,6}, e o maior é 6.", wrong: "Tente de novo na lógica. D(12) ∩ D(18) = {1,2,3,6}. O maior valor dessa intersecção é 6." },
+  { correct: "Exato! Para o mdc, tomamos os fatores primos COMUNS com os MENORES expoentes e multiplicamos.", wrong: "Cuidado! Para mdc usamos os menores expoentes (já para mmc usamos os maiores expoentes)." },
+  { correct: "Perfeito! Quando dois números são primos entre si (mdc = 1), o mmc deles é o produto. mmc(5,7) = 5 × 7 = 35.", wrong: "Lembre-se: se os números são primos entre si (mdc = 1), o mmc é igual ao produto deles: 5 × 7 = 35." },
+  { correct: "Ótimo! Para o mmc, pegamos TODOS os fatores primos (comuns e não-comuns) com os MAIORES expoentes.", wrong: "Atenção: no mmc usamos todos os fatores primos com maiores expoentes — não apenas os comuns." },
+  { correct: "Certo! Coincidir eventos periódicos é problema de mmc. mmc(12,18) = 36 — os ônibus saem juntos a cada 36 minutos.", wrong: "Quando eventos se repetem em intervalos diferentes e queremos saber quando coincidem, usamos o mmc." },
+  { correct: "Correto! 4 = 2² e 6 = 2×3. Para o mmc: todos os fatores com maiores expoentes = 2² × 3 = 12.", wrong: "Lembre: 4 = 2² e 6 = 2×3. mmc pega todos os fatores com maiores expoentes: 2² × 3 = 12." },
+  { correct: "Ótimo! 60 = 2²×3×5; 12 = 2²×3; 30 = 2×3×5. Fatores COMUNS com MENORES expoentes: 2¹ × 3¹ = 6.", wrong: "Decompondo: 60=2²×3×5; 12=2²×3; 30=2×3×5. Os fatores comuns com menores expoentes são 2¹×3¹ = 6." },
+  { correct: "Exato! Quando queremos o MAIOR divisor para cortar/cobrir sem sobrar, usamos o mdc.", wrong: "Para encontrar o maior tamanho de azulejo que cabe exato, precisamos do mdc (máximo divisor comum)." },
+  { correct: "Correto! Primos entre si significa que o mdc deles é 1 — não têm fator primo em comum.", wrong: "Quando mdc(a,b) = 1, os números são chamados de primos entre si — não compartilham nenhum fator primo." }
+];
+
+let score = 0;
+let currentQ = 0;
+
+function answer(qIdx, optIdx, isCorrect) {
+  const card = document.getElementById('q' + qIdx);
+  const buttons = card.querySelectorAll('.opt-btn');
+  buttons.forEach(b => b.disabled = true);
+  buttons[optIdx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) {
+    // highlight correct
+    buttons.forEach((b, i) => {
+      if (b.onclick && b.onclick.toString().includes('true')) b.classList.add('correct');
+    });
+  }
+  const fb = document.getElementById('fb' + qIdx);
+  const icon = fb.querySelector('.feedback-icon');
+  const text = fb.querySelector('.feedback-text');
+  if (isCorrect) {
+    score++;
+    fb.classList.add('correct', 'visible');
+    icon.textContent = '✓';
+    text.textContent = feedbacks[qIdx].correct;
+    document.getElementById('scoreLabel').textContent = score;
+  } else {
+    fb.classList.add('wrong', 'visible');
+    icon.textContent = '✗';
+    text.textContent = feedbacks[qIdx].wrong;
+  }
+  document.getElementById('next' + qIdx).classList.add('visible');
+}
+
+function nextQ(n) {
+  document.getElementById('q' + (n-1)).classList.remove('active');
+  document.getElementById('q' + n).classList.add('active');
+  currentQ = n;
+  document.getElementById('qNum').textContent = n + 1;
+  const pct = ((n) / 10) * 100;
+  document.getElementById('progFill').style.width = pct + '%';
+}
+
+function showResult() {
+  document.getElementById('q9').classList.remove('active');
+  document.getElementById('progFill').style.width = '100%';
+  const result = document.getElementById('result');
+  result.classList.add('active');
+  const pct = score / 10;
+  let trophy, msg, sub;
+  if (pct === 1)       { trophy = '🏆'; msg = 'Perfeito! Você dominou mdc e mmc!'; sub = 'Acertou todas as 10 questões. Incrível!'; }
+  else if (pct >= 0.8) { trophy = '⭐'; msg = 'Muito bem! Você está ótimo!'; sub = 'Quase perfeito — revise as que errou.'; }
+  else if (pct >= 0.6) { trophy = '👍'; msg = 'Bom trabalho! Continue praticando.'; sub = 'Revise os conceitos de fatores primos e intersecção ∩.'; }
+  else                 { trophy = '📚'; msg = 'Continue estudando!'; sub = 'Revise mdc, mmc e a decomposição em fatores primos.'; }
+  document.getElementById('rTrophy').textContent = trophy;
+  document.getElementById('rScore').textContent = score + '/10';
+  document.getElementById('rMsg').textContent = msg;
+  document.getElementById('rSub').textContent = sub;
+}
+
+function resetQuiz() {
+  score = 0; currentQ = 0;
+  document.getElementById('scoreLabel').textContent = '0';
+  document.getElementById('qNum').textContent = '1';
+  document.getElementById('progFill').style.width = '0%';
+  document.getElementById('result').classList.remove('active');
+  for (let i = 0; i < 10; i++) {
+    const card = document.getElementById('q' + i);
+    card.classList.remove('active');
+    card.querySelectorAll('.opt-btn').forEach(b => { b.disabled = false; b.classList.remove('correct','wrong'); });
+    const fb = document.getElementById('fb' + i);
+    fb.classList.remove('correct','wrong','visible');
+    document.getElementById('next' + i).classList.remove('visible');
+  }
+  document.getElementById('q0').classList.add('active');
+}
+</script>
+</body>
+</html>

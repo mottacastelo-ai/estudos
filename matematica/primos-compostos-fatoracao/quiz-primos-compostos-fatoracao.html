@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Interativo — Números Primos, Compostos e Fatoração</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #059669;
+    --light: #34D399;
+    --bg: #ECFDF5;
+    --dark: #064E3B;
+    --border: #D1FAE5;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --card: #fff;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
+    color: white;
+    padding: 28px 28px 24px;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255,255,255,.7);
+    text-decoration: none;
+    margin-bottom: 14px;
+    font-family: 'Baloo 2', cursive;
+    transition: color .2s;
+  }
+  .back-btn:hover { color: #fff; }
+  .header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .header p { font-size: 13px; font-weight: 600; opacity: .85; }
+  .container { max-width: 680px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  /* Progresso */
+  .progress-wrap { margin-bottom: 24px; }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 13px; font-weight: 700; color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .prog-track {
+    height: 10px; background: var(--border); border-radius: 99px; overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--light));
+    border-radius: 99px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Card da questão */
+  .q-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: 0 4px 24px rgba(5,150,105,.08);
+    border: 1.5px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .q-number {
+    font-size: 11px; font-weight: 800; color: var(--primary);
+    text-transform: uppercase; letter-spacing: .08em;
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: 17px; font-weight: 700; line-height: 1.5;
+    color: var(--text); margin-bottom: 20px;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    background: #F9FAFB;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: left;
+    font-family: 'Baloo 2', cursive;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all .18s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .opt-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    background: var(--bg);
+    transform: translateX(3px);
+  }
+  .opt-btn.correct {
+    background: #D1FAE5; border-color: #059669; color: #064E3B;
+  }
+  .opt-btn.wrong {
+    background: #FEE2E2; border-color: #EF4444; color: #7F1D1D;
+  }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    width: 28px; height: 28px; min-width: 28px;
+    background: var(--border); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: var(--dark);
+    font-family: 'Space Mono', monospace;
+    transition: background .18s;
+  }
+  .correct .opt-letter { background: #059669; color: #fff; }
+  .wrong .opt-letter { background: #EF4444; color: #fff; }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-top: 14px;
+    font-size: 14px; font-weight: 600; line-height: 1.5;
+    animation: fadeIn .3s ease;
+  }
+  .feedback.correct { background: #D1FAE5; color: #064E3B; border: 1.5px solid #6EE7B7; }
+  .feedback.wrong { background: #FEE2E2; color: #7F1D1D; border: 1.5px solid #FCA5A5; }
+  .feedback-icon { font-size: 20px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+
+  /* Botão próximo */
+  .next-btn {
+    width: 100%; margin-top: 16px;
+    background: var(--primary); color: white;
+    border: none; border-radius: 12px;
+    padding: 14px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 16px; font-weight: 800;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+    display: none;
+  }
+  .next-btn:hover { background: var(--dark); transform: translateY(-1px); }
+
+  /* Placar final */
+  .result-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 40px 28px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(5,150,105,.1);
+    border: 1.5px solid var(--border);
+    display: none;
+  }
+  .result-emoji { font-size: 64px; margin-bottom: 16px; }
+  .result-score {
+    font-family: 'Space Mono', monospace;
+    font-size: 52px; font-weight: 700;
+    color: var(--primary); margin-bottom: 8px;
+  }
+  .result-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .result-msg { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+  .replay-btn {
+    background: var(--primary); color: white;
+    border: none; border-radius: 12px;
+    padding: 14px 32px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 16px; font-weight: 800;
+    cursor: pointer;
+    transition: background .2s;
+    margin-bottom: 12px;
+  }
+  .replay-btn:hover { background: var(--dark); }
+  .portal-btn {
+    display: block; text-align: center;
+    color: var(--primary); text-decoration: none;
+    font-weight: 700; font-size: 14px; margin-top: 8px;
+  }
+
+  @media (max-width: 480px) {
+    .header h1 { font-size: 18px; }
+    .q-text { font-size: 15px; }
+    .opt-btn { font-size: 14px; padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>🔍🔢 Quiz Interativo</h1>
+  <p>Números Primos, Compostos e Fatoração — 5º Ano</p>
+</div>
+
+<div class="container">
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="q-label">Questão 1 de 10</span>
+      <span id="score-label">0 pontos</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="q-card" id="q-card">
+    <div class="q-number" id="q-number">Questão 1</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div id="feedback-area"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Próxima questão →</button>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="result-emoji" id="result-emoji"></div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <button class="replay-btn" onclick="restart()">Jogar novamente</button>
+    <a href="../../index.html" class="portal-btn">← Voltar ao Portal</a>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "Quantos divisores tem um número primo?",
+    opts: ["1 divisor", "2 divisores", "3 divisores", "Infinitos divisores"],
+    correct: 1,
+    feedback: "Um número primo tem exatamente 2 divisores: o número 1 e ele mesmo. Por exemplo, o 7 só é divisível por 1 e por 7."
+  },
+  {
+    text: "O número 1 é classificado como:",
+    opts: ["Número primo", "Número composto", "Primo e composto ao mesmo tempo", "Nem primo nem composto"],
+    correct: 3,
+    feedback: "O número 1 NÃO é primo nem composto. Para ser primo, precisaria ter exatamente 2 divisores — mas o 1 tem apenas 1 divisor (ele mesmo)."
+  },
+  {
+    text: "Qual é o único número par que é primo?",
+    opts: ["4", "2", "6", "10"],
+    correct: 1,
+    feedback: "O 2 é o único número par primo! Todo número par maior que 2 é divisível por 2, logo tem mais de 2 divisores e é composto."
+  },
+  {
+    text: "8 e 25 são chamados de 'números primos entre si' porque:",
+    opts: [
+      "Ambos são números primos",
+      "Têm apenas 1 como divisor comum (mdc = 1)",
+      "São números consecutivos",
+      "Os dois são ímpares"
+    ],
+    correct: 1,
+    feedback: "Números primos entre si são aqueles que têm apenas 1 como divisor comum, ou seja, mdc = 1. O 8 (2³) e o 25 (5²) não têm nenhum fator primo em comum!"
+  },
+  {
+    text: "A representação fatorada de 90 é:",
+    opts: ["9 × 10", "2 × 45", "2 × 3² × 5", "3 × 30"],
+    correct: 2,
+    feedback: "90 = 2 × 45 = 2 × 3 × 15 = 2 × 3 × 3 × 5 = 2 × 3² × 5. A representação fatorada usa apenas fatores primos!"
+  },
+  {
+    text: "Na representação fatorada, os números sobrescritos como em 2⁴ são chamados de:",
+    opts: ["Divisores", "Múltiplos", "Expoentes", "Fatores comuns"],
+    correct: 2,
+    feedback: "Os números sobrescritos são os expoentes! Na representação fatorada, quando um fator primo se repete, usamos expoentes. Por exemplo, 2⁴ significa 2 × 2 × 2 × 2."
+  },
+  {
+    text: "Qual é a representação fatorada de 400?",
+    opts: ["4 × 100", "2⁴ × 5²", "2³ × 5³", "2⁵ × 5"],
+    correct: 1,
+    feedback: "400 = 2 × 200 = 2 × 2 × 100 = 2 × 2 × 2 × 50 = 2 × 2 × 2 × 2 × 25 = 2⁴ × 5² = 16 × 25 = 400. ✓"
+  },
+  {
+    text: "Para verificar se 89 é primo, divido pelos primos 2, 3, 5, 7… Se 89 ÷ 7 = 12,7… e 12 < 7 não é verdade, mas ao tentar 89 ÷ 7 o quociente inteiro é 12 e 12 > 7. Quando posso parar de testar?",
+    opts: [
+      "Preciso continuar dividindo por 11, 13…",
+      "89 é composto pois não dividi por todos os primos",
+      "Quando o quociente for menor que o divisor testado, posso parar — 89 é primo",
+      "Devo dividir por todos os primos até 89"
+    ],
+    correct: 2,
+    feedback: "O método correto: divido pelo primo 2, depois 3, 5, 7… Quando o quociente obtido for menor que o próximo divisor a testar, posso parar. Se nenhuma divisão foi exata, o número é primo. 89 é primo!"
+  },
+  {
+    text: "Qual dos seguintes números NÃO é primo?",
+    opts: ["7", "11", "9", "13"],
+    correct: 2,
+    feedback: "O 9 não é primo porque 9 = 3 × 3, logo tem mais de 2 divisores (1, 3 e 9). Portanto, 9 é um número composto."
+  },
+  {
+    text: "A partir da representação fatorada 90 = 2 × 3² × 5, o conjunto D(90) de divisores tem quantos elementos?",
+    opts: ["9 elementos", "10 elementos", "12 elementos", "15 elementos"],
+    correct: 2,
+    feedback: "D(90) = {1, 2, 3, 5, 6, 9, 10, 15, 18, 30, 45, 90} → 12 elementos. Para encontrar todos os divisores, combinamos os fatores 2, 3², 5 de todas as formas possíveis."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function render() {
+  const q = questions[current];
+  document.getElementById('q-number').textContent = `Questão ${current + 1}`;
+  document.getElementById('q-label').textContent = `Questão ${current + 1} de ${questions.length}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('prog-fill').style.width = `${(current / questions.length) * 100}%`;
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const optDiv = document.getElementById('options');
+  optDiv.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => answer(i);
+    optDiv.appendChild(btn);
+  });
+
+  document.getElementById('feedback-area').innerHTML = '';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+
+  if (idx === q.correct) {
+    btns[idx].classList.add('correct');
+    score++;
+    document.getElementById('score-label').textContent = `${score} ponto${score !== 1 ? 's' : ''}`;
+    showFeedback('correct', '✓', q.feedback);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    showFeedback('wrong', '✗', q.feedback);
+  }
+
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = current < questions.length - 1 ? 'Próxima questão →' : 'Ver resultado →';
+}
+
+function showFeedback(type, icon, text) {
+  document.getElementById('feedback-area').innerHTML = `
+    <div class="feedback ${type}">
+      <span class="feedback-icon">${icon}</span>
+      <div class="feedback-text">${text}</div>
+    </div>`;
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    render();
+  }
+}
+
+function showResult() {
+  document.getElementById('q-card').style.display = 'none';
+  const rc = document.getElementById('result-card');
+  rc.style.display = 'block';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('q-label').textContent = 'Concluído!';
+
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('result-score').textContent = `${score}/${questions.length}`;
+
+  let emoji, title, msg;
+  if (pct === 100) {
+    emoji = '🏆'; title = 'Perfeito! Você é um Detetive Primo!';
+    msg = 'Você domina completamente números primos, compostos e fatoração. Continue assim!';
+  } else if (pct >= 70) {
+    emoji = '🌟'; title = 'Muito bem! Quase lá!';
+    msg = 'Você entende muito bem o conteúdo. Revise as questões que errou e tente novamente!';
+  } else if (pct >= 50) {
+    emoji = '💪'; title = 'Bom esforço!';
+    msg = 'Você está no caminho certo. Revise os conceitos de número primo, composto e representação fatorada.';
+  } else {
+    emoji = '📚'; title = 'Continue estudando!';
+    msg = 'Revise os conceitos: número primo tem exatamente 2 divisores, representação fatorada usa fatores primos. Você consegue!';
+  }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-msg').textContent = msg;
+  rc.style.animation = 'fadeIn .5s ease';
+}
+
+function restart() {
+  current = 0; score = 0;
+  document.getElementById('score-label').textContent = '0 pontos';
+  document.getElementById('result-card').style.display = 'none';
+  document.getElementById('q-card').style.display = 'block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
