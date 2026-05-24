@@ -41,21 +41,31 @@ Editar `index.html` para adicionar um novo tema: link na sidebar, conteúdo comp
 ## Procedimento obrigatório
 
 1. **Ler** `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\index.html` completo.
-2. **Localizar** o último tema da mesma disciplina — copiar exatamente o padrão HTML dele.
+2. **Localizar** o último tema da mesma disciplina — usar como referência de posição de inserção, mas **não copiar o HTML do bloco de conteúdo** — usar os padrões definidos abaixo.
 3. **Identificar os 3 pontos de inserção:**
-   - Sidebar: botão `<button class="theme-link" onclick="showTheme('[disc]','[último-slug]')">`
-   - Tab de navegação da disciplina: botão `<button class="theme-tab-btn [disc]-tab" ...>`
-   - Bloco de conteúdo: `<div class="theme-content" id="theme-[disc]-[último-slug]">`
+   - Sidebar: após o último `<button class="theme-link" onclick="showTheme('[disc]','[último-slug]')">`
+   - Tab de navegação da disciplina: após o último `<button class="theme-tab-btn [disc]-tab" ...>`
+   - Bloco de conteúdo: após o último `<div class="theme-content" id="theme-[disc]-[último-slug]">`
 4. **Inserir** o novo tema após o último da mesma disciplina em cada ponto.
 5. **Atualizar** o contador de temas da disciplina na seção home (chip `<span class="chip">N temas</span>`).
 6. **Não alterar nada** além das seções do novo tema e o contador.
 
-## Padrão do bloco de conteúdo (espelhar do existente)
+## Cores concretas por disciplina (substituir nos padrões abaixo)
+
+| disciplina | disc | primaria | clara | bg |
+|---|---|---|---|---|
+| portugues | port | #7C3AED | #A78BFA | #F3F0FF |
+| matematica | mat | #059669 | #34D399 | #ECFDF5 |
+| ciencias | cien | #0284C7 | #38BDF8 | #F0F9FF |
+| historia | hist | #B45309 | #F59E0B | #FFFBEB |
+| geografia | geo | #15803D | #4ADE80 | #F0FDF4 |
+
+## Padrão do bloco de conteúdo
 
 ```html
 <div class="theme-content" id="theme-[disc]-[slug]">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-    <span style="font-size:11px;font-weight:800;background:[bg];color:[primaria];border:1.5px solid [clara];border-radius:99px;padding:3px 10px;letter-spacing:.04em">📄 pp. [paginas_livro]</span>
+    <span style="font-size:11px;font-weight:800;background:[BG];color:[PRIMARIA];border:1.5px solid [CLARA];border-radius:99px;padding:3px 10px;letter-spacing:.04em">📄 pp. [paginas_livro]</span>
   </div>
   <div class="hq-section">
     <img class="hq-img" src="[disciplina]/[slug]/hq-[slug].png" alt="HQ [Nome do Tema]"
@@ -69,7 +79,8 @@ Editar `index.html` para adicionar um novo tema: link na sidebar, conteúdo comp
 </div>
 ```
 
-> Se `paginas_livro` for `null`, omitir o `<div>` da referência de página.
+> Substituir `[BG]`, `[PRIMARIA]`, `[CLARA]` pelos valores hex da tabela acima conforme a disciplina.
+> Se `paginas_livro` for `null`, omitir o `<div>` da referência de página inteiramente.
 
 ## Padrão do card de atividade
 

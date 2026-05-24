@@ -10,7 +10,8 @@
       "mcp__Claude_in_Chrome__read_console_messages",
       "Bash(python3 -c ' *)",
       "Bash(python -m pip show Pillow)",
-      "Bash(python -m pip install Pillow --quiet)"
+      "Bash(python -m pip install Pillow --quiet)",
+      "Bash(grep -E \"\\\\.html$\")"
     ]
   }
 }

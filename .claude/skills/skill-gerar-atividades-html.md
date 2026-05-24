@@ -145,20 +145,68 @@ const questions = [
 
 ### Mapa Mental (mapa-mental-[slug].html)
 
-- Balões arrastáveis que o aluno conecta
-- Conceito central fixo no centro
-- 6–10 conceitos ao redor para organizar
-- Botão "Verificar" + gabarito no final
+**Template canônico:** `historia/diversidade-cultural/mapa-mental-diversidade-cultural.html`
+Ler e adaptar esse arquivo — não inventar estrutura diferente.
+
+#### Características obrigatórias (herdadas do canônico)
+
+- **3 níveis de hierarquia** com cores distintas:
+  - `n-root` — gradiente da cor primária da disciplina (nó central)
+  - `n-level1` — fundo claro da disciplina (categorias principais)
+  - `n-level2` — fundo branco com borda clara (detalhes/exemplos)
+- **Toolbar** com 5 botões: `+ Conectar` · `✥ Mover` · `✕ Apagar seta` · `↺ Reiniciar` · `Ver gabarito`
+- **Stage SVG** para setas com marcadores de seta (`marker-end`)
+- **Gabarito SVG** — diagrama estático com a estrutura correta, exibido ao clicar "Ver gabarito"
+- **Score** — contagem de conexões corretas vs. total do gabarito
+- **Grid responsivo** — 2 colunas em telas < 480px, 5 colunas acima
+- **Touch + Mouse** — `mousedown/touchstart`, `mousemove/touchmove`, `mouseup/touchend`
+
+#### Estrutura de dados a adaptar por tema
 
 ```javascript
-// Estrutura dos nós
-const nodes = [
-  { id: 'center', label: '[Conceito Central]', type: 'center', x: 300, y: 250 },
-  { id: 'n1', label: '[Conceito 1]', type: 'branch', x: 150, y: 100 },
-  // ...
+// 1. Nós — definir id, label, classe CSS de hierarquia
+var NODES = [
+  {id:'root',   label:'🎯 [CONCEITO CENTRAL]',  cls:'n-root'},
+  {id:'cat1',   label:'[Categoria 1]',           cls:'n-level1'},
+  {id:'cat2',   label:'[Categoria 2]',           cls:'n-level1'},
+  {id:'cat3',   label:'[Categoria 3]',           cls:'n-level1'},
+  {id:'det1',   label:'[Detalhe 1.1]',           cls:'n-level2'},
+  {id:'det2',   label:'[Detalhe 1.2]',           cls:'n-level2'},
+  // ... 8–12 nós total
 ];
-const correctConnections = [['center', 'n1'], ['center', 'n2']];
+
+// 2. Gabarito — pares de conexões corretas (bidirecional)
+var GABARITO = [
+  ['root','cat1'], ['root','cat2'], ['root','cat3'],
+  ['cat1','det1'], ['cat1','det2'],
+  ['cat2','det3'], ['cat2','det4'],
+  ['cat3','det5'], ['cat3','det6'],
+];
+
+// 3. Ordem de exibição inicial (embaralhada)
+var SHUFFLE = ['det1','cat2','det3','root','det4','cat1','det2','cat3','det5','det6'];
 ```
+
+#### CSS — adaptar cores para a disciplina do tema
+
+```css
+/* Substituir var(--geo) / #15803D / #4ADE80 / #14532D pelas cores da disciplina */
+.n-root   { background: linear-gradient(135deg,[PRIMARIA],[CLARA]); color:white; border:2px solid [DARK]; }
+.n-level1 { background:[BG-MEDIO]; border:2px solid [CLARA]; color:[DARK]; }
+.n-level2 { background:white; border:2px solid [BG-MEDIO]; color:#374151; }
+```
+
+#### Gabarito SVG — desenhar o diagrama estático
+
+O `<svg id="gabarito-svg" viewBox="0 0 700 240">` deve conter:
+- `<line>` para cada aresta do gabarito (raiz→L1 mais grossas; L1→L2 mais finas)
+- `<rect>` + `<text>` para cada nó (mesmas 3 classes de hierarquia)
+- `<linearGradient>` para o nó raiz
+
+Posições de referência para 3 categorias L1:
+- Raiz: x=350, y=20
+- L1 esquerda: x=112, L1 centro: x=350, L1 direita: x=588 — todas y=96
+- L2: distribuídas sob cada L1 em y=170
 
 ### Classificador (classificador-[slug].html)
 
