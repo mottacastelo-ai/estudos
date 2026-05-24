@@ -20,6 +20,7 @@ Editar `index.html` para adicionar um novo tema: link na sidebar, conteúdo comp
   "codigo_disciplina": "port",
   "emoji": "📝",
   "hq_descricao": "Breve descrição da HQ e personagens (para o caption)",
+  "paginas_livro": "45–52",
   "atividades": [
     {
       "tipo": "quiz",
@@ -53,6 +54,9 @@ Editar `index.html` para adicionar um novo tema: link na sidebar, conteúdo comp
 
 ```html
 <div class="theme-content" id="theme-[disc]-[slug]">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <span style="font-size:11px;font-weight:800;background:[bg];color:[primaria];border:1.5px solid [clara];border-radius:99px;padding:3px 10px;letter-spacing:.04em">📄 pp. [paginas_livro]</span>
+  </div>
   <div class="hq-section">
     <img class="hq-img" src="[disciplina]/[slug]/hq-[slug].png" alt="HQ [Nome do Tema]"
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -64,6 +68,8 @@ Editar `index.html` para adicionar um novo tema: link na sidebar, conteúdo comp
   [cards de atividade — um <a class="act-card [disc]"> por atividade]
 </div>
 ```
+
+> Se `paginas_livro` for `null`, omitir o `<div>` da referência de página.
 
 ## Padrão do card de atividade
 

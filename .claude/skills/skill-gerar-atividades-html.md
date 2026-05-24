@@ -187,6 +187,48 @@ const correctConnections = [['center', 'n1'], ['center', 'n2']];
 
 ---
 
+## Responsividade — regras para celular
+
+Notebook é o uso principal, mas celular deve ser plenamente navegável. Toda atividade deve funcionar sem perda de funcionalidade em 375px de largura.
+
+### CSS obrigatório
+
+```css
+/* Nunca usar largura fixa em px para containers principais */
+.main { max-width: 680px; margin: 0 auto; padding: 32px 20px 0; }
+
+/* Cards e botões: full-width em telas pequenas */
+@media (max-width: 480px) {
+  .main { padding: 20px 14px 0; }
+  .header h1 { font-size: 18px; }
+  .q-text { font-size: 16px; }
+  .opt-btn { font-size: 14px; padding: 12px 14px; }
+}
+```
+
+### Regras de interação
+
+- **Sem hover exclusivo** — qualquer efeito de hover deve ter equivalente em tap/touch.
+- **Tap targets mínimos de 48×48px** — botões, opções, cards de arrastar.
+- **Scroll vertical apenas** — nunca scroll horizontal; usar `overflow-x: hidden` no body.
+- **Fontes mínimas** — 14px para texto auxiliar, 16px para questões e opções.
+- **Drag-and-drop em mobile** — atividades de arrastar devem usar eventos de touch além dos de mouse:
+  ```javascript
+  // Sempre par: mousedown/touchstart, mousemove/touchmove, mouseup/touchend
+  el.addEventListener('mousedown', startDrag);
+  el.addEventListener('touchstart', startDrag, { passive: false });
+  ```
+- **Teclado virtual** — inputs de texto devem ter `font-size: 16px` para evitar zoom automático no iOS.
+
+### O que nunca fazer
+
+- `position: fixed` em elementos grandes (quebra em celular com barra de endereço dinâmica)
+- `width: 700px` fixo em qualquer container
+- Tabelas sem `overflow-x: auto` no wrapper
+- Texto em imagem como único portador de informação (ilegível em tela pequena)
+
+---
+
 ## Regras de qualidade
 
 1. **Sem dependências externas** além do Google Fonts — zero `<script src>` externos
@@ -200,8 +242,8 @@ const correctConnections = [['center', 'n1'], ['center', 'n2']];
 
 ## Boas práticas
 
-- Abrir o arquivo no browser mentalmente e pensar: "André consegue usar isso no tablet?"
-- Botões de opção com altura mínima de 48px (toque fácil)
+- Abrir o arquivo no browser mentalmente e pensar: "isso funciona num celular de 375px sem scroll horizontal?"
+- Botões de opção com altura mínima de 48px (toque fácil em celular)
 - Feedback sempre visível sem precisar rolar a tela
 - Não usar animações pesadas — transições `0.2s ease` são suficientes
 - Textos das questões devem ser claros e diretos; evitar dupla negação

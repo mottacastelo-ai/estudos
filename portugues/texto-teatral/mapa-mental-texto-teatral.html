@@ -32,8 +32,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 #conn-count { font-size: 12px; font-weight: 800; color: var(--port-color); white-space: nowrap; }
 .stage-wrap { position: relative; padding: 16px 20px 20px; }
 #pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
-#stage { position: relative; width: 100%; height: 560px; background: var(--bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
-@media (max-width: 520px) { #stage { height: 680px; } }
+#stage { position: relative; width: 100%; height: calc(100svh - 340px); background: var(--bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+@media (max-width: 520px) { #stage { height: calc(100svh - 340px); } }
 .node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; white-space: nowrap; }
 .node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
 .node.selected { outline: 3px solid #7C3AED; outline-offset: 2px; }
@@ -48,6 +48,12 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .score-track { flex: 1; height: 8px; border-radius: 999px; background: #9FE1CB; }
 .score-fill  { height: 8px; border-radius: 999px; background: #059669; transition: width .4s; }
 .score-label { font-size: 12px; font-weight: 800; color: #065F46; white-space: nowrap; }
+
+@media (max-width: 600px) {
+  #stage { height: calc(100svh - 340px) !important; min-height: 380px; }
+  .node { font-size: 12px !important; padding: 9px 13px !important; min-width: 80px !important; }
+  .n-root { min-width: 130px !important; font-size: 13px !important; }
+}
 </style>
 </head>
 <body>

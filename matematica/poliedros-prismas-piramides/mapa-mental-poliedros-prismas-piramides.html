@@ -111,6 +111,11 @@ body {
 }
 .gab-item b { color: var(--mat-dark); }
 .gab-item.sub { margin-left: 16px; font-size: 12px; font-weight: 600; color: var(--muted); }
+
+@media (max-width: 600px) {
+  .node { padding: 12px 14px !important; font-size: 0.9rem !important; min-width: 95px !important; }
+  .canvas-wrap, #mind-canvas { min-height: calc(100svh - 260px) !important; height: auto !important; }
+}
 </style>
 </head>
 <body>
@@ -202,7 +207,7 @@ const ctx = canvas.getContext('2d');
 function setCanvasSize() {
   const w = canvas.parentElement.clientWidth;
   canvas.width = w;
-  canvas.height = 620;
+  canvas.height = Math.max(400, Math.round(w * 0.72));
   draw();
 }
 

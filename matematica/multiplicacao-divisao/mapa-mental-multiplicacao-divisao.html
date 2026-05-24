@@ -40,7 +40,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: #1A2E1A; m
   background: white; border-radius: 20px;
   box-shadow: 0 2px 14px rgba(5,150,105,.1); border: 2px solid #D1FAE5;
   position: relative; overflow: hidden;
-  min-height: 540px; margin-bottom: 20px; cursor: default;
+  min-height: calc(100svh - 260px); margin-bottom: 20px; cursor: default;
   touch-action: none;
 }
 
@@ -102,6 +102,12 @@ svg#connections {
   color: var(--primary); font-weight: 800; font-size: 14px; text-decoration: none;
 }
 .back-link:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .container { padding: 12px; }
+  #map-canvas { min-height: calc(100svh - 260px) !important; }
+  .node { font-size: 12px !important; padding: 9px 12px !important; min-width: 90px !important; }
+}
 </style>
 </head>
 <body>

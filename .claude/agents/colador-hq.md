@@ -32,6 +32,36 @@ Confirmar que existem na `pasta_tema`:
 
 Se algum estiver faltando, reportar quais faltam e interromper.
 
+### 1.5. Validar dimensões das 4 páginas ⚠️ OBRIGATÓRIO ANTES DA COLAGEM
+
+```python
+from PIL import Image
+import os
+
+slug = "SLUG_AQUI"
+pasta = r"PASTA_TEMA_AQUI"
+
+EXPECTED_W, EXPECTED_H = 1024, 1536
+erros = []
+for i in range(1, 5):
+    path = os.path.join(pasta, f"hq-{slug}-pg{i}.png")
+    img = Image.open(path)
+    if img.width != EXPECTED_W or img.height != EXPECTED_H:
+        erros.append(f"pg{i}: {img.width}x{img.height}px (esperado {EXPECTED_W}x{EXPECTED_H})")
+
+if erros:
+    raise ValueError(
+        "COLAGEM ABORTADA — páginas com dimensão incorreta:\n" +
+        "\n".join(erros) +
+        "\nCausa provável: thumbnail de comparação (864×1821) ou folha de personagens salva no lugar errado."
+        "\nCorrigir as páginas indicadas antes de continuar."
+    )
+
+print("Dimensões OK: todas as 4 páginas em 1024×1536px")
+```
+
+Se qualquer página falhar, **não prosseguir** — reportar o erro ao orquestrador com os nomes dos arquivos problemáticos.
+
 ### 2. Instalar Pillow se necessário
 
 ```bash

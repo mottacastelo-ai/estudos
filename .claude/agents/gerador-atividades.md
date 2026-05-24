@@ -37,7 +37,7 @@ Criar os arquivos HTML das atividades interativas para um tema, seguindo o desig
 3. **Um arquivo HTML auto-contido por tipo** — CSS e JS inline, sem dependências externas (exceto Google Fonts).
 4. **Termos técnicos do livro devem aparecer** nas perguntas, opções e gabaritos.
 5. **Nenhum conceito fora do escopo das fotos** — apenas o que foi validado pelo analisador.
-6. **Mobile-first** — André usa tablet; viewport mínimo 375px.
+6. **Responsivo obrigatório** — notebook é o uso principal, mas celular deve ser plenamente navegável (viewport mínimo 375px). Nenhum elemento deve quebrar ou ficar inacessível em tela pequena. Nenhuma funcionalidade pode depender exclusivamente de hover.
 7. **Gamificação obrigatória** — pontuação + feedback imediato + animação em toda atividade.
 8. Dificuldade adequada para 5º ano (~10 anos).
 9. **Back button** (`← Voltar`) sempre presente, linkando para `../../index.html`.

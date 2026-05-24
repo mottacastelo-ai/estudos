@@ -26,6 +26,7 @@ Usar a skill `.claude/skills/skill-analise-escopo.md` como guia procedural compl
 3. **Recomendar divisão em temas separados** quando: mais de um capítulo, subtemas com autonomia conceitual própria, ou mais de ~8 páginas densas.
 4. **Sugerir personagem como metáfora visual** do conceito central (não personagem genérico).
 5. **Verificar variedade de atividades** — listar HTMLs existentes na pasta da disciplina e propor tipos ainda não usados.
+6. **Capturar números de página** — ler os números de página visíveis nas fotos e registrar o intervalo no campo `paginas_livro` (ex.: `"45–52"`). Se a numeração não estiver visível em nenhuma foto, registrar `null`.
 
 ## Output — JSON estrito
 
@@ -48,6 +49,7 @@ Usar a skill `.claude/skills/skill-analise-escopo.md` como guia procedural compl
         "dark": "#064E3B"
       },
       "tipos_atividade_sugeridos": ["quiz", "mapa-mental"],
+      "paginas_livro": "45–52",
       "justificativa": "Por que este tema tem autonomia própria"
     }
   ],

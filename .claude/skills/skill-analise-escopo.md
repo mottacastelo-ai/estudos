@@ -15,11 +15,14 @@ Toda vez que o agente `analisador-pedagogico` precisa processar imagens de mater
 
 Para cada imagem recebida, extrair:
 
+- **Número de página** — ler o número impresso na página (geralmente no canto superior ou inferior). Registrar a menor e a maior página vista para compor o intervalo (ex.: `"45–52"`).
 - **Título do capítulo/seção** exibido na página
 - **Todos os termos técnicos em destaque** (negrito, caixas coloridas, legendas, glossário)
 - **Exemplos e exercícios visíveis** (anotar o tipo: identificar, classificar, produzir, etc.)
 - **Habilidades trabalhadas** (o que o aluno deve ser capaz de fazer com o conteúdo)
-- **Páginas aproximadas** (estimar volume de conteúdo)
+- **Volume de conteúdo** (quantas páginas abrange o tema)
+
+> Se nenhuma foto mostrar número de página legível, registrar `paginas_livro: null`.
 
 **Regra absoluta:** nenhum conceito que não esteja visível nas imagens pode ser incluído na proposta.
 

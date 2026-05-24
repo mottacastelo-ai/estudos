@@ -54,6 +54,7 @@
 
   /* Canvas area */
   .map-container {
+    height: calc(100svh - 220px); min-height: 420px;
     position: relative; width: 100%; overflow: hidden;
     background: var(--bg);
     background-image:
@@ -324,12 +325,13 @@ let positions = {};
 let dragging = null;
 let dragOffX = 0, dragOffY = 0;
 const nodeEls = {};
-const MAP_HEIGHT = 620;
+let MAP_HEIGHT = 420; // updated on each buildMap() call
 
 // ========== RENDER ==========
 function buildMap() {
   const container = document.getElementById('map-container');
-  container.style.height = MAP_HEIGHT + 'px';
+  // Use CSS-controlled height (calc(100svh - 220px)) — do not override with inline style
+  MAP_HEIGHT = container.clientHeight || Math.max(420, window.innerHeight - 220);
   container.innerHTML = '<svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>';
 
   const W = container.offsetWidth || 700;

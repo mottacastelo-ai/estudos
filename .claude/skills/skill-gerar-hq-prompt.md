@@ -36,6 +36,29 @@ Deve conter:
 
 ---
 
+## Regra absoluta — Sem reticências, sem subentendidos
+
+**O GPT Quadrinhos Sabendo renderiza apenas o que está escrito. Ele não infere, não completa sequências, não interpreta reticências.**
+
+❌ **Errado:**
+> "The numbers 4, 6, 8, 10... have a red X drawn through them"
+> "multiples of 3 (9, 15, 21...) get red X marks"
+> "os planetas do sistema solar (...) aparecem ao fundo"
+
+✅ **Certo:**
+> "The numbers 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50 each have a red X drawn through them"
+> "The multiples of 3 visible on the board — 9, 15, 21, 27, 33, 39, 45 — each have a red X"
+
+**Regra prática:** antes de salvar o arquivo, revisar todos os painéis e substituir qualquer `...` por enumeração completa. Se uma sequência for longa, listar todos os itens. Se um conjunto visual for complexo, descrever cada elemento individualmente.
+
+Isso vale para:
+- Sequências numéricas (`4, 6, 8...` → listar todos)
+- Listas de objetos (`livros, canetas...` → nomear cada um)
+- Padrões visuais (`os demais estão riscados...` → quais exatamente?)
+- Posições e disposições (`etc`, `entre outros`, `e assim por diante` → proibidos)
+
+---
+
 ## Regras para os prompts de cada painel
 
 ### Regra 1 — Termos técnicos nas falas

@@ -25,6 +25,11 @@ body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 10
 .result-bar.show { display: block; }
 .back-btn { display: block; margin: 0 auto 2rem; background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .7rem 1.6rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; width: fit-content; text-decoration: none; }
 .back-btn:hover { background: var(--primary); color: white; }
+
+@media (max-width: 600px) {
+  .node { padding: 12px 14px !important; font-size: 0.9rem !important; min-width: 95px !important; }
+  .canvas-wrap, #canvas { min-height: calc(100svh - 260px) !important; height: auto !important; }
+}
 </style>
 </head>
 <body>

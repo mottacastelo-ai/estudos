@@ -30,13 +30,18 @@ Localizar o bloco de links da disciplina (ex.: `<!-- MATEMÁTICA -->`).
 Inserir após o último `<button class="theme-link"` da disciplina:
 
 ```html
-<button class="theme-link" onclick="showTheme('[disc]','[slug]')">[emoji] [Nome do Tema]</button>
+<button class="theme-link" onclick="showTheme('[disc]','[slug]')">[emoji] [Nome do Tema] <span style="opacity:.55;font-size:10px;font-weight:700">pp.[paginas_livro]</span></button>
 ```
 
 Exemplo real:
 ```html
-<button class="theme-link" onclick="showTheme('mat','poliedros-prismas-piramides')">🏛️ Poliedros, Prismas e Pirâmides</button>
+<button class="theme-link" onclick="showTheme('mat','poliedros-prismas-piramides')">🏛️ Poliedros, Prismas e Pirâmides <span style="opacity:.55;font-size:10px;font-weight:700">pp.78–92</span></button>
 ```
+
+> Se `paginas_livro` for `null`, usar o padrão sem o `<span>`:
+> ```html
+> <button class="theme-link" onclick="showTheme('[disc]','[slug]')">[emoji] [Nome do Tema]</button>
+> ```
 
 ---
 
