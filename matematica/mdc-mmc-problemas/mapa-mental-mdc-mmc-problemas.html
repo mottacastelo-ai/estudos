@@ -6,528 +6,307 @@
 <title>Mapa Mental — mdc, mmc e Problemas</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --mat: #059669;
-  --mat-light: #34D399;
-  --mat-bg: #ECFDF5;
-  --mat-dark: #064E3B;
-  --text: #1A1A2E;
-  --muted: #6B7280;
-  --border: #D1FAE5;
-  --card: #fff;
-  --radius: 18px;
+  --mat: #059669; --mat-light: #34D399; --mat-bg: #ECFDF5;
+  --bg: #ECFDF5; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #D1FAE5;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: "Baloo 2", cursive;
-  background: var(--mat-bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 0 0 40px;
-}
-.header {
-  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
-  color: white; padding: 28px 28px 24px;
-}
-.back-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
-  text-decoration: none; margin-bottom: 14px; transition: color .15s;
-}
-.back-btn:hover { color: white; }
-.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
-.header p { font-size: 13px; font-weight: 600; opacity: .85; }
-
-.main { max-width: 820px; margin: 0 auto; padding: 24px 16px 0; }
-
-/* Instruções */
-.instructions {
-  background: #fff; border: 2px solid var(--border); border-radius: 14px;
-  padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 12px;
-  align-items: flex-start;
-}
-.inst-icon { font-size: 22px; flex-shrink: 0; }
-.inst-text { font-size: 13px; font-weight: 700; color: var(--muted); line-height: 1.5; }
-.inst-text strong { color: var(--text); }
-
-/* Área do canvas */
-.canvas-wrap {
-  background: #fff; border: 2px solid var(--border); border-radius: var(--radius);
-  overflow: hidden; position: relative; margin-bottom: 20px;
-  touch-action: none;
-}
-#mapCanvas {
-  display: block; width: 100%;
-  /* height set by JS */
-}
-
-/* Nós do mapa — sobrepostos ao canvas */
-.node {
-  position: absolute;
-  border-radius: 14px;
-  padding: 10px 14px;
-  font-family: "Baloo 2", cursive;
-  font-weight: 800;
-  text-align: center;
-  cursor: grab;
-  user-select: none;
-  touch-action: none;
-  transition: box-shadow .15s, transform .1s;
-  line-height: 1.3;
-  z-index: 5;
-}
-.node:active { cursor: grabbing; }
-.node.dragging { box-shadow: 0 8px 24px rgba(0,0,0,.18); transform: scale(1.05); z-index: 20; }
-.node.center {
-  background: linear-gradient(135deg, #064E3B, #059669);
-  color: #fff; font-size: 15px;
-  border: 3px solid #34D399;
-  cursor: default;
-  pointer-events: none;
-}
-.node.branch {
-  background: #fff; color: var(--text);
-  border: 2px solid var(--border); font-size: 13px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
-}
-.node.branch:hover { border-color: var(--mat); }
-
-/* Gabarito overlay */
-.node.gabarito-mdc { background: #D1FAE5; border-color: #34D399; color: #065F46; }
-.node.gabarito-mmc { background: #FEF3C7; border-color: #F59E0B; color: #78350F; }
-.node.gabarito-shared { background: #EDE9FE; border-color: #7C3AED; color: #4C1D95; }
-
-/* Linha de conexão no gabarito */
-.gab-line-mdc { stroke: #34D399; }
-.gab-line-mmc { stroke: #F59E0B; }
-.gab-line-shared { stroke: #7C3AED; }
-
-/* Legenda do gabarito */
-.legend {
-  display: none; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
-}
-.legend.visible { display: flex; }
-.leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; }
-.leg-dot { width: 14px; height: 14px; border-radius: 50%; }
-
-/* Botões de controle */
-.controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
-.btn-gab {
-  flex: 1; min-width: 130px; padding: 14px 18px; background: var(--mat); color: #fff;
-  border: none; border-radius: 12px; font-family: "Baloo 2", cursive;
-  font-size: 14px; font-weight: 800; cursor: pointer; transition: background .15s;
-}
-.btn-gab:hover { background: #047857; }
-.btn-reset {
-  padding: 14px 18px; background: #fff; color: var(--mat);
-  border: 2px solid var(--border); border-radius: 12px;
-  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800;
-  cursor: pointer; transition: all .15s;
-}
-.btn-reset:hover { border-color: var(--mat); background: var(--mat-bg); }
-
-/* Painel do gabarito */
-.gab-panel {
-  display: none; background: #fff; border: 2px solid var(--border);
-  border-radius: var(--radius); padding: 24px; margin-top: 16px;
-}
-.gab-panel.visible { display: block; animation: fadeIn .25s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-.gab-title { font-family: "Space Mono", monospace; font-size: 14px; font-weight: 700; color: var(--mat); margin-bottom: 16px; }
-.gab-section { margin-bottom: 16px; }
-.gab-section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 8px; }
-.gab-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.gab-chip {
-  padding: 6px 14px; border-radius: 99px; font-size: 13px; font-weight: 800;
-  border: 2px solid;
-}
-.gab-chip.mdc { background: #D1FAE5; border-color: #34D399; color: #065F46; }
-.gab-chip.mmc { background: #FEF3C7; border-color: #F59E0B; color: #78350F; }
-.gab-chip.shared { background: #EDE9FE; border-color: #7C3AED; color: #4C1D95; }
-.gab-chip.central { background: linear-gradient(135deg,#064E3B,#059669); color:#fff; border-color:#34D399; }
-.gab-arrow { font-size: 18px; margin: 0 4px; }
-
-/* Score */
-.score-row {
-  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-.score-box {
-  background: var(--mat-bg); border: 2px solid var(--border); border-radius: 12px;
-  padding: 10px 16px; font-family: "Space Mono", monospace;
-  font-size: 13px; font-weight: 700; color: var(--mat);
-}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--mat); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(5,150,105,.1); }
+.card-header { background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--mat-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #f8fffe; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--mat-light); color: var(--mat); }
+.toolbar button.active { background: var(--mat-bg); border-color: var(--mat); color: var(--mat); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--mat); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: calc(100svh - 360px); min-height: 380px; background: var(--mat-bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid #059669; outline-offset: 2px; }
+.n-root   { background: linear-gradient(135deg,#059669,#34D399); color: white; border: 2px solid #064E3B; font-size: 13px; font-weight: 800; min-width: 145px; padding: 11px 20px; z-index: 11; }
+.n-level1 { background: #d1fae5; border: 2px solid #6ee7b7; color: #064E3B; }
+.n-level2 { background: white; border: 2px solid #d1fae5; color: #374151; }
+.n-special { background: #FEF3C7; border: 2px solid #FCD34D; color: #78350F; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #6ee7b7; background: #f0fdf4; display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: #064E3B; margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: #f0fdf4; display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #bbf7d0; }
+.score-fill  { height: 8px; border-radius: 999px; background: #059669; transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: #064E3B; white-space: nowrap; }
 
 @media (max-width: 600px) {
-  .node { padding: 12px 14px !important; font-size: 0.9rem !important; min-width: 95px !important; }
-  .canvas-wrap, #canvas { min-height: calc(100svh - 260px) !important; height: auto !important; }
+  #stage { height: calc(100svh - 360px) !important; min-height: 380px; }
+  .node { font-size: 14px !important; padding: 12px 16px !important; min-width: 100px !important; }
+  .n-root { min-width: 130px !important; font-size: 13px !important; }
 }
 </style>
 </head>
 <body>
-
-<div class="header">
-  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
-  <h1>📐🔢 Mapa Mental</h1>
-  <p>mdc, mmc e Problemas — 5º Ano</p>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🔢</div>
+      <div><h1>Mapa Mental</h1><p>mdc, mmc e Problemas — 5º Ano</p></div>
+      <div class="hbadge">🏆 Síntese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar e organizar os balões.
+      Use <strong>+ Conectar</strong> para criar setas entre eles.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com a estrutura correta.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect">+ Conectar</button>
+      <button id="btn-move" class="active">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexões</span>
+      <span id="hint-bar">Clique e arraste qualquer balão</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balão para conectar ✔</div>
+      <div id="stage">
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#059669" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">ESTRUTURA DO MAPA — GABARITO</div>
+      <svg id="gabarito-svg" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#059669"/>
+            <stop offset="100%" stop-color="#34D399"/>
+          </linearGradient>
+          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#059669" opacity="0.6"/>
+          </marker>
+        </defs>
+        <!-- Root → L1 -->
+        <line x1="350" y1="34" x2="145" y2="61" stroke="#059669" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="555" y2="61" stroke="#059669" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="350" y2="61" stroke="#059669" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <!-- mdc → L2 -->
+        <line x1="145" y1="89" x2="60"  y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="145" y1="89" x2="175" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="145" y1="89" x2="295" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- mmc → L2 -->
+        <line x1="555" y1="89" x2="405" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="555" y1="89" x2="540" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="555" y1="89" x2="650" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- Root node -->
+        <rect x="240" y="6" width="220" height="28" rx="14" fill="url(#rg)" stroke="#064E3B" stroke-width="2"/>
+        <text x="350" y="25" text-anchor="middle" font-size="10" font-weight="800" fill="white">🔢 MDC E MMC</text>
+        <!-- L1 nodes -->
+        <rect x="55"  y="61" width="180" height="28" rx="14" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+        <text x="145" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#064E3B">mdc (Máx. Divisor Comum)</text>
+        <rect x="465" y="61" width="180" height="28" rx="14" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+        <text x="555" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#064E3B">mmc (Mín. Múltiplo Comum)</text>
+        <rect x="270" y="61" width="160" height="28" rx="14" fill="#FEF3C7" stroke="#FCD34D" stroke-width="1.5"/>
+        <text x="350" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#78350F">Primos entre si (mdc=1)</text>
+        <!-- L2 under mdc -->
+        <rect x="5"   y="131" width="110" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="60"  y="150" text-anchor="middle" font-size="8" fill="#374151">Fatores Comuns</text>
+        <rect x="110" y="131" width="130" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="175" y="150" text-anchor="middle" font-size="8" fill="#374151">Menores Expoentes (→mdc)</text>
+        <rect x="245" y="131" width="100" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="295" y="150" text-anchor="middle" font-size="8" fill="#374151">Problemas com mdc</text>
+        <!-- L2 under mmc -->
+        <rect x="340" y="131" width="130" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="405" y="150" text-anchor="middle" font-size="8" fill="#374151">Todos os Fatores Primos</text>
+        <rect x="465" y="131" width="150" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="540" y="150" text-anchor="middle" font-size="8" fill="#374151">Maiores Expoentes (→mmc)</text>
+        <rect x="595" y="131" width="100" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="645" y="150" text-anchor="middle" font-size="8" fill="#374151">Problemas com mmc</text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 9 conexões</span>
+      </div>
+    </div>
+  </div>
 </div>
-
-<div class="main">
-
-  <div class="instructions">
-    <span class="inst-icon">👆</span>
-    <div class="inst-text">
-      <strong>Organize os conceitos!</strong> Arraste os nós para perto do conceito a que pertencem: 📐 <strong>mdc</strong> (verde), 🔢 <strong>mmc</strong> (amarelo) ou ambos (roxo). Depois clique em <strong>Ver Gabarito</strong> para conferir.
-    </div>
-  </div>
-
-  <!-- Legenda (aparece com gabarito) -->
-  <div class="legend" id="legend">
-    <div class="leg-item"><div class="leg-dot" style="background:#34D399"></div> Conectado ao mdc</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#F59E0B"></div> Conectado ao mmc</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#7C3AED"></div> Conectado a ambos</div>
-  </div>
-
-  <div class="canvas-wrap" id="canvasWrap">
-    <canvas id="mapCanvas"></canvas>
-    <!-- Nós injetados por JS -->
-  </div>
-
-  <div class="controls">
-    <button class="btn-gab" id="btnGab" onclick="toggleGabarito()">Ver Gabarito 👁</button>
-    <button class="btn-reset" onclick="resetMap()">🔄 Reposicionar</button>
-  </div>
-
-  <div class="gab-panel" id="gabPanel">
-    <div class="gab-title">Gabarito — Conexões corretas do Mapa Mental</div>
-
-    <div class="gab-section">
-      <div class="gab-section-title">📐 Nó central mdc (Máximo Divisor Comum)</div>
-      <div class="gab-chips">
-        <span class="gab-chip central">mdc e mmc</span>
-        <span class="gab-arrow">→</span>
-        <span class="gab-chip mdc">mdc</span>
-        <span class="gab-chip mdc">Fatores Comuns</span>
-        <span class="gab-chip mdc">Menores Expoentes</span>
-        <span class="gab-chip mdc">Problemas com mdc</span>
-      </div>
-    </div>
-
-    <div class="gab-section">
-      <div class="gab-section-title">🔢 Nó central mmc (Mínimo Múltiplo Comum)</div>
-      <div class="gab-chips">
-        <span class="gab-chip central">mdc e mmc</span>
-        <span class="gab-arrow">→</span>
-        <span class="gab-chip mmc">mmc</span>
-        <span class="gab-chip mmc">Todos os Fatores</span>
-        <span class="gab-chip mmc">Maiores Expoentes</span>
-        <span class="gab-chip mmc">Problemas com mmc</span>
-      </div>
-    </div>
-
-    <div class="gab-section">
-      <div class="gab-section-title">🟣 Conectado a ambos</div>
-      <div class="gab-chips">
-        <span class="gab-chip central">mdc e mmc</span>
-        <span class="gab-arrow">→</span>
-        <span class="gab-chip shared">Intersecção ∩</span>
-        <span class="gab-chip shared">Primos entre si (mdc=1)</span>
-        <span class="gab-chip shared">Fatores Primos</span>
-      </div>
-    </div>
-
-    <div class="gab-section">
-      <div class="gab-section-title">📖 O que significa cada conceito</div>
-      <div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.8;">
-        • <strong>mdc</strong>: maior valor da intersecção ∩ dos conjuntos de <em>divisores</em><br>
-        • <strong>mmc</strong>: menor valor (≠0) da intersecção ∩ dos conjuntos de <em>múltiplos</em><br>
-        • <strong>Fatores Comuns</strong>: bases que aparecem em <em>todos</em> os números → usamos no mdc<br>
-        • <strong>Menores Expoentes</strong>: para mdc, pegar o menor expoente de cada base comum<br>
-        • <strong>Maiores Expoentes</strong>: para mmc, pegar o maior expoente de cada base<br>
-        • <strong>Todos os Fatores</strong>: mmc usa fatores comuns E não-comuns<br>
-        • <strong>Primos entre si</strong>: mdc=1 → mmc = produto dos números<br>
-        • <strong>Intersecção ∩</strong>: símbolo que indica o que é comum entre conjuntos
-      </div>
-    </div>
-  </div>
-
-</div>
-
 <script>
-// ─── Definição dos nós ───────────────────────────────────────────────────────
-const nodeData = [
-  { id: 'center', label: 'mdc e mmc', type: 'center', w: 130, h: 56 },
-  { id: 'mdc',    label: 'mdc\n(Máx. Divisor Comum)', type: 'branch', group: 'mdc', w: 148, h: 52 },
-  { id: 'mmc',    label: 'mmc\n(Mín. Múltiplo Comum)', type: 'branch', group: 'mmc', w: 152, h: 52 },
-  { id: 'inters', label: 'Intersecção ∩', type: 'branch', group: 'shared', w: 136, h: 44 },
-  { id: 'fatcom', label: 'Fatores Comuns', type: 'branch', group: 'mdc', w: 130, h: 44 },
-  { id: 'menexp', label: 'Menores Expoentes\n(→ mdc)', type: 'branch', group: 'mdc', w: 148, h: 52 },
-  { id: 'todfat', label: 'Todos os Fatores\nPrimos', type: 'branch', group: 'mmc', w: 140, h: 52 },
-  { id: 'maiexp', label: 'Maiores Expoentes\n(→ mmc)', type: 'branch', group: 'mmc', w: 148, h: 52 },
-  { id: 'primos', label: 'Primos entre si\n(mdc = 1)', type: 'branch', group: 'shared', w: 136, h: 52 },
-  { id: 'probmdc', label: 'Problemas\ncom mdc', type: 'branch', group: 'mdc', w: 120, h: 52 },
-  { id: 'probmmc', label: 'Problemas\ncom mmc', type: 'branch', group: 'mmc', w: 120, h: 52 },
+var NODES = [
+  {id:'center',   label:'🔢 mdc e mmc',                         cls:'n-root'},
+  {id:'mdc',      label:'mdc\n(Máx. Divisor Comum)',            cls:'n-level1'},
+  {id:'mmc',      label:'mmc\n(Mín. Múltiplo Comum)',           cls:'n-level1'},
+  {id:'fatcom',   label:'Fatores\nComuns',                      cls:'n-level2'},
+  {id:'menexp',   label:'Menores Expoentes\n(→ mdc)',           cls:'n-level2'},
+  {id:'probmdc',  label:'Problemas\ncom mdc',                   cls:'n-level2'},
+  {id:'todfat',   label:'Todos os Fatores\nPrimos',             cls:'n-level2'},
+  {id:'maiexp',   label:'Maiores Expoentes\n(→ mmc)',           cls:'n-level2'},
+  {id:'probmmc',  label:'Problemas\ncom mmc',                   cls:'n-level2'},
+  {id:'primos',   label:'Primos entre si\n(mdc = 1)',           cls:'n-special'},
 ];
 
-// Posições iniciais (embaralhadas — não revelam o gabarito)
-const initialPositions = {
-  center:  { x: 0.50, y: 0.47 },
-  mdc:     { x: 0.15, y: 0.08 },
-  mmc:     { x: 0.72, y: 0.08 },
-  inters:  { x: 0.50, y: 0.08 },
-  fatcom:  { x: 0.10, y: 0.38 },
-  menexp:  { x: 0.10, y: 0.62 },
-  todfat:  { x: 0.76, y: 0.38 },
-  maiexp:  { x: 0.76, y: 0.62 },
-  primos:  { x: 0.50, y: 0.82 },
-  probmdc: { x: 0.24, y: 0.82 },
-  probmmc: { x: 0.72, y: 0.82 },
-};
-
-// Conexões do gabarito
-const gabConnections = [
-  { from: 'center', to: 'mdc',     group: 'mdc' },
-  { from: 'center', to: 'mmc',     group: 'mmc' },
-  { from: 'center', to: 'inters',  group: 'shared' },
-  { from: 'mdc',    to: 'fatcom',  group: 'mdc' },
-  { from: 'mdc',    to: 'menexp',  group: 'mdc' },
-  { from: 'mdc',    to: 'probmdc', group: 'mdc' },
-  { from: 'mmc',    to: 'todfat',  group: 'mmc' },
-  { from: 'mmc',    to: 'maiexp',  group: 'mmc' },
-  { from: 'mmc',    to: 'probmmc', group: 'mmc' },
-  { from: 'center', to: 'primos',  group: 'shared' },
+var GABARITO = [
+  ['center','mdc'],['center','mmc'],['center','primos'],
+  ['mdc','fatcom'],['mdc','menexp'],['mdc','probmdc'],
+  ['mmc','todfat'],['mmc','maiexp'],['mmc','probmmc'],
 ];
 
-// ─── Estado ────────────────────────────────────────────────────────────────
-let nodes = {};
-let gabVisible = false;
-let canvasW = 0, canvasH = 0;
-const CANVAS_ASPECT = 1.55;
+var SHUFFLE = ['fatcom','center','mmc','primos','menexp','mdc','probmmc','todfat','probmdc','maiexp'];
 
-// ─── Init ──────────────────────────────────────────────────────────────────
-function init() {
-  const wrap = document.getElementById('canvasWrap');
-  canvasW = wrap.clientWidth || 700;
-  canvasH = Math.round(canvasW / CANVAS_ASPECT);
-  const canvas = document.getElementById('mapCanvas');
-  canvas.width = canvasW;
-  canvas.height = canvasH;
-  canvas.style.height = canvasH + 'px';
-  wrap.style.height = canvasH + 'px';
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'connect', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
 
-  // Remove existing node elements
-  wrap.querySelectorAll('.node').forEach(el => el.remove());
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 480 ? 2 : 5;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 16, padY = 32;
+  var colW = (W - padX*2) / COLS;
+  var rowH = Math.max(80, (stage.clientHeight - padY*2) / ROWS);
+  var minH = padY*2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i%COLS + 0.5) * colW,
+      y: padY + (Math.floor(i/COLS) + 0.5) * rowH
+    };
+  });
+}
 
-  // Create node elements
-  nodeData.forEach(nd => {
-    const el = document.createElement('div');
-    el.className = 'node ' + nd.type;
-    el.id = 'node-' + nd.id;
-    el.innerHTML = nd.label.replace(/\n/g, '<br>');
-    el.style.width = nd.w + 'px';
-    const pos = initialPositions[nd.id];
-    const x = pos.x * canvasW - nd.w / 2;
-    const y = pos.y * canvasH - (nd.h || 48) / 2;
-    el.style.left = clampX(x, nd.w) + 'px';
-    el.style.top  = clampY(y, nd.h || 48) + 'px';
-    nodes[nd.id] = { el, x: parseFloat(el.style.left), y: parseFloat(el.style.top), w: nd.w, h: nd.h || 48, id: nd.id, group: nd.group };
-
-    if (nd.type !== 'center') {
-      makeDraggable(el, nd.id);
+function renderNodes() {
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-'+n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls;
+      el.style.whiteSpace = 'pre-line';
+      el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
     }
-    wrap.appendChild(el);
+    placeNode(n.id);
   });
-
-  drawLines();
 }
 
-function clampX(x, w) { return Math.max(4, Math.min(canvasW - w - 4, x)); }
-function clampY(y, h) { return Math.max(4, Math.min(canvasH - h - 4, y)); }
+function placeNode(id) {
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw+4, Math.min(W-hw-4, p.x));
+  var cy = Math.max(hh+4, Math.min(H-hh-4, p.y));
+  el.style.left = (cx-hw)+'px'; el.style.top = (cy-hh)+'px';
+}
 
-// ─── Drag ──────────────────────────────────────────────────────────────────
-function makeDraggable(el, id) {
-  let startX, startY, startEl, isDragging = false;
+function center(id) {
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
+}
 
-  function onStart(ex, ey) {
-    isDragging = true;
-    startX = ex - nodes[id].x;
-    startY = ey - nodes[id].y;
-    el.classList.add('dragging');
-  }
-  function onMove(ex, ey) {
-    if (!isDragging) return;
-    const nx = clampX(ex - startX, nodes[id].w);
-    const ny = clampY(ey - startY, nodes[id].h);
-    nodes[id].x = nx;
-    nodes[id].y = ny;
-    el.style.left = nx + 'px';
-    el.style.top  = ny + 'px';
-    drawLines();
-  }
-  function onEnd() {
-    isDragging = false;
-    el.classList.remove('dragging');
-  }
-
-  // Mouse
-  el.addEventListener('mousedown', e => {
-    e.preventDefault();
-    onStart(e.clientX - document.getElementById('canvasWrap').getBoundingClientRect().left,
-            e.clientY - document.getElementById('canvasWrap').getBoundingClientRect().top);
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode==='erase';
+  arrows.forEach(function(a, i) {
+    var f=center(a.from), t=center(a.to), dx=t.x-f.x, dy=t.y-f.y;
+    var len=Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl=document.getElementById('nd-'+a.to);
+    var rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
+    var ex=t.x-(dx/len)*rad, ey=t.y-(dy/len)*rad;
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
+    line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
+    line.setAttribute('stroke', isErase?'#DC2626':'#059669');
+    line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents='stroke'; line.style.cursor='pointer';
+      (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
   });
-  document.addEventListener('mousemove', e => {
-    if (!isDragging) return;
-    onMove(e.clientX - document.getElementById('canvasWrap').getBoundingClientRect().left,
-           e.clientY - document.getElementById('canvasWrap').getBoundingClientRect().top);
-  });
-  document.addEventListener('mouseup', onEnd);
-
-  // Touch
-  el.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const t = e.touches[0];
-    onStart(t.clientX - document.getElementById('canvasWrap').getBoundingClientRect().left,
-            t.clientY - document.getElementById('canvasWrap').getBoundingClientRect().top);
-  }, { passive: false });
-  document.addEventListener('touchmove', e => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const t = e.touches[0];
-    onMove(t.clientX - document.getElementById('canvasWrap').getBoundingClientRect().left,
-           t.clientY - document.getElementById('canvasWrap').getBoundingClientRect().top);
-  }, { passive: false });
-  document.addEventListener('touchend', onEnd);
 }
 
-// ─── Draw ──────────────────────────────────────────────────────────────────
-function getCenter(id) {
-  const n = nodes[id];
-  return { x: n.x + n.w / 2, y: n.y + n.h / 2 };
+function updateCount() { var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões'); }
+
+function setMode(m) {
+  mode=m;
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  document.getElementById('pending-msg').style.display='none';
+  ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {connect:'Clique em dois balões para criar uma seta',move:'Clique e arraste qualquer balão',erase:'Clique em uma seta para apagá-la'}[m];
 }
 
-function drawLines() {
-  const canvas = document.getElementById('mapCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvasW, canvasH);
-
-  if (gabVisible) {
-    // Draw gabarito lines
-    gabConnections.forEach(conn => {
-      const a = getCenter(conn.from);
-      const b = getCenter(conn.to);
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.lineWidth = 3;
-      ctx.lineCap = 'round';
-      if (conn.group === 'mdc')    ctx.strokeStyle = '#34D399';
-      else if (conn.group === 'mmc') ctx.strokeStyle = '#F59E0B';
-      else ctx.strokeStyle = '#7C3AED';
-      ctx.stroke();
-    });
-
-    // Update node classes
-    nodeData.forEach(nd => {
-      if (nd.type === 'center') return;
-      const el = document.getElementById('node-' + nd.id);
-      el.classList.remove('gabarito-mdc','gabarito-mmc','gabarito-shared');
-      if (nd.group === 'mdc')    el.classList.add('gabarito-mdc');
-      else if (nd.group === 'mmc') el.classList.add('gabarito-mmc');
-      else if (nd.group === 'shared') el.classList.add('gabarito-shared');
-    });
-  } else {
-    // Draw neutral lines from center to all branch nodes
-    const center = getCenter('center');
-    nodeData.forEach(nd => {
-      if (nd.type === 'center') return;
-      const b = getCenter(nd.id);
-      ctx.beginPath();
-      ctx.moveTo(center.x, center.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#D1FAE5';
-      ctx.setLineDash([6, 4]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    });
-    // Remove gabarito classes
-    nodeData.forEach(nd => {
-      if (nd.type === 'center') return;
-      const el = document.getElementById('node-' + nd.id);
-      el.classList.remove('gabarito-mdc','gabarito-mmc','gabarito-shared');
-    });
+function onNodeClick(e, id) {
+  if (mode!=='connect') return;
+  if (!arrowFrom) { arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
+  else {
+    document.getElementById('nd-'+arrowFrom).classList.remove('selected');
+    document.getElementById('nd-'+id).classList.remove('selected');
+    if (arrowFrom!==id) {
+      var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom=null; document.getElementById('pending-msg').style.display='none';
   }
+  e.stopPropagation();
 }
 
-// ─── Gabarito ──────────────────────────────────────────────────────────────
-function toggleGabarito() {
-  gabVisible = !gabVisible;
-  document.getElementById('btnGab').textContent = gabVisible ? 'Ocultar Gabarito 🙈' : 'Ver Gabarito 👁';
-  document.getElementById('gabPanel').classList.toggle('visible', gabVisible);
-  document.getElementById('legend').classList.toggle('visible', gabVisible);
-  if (gabVisible) animateToGabarito();
-  else drawLines();
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
 }
-
-// Anima nós para posições do gabarito
-const gabPositions = {
-  center:  { x: 0.50, y: 0.47 },
-  mdc:     { x: 0.22, y: 0.20 },
-  mmc:     { x: 0.78, y: 0.20 },
-  inters:  { x: 0.50, y: 0.12 },
-  fatcom:  { x: 0.12, y: 0.45 },
-  menexp:  { x: 0.15, y: 0.68 },
-  todfat:  { x: 0.85, y: 0.45 },
-  maiexp:  { x: 0.82, y: 0.68 },
-  primos:  { x: 0.50, y: 0.88 },
-  probmdc: { x: 0.25, y: 0.88 },
-  probmmc: { x: 0.75, y: 0.88 },
-};
-
-function animateToGabarito() {
-  const duration = 600;
-  const start = performance.now();
-  const startPos = {};
-  nodeData.forEach(nd => {
-    startPos[nd.id] = { x: nodes[nd.id].x, y: nodes[nd.id].y };
-  });
-
-  function frame(now) {
-    const t = Math.min((now - start) / duration, 1);
-    const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
-    nodeData.forEach(nd => {
-      const gp = gabPositions[nd.id];
-      const tx = clampX(gp.x * canvasW - nd.w / 2, nd.w);
-      const ty = clampY(gp.y * canvasH - (nd.h || 48) / 2, nd.h || 48);
-      const nx = startPos[nd.id].x + (tx - startPos[nd.id].x) * ease;
-      const ny = startPos[nd.id].y + (ty - startPos[nd.id].y) * ease;
-      nodes[nd.id].x = nx;
-      nodes[nd.id].y = ny;
-      document.getElementById('node-' + nd.id).style.left = nx + 'px';
-      document.getElementById('node-' + nd.id).style.top  = ny + 'px';
-    });
-    drawLines();
-    if (t < 1) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
 }
+document.addEventListener('mousemove',function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup',function(){ dragging=null; });
+document.addEventListener('touchmove',function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
+document.addEventListener('touchend',function(){ dragging=null; });
 
-function resetMap() {
-  gabVisible = false;
-  document.getElementById('btnGab').textContent = 'Ver Gabarito 👁';
-  document.getElementById('gabPanel').classList.remove('visible');
-  document.getElementById('legend').classList.remove('visible');
-  init();
-}
-
-// ─── Responsive resize ─────────────────────────────────────────────────────
-let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(init, 150);
+document.getElementById('btn-connect').addEventListener('click',function(){ setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click',function(){ setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click',function(){ setMode(mode==='erase'?'connect':'erase'); });
+document.getElementById('btn-reset').addEventListener('click',function(){ arrows=[]; calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); updateCount(); updateGabarito(); });
+document.getElementById('btn-gabarito').addEventListener('click',function(){
+  gabVisible=!gabVisible;
+  document.getElementById('gabarito-panel').style.display=gabVisible?'block':'none';
+  document.getElementById('btn-gabarito').textContent=gabVisible?'Ocultar gabarito':'Ver gabarito';
+  if(gabVisible) updateGabarito();
 });
 
-window.addEventListener('DOMContentLoaded', init);
+function updateGabarito() {
+  if (!gabVisible) return;
+  var hits=0;
+  GABARITO.forEach(function(pair){ if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++; });
+  var total=GABARITO.length, pct=Math.round((hits/total)*100);
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-label').textContent=hits+' de '+total+' conexões ('+pct+'%)';
+}
+
+window.addEventListener('resize',function(){ calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load',function(){ calcPositions(); renderNodes(); setMode('move'); });
 </script>
 </body>
 </html>

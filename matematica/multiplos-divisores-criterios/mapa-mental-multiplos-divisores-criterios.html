@@ -3,383 +3,313 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mapa Mental — Múltiplos, Divisores e Critérios de Divisibilidade</title>
+<title>Mapa Mental — Múltiplos, Divisores e Critérios</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --primary: #059669;
-  --light: #34D399;
-  --bg: #ECFDF5;
-  --dark: #064E3B;
-  --border: #D1FAE5;
-  --text: #1A1A2E;
-  --muted: #6B7280;
-  --card: #fff;
-  --radius: 18px;
+  --mat: #059669; --mat-light: #34D399; --mat-bg: #ECFDF5;
+  --bg: #ECFDF5; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #D1FAE5;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--mat); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(5,150,105,.1); }
+.card-header { background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--mat-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #f8fffe; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--mat-light); color: var(--mat); }
+.toolbar button.active { background: var(--mat-bg); border-color: var(--mat); color: var(--mat); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--mat); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: calc(100svh - 360px); min-height: 380px; background: var(--mat-bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid #059669; outline-offset: 2px; }
+.n-root   { background: linear-gradient(135deg,#059669,#34D399); color: white; border: 2px solid #064E3B; font-size: 13px; font-weight: 800; min-width: 145px; padding: 11px 20px; z-index: 11; }
+.n-level1 { background: #d1fae5; border: 2px solid #6ee7b7; color: #064E3B; }
+.n-level2 { background: white; border: 2px solid #d1fae5; color: #374151; }
+.n-special { background: #FEF3C7; border: 2px solid #FCD34D; color: #78350F; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #6ee7b7; background: #f0fdf4; display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: #064E3B; margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: #f0fdf4; display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #bbf7d0; }
+.score-fill  { height: 8px; border-radius: 999px; background: #059669; transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: #064E3B; white-space: nowrap; }
 
-.header {
-  background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399);
-  color: white; padding: 28px 28px 24px;
-}
-.back-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7);
-  text-decoration: none; margin-bottom: 14px; transition: color .2s;
-}
-.back-btn:hover { color: #fff; }
-.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
-.header p { font-size: 13px; font-weight: 600; opacity: .85; }
-
-.toolbar {
-  background: var(--card); border-bottom: 2px solid var(--border);
-  padding: 12px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-}
-.toolbar-info { font-size: 13px; font-weight: 600; color: var(--muted); flex: 1; min-width: 180px; }
-.tool-btn {
-  background: var(--bg); border: 2px solid var(--border); border-radius: 10px;
-  padding: 8px 16px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700;
-  color: var(--dark); cursor: pointer; transition: all .15s;
-}
-.tool-btn:hover { border-color: var(--primary); background: #fff; }
-.tool-btn.gabarito-btn { background: var(--dark); color: #fff; border-color: var(--dark); }
-.tool-btn.gabarito-btn:hover { background: var(--primary); border-color: var(--primary); }
-.tool-btn.reset-btn { border-color: #EF4444; color: #DC2626; }
-.tool-btn.reset-btn:hover { background: #FEE2E2; }
-
-/* Canvas do mapa */
-.map-wrap {
-  position: relative; width: 100%; height: 600px; overflow: hidden;
-  background: radial-gradient(circle at 50% 50%, #D1FAE5 0%, var(--bg) 70%);
-  touch-action: none;
-}
 @media (max-width: 600px) {
-  .map-wrap { height: calc(100svh - 200px); min-height: 420px; }
-  .node { padding: 12px 16px !important; font-size: 14px !important; min-width: 100px !important; }
-  .node-central { font-size: 15px !important; }
-  .toolbar-info { font-size: 12px; }
-  .tool-btn { padding: 7px 12px; font-size: 13px; }
+  #stage { height: calc(100svh - 360px) !important; min-height: 380px; }
+  .node { font-size: 14px !important; padding: 12px 16px !important; min-width: 100px !important; }
+  .n-root { min-width: 130px !important; font-size: 13px !important; }
 }
-
-#svg-lines {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 1;
-}
-
-/* Nós */
-.node {
-  position: absolute; z-index: 10;
-  border-radius: 14px; padding: 10px 14px;
-  font-family: "Baloo 2", cursive; font-weight: 800;
-  cursor: grab; user-select: none;
-  box-shadow: 0 3px 12px rgba(5,150,105,.18);
-  transition: box-shadow .15s, transform .1s;
-  text-align: center; line-height: 1.3;
-  border: 2.5px solid transparent;
-}
-.node:active { cursor: grabbing; box-shadow: 0 6px 24px rgba(5,150,105,.28); transform: scale(1.04); }
-
-.node-central {
-  background: var(--dark); color: #fff; font-size: 15px;
-  border-color: var(--light); min-width: 160px;
-  font-family: "Space Mono", monospace;
-}
-.node-multiplo { background: #059669; color: #fff; font-size: 13px; min-width: 110px; }
-.node-divisor  { background: #0284C7; color: #fff; font-size: 13px; min-width: 110px; }
-.node-criterio { background: #7C3AED; color: #fff; font-size: 13px; min-width: 100px; }
-.node-detalhe  { background: var(--card); color: var(--dark); font-size: 12px; min-width: 120px; border-color: var(--border); }
-
-/* Legenda de cores */
-.legend {
-  display: flex; gap: 12px; flex-wrap: wrap;
-  padding: 10px 20px; background: var(--card); border-bottom: 2px solid var(--border);
-}
-.leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--muted); }
-.leg-dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
-
-/* Toast */
-.toast {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-  background: var(--dark); color: #fff; padding: 12px 22px; border-radius: 99px;
-  font-size: 14px; font-weight: 700; z-index: 999; transition: transform .3s ease;
-  pointer-events: none;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
-
-/* Gabarito overlay */
-.gabarito-overlay {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5);
-  z-index: 500; align-items: center; justify-content: center; padding: 16px;
-}
-.gabarito-overlay.show { display: flex; }
-.gabarito-box {
-  background: var(--card); border-radius: var(--radius); max-width: 540px; width: 100%;
-  padding: 28px; box-shadow: 0 8px 40px rgba(0,0,0,.2);
-  max-height: 80vh; overflow-y: auto;
-}
-.gab-title { font-family: "Space Mono", monospace; font-size: 18px; color: var(--dark); margin-bottom: 16px; }
-.gab-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.gab-item { font-size: 14px; font-weight: 600; line-height: 1.5; padding: 10px 14px; border-radius: 10px; }
-.gab-item.gm { background: #D1FAE5; color: #064E3B; }
-.gab-item.gd { background: #DBEAFE; color: #1E3A5F; }
-.gab-item.gc { background: #EDE9FE; color: #2D1B69; }
-.close-gab {
-  margin-top: 20px; width: 100%; background: var(--dark); color: #fff;
-  border: none; border-radius: 10px; padding: 12px;
-  font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800; cursor: pointer;
-}
-.close-gab:hover { background: var(--primary); }
 </style>
 </head>
 <body>
-
-<div class="header">
-  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
-  <h1>🖩 Mapa Mental</h1>
-  <p>Múltiplos, Divisores e Critérios de Divisibilidade — 5º Ano</p>
-</div>
-
-<div class="legend">
-  <div class="leg-item"><div class="leg-dot" style="background:#064E3B"></div>Conceito central</div>
-  <div class="leg-item"><div class="leg-dot" style="background:#059669"></div>Múltiplos</div>
-  <div class="leg-item"><div class="leg-dot" style="background:#0284C7"></div>Divisores</div>
-  <div class="leg-item"><div class="leg-dot" style="background:#7C3AED"></div>Critérios</div>
-  <div class="leg-item"><div class="leg-dot" style="background:#fff;border:2px solid #D1FAE5"></div>Detalhes</div>
-</div>
-
-<div class="toolbar">
-  <div class="toolbar-info">Arraste os nós para organizar o mapa.</div>
-  <button class="tool-btn reset-btn" onclick="resetPositions()">↺ Embaralhar</button>
-  <button class="tool-btn gabarito-btn" onclick="showGabarito()">🗝 Ver Gabarito</button>
-</div>
-
-<div class="map-wrap" id="map-wrap">
-  <svg id="svg-lines"></svg>
-  <!-- Nós criados via JS -->
-</div>
-
-<!-- Gabarito Overlay -->
-<div class="gabarito-overlay" id="gab-overlay">
-  <div class="gabarito-box">
-    <div class="gab-title">🗝 Gabarito — Estrutura do Mapa</div>
-    <ul class="gab-list">
-      <li class="gab-item gm"><strong>Múltiplo de n</strong> → produto de n por qualquer número natural. Ex: M(5) = {0, 5, 10, 15, 20, …}</li>
-      <li class="gab-item gm"><strong>Zero é múltiplo</strong> → zero é múltiplo de qualquer número</li>
-      <li class="gab-item gm"><strong>Sequência infinita</strong> → o conjunto dos múltiplos é infinito (reticências …)</li>
-      <li class="gab-item gm"><strong>Próximo múltiplo</strong> → termo anterior + n</li>
-      <li class="gab-item gd"><strong>Divisor / Fator</strong> → número que divide n com resto zero (divisão exata). Fator e divisor são sinônimos.</li>
-      <li class="gab-item gd"><strong>Conjunto finito</strong> → D(n) sempre tem quantidade limitada de elementos</li>
-      <li class="gab-item gd"><strong>Zero NÃO é divisor</strong> → zero não é divisor de nenhum número</li>
-      <li class="gab-item gd"><strong>Divisores comuns</strong> → pertencem a D(m) e D(n) simultaneamente</li>
-      <li class="gab-item gc"><strong>Critério ÷2</strong> → termina em 0, 2, 4, 6 ou 8 (número par)</li>
-      <li class="gab-item gc"><strong>Critério ÷3</strong> → soma dos algarismos divisível por 3</li>
-      <li class="gab-item gc"><strong>Critério ÷5</strong> → termina em 0 ou 5</li>
-      <li class="gab-item gc"><strong>Critério ÷6</strong> → divisível por 2 E por 3 ao mesmo tempo</li>
-      <li class="gab-item gc"><strong>Critério ÷9</strong> → soma dos algarismos divisível por 9</li>
-      <li class="gab-item gc"><strong>Critério ÷10</strong> → termina em 0</li>
-    </ul>
-    <button class="close-gab" onclick="closeGabarito()">Fechar gabarito</button>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🔢</div>
+      <div><h1>Mapa Mental</h1><p>Múltiplos, Divisores e Critérios — 5º Ano</p></div>
+      <div class="hbadge">🏆 Síntese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar e organizar os balões.
+      Use <strong>+ Conectar</strong> para criar setas entre eles.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com a estrutura correta.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect">+ Conectar</button>
+      <button id="btn-move" class="active">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexões</span>
+      <span id="hint-bar">Clique e arraste qualquer balão</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balão para conectar ✔</div>
+      <div id="stage">
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#059669" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">ESTRUTURA DO MAPA — GABARITO</div>
+      <svg id="gabarito-svg" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#059669"/>
+            <stop offset="100%" stop-color="#34D399"/>
+          </linearGradient>
+          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#059669" opacity="0.6"/>
+          </marker>
+        </defs>
+        <!-- Root → L1 -->
+        <line x1="350" y1="34" x2="120" y2="61" stroke="#059669" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="350" y2="61" stroke="#059669" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="590" y2="61" stroke="#059669" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <!-- multiplo → L2 -->
+        <line x1="120" y1="89" x2="120" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- divisor → L2 -->
+        <line x1="350" y1="89" x2="300" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="350" y1="89" x2="430" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- criterios → L2 -->
+        <line x1="590" y1="89" x2="530" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="590" y1="89" x2="620" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="590" y1="89" x2="665" y2="131" stroke="#6ee7b7" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- Root node -->
+        <rect x="238" y="6" width="224" height="28" rx="14" fill="url(#rg)" stroke="#064E3B" stroke-width="2"/>
+        <text x="350" y="25" text-anchor="middle" font-size="10" font-weight="800" fill="white">🔢 MÚLTIPLOS E DIVISORES</text>
+        <!-- L1 nodes -->
+        <rect x="50"  y="61" width="140" height="28" rx="14" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+        <text x="120" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#064E3B">Múltiplo de n</text>
+        <rect x="280" y="61" width="140" height="28" rx="14" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+        <text x="350" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#064E3B">Divisor / Fator</text>
+        <rect x="508" y="61" width="164" height="28" rx="14" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+        <text x="590" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#064E3B">Critérios de Divisibilidade</text>
+        <!-- L2 under multiplo -->
+        <rect x="57"  y="131" width="126" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="120" y="150" text-anchor="middle" font-size="8" fill="#374151">Sequência infinita</text>
+        <!-- L2 under divisor -->
+        <rect x="238" y="131" width="124" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="300" y="150" text-anchor="middle" font-size="8" fill="#374151">Zero NÃO é divisor</text>
+        <rect x="370" y="131" width="120" height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="430" y="150" text-anchor="middle" font-size="8" fill="#374151">Divisores comuns</text>
+        <!-- L2 under criterios -->
+        <rect x="487" y="131" width="86"  height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="530" y="150" text-anchor="middle" font-size="8" fill="#374151">÷2: par (0,2,4,6,8)</text>
+        <rect x="578" y="131" width="84"  height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="620" y="150" text-anchor="middle" font-size="8" fill="#374151">÷3: soma div. por 3</text>
+        <rect x="622" y="131" width="86"  height="28" rx="14" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <text x="665" y="150" text-anchor="middle" font-size="8" fill="#374151">÷5: termina 0 ou 5</text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 9 conexões</span>
+      </div>
+    </div>
   </div>
 </div>
-
-<div class="toast" id="toast"></div>
-
 <script>
-// ── Definição dos nós ──────────────────────────────────────────────
-const NODES = [
-  { id: "central",   label: "Múltiplos\ne Divisores",  type: "node-central",  cx: 0,    cy: 0 },
-  // Múltiplos
-  { id: "multiplo",  label: "Múltiplo de n",           type: "node-multiplo", cx: -220, cy: -140 },
-  { id: "zero_mul",  label: "Zero é\nmúltiplo",        type: "node-multiplo", cx: -270, cy: 20 },
-  { id: "infinito",  label: "Sequência\ninfinita",     type: "node-multiplo", cx: -200, cy: 160 },
-  { id: "prox",      label: "Próximo = \nanterior + n", type: "node-detalhe", cx: -340, cy: -70 },
-  // Divisores
-  { id: "divisor",   label: "Divisor / Fator",         type: "node-divisor",  cx: 220,  cy: -140 },
-  { id: "finito",    label: "Conjunto\nfinito",        type: "node-divisor",  cx: 300,  cy: 10 },
-  { id: "zero_div",  label: "Zero NÃO\né divisor",    type: "node-divisor",  cx: 210,  cy: 160 },
-  { id: "comuns",    label: "Divisores\ncomuns",       type: "node-detalhe",  cx: 370,  cy: -80 },
-  // Critérios
-  { id: "criterios", label: "Critérios de\nDivisibilidade", type: "node-criterio", cx: 0, cy: 220 },
-  { id: "c2",  label: "÷2: par\n(0,2,4,6,8)",  type: "node-detalhe", cx: -280, cy: 310 },
-  { id: "c3",  label: "÷3: soma\n÷ por 3",     type: "node-detalhe", cx: -130, cy: 340 },
-  { id: "c5",  label: "÷5: termina\nem 0 ou 5", type: "node-detalhe", cx: 0,   cy: 360 },
-  { id: "c6",  label: "÷6: ÷2\nE ÷3",         type: "node-detalhe", cx: 130,  cy: 340 },
-  { id: "c9",  label: "÷9: soma\n÷ por 9",     type: "node-detalhe", cx: 260,  cy: 310 },
-  { id: "c10", label: "÷10: termina\nem 0",    type: "node-detalhe", cx: 370,  cy: 250 },
+var NODES = [
+  {id:'central',   label:'🔢 Múltiplos\ne Divisores',             cls:'n-root'},
+  {id:'multiplo',  label:'Múltiplo de n',                         cls:'n-level1'},
+  {id:'infinito',  label:'Sequência\ninfinita',                   cls:'n-level2'},
+  {id:'divisor',   label:'Divisor / Fator',                       cls:'n-level1'},
+  {id:'zero_div',  label:'Zero NÃO\né divisor',                  cls:'n-level2'},
+  {id:'comuns',    label:'Divisores\ncomuns',                     cls:'n-level2'},
+  {id:'criterios', label:'Critérios de\nDivisibilidade',          cls:'n-level1'},
+  {id:'c2',        label:'÷2: par\n(0,2,4,6,8)',                 cls:'n-level2'},
+  {id:'c3',        label:'÷3: soma\ndiv. por 3',                 cls:'n-level2'},
+  {id:'c5',        label:'÷5: termina\nem 0 ou 5',               cls:'n-level2'},
 ];
 
-// Conexões [from, to]
-const EDGES = [
-  ["central","multiplo"], ["central","zero_mul"], ["central","infinito"],
-  ["multiplo","prox"],
-  ["central","divisor"], ["central","finito"], ["central","zero_div"],
-  ["divisor","comuns"],
-  ["central","criterios"],
-  ["criterios","c2"], ["criterios","c3"], ["criterios","c5"],
-  ["criterios","c6"], ["criterios","c9"], ["criterios","c10"],
+var GABARITO = [
+  ['central','multiplo'],['central','divisor'],['central','criterios'],
+  ['multiplo','infinito'],
+  ['divisor','zero_div'],['divisor','comuns'],
+  ['criterios','c2'],['criterios','c3'],['criterios','c5'],
 ];
 
-// ── Estado das posições ────────────────────────────────────────────
-const wrap = document.getElementById("map-wrap");
-let positions = {};
+var SHUFFLE = ['c2','central','divisor','infinito','c3','multiplo','comuns','criterios','zero_div','c5'];
 
-function getCenter() {
-  return { x: wrap.clientWidth / 2, y: wrap.clientHeight / 2 };
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'connect', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
+
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 480 ? 2 : 5;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 16, padY = 32;
+  var colW = (W - padX*2) / COLS;
+  var rowH = Math.max(80, (stage.clientHeight - padY*2) / ROWS);
+  var minH = padY*2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i%COLS + 0.5) * colW,
+      y: padY + (Math.floor(i/COLS) + 0.5) * rowH
+    };
+  });
 }
 
-function initPositions(shuffle) {
-  const c = getCenter();
-  if (!shuffle) {
-    // Scale offsets to fit the actual viewport
-    const allCx = NODES.map(n => Math.abs(n.cx));
-    const allCy = NODES.map(n => Math.abs(n.cy));
-    const maxCx = Math.max(...allCx, 1);
-    const maxCy = Math.max(...allCy, 1);
-    const scaleX = Math.min(1, (wrap.clientWidth  * 0.44) / maxCx);
-    const scaleY = Math.min(1, (wrap.clientHeight * 0.44) / maxCy);
-    const scale  = Math.min(scaleX, scaleY);
-    NODES.forEach(n => {
-      positions[n.id] = { x: c.x + n.cx * scale, y: c.y + n.cy * scale };
-    });
-  } else {
-    const W = wrap.clientWidth, H = wrap.clientHeight;
-    NODES.forEach(n => {
-      positions[n.id] = {
-        x: 60 + Math.random() * (W - 180),
-        y: 60 + Math.random() * (H - 120)
-      };
-    });
-  }
-}
-
-// ── Renderização dos nós ───────────────────────────────────────────
 function renderNodes() {
-  // Remover nós existentes
-  document.querySelectorAll(".node").forEach(el => el.remove());
-
-  NODES.forEach(n => {
-    const el = document.createElement("div");
-    el.className = `node ${n.type}`;
-    el.id = `node-${n.id}`;
-    el.innerHTML = n.label.replace(/\n/g, "<br>");
-    el.style.left = (positions[n.id].x - getNodeHalfW(n)) + "px";
-    el.style.top  = (positions[n.id].y - getNodeHalfH()) + "px";
-    makeDraggable(el, n.id);
-    wrap.appendChild(el);
-  });
-  drawLines();
-}
-
-function getNodeHalfW(n) {
-  // Aproximação para centering
-  if (n.type === "node-central") return 80;
-  if (n.type === "node-multiplo" || n.type === "node-divisor") return 55;
-  if (n.type === "node-criterio") return 65;
-  return 60;
-}
-function getNodeHalfH() { return 28; }
-
-// ── SVG de conexões ────────────────────────────────────────────────
-function drawLines() {
-  const svg = document.getElementById("svg-lines");
-  svg.innerHTML = "";
-
-  EDGES.forEach(([a, b]) => {
-    const pa = positions[a], pb = positions[b];
-    if (!pa || !pb) return;
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", pa.x); line.setAttribute("y1", pa.y);
-    line.setAttribute("x2", pb.x); line.setAttribute("y2", pb.y);
-    line.setAttribute("stroke", "#34D399");
-    line.setAttribute("stroke-width", "2.5");
-    line.setAttribute("stroke-dasharray", "6 4");
-    line.setAttribute("opacity", "0.7");
-    svg.appendChild(line);
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-'+n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls;
+      el.style.whiteSpace = 'pre-line';
+      el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
+    }
+    placeNode(n.id);
   });
 }
 
-// ── Drag & Drop ────────────────────────────────────────────────────
-function makeDraggable(el, id) {
-  let dragging = false, ox = 0, oy = 0;
+function placeNode(id) {
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw+4, Math.min(W-hw-4, p.x));
+  var cy = Math.max(hh+4, Math.min(H-hh-4, p.y));
+  el.style.left = (cx-hw)+'px'; el.style.top = (cy-hh)+'px';
+}
 
-  function startDrag(ex, ey) {
-    dragging = true;
-    const rect = el.getBoundingClientRect();
-    const wRect = wrap.getBoundingClientRect();
-    ox = ex - (rect.left - wRect.left) - rect.width / 2;
-    oy = ey - (rect.top  - wRect.top)  - rect.height / 2;
-    el.style.zIndex = 50;
-    el.style.transition = "none";
+function center(id) {
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
+}
+
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode==='erase';
+  arrows.forEach(function(a, i) {
+    var f=center(a.from), t=center(a.to), dx=t.x-f.x, dy=t.y-f.y;
+    var len=Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl=document.getElementById('nd-'+a.to);
+    var rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
+    var ex=t.x-(dx/len)*rad, ey=t.y-(dy/len)*rad;
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
+    line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
+    line.setAttribute('stroke', isErase?'#DC2626':'#059669');
+    line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents='stroke'; line.style.cursor='pointer';
+      (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
+  });
+}
+
+function updateCount() { var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões'); }
+
+function setMode(m) {
+  mode=m;
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  document.getElementById('pending-msg').style.display='none';
+  ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {connect:'Clique em dois balões para criar uma seta',move:'Clique e arraste qualquer balão',erase:'Clique em uma seta para apagá-la'}[m];
+}
+
+function onNodeClick(e, id) {
+  if (mode!=='connect') return;
+  if (!arrowFrom) { arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
+  else {
+    document.getElementById('nd-'+arrowFrom).classList.remove('selected');
+    document.getElementById('nd-'+id).classList.remove('selected');
+    if (arrowFrom!==id) {
+      var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom=null; document.getElementById('pending-msg').style.display='none';
   }
-
-  function moveDrag(ex, ey) {
-    if (!dragging) return;
-    const wRect = wrap.getBoundingClientRect();
-    let nx = ex - wRect.left - ox;
-    let ny = ey - wRect.top  - oy;
-    // Clamp
-    nx = Math.max(20, Math.min(wRect.width  - 20, nx));
-    ny = Math.max(20, Math.min(wRect.height - 20, ny));
-    positions[id] = { x: nx, y: ny };
-    el.style.left = (nx - el.offsetWidth  / 2) + "px";
-    el.style.top  = (ny - el.offsetHeight / 2) + "px";
-    drawLines();
-  }
-
-  function endDrag() {
-    dragging = false;
-    el.style.zIndex = 10;
-  }
-
-  // Mouse
-  el.addEventListener("mousedown", e => { e.preventDefault(); startDrag(e.clientX, e.clientY); });
-  document.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
-  document.addEventListener("mouseup", endDrag);
-
-  // Touch
-  el.addEventListener("touchstart", e => { e.preventDefault(); const t = e.touches[0]; startDrag(t.clientX, t.clientY); }, { passive: false });
-  el.addEventListener("touchmove",  e => { e.preventDefault(); const t = e.touches[0]; moveDrag(t.clientX, t.clientY); }, { passive: false });
-  el.addEventListener("touchend", endDrag);
+  e.stopPropagation();
 }
 
-// ── Controles ──────────────────────────────────────────────────────
-function resetPositions() {
-  initPositions(true);
-  renderNodes();
-  showToast("Nós embaralhados! Organize o mapa como você entende.");
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
 }
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+document.addEventListener('mousemove',function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup',function(){ dragging=null; });
+document.addEventListener('touchmove',function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
+document.addEventListener('touchend',function(){ dragging=null; });
 
-function showGabarito() {
-  document.getElementById("gab-overlay").classList.add("show");
-}
-function closeGabarito() {
-  document.getElementById("gab-overlay").classList.remove("show");
-}
-
-let toastTimer;
-function showToast(msg) {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("show"), 2800);
-}
-
-// ── Init ───────────────────────────────────────────────────────────
-window.addEventListener("load", () => {
-  // Iniciar com layout organizado; aluno pode embaralhar para praticar
-  initPositions(false);
-  renderNodes();
-  showToast("Clique em Embaralhar para praticar! Arraste os nós para organizar.");
+document.getElementById('btn-connect').addEventListener('click',function(){ setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click',function(){ setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click',function(){ setMode(mode==='erase'?'connect':'erase'); });
+document.getElementById('btn-reset').addEventListener('click',function(){ arrows=[]; calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); updateCount(); updateGabarito(); });
+document.getElementById('btn-gabarito').addEventListener('click',function(){
+  gabVisible=!gabVisible;
+  document.getElementById('gabarito-panel').style.display=gabVisible?'block':'none';
+  document.getElementById('btn-gabarito').textContent=gabVisible?'Ocultar gabarito':'Ver gabarito';
+  if(gabVisible) updateGabarito();
 });
 
-// Redesenhar ao redimensionar
-window.addEventListener("resize", () => {
-  // Mantém posições relativas ao novo tamanho
-  drawLines();
-});
+function updateGabarito() {
+  if (!gabVisible) return;
+  var hits=0;
+  GABARITO.forEach(function(pair){ if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++; });
+  var total=GABARITO.length, pct=Math.round((hits/total)*100);
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-label').textContent=hits+' de '+total+' conexões ('+pct+'%)';
+}
+
+window.addEventListener('resize',function(){ calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load',function(){ calcPositions(); renderNodes(); setMode('move'); });
 </script>
 </body>
 </html>

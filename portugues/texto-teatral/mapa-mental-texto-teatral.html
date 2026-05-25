@@ -51,7 +51,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 
 @media (max-width: 600px) {
   #stage { height: calc(100svh - 340px) !important; min-height: 380px; }
-  .node { font-size: 12px !important; padding: 9px 13px !important; min-width: 80px !important; }
+  .node { font-size: 14px !important; padding: 12px 16px !important; min-width: 100px !important; }
   .n-root { min-width: 130px !important; font-size: 13px !important; }
 }
 </style>
@@ -444,7 +444,7 @@ window.addEventListener('resize', function() {
 window.addEventListener('load', function() {
   calcPositions();
   renderNodes();
-  setMode('connect');
+  setMode('move');
 });
 </script>
 </body>

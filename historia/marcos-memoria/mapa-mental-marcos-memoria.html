@@ -6,162 +6,307 @@
 <title>Mapa Mental — Marcos de Memória</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; overflow-x: hidden; }
-.hero { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 1.8rem 1.5rem 1.2rem; text-align: center; color: white; }
-.hero h1 { font-size: 1.4rem; font-weight: 900; }
-.hero p { font-size: .9rem; opacity: .9; margin-top: .3rem; }
-.controls { display: flex; gap: .7rem; flex-wrap: wrap; padding: 1rem 1rem .5rem; justify-content: center; }
-.btn { border-radius: 10px; padding: .6rem 1.3rem; font-family: 'Baloo 2', sans-serif; font-size: .9rem; font-weight: 800; cursor: pointer; border: none; transition: transform .15s; }
-.btn:hover { transform: scale(1.04); }
-.btn-primary { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; }
-.btn-outline { background: white; border: 2.5px solid var(--primary); color: var(--primary); }
-.btn-green { background: #059669; color: white; }
-.canvas-wrap { width: 100%; overflow: auto; }
-#canvas { display: block; cursor: default; }
-.legend { padding: .8rem 1rem 1.5rem; text-align: center; font-size: .85rem; color: #6b7280; }
-.result-bar { display: none; margin: .8rem 1rem; background: white; border-radius: 14px; padding: 1rem 1.2rem; box-shadow: 0 2px 12px rgba(180,83,9,.1); font-weight: 700; border-left: 5px solid var(--primary); }
-.result-bar.show { display: block; }
-.back-btn { display: block; margin: 0 auto 2rem; background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .7rem 1.6rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; width: fit-content; }
-.back-btn:hover { background: var(--primary); color: white; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --mat: #B45309; --mat-light: #F59E0B; --mat-bg: #FFFBEB;
+  --bg: #FFFBEB; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #FEF3C7;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--mat); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(180,83,9,.1); }
+.card-header { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--mat-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #fffdf5; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--mat-light); color: var(--mat); }
+.toolbar button.active { background: var(--mat-bg); border-color: var(--mat); color: var(--mat); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--mat); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: calc(100svh - 360px); min-height: 380px; background: var(--mat-bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid #B45309; outline-offset: 2px; }
+.n-root   { background: linear-gradient(135deg,#B45309,#F59E0B); color: white; border: 2px solid #78350F; font-size: 13px; font-weight: 800; min-width: 145px; padding: 11px 20px; z-index: 11; }
+.n-level1 { background: #FEF3C7; border: 2px solid #F59E0B; color: #78350F; }
+.n-level2 { background: white; border: 2px solid #FEF3C7; color: #374151; }
+.n-special { background: #FEF3C7; border: 2px solid #FCD34D; color: #78350F; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #F59E0B; background: #FFFBEB; display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: #78350F; margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: #FFFBEB; display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #FEF3C7; }
+.score-fill  { height: 8px; border-radius: 999px; background: #B45309; transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: #78350F; white-space: nowrap; }
 
 @media (max-width: 600px) {
-  .node { padding: 12px 14px !important; font-size: 0.9rem !important; min-width: 95px !important; }
-  .canvas-wrap, #canvas { min-height: calc(100svh - 260px) !important; height: auto !important; }
+  #stage { height: calc(100svh - 360px) !important; min-height: 380px; }
+  .node { font-size: 14px !important; padding: 12px 16px !important; min-width: 100px !important; }
+  .n-root { min-width: 130px !important; font-size: 13px !important; }
 }
 </style>
 </head>
 <body>
-<div class="hero">
-  <div style="font-size:2.5rem;margin-bottom:.3rem">🗿🧠</div>
-  <h1>Mapa Mental — Marcos de Memória</h1>
-  <p>Arraste os nós · Conecte com setas · Compare com o gabarito</p>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🏛️</div>
+      <div><h1>Mapa Mental</h1><p>Marcos de Memória</p></div>
+      <div class="hbadge">🏆 Síntese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar e organizar os balões.
+      Use <strong>+ Conectar</strong> para criar setas entre eles.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com a estrutura correta.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect">+ Conectar</button>
+      <button id="btn-move" class="active">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexões</span>
+      <span id="hint-bar">Clique e arraste qualquer balão</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balão para conectar ✔</div>
+      <div id="stage">
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#B45309" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">ESTRUTURA DO MAPA — GABARITO</div>
+      <svg id="gabarito-svg" viewBox="0 0 700 195" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#B45309"/>
+            <stop offset="100%" stop-color="#F59E0B"/>
+          </linearGradient>
+          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#B45309" opacity="0.6"/>
+          </marker>
+        </defs>
+        <!-- Root → L1 -->
+        <line x1="350" y1="34" x2="135" y2="61" stroke="#B45309" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="305" y2="61" stroke="#B45309" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="460" y2="61" stroke="#B45309" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="620" y2="61" stroke="#B45309" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <!-- L1 → L2 -->
+        <line x1="135" y1="89" x2="105" y2="138" stroke="#F59E0B" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="305" y1="89" x2="275" y2="138" stroke="#F59E0B" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="460" y1="89" x2="423" y2="138" stroke="#F59E0B" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="460" y1="89" x2="545" y2="138" stroke="#F59E0B" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="620" y1="89" x2="623" y2="138" stroke="#F59E0B" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- Root node -->
+        <rect x="220" y="6" width="260" height="28" rx="14" fill="url(#rg)" stroke="#78350F" stroke-width="2"/>
+        <text x="350" y="25" text-anchor="middle" font-size="10" font-weight="800" fill="white">🏛️ MARCOS DE MEMÓRIA</text>
+        <!-- L1 nodes -->
+        <rect x="60"  y="61" width="150" height="28" rx="14" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+        <text x="135" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#78350F">Monumentos e Memória</text>
+        <rect x="225" y="61" width="160" height="28" rx="14" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+        <text x="305" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#78350F">Quem escolhe os mon.?</text>
+        <rect x="400" y="61" width="120" height="28" rx="14" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+        <text x="460" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#78350F">Memória Indígena</text>
+        <rect x="555" y="61" width="130" height="28" rx="14" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+        <text x="620" y="80" text-anchor="middle" font-size="9" font-weight="700" fill="#78350F">Cais do Valongo</text>
+        <!-- L2 nodes -->
+        <rect x="40"  y="138" width="130" height="22" rx="11" fill="white" stroke="#FEF3C7" stroke-width="1.5"/>
+        <text x="105" y="153" text-anchor="middle" font-size="8" fill="#374151">Cavaleiro Guaicuru</text>
+        <rect x="190" y="138" width="170" height="22" rx="11" fill="white" stroke="#FEF3C7" stroke-width="1.5"/>
+        <text x="275" y="153" text-anchor="middle" font-size="8" fill="#374151">Exclusão de mulheres/negros</text>
+        <rect x="368" y="138" width="110" height="22" rx="11" fill="white" stroke="#FEF3C7" stroke-width="1.5"/>
+        <text x="423" y="153" text-anchor="middle" font-size="8" fill="#374151">Nomes de cidades</text>
+        <rect x="488" y="138" width="115" height="22" rx="11" fill="white" stroke="#FEF3C7" stroke-width="1.5"/>
+        <text x="545" y="153" text-anchor="middle" font-size="8" fill="#374151">Patrimônio imaterial</text>
+        <rect x="558" y="138" width="130" height="22" rx="11" fill="white" stroke="#FEF3C7" stroke-width="1.5"/>
+        <text x="623" y="153" text-anchor="middle" font-size="8" fill="#374151">Patrimônio da Humanidade</text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 9 conexões</span>
+      </div>
+    </div>
+  </div>
 </div>
-<div class="controls">
-  <button class="btn btn-primary" onclick="addConnection()">➕ Conectar nós selecionados</button>
-  <button class="btn btn-outline" onclick="clearSelection()">❌ Limpar seleção</button>
-  <button class="btn btn-green" onclick="showGabarito()">📖 Ver gabarito</button>
-  <button class="btn btn-outline" onclick="resetMap()">🔄 Reiniciar</button>
-</div>
-<div class="canvas-wrap">
-  <canvas id="canvas" width="900" height="620"></canvas>
-</div>
-<div class="result-bar" id="result-bar"></div>
-<div class="legend">💡 Clique em dois nós e depois em "Conectar" para criar uma seta. Arraste os nós para organizar o mapa.</div>
-<br>
-<button class="back-btn" onclick="window.close() || (window.location.href='../../index.html')">← Voltar ao Portal</button>
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-
-const C = {
-  center: '#78350F', monumento: '#B45309', exclusao: '#DC2626',
-  indigena: '#059669', valongo: '#1e40af', detail: '#6b7280'
-};
-
-const initialNodes = [
-  { id:0, x:440, y:310, label:'MARCOS\nDE MEMÓRIA', color:C.center, r:55 },
-  { id:1, x:220, y:160, label:'Monumentos\ne memória', color:C.monumento, r:44 },
-  { id:2, x:660, y:160, label:'Quem escolhe\nos monumentos?', color:C.exclusao, r:46 },
-  { id:3, x:220, y:460, label:'Memória\nindígena', color:C.indigena, r:42 },
-  { id:4, x:660, y:460, label:'Cais do\nValongo', color:C.valongo, r:42 },
-  { id:5, x:110, y:310, label:'Cavaleiro\nGuaicuru', color:C.detail, r:38 },
-  { id:6, x:440, y:100, label:'Patrimônio\nda Humanidade', color:C.valongo, r:42 },
-  { id:7, x:750, y:310, label:'Exclusão de\nmulheres, negros\ne indígenas', color:C.exclusao, r:46 },
-  { id:8, x:340, y:520, label:'Nomes de\ncidades', color:C.indigena, r:38 },
-  { id:9, x:440, y:520, label:'Patrimônio\nimaterial', color:C.indigena, r:38 },
+var NODES = [
+  {id:'central',    label:'🏛️ Marcos\nde Memória',                  cls:'n-root'},
+  {id:'monumentos', label:'Monumentos\ne Memória',                  cls:'n-level1'},
+  {id:'escolhe',    label:'Quem escolhe\nos monumentos?',           cls:'n-level1'},
+  {id:'indig',      label:'Memória\nIndígena',                      cls:'n-level1'},
+  {id:'cais',       label:'Cais do Valongo',                        cls:'n-level1'},
+  {id:'cavaleiro',  label:'Cavaleiro Guaicuru',                     cls:'n-level2'},
+  {id:'exclusao',   label:'Exclusão de mulheres,\nnegros e indígenas', cls:'n-level2'},
+  {id:'nomes',      label:'Nomes de\ncidades',                      cls:'n-level2'},
+  {id:'imaterial',  label:'Patrimônio\nimaterial',                  cls:'n-level2'},
+  {id:'patrimonio', label:'Patrimônio\nda Humanidade',              cls:'n-level2'},
 ];
 
-const gabaritoConnections = [
-  [0,1],[0,2],[0,3],[0,4],
-  [1,5],[2,7],[3,8],[3,9],[4,6]
+var GABARITO = [
+  ['central','monumentos'],['central','escolhe'],
+  ['central','indig'],['central','cais'],
+  ['monumentos','cavaleiro'],['escolhe','exclusao'],
+  ['indig','nomes'],['indig','imaterial'],
+  ['cais','patrimonio'],
 ];
 
-let nodes = JSON.parse(JSON.stringify(initialNodes));
-let connections = [];
-let selected = [];
-let dragging = null, dragOffX = 0, dragOffY = 0;
+var SHUFFLE = ['cavaleiro','central','indig','cais','exclusao','monumentos','patrimonio','escolhe','nomes','imaterial'];
 
-function resizeCanvas() {
-  const w = Math.min(900, window.innerWidth - 8);
-  canvas.width = w; canvas.height = Math.max(500, w * 0.68);
-}
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'connect', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
 
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  connections.forEach(([a,b]) => {
-    const na = nodes[a], nb = nodes[b];
-    ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(nb.x, nb.y);
-    ctx.strokeStyle = '#d1d5db'; ctx.lineWidth = 2.5; ctx.stroke();
-    const angle = Math.atan2(nb.y - na.y, nb.x - na.x);
-    const ax = nb.x - Math.cos(angle) * nb.r;
-    const ay = nb.y - Math.sin(angle) * nb.r;
-    ctx.beginPath(); ctx.moveTo(ax, ay);
-    ctx.lineTo(ax - 10 * Math.cos(angle - .4), ay - 10 * Math.sin(angle - .4));
-    ctx.lineTo(ax - 10 * Math.cos(angle + .4), ay - 10 * Math.sin(angle + .4));
-    ctx.closePath(); ctx.fillStyle = '#9ca3af'; ctx.fill();
-  });
-  nodes.forEach((n, i) => {
-    ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-    ctx.fillStyle = n.color; ctx.fill();
-    if (selected.includes(i)) { ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 4; ctx.stroke(); }
-    ctx.fillStyle = 'white';
-    const sz = n.r > 48 ? 13 : 11;
-    ctx.font = `bold ${sz}px 'Baloo 2', sans-serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    const lines = n.label.split('\n');
-    const lh = sz + 2;
-    lines.forEach((line, li) => { ctx.fillText(line, n.x, n.y + (li - (lines.length-1)/2) * lh); });
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 480 ? 2 : 5;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 16, padY = 32;
+  var colW = (W - padX*2) / COLS;
+  var rowH = Math.max(80, (stage.clientHeight - padY*2) / ROWS);
+  var minH = padY*2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i%COLS + 0.5) * colW,
+      y: padY + (Math.floor(i/COLS) + 0.5) * rowH
+    };
   });
 }
 
-function getNode(x, y) {
-  for (let i = nodes.length - 1; i >= 0; i--) {
-    const n = nodes[i], dx = x - n.x, dy = y - n.y;
-    if (Math.sqrt(dx*dx+dy*dy) <= n.r) return i;
-  }
-  return -1;
-}
-function getPos(e) {
-  const rect = canvas.getBoundingClientRect();
-  const t = e.touches ? e.touches[0] : e;
-  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
-}
-
-canvas.addEventListener('mousedown', e => { const {x,y}=getPos(e); const ni=getNode(x,y); if(ni>=0){dragging=ni;dragOffX=x-nodes[ni].x;dragOffY=y-nodes[ni].y;} });
-canvas.addEventListener('mousemove', e => { if(dragging===null)return; const {x,y}=getPos(e); nodes[dragging].x=x-dragOffX; nodes[dragging].y=y-dragOffY; draw(); });
-canvas.addEventListener('mouseup', e => {
-  if(dragging!==null){
-    const {x,y}=getPos(e);
-    if(Math.abs(x-dragOffX-nodes[dragging].x+dragOffX)<5&&Math.abs(y-dragOffY-nodes[dragging].y+dragOffY)<5){
-      const idx=selected.indexOf(dragging);
-      if(idx>=0) selected.splice(idx,1); else { selected.push(dragging); if(selected.length>2)selected.shift(); }
+function renderNodes() {
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-'+n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls;
+      el.style.whiteSpace = 'pre-line';
+      el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
     }
-    dragging=null; draw();
+    placeNode(n.id);
+  });
+}
+
+function placeNode(id) {
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw+4, Math.min(W-hw-4, p.x));
+  var cy = Math.max(hh+4, Math.min(H-hh-4, p.y));
+  el.style.left = (cx-hw)+'px'; el.style.top = (cy-hh)+'px';
+}
+
+function center(id) {
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
+}
+
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode==='erase';
+  arrows.forEach(function(a, i) {
+    var f=center(a.from), t=center(a.to), dx=t.x-f.x, dy=t.y-f.y;
+    var len=Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl=document.getElementById('nd-'+a.to);
+    var rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
+    var ex=t.x-(dx/len)*rad, ey=t.y-(dy/len)*rad;
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
+    line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
+    line.setAttribute('stroke', isErase?'#DC2626':'#B45309');
+    line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents='stroke'; line.style.cursor='pointer';
+      (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
+  });
+}
+
+function updateCount() { var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões'); }
+
+function setMode(m) {
+  mode=m;
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  document.getElementById('pending-msg').style.display='none';
+  ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {connect:'Clique em dois balões para criar uma seta',move:'Clique e arraste qualquer balão',erase:'Clique em uma seta para apagá-la'}[m];
+}
+
+function onNodeClick(e, id) {
+  if (mode!=='connect') return;
+  if (!arrowFrom) { arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
+  else {
+    document.getElementById('nd-'+arrowFrom).classList.remove('selected');
+    document.getElementById('nd-'+id).classList.remove('selected');
+    if (arrowFrom!==id) {
+      var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom=null; document.getElementById('pending-msg').style.display='none';
   }
+  e.stopPropagation();
+}
+
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+document.addEventListener('mousemove',function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup',function(){ dragging=null; });
+document.addEventListener('touchmove',function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
+document.addEventListener('touchend',function(){ dragging=null; });
+
+document.getElementById('btn-connect').addEventListener('click',function(){ setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click',function(){ setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click',function(){ setMode(mode==='erase'?'connect':'erase'); });
+document.getElementById('btn-reset').addEventListener('click',function(){ arrows=[]; calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); updateCount(); updateGabarito(); });
+document.getElementById('btn-gabarito').addEventListener('click',function(){
+  gabVisible=!gabVisible;
+  document.getElementById('gabarito-panel').style.display=gabVisible?'block':'none';
+  document.getElementById('btn-gabarito').textContent=gabVisible?'Ocultar gabarito':'Ver gabarito';
+  if(gabVisible) updateGabarito();
 });
-canvas.addEventListener('touchstart', e=>{e.preventDefault();const{x,y}=getPos(e);const ni=getNode(x,y);if(ni>=0){dragging=ni;dragOffX=x-nodes[ni].x;dragOffY=y-nodes[ni].y;}},{passive:false});
-canvas.addEventListener('touchmove', e=>{e.preventDefault();if(dragging===null)return;const{x,y}=getPos(e);nodes[dragging].x=x-dragOffX;nodes[dragging].y=y-dragOffY;draw();},{passive:false});
-canvas.addEventListener('touchend', e=>{if(dragging!==null){const idx=selected.indexOf(dragging);if(idx>=0)selected.splice(idx,1);else{selected.push(dragging);if(selected.length>2)selected.shift();}dragging=null;draw();}});
 
-function addConnection(){
-  if(selected.length!==2){alert('Selecione exatamente 2 nós primeiro.');return;}
-  const[a,b]=selected;
-  if(!connections.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a)))connections.push([a,b]);
-  selected=[];draw();
+function updateGabarito() {
+  if (!gabVisible) return;
+  var hits=0;
+  GABARITO.forEach(function(pair){ if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++; });
+  var total=GABARITO.length, pct=Math.round((hits/total)*100);
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-label').textContent=hits+' de '+total+' conexões ('+pct+'%)';
 }
-function clearSelection(){selected=[];draw();}
-function showGabarito(){
-  connections=JSON.parse(JSON.stringify(gabaritoConnections));selected=[];draw();
-  const rb=document.getElementById('result-bar');
-  rb.className='result-bar show';
-  rb.innerHTML='<span style="color:var(--primary)">📖 Gabarito exibido!</span> Monumentos, exclusão, memória indígena e Cais do Valongo são as 4 ramificações principais dos Marcos de Memória.';
-}
-function resetMap(){nodes=JSON.parse(JSON.stringify(initialNodes));connections=[];selected=[];resizeCanvas();draw();}
 
-resizeCanvas(); draw();
-window.addEventListener('resize',()=>{resizeCanvas();draw();});
+window.addEventListener('resize',function(){ calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load',function(){ calcPositions(); renderNodes(); setMode('move'); });
 </script>
 </body>
 </html>
