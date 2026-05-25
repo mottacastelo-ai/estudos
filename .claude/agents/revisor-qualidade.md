@@ -43,7 +43,21 @@ Auditar todos os arquivos de um tema recém-criado e retornar relatório de conf
 - [ ] Toda atividade HTML tem sistema de pontuação?
 - [ ] Feedback imediato implementado (resposta certa/errada com explicação)?
 
-### 5. Design system (média)
+### 5. Mapa Mental — implementação (crítico)
+
+Abrir `mapa-mental-[slug].html` e verificar:
+- [ ] `arrowFrom` existe no código JS? (se não → arquivo usa padrão errado, reescrita necessária)
+- [ ] `setMode('move')` é chamado no load? (se `setMode('connect')` → bug de modo padrão)
+- [ ] `btn-move` tem `class="active"` no HTML estático?
+- [ ] Nenhum nó possui propriedade `connects`? (ex: `connects:['central']` = padrão proibido)
+- [ ] Não existe função `drawConnections()` ou equivalente que auto-desenha no load?
+- [ ] Gabarito é painel inline (`display:none`) abaixo do stage? (não overlay/modal)
+- [ ] Total de nós ≤ 10?
+- [ ] Score bar exibe "X de N conexões"?
+
+Se qualquer item falhar, classificar como `tipo: "mapa_mental_implementacao_errada"`, `severidade: "critica"`.
+
+### 6. Design system (média)
 - [ ] Fontes Baloo 2 + Space Mono carregadas?
 - [ ] CSS variables da disciplina usadas?
 - [ ] Back button `← Voltar` presente em todos os HTMLs?

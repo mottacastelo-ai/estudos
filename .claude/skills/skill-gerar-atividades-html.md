@@ -146,67 +146,103 @@ const questions = [
 ### Mapa Mental (mapa-mental-[slug].html)
 
 **Template canônico:** `historia/diversidade-cultural/mapa-mental-diversidade-cultural.html`
-Ler e adaptar esse arquivo — não inventar estrutura diferente.
+**OBRIGATÓRIO:** ler esse arquivo antes de escrever qualquer mapa mental. Nunca inventar estrutura diferente.
 
-#### Características obrigatórias (herdadas do canônico)
+#### Regras absolutas — NUNCA violar
 
-- **3 níveis de hierarquia** com cores distintas:
-  - `n-root` — gradiente da cor primária da disciplina (nó central)
-  - `n-level1` — fundo claro da disciplina (categorias principais)
-  - `n-level2` — fundo branco com borda clara (detalhes/exemplos)
-- **Toolbar** com 5 botões: `+ Conectar` · `✥ Mover` · `✕ Apagar seta` · `↺ Reiniciar` · `Ver gabarito`
-- **Stage SVG** para setas com marcadores de seta (`marker-end`)
-- **Gabarito SVG** — diagrama estático com a estrutura correta, exibido ao clicar "Ver gabarito"
-- **Score** — contagem de conexões corretas vs. total do gabarito
-- **Grid responsivo** — 2 colunas em telas < 480px, 5 colunas acima
-- **Touch + Mouse** — `mousedown/touchstart`, `mousemove/touchmove`, `mouseup/touchend`
+| ❌ NUNCA fazer | ✅ SEMPRE fazer |
+|---|---|
+| `connects: ['central']` nos objetos de nó | `{id, label, cls}` apenas — sem propriedade `connects` |
+| Função que desenha conexões automaticamente no load | Conexões desenhadas SOMENTE pelo usuário em modo Conectar |
+| Gabarito como overlay/modal sobre o stage | Gabarito como painel inline ABAIXO do stage |
+| `setMode('connect')` no load | `setMode('move')` no load — Mover ativo por padrão |
+| Mais de 10 nós | Máximo 10 nós (exemplos contam para o limite) |
+| `btn-connect` com `class="active"` no HTML inicial | `btn-move` com `class="active"` no HTML inicial |
 
-#### Estrutura de dados a adaptar por tema
+#### Identificação de padrão correto vs. errado
+
+Antes de editar qualquer mapa mental existente, verificar:
+- `grep arrowFrom` no arquivo → se encontrar, o padrão connect/delete está implementado ✅
+- `grep "load.*setMode\|setMode.*move"` → se encontrar `setMode('move')`, o modo padrão está correto ✅
+- Ambos devem estar presentes. Se faltarem, o arquivo precisa de reescrita a partir do canônico.
+
+#### Estrutura de dados obrigatória
 
 ```javascript
-// 1. Nós — definir id, label, classe CSS de hierarquia
+// 1. Nós — SEM propriedade connects, máximo 10 total
 var NODES = [
-  {id:'root',   label:'🎯 [CONCEITO CENTRAL]',  cls:'n-root'},
-  {id:'cat1',   label:'[Categoria 1]',           cls:'n-level1'},
-  {id:'cat2',   label:'[Categoria 2]',           cls:'n-level1'},
-  {id:'cat3',   label:'[Categoria 3]',           cls:'n-level1'},
-  {id:'det1',   label:'[Detalhe 1.1]',           cls:'n-level2'},
-  {id:'det2',   label:'[Detalhe 1.2]',           cls:'n-level2'},
-  // ... 8–12 nós total
+  {id:'central', label:'🎯 [CONCEITO CENTRAL]', cls:'n-root'},
+  {id:'cat1',    label:'[Categoria 1]',          cls:'n-level1'},
+  {id:'cat2',    label:'[Categoria 2]',          cls:'n-level1'},
+  {id:'cat3',    label:'[Categoria 3]',          cls:'n-level1'},
+  {id:'det1',    label:'[Detalhe 1.1]',          cls:'n-level2'},
+  {id:'det2',    label:'[Detalhe 2.1]',          cls:'n-level2'},
+  // máximo 10 nós — exemplos contam para o limite
 ];
 
-// 2. Gabarito — pares de conexões corretas (bidirecional)
+// 2. Gabarito — array separado, pares [origem, destino]
+//    NÃO é desenhado automaticamente; apenas usado para calcular score
 var GABARITO = [
-  ['root','cat1'], ['root','cat2'], ['root','cat3'],
-  ['cat1','det1'], ['cat1','det2'],
-  ['cat2','det3'], ['cat2','det4'],
-  ['cat3','det5'], ['cat3','det6'],
+  ['central','cat1'], ['central','cat2'], ['central','cat3'],
+  ['cat1','det1'], ['cat2','det2'],
 ];
 
-// 3. Ordem de exibição inicial (embaralhada)
-var SHUFFLE = ['det1','cat2','det3','root','det4','cat1','det2','cat3','det5','det6'];
+// 3. Ordem embaralhada para posicionamento inicial no grid
+var SHUFFLE = ['det1','cat2','central','cat3','cat1','det2'];
 ```
 
-#### CSS — adaptar cores para a disciplina do tema
+#### Toolbar HTML — estrutura exata (5 botões)
+
+```html
+<div class="toolbar">
+  <button class="tb-btn" id="btn-connect" onclick="setMode('connect')">+ Conectar</button>
+  <button class="tb-btn active" id="btn-move" onclick="setMode('move')">✥ Mover</button>
+  <button class="tb-btn" id="btn-erase" onclick="setMode('erase')">✕ Apagar seta</button>
+  <button class="tb-btn" onclick="resetStage()">↺ Reiniciar</button>
+  <button class="tb-btn tb-gabarito" onclick="toggleGabarito()">Ver gabarito</button>
+</div>
+```
+
+`btn-move` **deve ter** `class="active"` no HTML estático — não apenas setado via JS no load.
+
+#### Modo padrão no load
+
+```javascript
+window.addEventListener('load', function() {
+  calcPositions();
+  setMode('move'); // SEMPRE move, nunca connect
+});
+```
+
+#### Gabarito — painel inline abaixo do stage
+
+```html
+<!-- FORA do stage, logo abaixo dele, oculto por padrão -->
+<div id="gabarito-panel" style="display:none;">
+  <svg id="gabarito-svg" viewBox="0 0 700 230" style="width:100%;max-width:700px">
+    <!-- linhas e nós estáticos desenhados à mão para o tema -->
+  </svg>
+  <div id="score-bar">0 de N conexões</div>
+</div>
+```
+
+O `score-bar` mostra conexões corretas ao fechar o gabarito. Nunca usar `position:fixed` ou overlay.
+
+#### CSS — adaptar cores para a disciplina
 
 ```css
-/* Substituir var(--geo) / #15803D / #4ADE80 / #14532D pelas cores da disciplina */
+/* Substituir pelos valores da disciplina conforme tabela de paleta */
 .n-root   { background: linear-gradient(135deg,[PRIMARIA],[CLARA]); color:white; border:2px solid [DARK]; }
 .n-level1 { background:[BG-MEDIO]; border:2px solid [CLARA]; color:[DARK]; }
 .n-level2 { background:white; border:2px solid [BG-MEDIO]; color:#374151; }
 ```
 
-#### Gabarito SVG — desenhar o diagrama estático
+#### Gabarito SVG — posições de referência
 
-O `<svg id="gabarito-svg" viewBox="0 0 700 240">` deve conter:
-- `<line>` para cada aresta do gabarito (raiz→L1 mais grossas; L1→L2 mais finas)
-- `<rect>` + `<text>` para cada nó (mesmas 3 classes de hierarquia)
-- `<linearGradient>` para o nó raiz
-
-Posições de referência para 3 categorias L1:
-- Raiz: x=350, y=20
-- L1 esquerda: x=112, L1 centro: x=350, L1 direita: x=588 — todas y=96
-- L2: distribuídas sob cada L1 em y=170
+Viewbox `0 0 700 230`. Layout sugerido para 3 categorias L1:
+- Raiz: cx≈350, y≈20
+- L1 esquerda: cx≈112, L1 centro: cx≈350, L1 direita: cx≈588 — todas y≈96
+- L2: distribuídas sob cada L1 em y≈170
 
 ### Classificador (classificador-[slug].html)
 

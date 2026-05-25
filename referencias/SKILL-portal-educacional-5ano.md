@@ -310,10 +310,23 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 
 #### B) Mapa Mental
 - **Arquivo:** `[disc-folder]/[slug]/mapa-mental-[slug].html`
-- **Estrutura:** Nós arrastáveis com conexões, gabarito ao final
-- **Conteúdo:** 6-10 nós representando os conceitos-chave do tema
+- **Template canônico:** `historia/diversidade-cultural/mapa-mental-diversidade-cultural.html` — ler antes de implementar
+- **Conteúdo:** máximo 10 nós (exemplos contam para o limite)
 - **Nível Glasser:** 🏆 Ensinar (90%)
 - **Sempre é a última atividade listada no act-grid**
+
+**Regras de implementação obrigatórias:**
+- Nós definidos como `{id, label, cls}` — SEM propriedade `connects`
+- `GABARITO` array separado `[['from','to'],...]` — não auto-desenhado no load
+- `setMode('move')` no load — Mover ativo por padrão; `btn-move` com `class="active"` no HTML
+- Toolbar com 5 botões: `+ Conectar` · `✥ Mover` · `✕ Apagar seta` · `↺ Reiniciar` · `Ver gabarito`
+- Gabarito como painel inline abaixo do stage (não overlay), com SVG estático + score "X de N conexões"
+
+**Anti-padrões proibidos:**
+- `connects:[...]` em qualquer nó → causa conexões auto-desenhadas no load
+- Função `drawConnections()` ou similar chamada no load
+- Gabarito como modal/overlay com `position:fixed`
+- Inicializar em modo Conectar (`setMode('connect')` no load)
 - **Card no index:**
 ```html
 <a class="act-card [disc]" href="[disc-folder]/[slug]/mapa-mental-[slug].html" target="_blank">

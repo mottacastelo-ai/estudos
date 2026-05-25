@@ -87,7 +87,7 @@ Criar os arquivos HTML das atividades interativas para um tema, seguindo o desig
 | Tipo | Descrição | Quando usar |
 |---|---|---|
 | `quiz` | 8–12 questões de múltipla escolha com feedback | Sempre disponível |
-| `mapa-mental` | Arrastar e conectar conceitos (obrigatório) | Todo tema |
+| `mapa-mental` | Arrastar e conectar conceitos (obrigatório) — ver spec abaixo | Todo tema |
 | `complete-lacuna` | Frases com lacunas para completar | Vocabulário, termos |
 | `caca-erro` | Texto/código com erros para encontrar | Português, regras |
 | `classificador` | Arrastar itens para categorias | Quando há classificação no conteúdo |
@@ -97,6 +97,51 @@ Criar os arquivos HTML das atividades interativas para um tema, seguindo o desig
 | `flashcards` | Sistema Leitner de repetição espaçada | Vocabulário, fórmulas |
 | `criador` | Produção textual guiada | Português produção |
 | `missao` | Desafio gamificado com níveis | Revisão geral |
+
+## Mapa Mental — Especificação de implementação obrigatória
+
+**Arquivo canônico de referência:** `historia/diversidade-cultural/mapa-mental-diversidade-cultural.html`
+Sempre ler esse arquivo antes de implementar um mapa mental. Nunca inventar estrutura diferente.
+
+### Regras invioláveis
+
+1. **Máximo 10 nós** — exemplos contam para o limite. Reduzir conceitos se necessário.
+2. **Mover ativo por padrão** — `setMode('move')` no load; `btn-move` com `class="active"` no HTML.
+3. **Sem `connects` nos nós** — estrutura `{id, label, cls}` apenas. O gabarito fica em array separado.
+4. **Gabarito não auto-desenhado** — conexões só existem se o usuário as fizer. O GABARITO array é só para scoring.
+5. **Gabarito inline** — painel abaixo do stage, não overlay/modal.
+6. **Toolbar com 5 botões:** `+ Conectar` · `✥ Mover` · `✕ Apagar seta` · `↺ Reiniciar` · `Ver gabarito`
+
+### Estrutura de dados correta
+
+```javascript
+// CORRETO — sem propriedade connects
+var NODES = [
+  {id:'central', label:'🎯 Conceito Central', cls:'n-root'},
+  {id:'cat1',    label:'Categoria 1',         cls:'n-level1'},
+  {id:'det1',    label:'Detalhe 1',           cls:'n-level2'},
+  // máximo 10 total
+];
+var GABARITO = [['central','cat1'], ['cat1','det1']]; // array separado
+var SHUFFLE   = ['det1','cat1','central']; // ordem embaralhada
+```
+
+```javascript
+// ERRADO — nunca fazer
+var NODES = [
+  {id:'central', label:'...', cls:'n-root', connects:['cat1','cat2']}, // ← PROIBIDO
+];
+function drawConnections() { /* auto-desenha no load */ } // ← PROIBIDO
+```
+
+### Verificação antes de finalizar
+
+- [ ] `arrowFrom` existe no JS (controla modo connect) → se não existir, reescrever a partir do canônico
+- [ ] `setMode('move')` chamado no load (não `setMode('connect')`)
+- [ ] `btn-move` tem `class="active"` no HTML estático
+- [ ] Nenhum nó tem propriedade `connects`
+- [ ] Gabarito é painel inline com `display:none` inicial
+- [ ] Contagem "X de N conexões" presente no score-bar
 
 ## Output JSON (retornar ao orquestrador)
 
