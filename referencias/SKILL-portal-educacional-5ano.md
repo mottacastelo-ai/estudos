@@ -33,7 +33,8 @@ FOTOS → [FASE 0] Análise de escopo → Proposta estrutural → ⏸ AGUARDAR A
 
 Examine todas as imagens fornecidas e extraia:
 - Disciplina(s) identificada(s)
-- Capítulos ou unidades visíveis
+- Capítulos ou unidades visíveis — **incluindo o título exato do capítulo como aparece no livro**
+- **Intervalo de páginas de cada tema** — registrar `pages_start` e `pages_end` por tema para uso posterior no HTML (atributos `data-pages-start`/`data-pages-end` e caption visual)
 - Todos os subtemas e conceitos-chave presentes (listar exaustivamente)
 - Habilidades específicas trabalhadas pelo livro (interpretar gráficos, produção escrita, etc.)
 
@@ -492,10 +493,15 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 ### 6.2 Estrutura do theme-content
 
 ```html
-<div class="theme-content" id="theme-[disc]-[slug]">
+<div class="theme-content" id="theme-[disc]-[slug]"
+     data-book="[Disciplina]" data-pages-start="[N]" data-pages-end="[M]">
   <div class="hq-card">
     <img class="hq-img" src="[disc-folder]/[slug]/hq-[slug].png" alt="HQ [Nome do Tema]">
-    <div class="hq-caption"><span>📖</span><span>[Título HQ] — 4 páginas · Personagens: [lista] · Tema: [tema]</span></div>
+    <div class="hq-caption">
+      <span>📖</span>
+      <span>[Título HQ] — 4 páginas · Personagens: [lista] · Tema: [tema]</span>
+      <span style="display:block;margin-top:4px;font-size:0.8em;opacity:0.75;">📚 Livro didático de [Disciplina] · pp. [N]–[M] · [Cap./Unidade] — "[Título do capítulo no livro]"</span>
+    </div>
   </div>
   <hr class="sdiv">
   <div class="act-grid">
@@ -511,6 +517,11 @@ var firstTheme = { port: 'preposicoes', mat: 'tabuada', ..., [disc]: '[primeiro-
 
 > **Atenção:** a extensão padrão do arquivo HQ é `.png`. Usar `.jpg` apenas se Léo fornecer a imagem nesse formato.
 > **Caminho completo do src:** `[disc-folder]/[slug]/hq-[slug].png` — nunca apenas `hq-[slug].png`.
+
+> **⚠️ Regra obrigatória — referência ao livro didático:** todo `theme-content` deve incluir:
+> 1. Atributos `data-book`, `data-pages-start` e `data-pages-end` no div raiz — permitem busca futura por página com `querySelectorAll('[data-pages-start]')` sem parsear texto.
+> 2. Segunda linha no `hq-caption` com o texto visual `📚 Livro didático de [Disciplina] · pp. N–M · Cap. X — "Título"`.
+> Os números de página são extraídos da Fase 0 (análise do conteúdo) — a skill deve registrá-los durante a leitura do material e usá-los ao gerar o HTML.
 
 ---
 
@@ -548,6 +559,8 @@ Exemplos de caminhos reais:
 - [ ] Contadores da home atualizados
 - [ ] `firstTheme` atualizado no JavaScript (se nova disciplina)
 - [ ] `src` da `hq-img` no index aponta para `[disc-folder]/[slug]/hq-[slug].png` (nunca apenas `hq-[slug].png`)
+- [ ] `theme-content` tem `data-book`, `data-pages-start` e `data-pages-end` preenchidos
+- [ ] `hq-caption` tem segunda linha com `📚 Livro didático · pp. N–M · Cap. — "Título"`
 - [ ] Botão "Voltar ao Portal" nas atividades usa `href="../../index.html"`
 - [ ] hq-generator foi acionada com `SUBFOLDER = [disc-folder]/[slug]`
 
