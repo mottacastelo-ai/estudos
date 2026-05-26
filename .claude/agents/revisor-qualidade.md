@@ -39,6 +39,22 @@ Auditar todos os arquivos de um tema recém-criado e retornar relatório de conf
 - [ ] Existe algum conceito nos HTMLs que **não** estava em `conceitos_esperados`?
   - Se sim: verificar se é expansão razoável ou violação do escopo.
 
+### 3b. Coerência das atividades interativas (crítico)
+
+Para cada atividade de arrastar, ordenar, classificar ou parear — ler o HTML e verificar:
+
+- [ ] O enunciado declara explicitamente o critério de acerto?
+- [ ] A resposta correta pode ser determinada **exclusivamente** pelo que está visível na tela (sem livro, sem HQ, sem contexto externo)?
+- [ ] Nenhum par/posição é atribuído arbitrariamente por cor, formato ou ordem sem label explicativo?
+
+**Exemplos de FALHA — classificar como `tipo: "criterio_implicito"`, `severidade: "critica"`:**
+- Atividade de arrastar onde a ordem correta pressupõe leitura prévia do livro
+- Jogo da memória onde a relação entre pares não está declarada no enunciado
+- Ordenação onde elementos são identificados apenas por cor (sem label/número visível)
+- Classificador onde a categoria correta depende de conhecimento externo não exibido na tela
+
+Se qualquer item falhar, classificar como problema crítico e bloquear aprovação (`aprovado: false`), descrevendo o arquivo, o problema exato e como redesenhar.
+
 ### 4. Gamificação (alta)
 - [ ] Toda atividade HTML tem sistema de pontuação?
 - [ ] Feedback imediato implementado (resposta certa/errada com explicação)?

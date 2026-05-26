@@ -30,6 +30,37 @@ Criar os arquivos HTML das atividades interativas para um tema, seguindo o desig
 }
 ```
 
+## Teste de Coerência — obrigatório antes de gerar qualquer HTML
+
+**Para cada atividade planejada, escreva internamente uma linha de spec e aplique o teste antes de codar:**
+
+> **Spec:** "A criança vê [X] e deve fazer [Y] porque [Z]."
+> **Teste:** "A resposta correta pode ser determinada exclusivamente pelo que está visível na tela, sem depender do livro, da HQ ou de qualquer contexto externo?"
+
+### Exemplos de aprovação ✅
+- Arrastar "verbo de ação" para a categoria "Verbos" → relação semântica declarada no enunciado
+- Parear palavra com definição → ambos visíveis nos cards
+- Ordenar etapas de processo numeradas → critério numérico visível nos elementos
+
+### Exemplos de reprovação ❌ — redesenhar antes de codar
+- Arrastar elemento para posição que só faz sentido para quem leu o livro
+- Atribuir categorias arbitrárias a elementos por cor/formato sem label explicativo
+- Ordenação onde a ordem correta é implícita (não declarada no enunciado nem nos elementos)
+
+### Regras específicas por tipo de atividade
+
+| Tipo | Regra obrigatória |
+|---|---|
+| Arrastar / Classificador / Ordenação | Critério de classificação declarado no enunciado **e** visível nos próprios elementos. Nunca atribuir posição por cor. |
+| Jogo da Memória / Flashcards | Relação entre pares declarada no enunciado (ex: "Parear o termo com a definição"). |
+| Mapa Mental | Gabarito com conexões semanticamente justificadas — nunca posição como critério. |
+| Complete-lacuna / Caça-erro | Resposta determinável pelo contexto do próprio texto exibido. |
+| Missão / Quiz | Cada questão auto-suficiente — resposta correta determinável pela pergunta + opções. |
+
+**Se o teste falhar: redesenhar o conceito antes de gerar o HTML. Nunca gerar HTML de atividade com critério implícito ou externo.**
+
+---
+
 ## Regras críticas
 
 1. Usar a skill `.claude/skills/skill-gerar-atividades-html.md` como guia do design system e padrões de código.
