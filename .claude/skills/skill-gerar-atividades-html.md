@@ -257,6 +257,25 @@ Viewbox `0 0 700 230`. Layout sugerido para 3 categorias L1:
 - Arrastar ou clicar para reposicionar
 - "Verificar" mostra a ordem correta destacada
 
+**CSS obrigatório para zonas de destino (drop-zone):**
+```css
+.drop-zone {
+  min-height: 80px;          /* nunca menos — deve acomodar o card arrastado */
+  padding: 12px 16px;        /* espaço interno visível mesmo vazio */
+  margin-bottom: 8px;
+  border-radius: 12px;
+  border: 2px dashed var(--border);
+  background: #F9FAFB;
+  display: flex; align-items: center;
+  position: relative;
+}
+.drag-card {
+  min-height: 56px;          /* cards sempre menores que a drop-zone */
+  padding: 10px 16px;
+}
+```
+> ⚠️ A `drop-zone` deve ser **sempre maior** que o `drag-card`. Nunca use `min-height` menor que 80px na zona.
+
 ### Complete Lacuna (complete-lacuna-[slug].html)
 
 - Frases com `___` para preencher

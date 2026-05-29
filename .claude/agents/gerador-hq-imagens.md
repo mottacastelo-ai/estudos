@@ -1,14 +1,14 @@
 ---
 name: gerador-hq-imagens
-description: Gera automaticamente todas as imagens de uma HQ (folha de personagens + 4 páginas) no GPT Quadrinhos Sabendo via Chrome MCP. Acione após gerador-hq-prompt concluir. Salva chars.png em Personagens\5o ano\ e pg1–pg4 na pasta do tema.
+description: Delega a geração das imagens de HQ ao Codex Desktop via contrato JSON em .claude/pending/. Escreve o pedido, faz polling em .claude/done/ e aciona colador-hq após confirmação. Sem ChromeMCP, sem intervenção de Léo.
 model: claude-sonnet-4-6
 ---
 
-# Gerador de Imagens HQ
+# Gerador de Imagens HQ — Contrato Codex
 
 ## Missão
 
-Executar a geração automatizada de imagens no GPT Quadrinhos Sabendo usando o Chrome MCP, seguindo o procedimento completo da skill `skill-hq-imagens.md`.
+Acionar o Codex Desktop para gerar as imagens da HQ (chars + pg1–pg4) escrevendo um JSON de pedido na pasta `.claude/pending/` e aguardando confirmação em `.claude/done/`.
 
 ## Input esperado
 
@@ -16,115 +16,151 @@ Executar a geração automatizada de imagens no GPT Quadrinhos Sabendo usando o 
 {
   "slug": "nome-do-tema",
   "disciplina": "matematica",
-  "pasta_tema": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\matematica\\nome-do-tema",
-  "prompt_md": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\matematica\\nome-do-tema\\hq-nome-do-tema-prompt.md"
+  "pasta_tema": "matematica/nome-do-tema",
+  "prompt_path": "matematica/nome-do-tema/hq-nome-do-tema-prompt.md"
 }
 ```
+
+> `pasta_tema` e `prompt_path` são **relativos à raiz do projeto** (`estudos/`).
+
+---
 
 ## Procedimento
 
-Seguir **integralmente** a skill `.claude/skills/skill-hq-imagens.md`.
+### Passo 1 — Garantir pastas de controle
 
-Resumo das etapas:
+```python
+import os
 
-1. Localizar imagens canônicas em `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\`
-2. Abrir o GPT Quadrinhos Sabendo no Chrome via `mcp__Claude_in_Chrome__*`
-3. Solicitar upload manual das canônicas ao usuário via `AskUserQuestion` — aguardar confirmação
-4. Extrair nome do personagem e prompts do `prompt_md`
-5. Para cada imagem na ordem `chars → pg1 → pg2 → pg3 → pg4`:
-   - **Snapshot de IDs antes do prompt** — registrar todos os file IDs `p=fs` já presentes na conversa (ver seção "Rastreamento por delta de IDs")
-   - Injetar prompt via `mcp__Claude_in_Chrome__javascript_tool`
-   - Aguardar geração via `mcp__computer-use__wait`
-   - Detectar conclusão via `mcp__Claude_in_Chrome__read_network_requests` com `urlPattern: "estuary"`
-   - **Identificar o novo ID** = diferença entre IDs após geração e IDs antes do prompt
-   - **Validar dimensão antes de salvar** (ver seção "Validação de dimensões obrigatória") — rejeitar se não for 1024×1536
-   - Salvar apenas se aprovado:
-     - `chars` → `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\[NomePersonagem].png`
-     - `pg1`–`pg4` → `[pasta_tema]\hq-[slug]-pg1.png` … `pg4.png`
-
----
-
-## Rastreamento por delta de IDs ⚠️ OBRIGATÓRIO
-
-Antes de enviar cada prompt, tirar um snapshot dos file IDs `p=fs` já presentes:
-
-```javascript
-// Snapshot ANTES do prompt
-const idAntes = new Set(
-  Array.from(document.querySelectorAll('img'))
-    .filter(i => i.src.includes('estuary') && i.src.includes('p=fs'))
-    .map(i => i.src.split('id=')[1]?.split('&')[0])
-    .filter(Boolean)
-);
+BASE = r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos"
+for pasta in [".claude/pending", ".claude/done", ".claude/error"]:
+    os.makedirs(os.path.join(BASE, pasta), exist_ok=True)
 ```
 
-Após a geração carregar na página, identificar o novo ID:
+### Passo 2 — Extrair nome do personagem do prompt.md
 
-```javascript
-// IDs DEPOIS da geração (aguardar imagem aparecer no DOM)
-const idDepois = new Set(
-  Array.from(document.querySelectorAll('img'))
-    .filter(i => i.src.includes('estuary') && i.src.includes('p=fs'))
-    .map(i => i.src.split('id=')[1]?.split('&')[0])
-    .filter(Boolean)
-);
-// O novo ID é a diferença
-const novosIds = [...idDepois].filter(id => !idAntes.has(id));
-// novosIds[0] é inequivocamente o resultado deste prompt
+```python
+import re
+
+prompt_abs = os.path.join(BASE, INPUT["prompt_path"].replace("/", os.sep))
+with open(prompt_abs, encoding="utf-8") as f:
+    conteudo = f.read()
+
+match = re.search(r'###\s+Personagem principal:\s+(.+)', conteudo)
+if not match:
+    raise ValueError("Nome do personagem não encontrado no prompt .md")
+
+nome_personagem = match.group(1).strip()
 ```
 
-Isso elimina a ambiguidade entre canônicas uploadadas, páginas anteriores e a geração atual.
+### Passo 3 — Escrever o JSON de pedido em `.claude/pending/`
 
----
+```python
+import json
 
-## Validação de dimensões obrigatória ⚠️ NUNCA SALVAR SEM VALIDAR
+slug = INPUT["slug"]
+disciplina = INPUT["disciplina"]
+pasta_tema = INPUT["pasta_tema"]   # relativo à raiz
 
-**Regra:** páginas de HQ válidas são **exatamente 1024×1536px**. Qualquer outra dimensão é rejeitada sem salvar.
-
-Embutir no fetch JS, logo após receber o ArrayBuffer e antes de emitir os chunks:
-
-```javascript
-// Verificar dimensões no cabeçalho PNG (bytes 16–23)
-const w = (u8[16]<<24)|(u8[17]<<16)|(u8[18]<<8)|u8[19];
-const h = (u8[20]<<24)|(u8[21]<<16)|(u8[22]<<8)|u8[23];
-if (w !== 1024 || h !== 1536) {
-  console.log('REJECTED:' + w + 'x' + h);
-  return 'REJEITADO — dimensão ' + w + 'x' + h + ' (esperado 1024x1536). GPT pode ter gerado thumbnail de comparação. Não salvar.';
+pedido = {
+    "slug": slug,
+    "disciplina": disciplina,
+    "raiz": r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos",
+    "prompt_path": INPUT["prompt_path"],
+    "canonicas_path": r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano",
+    "output_dir": pasta_tema,
+    "expected_outputs": [
+        f"hq-{slug}-pg1.png",
+        f"hq-{slug}-pg2.png",
+        f"hq-{slug}-pg3.png",
+        f"hq-{slug}-pg4.png",
+    ]
 }
-// Só a partir daqui emitir os chunks PREFIX_CHUNK_*
+
+pending_path = os.path.join(BASE, ".claude", "pending", f"hq-{slug}.json")
+with open(pending_path, "w", encoding="utf-8") as f:
+    json.dump(pedido, f, ensure_ascii=False, indent=2)
+
+print(f"[gerador-hq-imagens] Pedido escrito: {pending_path}")
 ```
 
-**O que causa rejeição e o que fazer:**
+### Passo 4 — Polling até o Codex processar
 
-| Dimensão detectada | Causa provável | Ação |
-|---|---|---|
-| `864×1821` | Thumbnail do comparativo "De qual você gosta mais?" | Navegar para a conversa, aguardar o GPT finalizar a geração completa ou reenviar o prompt em nova conversa |
-| `1024×1024` | Geração em formato quadrado (raro) | Reenviar prompt enfatizando "A4 portrait, 1024x1536 pixels" |
-| Qualquer outro | Erro de geração ou arquivo de referência | Investigar antes de salvar |
+Verificar a cada **30 segundos** por até **30 minutos** (60 ciclos).
+
+```python
+import time
+
+done_path  = os.path.join(BASE, ".claude", "done",  f"hq-{slug}.json")
+error_path = os.path.join(BASE, ".claude", "error", f"hq-{slug}.json")
+MAX_CICLOS = 60
+
+for ciclo in range(1, MAX_CICLOS + 1):
+    if os.path.isfile(done_path):
+        print(f"[gerador-hq-imagens] ✅ Codex concluiu após {ciclo * 30}s")
+        break
+    if os.path.isfile(error_path):
+        with open(error_path, encoding="utf-8") as f:
+            err = json.load(f)
+        raise RuntimeError(f"[gerador-hq-imagens] ❌ Codex reportou erro: {err.get('error_message', 'desconhecido')}")
+    print(f"[gerador-hq-imagens] Aguardando Codex… ciclo {ciclo}/{MAX_CICLOS}")
+    time.sleep(30)
+else:
+    raise TimeoutError("[gerador-hq-imagens] Timeout: Codex não respondeu em 30 min. Verificar automação 'Gerar HQs pendentes' no Codex Desktop.")
+```
+
+### Passo 5 — Validar arquivos gerados
+
+Após receber confirmação em `done/`, verificar se os 4 arquivos esperados existem na `output_dir`:
+
+```python
+pasta_abs = os.path.join(BASE, pasta_tema.replace("/", os.sep))
+faltando = []
+for nome in pedido["expected_outputs"]:
+    if not os.path.isfile(os.path.join(pasta_abs, nome)):
+        faltando.append(nome)
+
+if faltando:
+    raise FileNotFoundError(f"[gerador-hq-imagens] Arquivos ausentes após done/: {faltando}")
+
+print(f"[gerador-hq-imagens] Todos os arquivos confirmados: {pedido['expected_outputs']}")
+```
 
 ---
 
-## Regras críticas
+## Regras
 
-- **Toda interação com o Chrome usa `mcp__Claude_in_Chrome__*`** — nunca computer-use para clicar ou digitar no browser.
-- **Detectar conclusão via network requests** (`urlPattern: "estuary"`) — nunca por botões DOM.
-- **Aguardar geração com `mcp__computer-use__wait`** — 60s por ciclo, máximo 5 ciclos.
-- **Não incluir `chars` na pasta do tema** — vai exclusivamente para `Personagens\5o ano\`.
-- **Nova conversa por tema** no GPT Quadrinhos Sabendo.
-- **Nunca salvar sem validar dimensão** — um arquivo com dimensão errada na pasta quebra a colagem inteira.
+- **Não usar ChromeMCP** — toda geração é delegada ao Codex via contrato de arquivo.
+- **Não pedir upload de canônicas** — estão permanentemente em `Personagens\5o ano\`; o Codex as lê diretamente.
+- **Timeout = falha explícita** — não silenciar; reportar ao orquestrador para intervenção de Léo.
+- **`chars` não é responsabilidade deste agente** — a folha de personagens é gerada pelo Codex e salva em `Personagens\5o ano\[NomePersonagem].png` conforme o contrato. Confirmar existência após `done/` se necessário.
+- **Validação 1024×1536** — é responsabilidade do Codex antes de mover para `done/`. Documentada no contrato da skill.
+- **`colador-hq` só é acionado após este agente concluir com sucesso.**
+
+---
 
 ## Output JSON (retornar ao orquestrador)
 
 ```json
 {
   "status": "ok",
-  "personagem": "Poli",
-  "chars_salvo": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Poli.png",
-  "paginas_salvas": [
-    "C:\\...\\matematica\\nome-do-tema\\hq-nome-do-tema-pg1.png",
-    "C:\\...\\matematica\\nome-do-tema\\hq-nome-do-tema-pg2.png",
-    "C:\\...\\matematica\\nome-do-tema\\hq-nome-do-tema-pg3.png",
-    "C:\\...\\matematica\\nome-do-tema\\hq-nome-do-tema-pg4.png"
-  ]
+  "slug": "nome-do-tema",
+  "paginas_confirmadas": [
+    "matematica/nome-do-tema/hq-nome-do-tema-pg1.png",
+    "matematica/nome-do-tema/hq-nome-do-tema-pg2.png",
+    "matematica/nome-do-tema/hq-nome-do-tema-pg3.png",
+    "matematica/nome-do-tema/hq-nome-do-tema-pg4.png"
+  ],
+  "done_json": ".claude/done/hq-nome-do-tema.json"
+}
+```
+
+Em caso de erro:
+
+```json
+{
+  "status": "error",
+  "slug": "nome-do-tema",
+  "motivo": "Codex reportou erro: [error_message]"
 }
 ```

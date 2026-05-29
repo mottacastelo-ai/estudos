@@ -29,7 +29,7 @@ Criar o arquivo `hq-[slug]-prompt.md` com os prompts detalhados para geração d
 1. Usar a skill `.claude/skills/skill-gerar-hq-prompt.md` como guia completo de formato e estilo.
 2. Os **termos técnicos exatos do livro devem aparecer nas falas dos personagens** das 4 páginas.
 3. **Personagens canônicos** (Bia, Prepo) podem aparecer como coadjuvantes — usar descrições visuais do CLAUDE.md.
-4. **Imagens canônicas de referência** estão em: `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\` (arquivos "versao canonica *.png").
+4. **Imagens canônicas de referência** estão em: `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\` (arquivos `Bia.png`, `Prepo.png` e canônicas dos personagens de tema).
 5. Cada página tem **4–6 painéis** com diálogos que avançam a narrativa pedagógica.
 6. **Folha de personagens primeiro** — descrever o novo personagem com 3 emoções distintas + Bia de apoio.
 7. Tom: didático e divertido; adequado para André (10 anos).
@@ -44,6 +44,19 @@ Criar o arquivo `hq-[slug]-prompt.md` com os prompts detalhados para geração d
 **Personagem:** [Nome do personagem]
 **Apoio:** Bia (amiga humana, cabelos cacheados preto, uniforme escolar azul)
 **Páginas:** 4 páginas + 1 folha de personagens
+
+---
+
+## ESTILO VISUAL
+
+**Paleta:** primária [hex], clara [hex], fundo [hex] (paleta da disciplina definida no CLAUDE.md)
+**Traço:** cartoon educacional — linhas limpas, contornos definidos, sem sombras complexas
+**Tipografia:** balões de fala arredondados, texto legível para criança de 10 anos
+**Regras visuais:**
+- Fundo sempre claro ou neutro — nunca escuro
+- Personagem novo usa a paleta da disciplina como cor principal
+- Bia aparece com cabelo cacheado preto e uniforme escolar azul em todas as páginas
+- Painéis separados por bordas finas escuras; título da página no topo em destaque
 
 ---
 
@@ -100,7 +113,7 @@ Criar o arquivo `hq-[slug]-prompt.md` com os prompts detalhados para geração d
 2. Depois: Página 1, Página 2, Página 3, Página 4 — nessa ordem
 
 **Nomes para salvar:**
-- `hq-[slug]-chars.png`
+- Folha de personagens → `[NomePersonagem].png` em `Personagens\5o ano\` (não na pasta do tema)
 - `hq-[slug]-pg1.png`
 - `hq-[slug]-pg2.png`
 - `hq-[slug]-pg3.png`

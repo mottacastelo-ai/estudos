@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\scripts\\update-docs.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

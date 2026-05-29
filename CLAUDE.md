@@ -31,17 +31,29 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 [atualizador-index] → index.html atualizado
          ↓
 [revisor-qualidade] → relatório de conformidade
-         ↓ ← pausa: pedir ao usuário upload das canônicas no ChatGPT
          ↓
-[gerador-hq-imagens] → chars.png (em Personagens\5o ano\) + pg1–pg4 (na pasta do tema)
+[gerador-hq-imagens] → escreve .claude/pending/hq-[slug].json → aguarda Codex processar
+                     → chars.png (em Personagens\5o ano\) + pg1–pg4 (na pasta do tema)
          ↓
 [colador-hq] → hq-[slug].png pronto para o portal
+         ↓
+[atualizador-docs] → CONTEUDO.md + SQUAD.md atualizados
          ↓
 [Orquestrador] → relatório final a Léo
 ```
 
-> A única pausa manual no meio do fluxo é o upload das imagens canônicas no ChatGPT,
-> que a skill-hq-imagens solicita automaticamente via AskUserQuestion antes de começar.
+> O fluxo é totalmente automático após a aprovação de Léo na Fase 0.
+> As imagens canônicas estão permanentemente em `Personagens\5o ano\` — o Codex as acessa diretamente.
+
+### Contrato Codex — pastas de controle
+
+| Pasta | Papel |
+|---|---|
+| `.claude/pending/hq-[slug].json` | Pedido escrito pelo `gerador-hq-imagens`; Codex monitora e processa |
+| `.claude/done/hq-[slug].json` | Codex move aqui após sucesso; `gerador-hq-imagens` detecta e aciona `colador-hq` |
+| `.claude/error/hq-[slug].json` | Codex move aqui com `error_message` em caso de falha; orquestrador reporta a Léo |
+
+> **Pré-requisito:** O Codex Desktop deve estar **aberto** com a automação "Gerar HQs pendentes" **ativa** antes de iniciar o pipeline. Sem isso, o JSON ficará em `pending/` sem ser processado e o `gerador-hq-imagens` vai expirar o timeout de 30 min.
 
 ---
 
@@ -52,7 +64,7 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 3. **Escopo restrito às fotos fornecidas** — nenhum conceito inventado.
 4. **Variedade de atividades** — sem repetição de tipos na mesma disciplina.
 5. **Orquestrador não escreve HTML, prompts ou código** — delega sempre.
-6. **HQ gerada externamente** — o `hq-[slug].png` é copiado manualmente por Léo.
+6. **HQ via Codex** — `gerador-hq-imagens` escreve o JSON de pedido em `.claude/pending/`; Codex gera e salva as imagens; `colador-hq` empilha pg1–pg4 em `hq-[slug].png`. Nenhuma ação manual de Léo nessa etapa.
 
 ---
 
@@ -125,5 +137,6 @@ font-family: "Space Mono", monospace;  /* títulos/headers */
 | `gerador-atividades` | Cria arquivos HTML das atividades interativas |
 | `atualizador-index` | Atualiza `index.html` para registrar o novo tema |
 | `revisor-qualidade` | Audita arquivos gerados e reporta conformidade pedagógica |
-| `gerador-hq-imagens` | Gera imagens no GPT Quadrinhos Sabendo via Chrome MCP |
+| `gerador-hq-imagens` | Escreve JSON de pedido em `.claude/pending/`; faz polling até Codex confirmar em `.claude/done/` |
 | `colador-hq` | Empilha pg1–pg4 em `hq-[slug].png` pronto para o index |
+| `atualizador-docs` | Regenera `CONTEUDO.md` e atualiza tabela de agentes do `SQUAD.md` |
