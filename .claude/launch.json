@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "landing",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "_landing", "-p", "3456", "--no-clipboard"],
+      "port": 3456
+    }
+  ],
+  "configurations_extra": [
+    {
+      "name": "branding",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "C:\\Users\\wizar\\Downloads", "-p", "3457", "--no-clipboard"],
+      "port": 3457
+    }
+  ]
+}

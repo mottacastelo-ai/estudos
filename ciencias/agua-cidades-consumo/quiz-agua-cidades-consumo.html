@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Água, Cidades e Consumo Consciente</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.1); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 34px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.prog-wrap { padding: 14px 24px 10px; border-bottom: 2px solid var(--border); background: var(--cien-bg); }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: var(--cien); transition: width .4s; }
+.score-badge { display: inline-block; margin-left: 10px; font-size: 12px; font-weight: 800; color: var(--cien); }
+.quiz-body { padding: 20px 24px; }
+.question-num { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--cien); letter-spacing: .06em; margin-bottom: 8px; }
+.question-text { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 16px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn { background: var(--cien-bg); border: 2px solid var(--border); border-radius: var(--radius); padding: 12px 16px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; text-align: left; transition: all .15s; line-height: 1.4; }
+.opt-btn:hover:not(:disabled) { border-color: var(--cien-light); background: #E0F2FE; }
+.opt-btn.correct { background: #D1FAE5; border-color: #059669; color: #065F46; }
+.opt-btn.wrong   { background: #FEE2E2; border-color: #DC2626; color: #991B1B; }
+.opt-btn:disabled { cursor: default; }
+.feedback { margin-top: 14px; border-radius: var(--radius); padding: 12px 16px; display: none; align-items: flex-start; gap: 10px; }
+.feedback.show { display: flex; }
+.feedback.correct { background: #D1FAE5; border: 2px solid #6EE7B7; }
+.feedback.wrong   { background: #FEE2E2; border: 2px solid #FCA5A5; }
+.feedback-icon { font-size: 20px; line-height: 1; flex-shrink: 0; }
+.feedback-text { font-size: 13px; font-weight: 600; line-height: 1.5; }
+.nav-row { display: flex; justify-content: flex-end; margin-top: 20px; }
+.next-btn { background: var(--cien); color: #fff; border: none; border-radius: 999px; padding: 10px 28px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; transition: opacity .15s; }
+.next-btn:hover { opacity: .85; }
+.next-btn:disabled { opacity: .4; cursor: default; }
+/* Final screen */
+.final { padding: 36px 24px; text-align: center; display: none; }
+.final-icon { font-size: 56px; margin-bottom: 12px; }
+.final-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; color: var(--cien-dark); margin-bottom: 8px; }
+.final-score { font-size: 40px; font-weight: 900; color: var(--cien); margin: 12px 0; }
+.final-msg { font-size: 15px; font-weight: 600; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+.restart-btn { background: var(--cien); color: #fff; border: none; border-radius: 999px; padding: 12px 32px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.restart-btn:hover { opacity: .85; }
+@media (max-width: 600px) {
+  .quiz-body { padding: 16px; }
+  .question-text { font-size: 14px; }
+  .opt-btn { font-size: 13px; padding: 10px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">💧🏙️</div>
+      <div><h1>Quiz Interativo</h1><p>Água, Cidades e Consumo Consciente</p></div>
+      <div class="hbadge">📖 Retrieval</div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label">Questão <span id="qnum">1</span> de 10 <span class="score-badge" id="score-live">Pontos: 0</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+    </div>
+    <div class="quiz-body" id="quiz-body">
+      <div class="question-num" id="q-num-label">QUESTÃO 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"><span class="feedback-icon" id="fb-icon"></span><div class="feedback-text" id="fb-text"></div></div>
+      <div class="nav-row"><button class="next-btn" id="next-btn" disabled>Próxima →</button></div>
+    </div>
+    <div class="final" id="final">
+      <div class="final-icon" id="final-icon">🎉</div>
+      <div class="final-title">Quiz concluído!</div>
+      <div class="final-score" id="final-score"></div>
+      <div class="final-msg" id="final-msg"></div>
+      <button class="restart-btn" id="restart-btn">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QUESTIONS = [
+  {
+    q: "O que é a ilha de calor nas cidades?",
+    opts: [
+      "Um parque aquático construído no centro urbano",
+      "O aumento da temperatura em áreas urbanas causado pelo excesso de construções, asfalto e poluição",
+      "Uma região da cidade onde chove muito mais do que nos arredores",
+      "O nome dado às chuvas fortes que alagam as ruas"
+    ],
+    correct: 1,
+    fb: "A ilha de calor ocorre porque o excesso de construções, asfalto e poluição nas cidades impede a dissipação natural do calor. As árvores ajudam a combatê-la por meio da transpiração das árvores e por refletir os raios solares."
+  },
+  {
+    q: "O que acontece com a água da chuva em uma área urbana com impermeabilização dos solos?",
+    opts: [
+      "A maior parte é absorvida pelo asfalto",
+      "Toda a água evapora antes de chegar ao solo",
+      "A maior parte escoa pela superfície, pois o solo impermeabilizado não consegue absorvê-la",
+      "A água é captada automaticamente pelo sistema de esgoto"
+    ],
+    correct: 2,
+    fb: "A impermeabilização dos solos é um dos principais problemas urbanos. Uma área florestal absorve 80 a 90% da água da chuva, enquanto uma área urbana absorve apenas 0 a 10%. O restante escoa pela superfície, causando enchentes."
+  },
+  {
+    q: "Qual é o percentual de água doce do mundo usado pela agropecuária?",
+    opts: ["22%", "8%", "50%", "70%"],
+    correct: 3,
+    fb: "O uso da água doce no mundo se divide assim: 70% vai para a agropecuária, 22% para a indústria e apenas 8% para as residências. Por isso o consumo consciente na produção de alimentos é tão importante."
+  },
+  {
+    q: "Quantos litros de água são necessários para produzir 100g de carne bovina?",
+    opts: ["160 litros", "250 litros", "1.500 litros", "120 litros"],
+    correct: 2,
+    fb: "Produzir 100g de carne bovina exige aproximadamente 1.500 litros de água. Esse conceito se chama água virtual — toda a água usada ao longo do processo de produção de um alimento ou produto."
+  },
+  {
+    q: "Como as árvores ajudam a combater as ilhas de calor nas cidades?",
+    opts: [
+      "Aumentando a impermeabilização dos solos ao redor",
+      "Por meio da transpiração das árvores e por refletir os raios solares com suas folhas",
+      "Produzindo chuva artificial nas regiões urbanizadas",
+      "Impedindo a formação de lençóis de água subterrâneos"
+    ],
+    correct: 1,
+    fb: "As folhas verdes das árvores refletem os raios solares, tornando as regiões com árvores mais frescas. Além disso, a transpiração das árvores libera vapor d'água, umidificando e resfriando o ar."
+  },
+  {
+    q: "O que são os tetos verdes?",
+    opts: [
+      "Telhados pintados de verde para refletir o sol",
+      "Coberturas com plantas que absorvem calor e ajudam a refrescar o ambiente urbano",
+      "Painéis solares instalados em cima dos edifícios",
+      "Reservatórios de água construídos no topo dos prédios"
+    ],
+    correct: 1,
+    fb: "Os tetos verdes são coberturas com plantas, e junto com os jardins verticais, são soluções que ajudam a combater as ilhas de calor, reduzir a impermeabilização dos solos e melhorar a qualidade do ar nas cidades."
+  },
+  {
+    q: "Qual é a principal consequência da destruição de mananciais nas cidades?",
+    opts: [
+      "Aumento das ilhas de calor por falta de vegetação nas margens dos rios",
+      "Diminuição da poluição, pois menos rios ficam expostos",
+      "Redução da umidade do ar sem impacto na disponibilidade de água potável",
+      "Comprometimento do abastecimento de água potável para a população"
+    ],
+    correct: 3,
+    fb: "Os mananciais são as fontes de onde vem a água que abastece as cidades. A destruição de mananciais por poluição, desmatamento ou ocupação irregular representa uma das principais ameaças à qualidade da água e ao abastecimento urbano."
+  },
+  {
+    q: "Quantos litros de água são necessários para produzir 250 mL de leite?",
+    opts: ["120 litros", "160 litros", "250 litros", "1.500 litros"],
+    correct: 2,
+    fb: "Produzir 250 mL de leite exige cerca de 250 litros de água. Compare: 1 maçã = 120 L, 100g de pão = 160 L. Esses números mostram a importância do consumo consciente da água em toda a cadeia alimentar."
+  },
+  {
+    q: "O que é a impermeabilização dos solos e qual é um de seus principais efeitos?",
+    opts: [
+      "O processo de plantar árvores para segurar o solo, reduzindo deslizamentos de terra",
+      "A cobertura do solo com asfalto e concreto, que impede a absorção da água e favorece as enchentes",
+      "A construção de tetos verdes e jardins verticais para reter umidade",
+      "O tratamento do solo para melhorar a qualidade dos lençóis de água subterrâneos"
+    ],
+    correct: 1,
+    fb: "A impermeabilização dos solos ocorre quando o solo é coberto por asfalto ou concreto, impedindo que a água da chuva seja absorvida. Isso agrava as enchentes e reduz a recarga dos lençóis de água subterrâneos."
+  },
+  {
+    q: "O que são os lençóis de água e por que eles são importantes?",
+    opts: [
+      "Reservatórios artificiais construídos para o abastecimento das cidades",
+      "Camadas de água que ficam sobre o solo durante as enchentes",
+      "Acúmulos de água subterrâneos que abastecem poços e nascentes e precisam ser protegidos",
+      "O nome técnico para os rios que cortam as áreas urbanas"
+    ],
+    correct: 2,
+    fb: "Os lençóis de água são reservatórios subterrâneos naturais que abastecem poços, nascentes e rios. A impermeabilização dos solos e a poluição representam ameaças à qualidade da água nesses lençóis, colocando em risco o abastecimento futuro."
+  }
+];
+
+var current = 0, score = 0, answered = false;
+
+function loadQuestion() {
+  var q = QUESTIONS[current];
+  document.getElementById('q-num-label').textContent = 'QUESTÃO ' + (current+1);
+  document.getElementById('q-text').textContent = q.q;
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach(function(o, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = o;
+    btn.addEventListener('click', function() { selectAnswer(i); });
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').disabled = true;
+  document.getElementById('qnum').textContent = current + 1;
+  document.getElementById('prog-fill').style.width = ((current + 1) / QUESTIONS.length * 100) + '%';
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[current];
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b, i) {
+    b.disabled = true;
+    if (i === q.correct) b.classList.add('correct');
+    else if (i === idx && idx !== q.correct) b.classList.add('wrong');
+  });
+  var fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    fb.className = 'feedback correct show';
+    document.getElementById('fb-icon').textContent = '✓';
+  } else {
+    fb.className = 'feedback wrong show';
+    document.getElementById('fb-icon').textContent = '✗';
+  }
+  document.getElementById('fb-text').textContent = q.fb;
+  document.getElementById('score-live').textContent = 'Pontos: ' + score;
+  document.getElementById('next-btn').disabled = false;
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  current++;
+  if (current < QUESTIONS.length) {
+    loadQuestion();
+  } else {
+    showFinal();
+  }
+});
+
+function showFinal() {
+  document.getElementById('quiz-body').style.display = 'none';
+  document.getElementById('prog-wrap') && (document.querySelector('.prog-wrap').style.display = 'none');
+  var final = document.getElementById('final');
+  final.style.display = 'block';
+  var pct = Math.round(score / QUESTIONS.length * 100);
+  document.getElementById('final-score').textContent = score + ' / ' + QUESTIONS.length;
+  var msgs = [
+    [0,  50,  '🌧️', 'Continue estudando! Revise os conceitos de ameaças à qualidade da água e consumo consciente.'],
+    [50, 70,  '💧', 'Bom esforço! Revise os dados sobre impermeabilização dos solos e lençóis de água.'],
+    [70, 90,  '🌿', 'Muito bem! Você domina os conceitos principais sobre água e cidades!'],
+    [90, 101, '🏆', 'Excelente! Você é um especialista em consumo consciente da água e impactos urbanos!']
+  ];
+  var m = msgs.find(function(x){ return pct >= x[0] && pct < x[1]; });
+  document.getElementById('final-icon').textContent = m[2];
+  document.getElementById('final-msg').textContent = m[3];
+}
+
+document.getElementById('restart-btn').addEventListener('click', function() {
+  current = 0; score = 0; answered = false;
+  document.getElementById('quiz-body').style.display = 'block';
+  document.querySelector('.prog-wrap').style.display = 'block';
+  document.getElementById('final').style.display = 'none';
+  document.getElementById('score-live').textContent = 'Pontos: 0';
+  loadQuestion();
+});
+
+loadQuestion();
+</script>
+</body>
+</html>

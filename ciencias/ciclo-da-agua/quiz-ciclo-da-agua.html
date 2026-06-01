@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — O Ciclo da Água</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.12); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.progress-wrap { padding: 14px 24px 10px; border-bottom: 2px solid var(--border); }
+.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: var(--cien); transition: width .4s; }
+.score-badge { display: inline-block; margin-left: 10px; font-size: 12px; font-weight: 800; color: var(--cien); }
+.q-body { padding: 24px; }
+.q-num { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700; color: var(--cien); letter-spacing: .08em; margin-bottom: 8px; }
+.q-text { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 18px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn { background: var(--cien-bg); border: 2px solid var(--border); border-radius: 14px; padding: 12px 16px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; text-align: left; transition: all .15s; }
+.opt-btn:hover:not(:disabled) { border-color: var(--cien-light); background: #e0f2fe; }
+.opt-btn.correct { background: #DCFCE7; border-color: #16A34A; color: #14532D; }
+.opt-btn.wrong { background: #FEE2E2; border-color: #DC2626; color: #7F1D1D; }
+.opt-btn:disabled { cursor: default; }
+.feedback { margin-top: 16px; padding: 12px 16px; border-radius: 14px; display: none; font-size: 14px; font-weight: 600; line-height: 1.5; }
+.feedback.correct { background: #DCFCE7; border: 2px solid #16A34A; color: #14532D; display: flex; gap: 10px; align-items: flex-start; }
+.feedback.wrong { background: #FEE2E2; border: 2px solid #DC2626; color: #7F1D1D; display: flex; gap: 10px; align-items: flex-start; }
+.feedback-icon { font-size: 18px; flex-shrink: 0; }
+.next-btn { margin-top: 18px; display: none; background: var(--cien); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s; }
+.next-btn:hover { background: var(--cien-dark); }
+.result-panel { padding: 32px 24px; text-align: center; display: none; }
+.result-icon { font-size: 60px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 22px; font-weight: 700; margin: 12px 0 6px; }
+.result-score { font-size: 18px; font-weight: 700; color: var(--cien); margin-bottom: 8px; }
+.result-msg { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+.restart-btn { background: var(--cien); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.restart-btn:hover { background: var(--cien-dark); }
+@media (max-width: 480px) {
+  .q-text { font-size: 15px; }
+  .opt-btn { font-size: 14px; }
+  .card-header h1 { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">💧</div>
+      <div><h1>Quiz Interativo</h1><p>O Ciclo da Água</p></div>
+      <div class="hbadge">📖 Retrieval practice</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">Questão <span id="q-cur">1</span> de 10 <span class="score-badge" id="score-badge">0 pontos</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+    </div>
+    <div class="q-body" id="q-body">
+      <div class="q-num" id="q-num">QUESTÃO 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"><span class="feedback-icon" id="fb-icon"></span><div class="feedback-text" id="fb-text"></div></div>
+      <button class="next-btn" id="next-btn">Próxima questão →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-icon" id="r-icon"></div>
+      <div class="result-title" id="r-title"></div>
+      <div class="result-score" id="r-score"></div>
+      <div class="result-msg" id="r-msg"></div>
+      <button class="restart-btn" onclick="restart()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QS = [
+  {
+    q: "O que acontece com a água quando o Sol a aquece em oceanos, rios e lagos?",
+    opts: ["A água congela e forma geleiras", "Ocorre a evaporação — a água passa para o estado de vapor", "A água se transforma diretamente em chuva", "As plantas absorvem toda a água"],
+    ans: 1,
+    fb: "Correto! A evaporação é o processo pelo qual o Sol aquece a água e ela passa do estado líquido para o estado gasoso (vapor d'água), iniciando o ciclo da água."
+  },
+  {
+    q: "Como se chama o processo em que o vapor d'água sobe, encontra regiões mais frias e forma nuvens?",
+    opts: ["Precipitação", "Infiltração", "Condensação", "Escoamento superficial"],
+    ans: 2,
+    fb: "Exato! A condensação acontece quando o vapor d'água resfria e volta ao estado líquido, formando as gotículas que compõem as nuvens."
+  },
+  {
+    q: "O termo 'precipitação' no ciclo da água se refere a qual fenômeno?",
+    opts: ["Água infiltrando no solo", "Chuva, neve ou granizo caindo das nuvens", "Vapor d'água formando nuvens", "Água evaporando dos oceanos"],
+    ans: 1,
+    fb: "Correto! Precipitação é o nome dado à chuva, neve ou granizo que cai das nuvens quando as gotículas ficam pesadas demais para se manter suspensas."
+  },
+  {
+    q: "Como se chama o processo em que a água da chuva penetra no solo e pode formar reservatórios subterrâneos?",
+    opts: ["Escoamento superficial", "Transpiração das plantas", "Condensação", "Infiltração"],
+    ans: 3,
+    fb: "Isso mesmo! A infiltração é a penetração da água no solo. Essa água pode chegar a reservatórios subterrâneos chamados aquíferos ou surgir em nascentes."
+  },
+  {
+    q: "Qual porcentagem da água doce do planeta está armazenada nas geleiras?",
+    opts: ["22,4%", "0,36%", "77,2%", "50%"],
+    ans: 2,
+    fb: "Correto! Segundo o livro, 77,2% da água doce do planeta está nas geleiras. Apenas 22,4% está nos aquíferos e menos de 1% em rios, lagos e pântanos."
+  },
+  {
+    q: "A cada 40 copos de água do planeta, quantos são de água doce?",
+    opts: ["20 copos", "10 copos", "5 copos", "1 copo"],
+    ans: 3,
+    fb: "Perfeito! Apenas 1 em cada 40 copos é água doce. Isso mostra como a água doce é um recurso escasso e precioso em nosso planeta."
+  },
+  {
+    q: "Como as plantas participam do ciclo da água?",
+    opts: ["Apenas absorvem água do solo, sem devolvê-la", "Por meio da transpiração das plantas, liberando vapor d'água para a atmosfera", "As plantas não participam do ciclo da água", "As plantas fazem precipitação"],
+    ans: 1,
+    fb: "Correto! A transpiração das plantas é o processo pelo qual as plantas liberam vapor d'água pelas folhas, contribuindo para a umidade da atmosfera e o ciclo da água."
+  },
+  {
+    q: "O que é o escoamento superficial no ciclo da água?",
+    opts: ["Água que evapora das plantas", "Água que penetra fundo no solo formando aquíferos", "Água que corre pela superfície do solo formando rios e lagos", "Vapor d'água que condensa nas nuvens"],
+    ans: 2,
+    fb: "Certo! O escoamento superficial é o movimento da água pela superfície do solo, alimentando rios, lagos e outros corpos d'água."
+  },
+  {
+    q: "Onde está a maior parte da água do planeta Terra?",
+    opts: ["Nos aquíferos subterrâneos", "Nas geleiras dos polos", "Nos oceanos — água salgada", "Nos rios e lagos"],
+    ans: 2,
+    fb: "Exato! Cerca de 3/4 da superfície do planeta é coberta por água, mas a maior parte é água salgada dos oceanos. A água doce representa apenas uma pequena fração."
+  },
+  {
+    q: "Qual é a ordem correta das principais etapas do ciclo da água?",
+    opts: [
+      "Precipitação → Condensação → Evaporação → Infiltração",
+      "Evaporação → Condensação → Precipitação → Infiltração",
+      "Condensação → Evaporação → Infiltração → Precipitação",
+      "Infiltração → Precipitação → Evaporação → Condensação"
+    ],
+    ans: 1,
+    fb: "Perfeito! O ciclo começa com a evaporação (Sol aquece a água), o vapor sobe e passa pela condensação (forma nuvens), depois ocorre a precipitação (chuva/neve) e por fim a infiltração no solo."
+  }
+];
+
+var cur = 0, score = 0, answered = false;
+
+function load(i) {
+  var q = QS[i];
+  document.getElementById('q-num').textContent = 'QUESTÃO ' + (i+1);
+  document.getElementById('q-cur').textContent = i+1;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('prog-fill').style.width = ((i+1)/QS.length*100) + '%';
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach(function(o, j) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = o;
+    btn.onclick = function() { answer(j); };
+    opts.appendChild(btn);
+  });
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function answer(j) {
+  if (answered) return;
+  answered = true;
+  var q = QS[cur];
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b, k) {
+    b.disabled = true;
+    if (k === q.ans) b.classList.add('correct');
+    if (k === j && j !== q.ans) b.classList.add('wrong');
+  });
+  var fb = document.getElementById('feedback');
+  var correct = j === q.ans;
+  if (correct) { score++; document.getElementById('score-badge').textContent = score + ' ponto' + (score > 1 ? 's' : ''); }
+  fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+  document.getElementById('fb-icon').textContent = correct ? '✓' : '✗';
+  document.getElementById('fb-text').textContent = q.fb;
+  fb.style.display = 'flex';
+  var nxt = document.getElementById('next-btn');
+  nxt.textContent = cur < QS.length - 1 ? 'Próxima questão →' : 'Ver resultado';
+  nxt.style.display = 'inline-block';
+}
+
+document.getElementById('next-btn').onclick = function() {
+  cur++;
+  if (cur < QS.length) { load(cur); }
+  else { showResult(); }
+};
+
+function showResult() {
+  document.getElementById('q-body').style.display = 'none';
+  var r = document.getElementById('result-panel');
+  r.style.display = 'block';
+  var pct = Math.round(score / QS.length * 100);
+  var icons = ['😅','😐','😊','🌟','💧'];
+  var msgs = ['Continue estudando o ciclo da água!','Você está no caminho certo!','Bom trabalho, cientista!','Muito bem! Você domina o ciclo!','Incrível! Você é expert no ciclo da água!'];
+  var tier = pct < 40 ? 0 : pct < 60 ? 1 : pct < 80 ? 2 : pct < 100 ? 3 : 4;
+  document.getElementById('r-icon').textContent = icons[tier];
+  document.getElementById('r-title').textContent = msgs[tier];
+  document.getElementById('r-score').textContent = score + ' de ' + QS.length + ' questões corretas (' + pct + '%)';
+  document.getElementById('r-msg').textContent = pct >= 80 ? 'Você entende muito bem o ciclo da água e seus processos!' : 'Revise os termos evaporação, condensação, precipitação e infiltração e tente novamente.';
+}
+
+function restart() {
+  cur = 0; score = 0;
+  document.getElementById('score-badge').textContent = '0 pontos';
+  document.getElementById('q-body').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+  load(0);
+}
+
+load(0);
+</script>
+</body>
+</html>

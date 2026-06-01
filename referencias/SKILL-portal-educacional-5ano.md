@@ -169,6 +169,20 @@ O arquivo `.md` gerado deve ser um **documento de produção completo** — deve
 - Dicas práticas no final (o que fazer se o texto dos balões sair errado, como obter consistência visual)
 - Falas dos personagens em português dentro dos prompts em inglês, entre aspas
 
+**Regra de exemplos completos ⚠️ — verificar antes de finalizar o roteiro:**
+
+Para qualquer conceito que envolva **método, algoritmo ou cálculo**, o roteiro deve conter pelo menos um exemplo com **números (ou situação) não-triviais**, trabalhado **passo a passo até o resultado**. Nunca usar apenas o caso especial ou o atalho como único exemplo demonstrado.
+
+| ❌ Insuficiente sozinho | ✅ Obrigatório |
+|---|---|
+| `mmc(4,5) = 4×5 = 20` (primos entre si — não requer fatoração) | `mmc(12,18) = 2²×3² = 36` com fatoração passo a passo |
+| `mdc(7,3) = 1` (já primos entre si) | `mdc(60,12,30) = 6` com fatores comuns e menores expoentes |
+| Resultado dado sem mostrar o raciocínio | Exemplo numerado ①②③④ até a verificação final |
+
+Se o conteúdo tiver um atalho válido para casos especiais (ex.: "se primos entre si, mmc = produto direto"), ele deve aparecer **após** a demonstração do caso geral, nunca como substituto.
+
+> **Origem desta regra:** na HQ de MDC/MMC o único exemplo de MMC foi `mmc(4,5)=20` (caso especial). O André não soube calcular o MMC em situações gerais que requerem fatoração.
+
 Crie o arquivo `.md` seguindo este template expandido:
 
 ```markdown

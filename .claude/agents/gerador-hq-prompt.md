@@ -120,6 +120,31 @@ Criar o arquivo `hq-[slug]-prompt.md` com os prompts detalhados para geração d
 - `hq-[slug]-pg4.png`
 ```
 
+## Checklist pedagógico de roteiro ⚠️ OBRIGATÓRIO antes de salvar
+
+Para cada conceito do tema, verificar:
+
+### Regra de exemplos completos
+> Para qualquer conceito que envolva **método, algoritmo ou cálculo**, o roteiro DEVE conter pelo menos um exemplo com **números (ou situação) não-triviais**, trabalhado **passo a passo até o resultado**. Nunca usar apenas o caso especial ou o atalho como único exemplo.
+
+**O que é caso especial / atalho (INSUFICIENTE sozinho):**
+- `mmc(4, 5) = 4 × 5 = 20` — funciona só porque 4 e 5 são primos entre si
+- `mdc(7, 3) = 1` — números já primos entre si, não demonstra o método
+- Qualquer exemplo onde a resposta "acontece" sem precisar do método geral
+
+**O que é exemplo não-trivial (OBRIGATÓRIO):**
+- `mmc(12, 18) = 36` — requer fatoração: 12=2²×3, 18=2×3², mmc=2²×3²=36
+- `mdc(60, 12, 30) = 6` — requer identificar fatores comuns com menores expoentes
+- Qualquer exemplo onde o aluno precisa executar o método do livro do início ao fim
+
+**Checklist por conceito operacional:**
+- [ ] O método/algoritmo principal aparece demonstrado em pelo menos 1 exemplo não-trivial?
+- [ ] O exemplo tem passo a passo explícito (numerado ou sequenciado visualmente no painel)?
+- [ ] O exemplo termina com verificação ou confirmação do resultado?
+- [ ] Se existe um "atalho" para casos especiais, ele aparece **depois** do caso geral — nunca como único exemplo?
+
+> **Origem desta regra:** na HQ de MDC/MMC o único exemplo de cálculo de MMC foi `mmc(4,5)=20` (primos entre si — caso especial). O André não soube calcular o MMC em situações gerais que requerem fatoração.
+
 ## Output JSON (retornar ao orquestrador)
 
 ```json

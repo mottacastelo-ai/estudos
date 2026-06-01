@@ -79,10 +79,23 @@ Se qualquer item falhar, classificar como `tipo: "mapa_mental_implementacao_erra
 - [ ] Back button `← Voltar` presente em todos os HTMLs?
 - [ ] Mobile-first (viewport meta tag presente)?
 
-### 6. Prompt HQ (média)
+### 6. Prompt HQ (média + crítico para métodos)
 - [ ] Todos os `conceitos_esperados` cobertos nas 4 páginas?
 - [ ] Termos técnicos aparecem nas falas dos personagens?
 - [ ] Folha de personagens descrita?
+
+**6b. Exemplos completos em métodos/algoritmos (crítico)**
+
+Para cada conceito que envolva cálculo, algoritmo ou método nas 4 páginas:
+- [ ] Existe pelo menos um exemplo com **números não-triviais** (não apenas o caso especial)?
+- [ ] O exemplo tem **passo a passo explícito** até o resultado?
+- [ ] Algum "atalho" para caso especial é apresentado **somente após** o caso geral?
+
+**Falha neste item** → `tipo: "exemplo_insuficiente"`, `severidade: "alta"`.
+
+> Exemplo de falha: HQ de MMC mostra apenas `mmc(4,5)=20` (primos entre si — não requer fatoração) sem nunca demonstrar o caso geral com fatoração. O aluno não aprende a calcular MMC em situações não-triviais.
+
+> Exemplos de aprovação: `mmc(12,18)=36` com fatoração passo a passo; `mdc(60,12,30)=6` com fatores comuns e menores expoentes identificados explicitamente.
 
 ### 7. index.html (média)
 - [ ] Novo tema aparece na sidebar?

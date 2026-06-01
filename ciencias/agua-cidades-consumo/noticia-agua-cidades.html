@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notícia Científica — Água, Cidades e Consumo Consciente</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 760px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.1); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 34px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--border); background: var(--cien-bg); line-height: 1.6; }
+.instrucao strong { color: var(--text); }
+/* Context card */
+.context-card { margin: 20px 20px 0; padding: 14px 16px; border-radius: var(--radius); background: #FFFBEB; border: 2px solid #FCD34D; }
+.context-title { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700; color: #78350F; letter-spacing: .06em; margin-bottom: 6px; }
+.context-text { font-size: 13px; font-weight: 600; color: #1A1A2E; line-height: 1.6; }
+/* Form */
+.form-wrap { padding: 20px; }
+.field-group { margin-bottom: 18px; }
+.field-label { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--cien-dark); letter-spacing: .06em; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.field-hint { font-size: 11px; font-weight: 600; color: var(--muted); }
+input[type="text"], textarea {
+  width: 100%; border: 2px solid var(--border); border-radius: 14px; padding: 12px 14px;
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; color: var(--text);
+  background: var(--cien-bg); outline: none; transition: border-color .15s; resize: vertical;
+}
+input[type="text"]:focus, textarea:focus { border-color: var(--cien); background: #fff; }
+textarea { min-height: 80px; }
+.char-count { font-size: 11px; font-weight: 600; color: var(--muted); text-align: right; margin-top: 4px; }
+/* Terms panel */
+.terms-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: var(--radius); border: 2px solid var(--border); background: #f8fbff; }
+.terms-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--cien-dark); letter-spacing: .06em; margin-bottom: 10px; }
+.terms-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.term-chip { font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; border: 2px solid var(--border); background: #fff; color: var(--muted); transition: all .2s; }
+.term-chip.found { background: #D1FAE5; border-color: #059669; color: #065F46; }
+.term-count { font-size: 12px; font-weight: 800; color: var(--cien); margin-top: 10px; }
+/* Action bar */
+.action-bar { display: flex; align-items: center; gap: 12px; padding: 0 20px 20px; flex-wrap: wrap; }
+.validate-btn { background: var(--cien); color: #fff; border: none; border-radius: 999px; padding: 11px 28px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; }
+.validate-btn:hover { opacity: .85; }
+.reset-btn2 { background: transparent; color: var(--muted); border: 2px solid var(--border); border-radius: 999px; padding: 10px 20px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 700; cursor: pointer; }
+.reset-btn2:hover { border-color: var(--cien-light); color: var(--cien); }
+/* Result */
+.result-panel { margin: 0 20px 20px; padding: 16px; border-radius: var(--radius); display: none; }
+.result-panel.show { display: block; }
+.result-panel.ok { background: #D1FAE5; border: 2px solid #6EE7B7; }
+.result-panel.warn { background: #FEF3C7; border: 2px solid #FCD34D; }
+.result-panel.bad { background: #FEE2E2; border: 2px solid #FCA5A5; }
+.result-title { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+.result-msg { font-size: 13px; font-weight: 600; line-height: 1.5; }
+@media (max-width: 600px) {
+  .form-wrap { padding: 14px; }
+  .action-bar { padding: 0 14px 16px; }
+  .context-card { margin: 14px 14px 0; }
+  .terms-panel { margin: 0 14px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">💧🏙️</div>
+      <div><h1>Notícia Científica</h1><p>Água, Cidades e Consumo Consciente</p></div>
+      <div class="hbadge">🏆 Ensinar (90%)</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Leia o contexto abaixo e escreva uma notícia científica sobre o problema ambiental descrito. Use pelo menos <strong>3 termos técnicos</strong> da lista — eles ficam verdes conforme você digita. Preencha todos os campos e clique em <strong>Validar notícia</strong>.
+    </div>
+    <div class="context-card">
+      <div class="context-title">CONTEXTO DA NOTÍCIA</div>
+      <div class="context-text">
+        Segundo reportagem publicada em 2023, cinco rios no Maranhão sofreram com poluição intensa e desmatamento nas margens. O desmatamento destruiu a vegetação que protegia as margens e segurava o solo. O lançamento irregular de esgoto e lixo contaminou a água, ameaçando os mananciais e o abastecimento das populações ribeirinhas. Use esse contexto para escrever sua notícia.
+      </div>
+    </div>
+    <div class="form-wrap">
+      <div class="field-group">
+        <div class="field-label">TÍTULO DA NOTÍCIA</div>
+        <input type="text" id="campo-titulo" placeholder="Escreva um título impactante para a notícia..." maxlength="120">
+      </div>
+      <div class="field-group">
+        <div class="field-label">LEAD <span class="field-hint">— Quem foi afetado? O quê aconteceu? Onde?</span></div>
+        <textarea id="campo-lead" placeholder="Ex: Cinco rios do Maranhão foram afetados por..." maxlength="400"></textarea>
+        <div class="char-count" id="cc-lead">0 / 400</div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">CAUSA DO PROBLEMA <span class="field-hint">— use pelo menos 1 termo técnico</span></div>
+        <textarea id="campo-causa" placeholder="Ex: A principal causa foi a destruição de mananciais causada por..." maxlength="400"></textarea>
+        <div class="char-count" id="cc-causa">0 / 400</div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">CONSEQUÊNCIAS <span class="field-hint">— use pelo menos 1 termo técnico</span></div>
+        <textarea id="campo-conseq" placeholder="Ex: Como consequência, houve enchentes e..." maxlength="400"></textarea>
+        <div class="char-count" id="cc-conseq">0 / 400</div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">SOLUÇÃO PROPOSTA</div>
+        <textarea id="campo-solucao" placeholder="Ex: Especialistas recomendam o plantio de árvores e a instalação de tetos verdes..." maxlength="400"></textarea>
+        <div class="char-count" id="cc-solucao">0 / 400</div>
+      </div>
+    </div>
+    <div class="terms-panel">
+      <div class="terms-title">TERMOS TÉCNICOS DO LIVRO — ficam verdes quando você os usar na notícia</div>
+      <div class="terms-grid" id="terms-grid"></div>
+      <div class="term-count" id="term-count">0 de 12 termos usados</div>
+    </div>
+    <div class="action-bar">
+      <button class="validate-btn" id="validate-btn">Validar notícia ✓</button>
+      <button class="reset-btn2" id="reset-btn">↺ Recomeçar</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-title" id="result-title"></div>
+      <div class="result-msg" id="result-msg"></div>
+    </div>
+  </div>
+</div>
+<script>
+var TERMS = [
+  'ameaças à qualidade da água',
+  'poluição',
+  'destruição de mananciais',
+  'lençóis de água',
+  'ilha de calor',
+  'transpiração das árvores',
+  'impermeabilização dos solos',
+  'enchentes',
+  'deslizamentos de terra',
+  'tetos verdes',
+  'jardins verticais',
+  'consumo consciente da água'
+];
+
+var FIELDS = ['titulo','lead','causa','conseq','solucao'];
+
+// Build term chips
+var grid = document.getElementById('terms-grid');
+TERMS.forEach(function(t) {
+  var chip = document.createElement('span');
+  chip.className = 'term-chip';
+  chip.id = 'chip-' + t.replace(/\s/g,'_');
+  chip.textContent = t;
+  grid.appendChild(chip);
+});
+
+function getAllText() {
+  return FIELDS.map(function(f){ return (document.getElementById('campo-'+f).value||'').toLowerCase(); }).join(' ');
+}
+
+function updateTerms() {
+  var txt = getAllText();
+  var count = 0;
+  TERMS.forEach(function(t) {
+    var found = txt.indexOf(t.toLowerCase()) !== -1;
+    var chip = document.getElementById('chip-' + t.replace(/\s/g,'_'));
+    chip.className = 'term-chip' + (found ? ' found' : '');
+    if (found) count++;
+  });
+  document.getElementById('term-count').textContent = count + ' de ' + TERMS.length + ' termos usados';
+  return count;
+}
+
+// Char counters
+['lead','causa','conseq','solucao'].forEach(function(f) {
+  var ta = document.getElementById('campo-'+f);
+  ta.addEventListener('input', function() {
+    document.getElementById('cc-'+f).textContent = ta.value.length + ' / 400';
+    updateTerms();
+  });
+});
+document.getElementById('campo-titulo').addEventListener('input', updateTerms);
+
+document.getElementById('validate-btn').addEventListener('click', function() {
+  var empty = FIELDS.filter(function(f){ return !document.getElementById('campo-'+f).value.trim(); });
+  if (empty.length > 0) {
+    var rp = document.getElementById('result-panel');
+    rp.className = 'result-panel bad show';
+    document.getElementById('result-title').textContent = '⚠️ Campos incompletos';
+    document.getElementById('result-msg').textContent = 'Preencha todos os campos antes de validar. Faltam: ' + empty.map(function(f){ return ({titulo:'Título',lead:'Lead',causa:'Causa',conseq:'Consequências',solucao:'Solução'})[f]; }).join(', ') + '.';
+    return;
+  }
+  var count = updateTerms();
+  var rp = document.getElementById('result-panel');
+  if (count >= 3) {
+    rp.className = 'result-panel ok show';
+    document.getElementById('result-title').textContent = count >= 6 ? '🏆 Excelente! Notícia completa com ' + count + ' termos técnicos!' : '✓ Ótimo trabalho! ' + count + ' termos técnicos usados.';
+    document.getElementById('result-msg').textContent = 'Sua notícia usa os termos científicos corretos do livro. Uma notícia científica bem escrita explica as causas (como poluição e destruição de mananciais), os efeitos (como enchentes e deslizamentos de terra) e propõe soluções como tetos verdes e consumo consciente da água. Continue escrevendo!';
+  } else {
+    rp.className = 'result-panel warn show';
+    document.getElementById('result-title').textContent = '⚠️ Apenas ' + count + ' de 3 termos técnicos mínimos usados';
+    document.getElementById('result-msg').textContent = 'Para uma notícia científica de qualidade, use pelo menos 3 termos técnicos do livro. Os chips verdes mostram quais você já usou. Tente incluir termos como "ameaças à qualidade da água", "destruição de mananciais", "enchentes" ou "impermeabilização dos solos" no texto.';
+  }
+});
+
+document.getElementById('reset-btn').addEventListener('click', function() {
+  FIELDS.forEach(function(f) {
+    document.getElementById('campo-'+f).value = '';
+  });
+  ['lead','causa','conseq','solucao'].forEach(function(f){
+    document.getElementById('cc-'+f).textContent = '0 / 400';
+  });
+  updateTerms();
+  document.getElementById('result-panel').className = 'result-panel';
+});
+
+updateTerms();
+</script>
+</body>
+</html>

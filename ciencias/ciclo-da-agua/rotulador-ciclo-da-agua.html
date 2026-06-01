@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotulador Científico — O Ciclo da Água</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 820px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.12); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--border); background: var(--cien-bg); line-height: 1.6; }
+.instrucao strong { color: var(--text); }
+
+/* Banco de termos */
+.bank-wrap { padding: 14px 24px 10px; border-bottom: 2px solid var(--border); }
+.bank-title { font-size: 11px; font-weight: 800; color: var(--cien); letter-spacing: .06em; margin-bottom: 8px; font-family: "Space Mono", monospace; }
+.bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
+.term { background: var(--cien); color: #fff; border-radius: 999px; padding: 6px 16px; font-size: 13px; font-weight: 700; cursor: grab; user-select: none; transition: transform .12s, box-shadow .12s; box-shadow: 0 2px 8px rgba(2,132,199,.25); touch-action: none; }
+.term:active { cursor: grabbing; }
+.term.dragging { opacity: .45; transform: scale(.95); }
+.term.used { opacity: .3; pointer-events: none; }
+
+/* Diagrama SVG + slots */
+.diagram-wrap { padding: 20px 24px; }
+.diagram-outer { position: relative; width: 100%; }
+.diagram-outer svg { display: block; width: 100%; height: auto; }
+
+.slot-zone { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 2px dashed var(--cien-light); background: rgba(240,249,255,.85); min-height: 34px; padding: 4px 8px; text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); transition: border-color .15s, background .15s; cursor: default; }
+.slot-zone.over { border-color: var(--cien); background: #e0f2fe; }
+.slot-zone.correct { border-color: #16A34A; background: #DCFCE7; color: #14532D; }
+.slot-zone.wrong { border-color: #DC2626; background: #FEE2E2; color: #7F1D1D; animation: shake .3s; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+/* Score bar */
+.score-bar { display: flex; align-items: center; gap: 12px; padding: 10px 24px; border-top: 2px solid var(--border); }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: var(--border); }
+.score-fill { height: 8px; border-radius: 999px; background: var(--cien); transition: width .4s; }
+.score-label { font-size: 13px; font-weight: 800; color: var(--cien); white-space: nowrap; }
+.gab-btn { background: var(--cien); color: #fff; border: none; border-radius: 12px; padding: 8px 20px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800; cursor: pointer; }
+.gab-btn:hover { background: var(--cien-dark); }
+
+.gabarito-panel { margin: 0 24px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--cien-light); background: var(--cien-bg); display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--cien-dark); margin-bottom: 10px; letter-spacing: .06em; }
+.gab-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.gab-list li { font-size: 13px; font-weight: 600; }
+.gab-list li span { display: inline-block; background: var(--cien); color: #fff; border-radius: 999px; padding: 2px 12px; margin-right: 6px; font-size: 12px; }
+
+.feedback-final { display: none; margin: 0 24px 20px; padding: 14px 16px; border-radius: 16px; font-size: 15px; font-weight: 700; text-align: center; }
+.feedback-final.great { background: #DCFCE7; border: 2px solid #16A34A; color: #14532D; }
+.feedback-final.good { background: #FEF9C3; border: 2px solid #CA8A04; color: #78350F; }
+
+@media (max-width: 600px) {
+  .slot-zone { font-size: 9px; min-height: 28px; }
+  .term { font-size: 12px; padding: 5px 12px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">💧</div>
+      <div><h1>Rotulador Científico</h1><p>O Ciclo da Água</p></div>
+      <div class="hbadge">⚡ Praticar (80%)</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Arraste cada termo do banco para o local correto no diagrama do ciclo da água. Cada posição numerada corresponde a um processo específico. Você verá verde se acertar e vermelho se errar!
+    </div>
+    <div class="bank-wrap">
+      <div class="bank-title">BANCO DE TERMOS</div>
+      <div class="bank" id="bank">
+        <div class="term" draggable="true" data-term="evaporação" id="t-evap">evaporação</div>
+        <div class="term" draggable="true" data-term="condensação" id="t-cond">condensação</div>
+        <div class="term" draggable="true" data-term="precipitação" id="t-prec">precipitação</div>
+        <div class="term" draggable="true" data-term="infiltração" id="t-infi">infiltração</div>
+        <div class="term" draggable="true" data-term="escoamento superficial" id="t-esco">escoamento superficial</div>
+        <div class="term" draggable="true" data-term="transpiração das plantas" id="t-tran">transpiração das plantas</div>
+      </div>
+    </div>
+
+    <!-- Diagrama -->
+    <div class="diagram-wrap">
+      <div class="diagram-outer" id="diagram-outer">
+        <!-- SVG do diagrama do ciclo da água -->
+        <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+          <!-- Céu / fundo -->
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#bfdbfe"/>
+              <stop offset="100%" stop-color="#e0f2fe"/>
+            </linearGradient>
+            <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a3e635"/>
+              <stop offset="100%" stop-color="#854d0e"/>
+            </linearGradient>
+            <linearGradient id="water" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#0284C7"/>
+              <stop offset="100%" stop-color="#38BDF8"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Céu -->
+          <rect x="0" y="0" width="700" height="420" fill="url(#sky)"/>
+          <!-- Solo -->
+          <rect x="0" y="320" width="700" height="100" fill="url(#ground)" rx="0"/>
+          <!-- Linhas de solo -->
+          <line x1="0" y1="320" x2="700" y2="320" stroke="#4d7c0f" stroke-width="2" opacity=".6"/>
+
+          <!-- Oceano / lago -->
+          <ellipse cx="130" cy="318" rx="110" ry="22" fill="url(#water)" opacity=".85"/>
+          <text x="130" y="322" text-anchor="middle" font-size="9" fill="white" font-weight="700">Oceano / Rio / Lago</text>
+
+          <!-- Sol -->
+          <circle cx="600" cy="55" r="38" fill="#FCD34D" opacity=".9"/>
+          <circle cx="600" cy="55" r="30" fill="#FBBF24"/>
+          <text x="600" y="59" text-anchor="middle" font-size="12" font-weight="800" fill="#78350F">SOL</text>
+          <!-- Raios do sol -->
+          <line x1="600" y1="10" x2="600" y2="2" stroke="#FCD34D" stroke-width="2.5"/>
+          <line x1="574" y1="22" x2="568" y2="16" stroke="#FCD34D" stroke-width="2.5"/>
+          <line x1="627" y1="22" x2="633" y2="16" stroke="#FCD34D" stroke-width="2.5"/>
+          <line x1="640" y1="55" x2="648" y2="55" stroke="#FCD34D" stroke-width="2.5"/>
+          <line x1="560" y1="55" x2="552" y2="55" stroke="#FCD34D" stroke-width="2.5"/>
+          <line x1="627" y1="88" x2="633" y2="94" stroke="#FCD34D" stroke-width="2.5"/>
+          <line x1="574" y1="88" x2="568" y2="94" stroke="#FCD34D" stroke-width="2.5"/>
+          <line x1="600" y1="100" x2="600" y2="108" stroke="#FCD34D" stroke-width="2.5"/>
+
+          <!-- SETA 1 — Evaporação (do oceano para cima, à esquerda) -->
+          <path d="M 130 295 Q 150 230 200 160" stroke="#0284C7" stroke-width="2.5" fill="none" stroke-dasharray="6,3" marker-end="url(#arrBlue)"/>
+          <!-- SETA 6 — Transpiração (das plantas) -->
+          <path d="M 340 280 Q 330 240 310 195" stroke="#16A34A" stroke-width="2.5" fill="none" stroke-dasharray="6,3" marker-end="url(#arrGreen)"/>
+          <!-- Planta simples -->
+          <rect x="327" y="295" width="14" height="30" fill="#65A30D" rx="3"/>
+          <ellipse cx="334" cy="285" rx="22" ry="18" fill="#4ADE80" opacity=".85"/>
+          <ellipse cx="318" cy="292" rx="14" ry="10" fill="#86EFAC" opacity=".7"/>
+          <ellipse cx="350" cy="290" rx="14" ry="10" fill="#86EFAC" opacity=".7"/>
+
+          <!-- Nuvem (condensação) -->
+          <ellipse cx="310" cy="110" rx="55" ry="28" fill="white" opacity=".95"/>
+          <ellipse cx="280" cy="122" rx="38" ry="22" fill="white" opacity=".95"/>
+          <ellipse cx="342" cy="118" rx="38" ry="22" fill="white" opacity=".95"/>
+          <ellipse cx="310" cy="130" rx="52" ry="18" fill="white"/>
+
+          <!-- SETA 3 — Precipitação (chuva caindo) -->
+          <line x1="275" y1="148" x2="258" y2="200" stroke="#0284C7" stroke-width="2" stroke-dasharray="4,3"/>
+          <line x1="295" y1="148" x2="278" y2="200" stroke="#0284C7" stroke-width="2" stroke-dasharray="4,3"/>
+          <line x1="315" y1="148" x2="298" y2="200" stroke="#0284C7" stroke-width="2" stroke-dasharray="4,3"/>
+          <line x1="335" y1="148" x2="318" y2="200" stroke="#0284C7" stroke-width="2" stroke-dasharray="4,3"/>
+          <line x1="355" y1="148" x2="338" y2="200" stroke="#0284C7" stroke-width="2" stroke-dasharray="4,3"/>
+
+          <!-- SETA 4 — Infiltração (descendo no solo) -->
+          <path d="M 460 322 Q 465 360 468 395" stroke="#92400E" stroke-width="2.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arrBrown)"/>
+          <!-- símbolo do aquífero / nascente -->
+          <ellipse cx="468" cy="400" rx="28" ry="8" fill="#38BDF8" opacity=".6"/>
+          <text x="468" y="404" text-anchor="middle" font-size="8" fill="#0C4A6E" font-weight="700">aquífero</text>
+
+          <!-- SETA 5 — Escoamento superficial (rio na superfície) -->
+          <path d="M 520 322 Q 560 320 600 318" stroke="#0284C7" stroke-width="3" fill="none" marker-end="url(#arrBlue)"/>
+          <ellipse cx="590" cy="321" rx="42" ry="10" fill="#38BDF8" opacity=".5"/>
+          <text x="590" y="324" text-anchor="middle" font-size="8" fill="#0C4A6E" font-weight="700">rio / lago</text>
+
+          <!-- Marcadores de setas -->
+          <defs>
+            <marker id="arrBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#0284C7"/>
+            </marker>
+            <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#16A34A"/>
+            </marker>
+            <marker id="arrBrown" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#92400E"/>
+            </marker>
+          </defs>
+
+          <!-- Rótulos numerados (círculos azuis) -->
+          <!-- 1 = evaporação -->
+          <circle cx="168" cy="215" r="12" fill="#0284C7"/>
+          <text x="168" y="219" text-anchor="middle" font-size="11" font-weight="800" fill="white">1</text>
+          <!-- 2 = condensação -->
+          <circle cx="310" cy="78" r="12" fill="#0284C7"/>
+          <text x="310" y="82" text-anchor="middle" font-size="11" font-weight="800" fill="white">2</text>
+          <!-- 3 = precipitação -->
+          <circle cx="390" cy="185" r="12" fill="#0284C7"/>
+          <text x="390" y="189" text-anchor="middle" font-size="11" font-weight="800" fill="white">3</text>
+          <!-- 4 = infiltração -->
+          <circle cx="460" cy="355" r="12" fill="#0284C7"/>
+          <text x="460" y="359" text-anchor="middle" font-size="11" font-weight="800" fill="white">4</text>
+          <!-- 5 = escoamento superficial -->
+          <circle cx="555" cy="308" r="12" fill="#0284C7"/>
+          <text x="555" y="312" text-anchor="middle" font-size="11" font-weight="800" fill="white">5</text>
+          <!-- 6 = transpiração das plantas -->
+          <circle cx="316" cy="245" r="12" fill="#16A34A"/>
+          <text x="316" y="249" text-anchor="middle" font-size="11" font-weight="800" fill="white">6</text>
+        </svg>
+
+        <!-- Slots sobrepostos (posicionados via % relativo ao SVG) -->
+        <!-- 1 — evaporação: próximo ao círculo 1 -->
+        <div class="slot-zone" id="slot-1" data-answer="evaporação"
+          style="left:27%;top:44%;width:18%;min-height:32px;">
+          arraste aqui
+        </div>
+        <!-- 2 — condensação: acima da nuvem -->
+        <div class="slot-zone" id="slot-2" data-answer="condensação"
+          style="left:38%;top:10%;width:18%;min-height:32px;">
+          arraste aqui
+        </div>
+        <!-- 3 — precipitação: à direita da chuva -->
+        <div class="slot-zone" id="slot-3" data-answer="precipitação"
+          style="left:57%;top:38%;width:18%;min-height:32px;">
+          arraste aqui
+        </div>
+        <!-- 4 — infiltração: abaixo do solo -->
+        <div class="slot-zone" id="slot-4" data-answer="infiltração"
+          style="left:62%;top:78%;width:16%;min-height:32px;">
+          arraste aqui
+        </div>
+        <!-- 5 — escoamento superficial: à direita do rio -->
+        <div class="slot-zone" id="slot-5" data-answer="escoamento superficial"
+          style="left:72%;top:65%;width:22%;min-height:32px;">
+          arraste aqui
+        </div>
+        <!-- 6 — transpiração: acima das plantas -->
+        <div class="slot-zone" id="slot-6" data-answer="transpiração das plantas"
+          style="left:38%;top:54%;width:22%;min-height:32px;">
+          arraste aqui
+        </div>
+      </div>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+      <span class="score-label" id="score-label">0 de 6 corretos</span>
+      <button class="gab-btn" id="gab-btn">Ver gabarito</button>
+    </div>
+
+    <div class="feedback-final" id="feedback-final"></div>
+
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">GABARITO — POSIÇÕES CORRETAS</div>
+      <ul class="gab-list">
+        <li><span>1</span> <strong>Evaporação</strong> — setas subindo da superfície da água aquecida pelo Sol</li>
+        <li><span>2</span> <strong>Condensação</strong> — vapor d'água esfria e forma as nuvens</li>
+        <li><span>3</span> <strong>Precipitação</strong> — chuva, neve ou granizo caindo das nuvens</li>
+        <li><span>4</span> <strong>Infiltração</strong> — água desce pelo solo, podendo formar aquíferos ou nascentes</li>
+        <li><span>5</span> <strong>Escoamento superficial</strong> — água corre pela superfície formando rios e lagos</li>
+        <li><span>6</span> <strong>Transpiração das plantas</strong> — plantas liberam vapor d'água pelas folhas</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<script>
+var dragged = null;
+var correct = 0;
+var total = 6;
+
+// Drag & Drop — desktop
+document.querySelectorAll('.term').forEach(function(t) {
+  t.addEventListener('dragstart', function(e) {
+    dragged = t;
+    t.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', t.dataset.term);
+  });
+  t.addEventListener('dragend', function() { t.classList.remove('dragging'); });
+});
+
+document.querySelectorAll('.slot-zone').forEach(function(slot) {
+  slot.addEventListener('dragover', function(e) { e.preventDefault(); slot.classList.add('over'); });
+  slot.addEventListener('dragleave', function() { slot.classList.remove('over'); });
+  slot.addEventListener('drop', function(e) {
+    e.preventDefault();
+    slot.classList.remove('over');
+    if (!dragged || slot.dataset.filled) return;
+    var term = dragged.dataset.term;
+    checkDrop(slot, term, dragged);
+  });
+});
+
+// Touch support
+var touchEl = null, touchClone = null;
+
+document.querySelectorAll('.term').forEach(function(t) {
+  t.addEventListener('touchstart', function(e) {
+    touchEl = t;
+    t.classList.add('dragging');
+    var touch = e.touches[0];
+    touchClone = t.cloneNode(true);
+    touchClone.style.position = 'fixed';
+    touchClone.style.pointerEvents = 'none';
+    touchClone.style.zIndex = 9999;
+    touchClone.style.opacity = '.85';
+    touchClone.style.transform = 'scale(1.08)';
+    document.body.appendChild(touchClone);
+    moveTouchClone(touch);
+  }, {passive: true});
+  t.addEventListener('touchmove', function(e) {
+    if (!touchEl) return;
+    moveTouchClone(e.touches[0]);
+  }, {passive: true});
+  t.addEventListener('touchend', function(e) {
+    if (!touchEl) return;
+    if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
+    touchEl.classList.remove('dragging');
+    var touch = e.changedTouches[0];
+    var el = document.elementFromPoint(touch.clientX, touch.clientY);
+    var slot = el && (el.classList.contains('slot-zone') ? el : el.closest('.slot-zone'));
+    if (slot && !slot.dataset.filled) checkDrop(slot, touchEl.dataset.term, touchEl);
+    touchEl = null;
+  });
+});
+
+function moveTouchClone(touch) {
+  if (!touchClone) return;
+  touchClone.style.left = (touch.clientX - 60) + 'px';
+  touchClone.style.top  = (touch.clientY - 20) + 'px';
+}
+
+function checkDrop(slot, term, termEl) {
+  slot.dataset.filled = '1';
+  if (term === slot.dataset.answer) {
+    slot.textContent = term;
+    slot.classList.add('correct');
+    termEl.classList.add('used');
+    correct++;
+    updateScore();
+    if (correct === total) showFinal(true);
+  } else {
+    slot.textContent = term + ' ✗';
+    slot.classList.add('wrong');
+    setTimeout(function() {
+      slot.textContent = 'arraste aqui';
+      slot.classList.remove('wrong');
+      delete slot.dataset.filled;
+    }, 900);
+  }
+}
+
+function updateScore() {
+  var pct = Math.round(correct / total * 100);
+  document.getElementById('score-fill').style.width = pct + '%';
+  document.getElementById('score-label').textContent = correct + ' de ' + total + ' corretos';
+}
+
+function showFinal(great) {
+  var fb = document.getElementById('feedback-final');
+  fb.className = 'feedback-final ' + (great ? 'great' : 'good');
+  fb.textContent = great ? '🌊 Parabéns! Você rotulou todo o ciclo da água corretamente!' : 'Bom trabalho! Confira o gabarito para rever os processos.';
+  fb.style.display = 'block';
+}
+
+var gabVisible = false;
+document.getElementById('gab-btn').addEventListener('click', function() {
+  gabVisible = !gabVisible;
+  document.getElementById('gabarito-panel').style.display = gabVisible ? 'block' : 'none';
+  this.textContent = gabVisible ? 'Ocultar gabarito' : 'Ver gabarito';
+});
+</script>
+</body>
+</html>

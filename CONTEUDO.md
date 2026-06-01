@@ -1,5 +1,5 @@
 # Conteúdo do Portal — Estado Atual
-**Última atualização:** 2026-05-26
+**Última atualização:** 2026-06-01
 
 ---
 
@@ -9,10 +9,10 @@
 |---|---|---|
 | 📝 Português | 8 | 43 |
 | 🔢 Matemática | 7 | 26 |
-| 🔬 Ciências | 2 | 8 |
+| 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 3 | 9 |
-| **Total** | **23** | **97** |
+| **Total** | **25** | **107** |
 
 ---
 
@@ -238,6 +238,33 @@
 
 ---
 
+### Ciclo Da Agua
+**HQ:** ✅ `hq-ciclo-da-agua.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-ciclo-da-agua.html` |
+| Rotulador do Ciclo | ✅ `rotulador-ciclo-da-agua.html` |
+| Ordenador de Etapas | ✅ `ordena-etapas-ciclo-da-agua.html` |
+| Notícia Científica | ✅ `noticia-ciclo-da-agua.html` |
+| Mapa Mental | ✅ `mapa-mental-ciclo-da-agua.html` |
+
+---
+
+### Agua Cidades Consumo
+**Personagem:** GOTINHA
+**HQ:** ✅ `hq-agua-cidades-consumo.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-agua-cidades-consumo.html` |
+| Diagrama de Causas e Efeitos | ✅ `fluxo-causal-agua-cidades.html` |
+| Classificador Ambiental | ✅ `classificador-agua-cidades-consumo.html` |
+| Notícia Científica | ✅ `noticia-agua-cidades.html` |
+| Mapa Mental | ✅ `mapa-mental-agua-cidades-consumo.html` |
+
+---
+
 ## 🌍 Geografia
 
 ### Diversidade Cultural
@@ -314,13 +341,18 @@
 
 | Arquivo |
 |---|
+| `Bia com fundo.png` |
+| `Bia.png` |
 | `Calco.png` |
 | `Calê.png` |
+| `Ciclao.png` |
 | `Divi.png` |
 | `Esfer.png` |
+| `Gotinha.png` |
 | `Max-Min.png` |
 | `Poli.png` |
 | `Prepo musculoso.png` |
+| `Prepo.png` |
 | `Primo.png` |
 | `memo e timbre.png` |
 

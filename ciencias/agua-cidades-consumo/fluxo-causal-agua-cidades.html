@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagrama de Fluxo Causal — Água, Cidades e Consumo Consciente</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.1); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 34px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--border); background: var(--cien-bg); line-height: 1.6; }
+.instrucao strong { color: var(--text); }
+.score-bar { display: flex; align-items: center; gap: 10px; padding: 10px 24px; border-bottom: 2px solid var(--border); background: #f8fbff; flex-wrap: wrap; }
+.score-txt { font-size: 13px; font-weight: 800; color: var(--cien); }
+.check-btn { background: var(--cien); color: #fff; border: none; border-radius: 999px; padding: 7px 20px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800; cursor: pointer; margin-left: auto; }
+.check-btn:hover { opacity: .85; }
+.check-btn:disabled { opacity: .4; cursor: default; }
+.reset-btn { background: transparent; color: var(--muted); border: 2px solid var(--border); border-radius: 999px; padding: 6px 16px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; cursor: pointer; }
+.reset-btn:hover { border-color: var(--cien-light); color: var(--cien); }
+/* Grid layout */
+.grid-area { padding: 20px; overflow-x: auto; }
+.col-grid { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0; min-width: 560px; }
+.col-label { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: #fff; text-align: center; padding: 8px 12px; border-radius: 12px 12px 0 0; margin-bottom: 4px; }
+.col-label.causa   { background: #7C3AED; }
+.col-label.proc    { background: #0284C7; }
+.col-label.efeito  { background: #B45309; }
+.drop-col { border-radius: 0 0 16px 16px; border: 2px solid var(--border); min-height: 340px; padding: 10px 8px; display: flex; flex-direction: column; gap: 10px; align-items: center; background: #fafeff; }
+.drop-col.over { background: #E0F2FE; }
+.arrow-col { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 8px; }
+.arrow-svg { width: 32px; height: 100%; }
+/* Node cards */
+.node-card { width: 100%; border-radius: 14px; padding: 10px 12px; font-size: 12px; font-weight: 700; text-align: center; cursor: grab; border: 2px solid var(--border); background: #fff; transition: transform .12s, box-shadow .12s; line-height: 1.4; user-select: none; }
+.node-card:hover { transform: scale(1.03); box-shadow: 0 4px 14px rgba(2,132,199,.15); }
+.node-card.causa-card  { border-color: #C4B5FD; background: #F5F3FF; color: #4C1D95; }
+.node-card.proc-card   { border-color: var(--cien-light); background: #E0F2FE; color: var(--cien-dark); }
+.node-card.efeito-card { border-color: #FCD34D; background: #FFFBEB; color: #78350F; }
+.node-card.correct { border-color: #059669 !important; background: #D1FAE5 !important; color: #065F46 !important; cursor: default; }
+.node-card.wrong   { border-color: #DC2626 !important; background: #FEE2E2 !important; color: #991B1B !important; cursor: default; }
+.node-card.dragging { opacity: .4; }
+/* Pool */
+.pool-wrap { margin: 0 20px 8px; }
+.pool-label { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; margin-bottom: 8px; }
+.pool { display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; padding: 10px; border-radius: var(--radius); border: 2px dashed var(--border); background: var(--cien-bg); }
+/* Gabarito */
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: var(--radius); border: 2px solid var(--cien-light); background: #E0F2FE; display: none; }
+.gabarito-panel.show { display: block; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--cien-dark); margin-bottom: 12px; letter-spacing: .06em; }
+.gab-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 12px; font-weight: 700; }
+.gab-causa  { background: #F5F3FF; color: #4C1D95; border: 2px solid #C4B5FD; border-radius: 10px; padding: 7px 10px; text-align: center; }
+.gab-proc   { background: #E0F2FE; color: var(--cien-dark); border: 2px solid var(--cien-light); border-radius: 10px; padding: 7px 10px; text-align: center; }
+.gab-efeito { background: #FFFBEB; color: #78350F; border: 2px solid #FCD34D; border-radius: 10px; padding: 7px 10px; text-align: center; }
+.gab-arrow { color: var(--cien); font-size: 16px; font-weight: 900; flex-shrink: 0; }
+/* Result */
+.result-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: var(--radius); display: none; }
+.result-panel.show { display: block; }
+.result-panel.all-ok { background: #D1FAE5; border: 2px solid #6EE7B7; }
+.result-panel.partial { background: #FEF3C7; border: 2px solid #FCD34D; }
+.result-title { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+.result-msg { font-size: 13px; font-weight: 600; line-height: 1.5; }
+@media (max-width: 600px) {
+  .grid-area { padding: 12px 8px; }
+  .col-grid { min-width: 480px; }
+  .node-card { font-size: 11px; padding: 8px 8px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">💧🏙️</div>
+      <div><h1>Diagrama de Fluxo Causal</h1><p>Água, Cidades e Consumo Consciente</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Cada causa produz um processo, que gera um efeito. Arraste os cartões da área de itens para a coluna correta — <strong>CAUSA</strong>, <strong>PROCESSO</strong> ou <strong>EFEITO</strong>. Quando terminar, clique em <strong>Verificar</strong>.
+    </div>
+    <div class="score-bar">
+      <span class="score-txt" id="score-txt">0 de 12 posicionados</span>
+      <button class="reset-btn" id="reset-btn">↺ Recomeçar</button>
+      <button class="check-btn" id="check-btn" disabled>Verificar ✓</button>
+    </div>
+    <div class="pool-wrap">
+      <div class="pool-label">ITENS — arraste para CAUSA, PROCESSO ou EFEITO</div>
+      <div class="pool" id="pool"></div>
+    </div>
+    <div class="grid-area">
+      <div class="col-grid">
+        <div>
+          <div class="col-label causa">CAUSA</div>
+          <div class="drop-col" id="col-causa" data-col="causa"></div>
+        </div>
+        <div class="arrow-col">
+          <svg viewBox="0 0 32 300" width="32" height="300" xmlns="http://www.w3.org/2000/svg">
+            <line x1="16" y1="10" x2="16" y2="280" stroke="#BAE6FD" stroke-width="2"/>
+            <polygon points="10,270 22,270 16,285" fill="#0284C7" opacity="0.5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="col-label proc">PROCESSO</div>
+          <div class="drop-col" id="col-proc" data-col="proc"></div>
+        </div>
+        <div class="arrow-col">
+          <svg viewBox="0 0 32 300" width="32" height="300" xmlns="http://www.w3.org/2000/svg">
+            <line x1="16" y1="10" x2="16" y2="280" stroke="#BAE6FD" stroke-width="2"/>
+            <polygon points="10,270 22,270 16,285" fill="#0284C7" opacity="0.5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="col-label efeito">EFEITO</div>
+          <div class="drop-col" id="col-efeito" data-col="efeito"></div>
+        </div>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gab-panel">
+      <div class="gabarito-title">GABARITO — RELAÇÕES CORRETAS</div>
+      <div class="gab-row">
+        <div class="gab-causa">Desmatamento</div><span class="gab-arrow">→</span>
+        <div class="gab-proc">Árvores não seguram o solo</div><span class="gab-arrow">→</span>
+        <div class="gab-efeito">Deslizamentos de terra</div>
+      </div>
+      <div class="gab-row">
+        <div class="gab-causa">Impermeabilização dos solos</div><span class="gab-arrow">→</span>
+        <div class="gab-proc">Solo não absorve a água da chuva</div><span class="gab-arrow">→</span>
+        <div class="gab-efeito">Enchentes nas cidades</div>
+      </div>
+      <div class="gab-row">
+        <div class="gab-causa">Lançamento de esgoto nos rios</div><span class="gab-arrow">→</span>
+        <div class="gab-proc">Água contamina os mananciais</div><span class="gab-arrow">→</span>
+        <div class="gab-efeito">Destruição de mananciais</div>
+      </div>
+      <div class="gab-row">
+        <div class="gab-causa">Excesso de construções e asfalto</div><span class="gab-arrow">→</span>
+        <div class="gab-proc">Calor não é dissipado naturalmente</div><span class="gab-arrow">→</span>
+        <div class="gab-efeito">Ilha de calor</div>
+      </div>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-title" id="result-title"></div>
+      <div class="result-msg" id="result-msg"></div>
+    </div>
+  </div>
+</div>
+<script>
+var ITEMS = [
+  // causas
+  { id:'c1', text:'Desmatamento',                    col:'causa',  cls:'causa-card'  },
+  { id:'c2', text:'Impermeabilização dos solos',     col:'causa',  cls:'causa-card'  },
+  { id:'c3', text:'Lançamento de esgoto nos rios',   col:'causa',  cls:'causa-card'  },
+  { id:'c4', text:'Excesso de construções e asfalto',col:'causa',  cls:'causa-card'  },
+  // processos
+  { id:'p1', text:'Solo não absorve a água da chuva',     col:'proc', cls:'proc-card' },
+  { id:'p2', text:'Água contamina os mananciais',          col:'proc', cls:'proc-card' },
+  { id:'p3', text:'Calor não é dissipado naturalmente',    col:'proc', cls:'proc-card' },
+  { id:'p4', text:'Árvores não seguram o solo',            col:'proc', cls:'proc-card' },
+  // efeitos
+  { id:'e1', text:'Enchentes nas cidades',           col:'efeito', cls:'efeito-card' },
+  { id:'e2', text:'Destruição de mananciais',        col:'efeito', cls:'efeito-card' },
+  { id:'e3', text:'Ilha de calor',                   col:'efeito', cls:'efeito-card' },
+  { id:'e4', text:'Deslizamentos de terra',          col:'efeito', cls:'efeito-card' },
+];
+
+var placements = {};
+var checked = false;
+
+function shuffle(a){ var b=a.slice(); for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;} return b; }
+
+function buildItems() {
+  checked = false;
+  placements = {};
+  document.getElementById('pool').innerHTML = '';
+  ['causa','proc','efeito'].forEach(function(c){ document.getElementById('col-'+c).innerHTML=''; });
+  document.getElementById('result-panel').className = 'result-panel';
+  document.getElementById('gab-panel').className = 'gabarito-panel';
+  document.getElementById('check-btn').disabled = true;
+  document.getElementById('score-txt').textContent = '0 de 12 posicionados';
+
+  shuffle(ITEMS).forEach(function(item) {
+    placements[item.id] = 'pool';
+    document.getElementById('pool').appendChild(createEl(item));
+  });
+}
+
+function createEl(item) {
+  var el = document.createElement('div');
+  el.id = 'el-' + item.id;
+  el.className = 'node-card ' + item.cls;
+  el.textContent = item.text;
+  el.setAttribute('draggable', 'true');
+  el.dataset.id = item.id;
+
+  el.addEventListener('dragstart', function(e) {
+    e.dataTransfer.setData('text/plain', item.id);
+    setTimeout(function(){ el.classList.add('dragging'); }, 0);
+  });
+  el.addEventListener('dragend', function(){ el.classList.remove('dragging'); });
+
+  // Touch
+  var clone = null;
+  el.addEventListener('touchstart', function(e) {
+    if (checked) return;
+    var t = e.touches[0];
+    clone = el.cloneNode(true);
+    clone.style.cssText = 'position:fixed;opacity:.7;pointer-events:none;z-index:9999;width:'+el.offsetWidth+'px;';
+    clone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
+    clone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
+    document.body.appendChild(clone);
+    el.style.opacity = '.3';
+  }, {passive:true});
+  el.addEventListener('touchmove', function(e) {
+    if (!clone) return;
+    var t = e.touches[0];
+    clone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
+    clone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
+    e.preventDefault();
+  }, {passive:false});
+  el.addEventListener('touchend', function(e) {
+    el.style.opacity = '1';
+    if (!clone) return;
+    var t = e.changedTouches[0];
+    clone.remove(); clone = null;
+    var target = document.elementFromPoint(t.clientX, t.clientY);
+    var zone = target && (target.classList.contains('drop-col') ? target : target.closest('.drop-col'));
+    if (!zone) zone = target && (target.classList.contains('pool') ? target : target.closest('.pool'));
+    if (zone) {
+      var col = zone.dataset.col || 'pool';
+      moveTo(item.id, col, zone);
+    }
+  });
+
+  return el;
+}
+
+function moveTo(itemId, colName, zoneEl) {
+  if (checked) return;
+  var el = document.getElementById('el-' + itemId);
+  placements[itemId] = colName;
+  if (colName === 'pool') {
+    document.getElementById('pool').appendChild(el);
+  } else {
+    zoneEl.appendChild(el);
+  }
+  updateScore();
+}
+
+function updateScore() {
+  var n = Object.values(placements).filter(function(v){ return v !== 'pool'; }).length;
+  document.getElementById('score-txt').textContent = n + ' de 12 posicionados';
+  document.getElementById('check-btn').disabled = n < 12;
+}
+
+['pool','col-causa','col-proc','col-efeito'].forEach(function(zid) {
+  var el = document.getElementById(zid);
+  el.addEventListener('dragover', function(e){ e.preventDefault(); el.classList.add('over'); });
+  el.addEventListener('dragleave', function(){ el.classList.remove('over'); });
+  el.addEventListener('drop', function(e) {
+    e.preventDefault(); el.classList.remove('over');
+    var itemId = e.dataTransfer.getData('text/plain');
+    var col = zid === 'pool' ? 'pool' : el.dataset.col;
+    moveTo(itemId, col, el);
+  });
+});
+
+document.getElementById('check-btn').addEventListener('click', function() {
+  checked = true;
+  var correct = 0;
+  ITEMS.forEach(function(item) {
+    var el = document.getElementById('el-' + item.id);
+    el.setAttribute('draggable', 'false');
+    if (placements[item.id] === item.col) { el.classList.add('correct'); correct++; }
+    else el.classList.add('wrong');
+  });
+  document.getElementById('gab-panel').className = 'gabarito-panel show';
+  var rp = document.getElementById('result-panel');
+  if (correct === 12) {
+    rp.className = 'result-panel all-ok show';
+    document.getElementById('result-title').textContent = '🎉 Perfeito! Todas as relações causais estão corretas!';
+    document.getElementById('result-msg').textContent = 'Você entendeu como a impermeabilização dos solos leva às enchentes, como o desmatamento provoca deslizamentos de terra, como o esgoto contamina os mananciais e como o excesso de construções forma ilhas de calor nas cidades.';
+  } else {
+    rp.className = 'result-panel partial show';
+    document.getElementById('result-title').textContent = correct + ' de 12 corretos — veja o gabarito acima';
+    document.getElementById('result-msg').textContent = 'Leia as relações corretas no gabarito. Cada causa produz um processo específico, que leva a um efeito real nas cidades. Tente novamente!';
+  }
+});
+
+document.getElementById('reset-btn').addEventListener('click', buildItems);
+buildItems();
+</script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Água, Cidades e Consumo Consciente</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.1); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--cien-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #f8fbff; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--cien-light); color: var(--cien); }
+.toolbar button.active { background: var(--cien-bg); border-color: var(--cien); color: var(--cien); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--cien); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: calc(100svh - 340px); background: var(--cien-bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid var(--cien); outline-offset: 2px; }
+.n-root   { background: linear-gradient(135deg,#0284C7,#38BDF8); color: white; border: 2px solid #0C4A6E; font-size: 13px; font-weight: 800; min-width: 145px; padding: 11px 20px; z-index: 11; }
+.n-level1 { background: #DBEAFE; border: 2px solid #93C5FD; color: #1E3A5F; }
+.n-level2 { background: white; border: 2px solid #BAE6FD; color: #374151; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--cien-light); background: var(--cien-bg); display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--cien-dark); margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: var(--cien-bg); display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #BAE6FD; }
+.score-fill  { height: 8px; border-radius: 999px; background: var(--cien); transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: var(--cien-dark); white-space: nowrap; }
+@media (max-width: 600px) {
+  #stage { height: calc(100svh - 340px) !important; min-height: 380px; }
+  .node { font-size: 11px !important; padding: 8px 12px !important; min-width: 90px !important; }
+  .n-root { min-width: 130px !important; font-size: 12px !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🗺️</div>
+      <div><h1>Mapa Mental</h1><p>Água, Cidades e Consumo Consciente</p></div>
+      <div class="hbadge">🏆 Síntese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar os balões e organizar o mapa.
+      Use <strong>+ Conectar</strong> para criar setas entre eles.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com a estrutura correta.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect">+ Conectar</button>
+      <button id="btn-move" class="active">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexões</span>
+      <span id="hint-bar">Clique e arraste qualquer balão</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balão para conectar ✔</div>
+      <div id="stage">
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#0284C7" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">ESTRUTURA DO MAPA — GABARITO</div>
+      <svg id="gabarito-svg" viewBox="0 0 740 300" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0284C7"/>
+            <stop offset="100%" stop-color="#38BDF8"/>
+          </linearGradient>
+          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0284C7" opacity="0.6"/>
+          </marker>
+        </defs>
+        <!-- Root → L1 -->
+        <line x1="370" y1="38" x2="90"  y2="90" stroke="#0284C7" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="370" y1="38" x2="250" y2="90" stroke="#0284C7" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="370" y1="38" x2="490" y2="90" stroke="#0284C7" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="370" y1="38" x2="650" y2="90" stroke="#0284C7" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <!-- L1 Ameacas → L2 -->
+        <line x1="90"  y1="118" x2="55"  y2="170" stroke="#93C5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="90"  y1="118" x2="125" y2="170" stroke="#93C5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- L1 Impactos → L2 -->
+        <line x1="250" y1="118" x2="210" y2="170" stroke="#93C5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="250" y1="118" x2="280" y2="170" stroke="#93C5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- L1 Solucoes → L2 -->
+        <line x1="490" y1="118" x2="450" y2="170" stroke="#93C5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="490" y1="118" x2="520" y2="170" stroke="#93C5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- L1 Consumo → L2 -->
+        <line x1="650" y1="118" x2="615" y2="170" stroke="#93C5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="650" y1="118" x2="685" y2="170" stroke="#93C5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- Root -->
+        <rect x="258" y="10" width="224" height="32" rx="16" fill="url(#rg)" stroke="#0C4A6E" stroke-width="2"/>
+        <text x="370" y="30" text-anchor="middle" font-size="10" font-weight="800" fill="white">💧 ÁGUA, CIDADES E CONSUMO</text>
+        <!-- L1 -->
+        <rect x="22"  y="90" width="136" height="28" rx="14" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.5"/>
+        <text x="90"  y="109" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1E3A5F">⚠️ Ameaças à qualidade</text>
+        <rect x="178" y="90" width="144" height="28" rx="14" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.5"/>
+        <text x="250" y="109" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1E3A5F">🏙️ Impactos urbanos</text>
+        <rect x="416" y="90" width="148" height="28" rx="14" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.5"/>
+        <text x="490" y="109" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1E3A5F">🌿 Soluções nas cidades</text>
+        <rect x="577" y="90" width="146" height="28" rx="14" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.5"/>
+        <text x="650" y="109" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1E3A5F">💡 Consumo consciente</text>
+        <!-- L2 under Ameacas -->
+        <rect x="8"   y="170" width="94" height="22" rx="11" fill="white" stroke="#BAE6FD" stroke-width="1.5"/>
+        <text x="55"  y="185" text-anchor="middle" font-size="8" fill="#374151">Poluição</text>
+        <rect x="80"  y="170" width="90" height="22" rx="11" fill="white" stroke="#BAE6FD" stroke-width="1.5"/>
+        <text x="125" y="185" text-anchor="middle" font-size="8" fill="#374151">Destruição mananciais</text>
+        <!-- L2 under Impactos -->
+        <rect x="162" y="170" width="96" height="22" rx="11" fill="white" stroke="#BAE6FD" stroke-width="1.5"/>
+        <text x="210" y="185" text-anchor="middle" font-size="8" fill="#374151">Ilha de calor</text>
+        <rect x="234" y="170" width="92" height="22" rx="11" fill="white" stroke="#BAE6FD" stroke-width="1.5"/>
+        <text x="280" y="185" text-anchor="middle" font-size="8" fill="#374151">Impermeabilização</text>
+        <!-- L2 under Solucoes -->
+        <rect x="402" y="170" width="96" height="22" rx="11" fill="white" stroke="#BAE6FD" stroke-width="1.5"/>
+        <text x="450" y="185" text-anchor="middle" font-size="8" fill="#374151">Tetos verdes</text>
+        <rect x="472" y="170" width="96" height="22" rx="11" fill="white" stroke="#BAE6FD" stroke-width="1.5"/>
+        <text x="520" y="185" text-anchor="middle" font-size="8" fill="#374151">Jardins verticais</text>
+        <!-- L2 under Consumo -->
+        <rect x="565" y="170" width="100" height="22" rx="11" fill="white" stroke="#BAE6FD" stroke-width="1.5"/>
+        <text x="615" y="185" text-anchor="middle" font-size="8" fill="#374151">Agropecuária 70%</text>
+        <rect x="639" y="170" width="92" height="22" rx="11" fill="white" stroke="#BAE6FD" stroke-width="1.5"/>
+        <text x="685" y="185" text-anchor="middle" font-size="8" fill="#374151">Água virtual</text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 12 conexões</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var NODES = [
+  {id:'root',    label:'💧 Água, Cidades e Consumo', cls:'n-root'},
+  {id:'ameacas', label:'⚠️ Ameaças à qualidade',     cls:'n-level1'},
+  {id:'impactos',label:'🏙️ Impactos urbanos',        cls:'n-level1'},
+  {id:'solucoes',label:'🌿 Soluções nas cidades',     cls:'n-level1'},
+  {id:'consumo', label:'💡 Consumo consciente',       cls:'n-level1'},
+  {id:'poluicao',label:'Poluição',                    cls:'n-level2'},
+  {id:'mananciais',label:'Destruição de mananciais',  cls:'n-level2'},
+  {id:'calor',   label:'Ilha de calor',               cls:'n-level2'},
+  {id:'impermeab',label:'Impermeabilização dos solos',cls:'n-level2'},
+  {id:'tetos',   label:'Tetos verdes',                cls:'n-level2'},
+  {id:'jardins', label:'Jardins verticais',           cls:'n-level2'},
+  {id:'agropec', label:'Agropecuária 70%',            cls:'n-level2'},
+  {id:'virtual', label:'Água virtual nos alimentos',  cls:'n-level2'},
+];
+
+var GABARITO = [
+  ['root','ameacas'],['root','impactos'],['root','solucoes'],['root','consumo'],
+  ['ameacas','poluicao'],['ameacas','mananciais'],
+  ['impactos','calor'],['impactos','impermeab'],
+  ['solucoes','tetos'],['solucoes','jardins'],
+  ['consumo','agropec'],['consumo','virtual'],
+];
+
+var SHUFFLE = ['virtual','impactos','tetos','poluicao','consumo','root','jardins','ameacas','calor','solucoes','impermeab','mananciais','agropec'];
+
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'move', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
+
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 480 ? 2 : 4;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 16, padY = 32;
+  var colW = (W - padX*2) / COLS;
+  var rowH = Math.max(80, (stage.clientHeight - padY*2) / ROWS);
+  var minH = padY*2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i % COLS + 0.5) * colW,
+      y: padY + (Math.floor(i / COLS) + 0.5) * rowH
+    };
+  });
+}
+
+function renderNodes() {
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-'+n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls; el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
+    }
+    placeNode(n.id);
+  });
+}
+
+function placeNode(id) {
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw+4, Math.min(W-hw-4, p.x));
+  var cy = Math.max(hh+4, Math.min(H-hh-4, p.y));
+  el.style.left = (cx-hw)+'px'; el.style.top = (cy-hh)+'px';
+}
+
+function center(id) {
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
+}
+
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode==='erase';
+  arrows.forEach(function(a, i) {
+    var f=center(a.from), t=center(a.to), dx=t.x-f.x, dy=t.y-f.y;
+    var len=Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl=document.getElementById('nd-'+a.to);
+    var rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
+    var ex=t.x-(dx/len)*rad, ey=t.y-(dy/len)*rad;
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
+    line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
+    line.setAttribute('stroke', isErase?'#DC2626':'#0284C7');
+    line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents='stroke'; line.style.cursor='pointer';
+      (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
+  });
+}
+
+function updateCount() { var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões'); }
+
+function setMode(m) {
+  mode=m;
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  document.getElementById('pending-msg').style.display='none';
+  ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {connect:'Clique em dois balões para criar uma seta',move:'Clique e arraste qualquer balão',erase:'Clique em uma seta para apagá-la'}[m];
+}
+
+function onNodeClick(e, id) {
+  if (mode!=='connect') return;
+  if (!arrowFrom) { arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
+  else {
+    document.getElementById('nd-'+arrowFrom).classList.remove('selected');
+    document.getElementById('nd-'+id).classList.remove('selected');
+    if (arrowFrom!==id) {
+      var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom=null; document.getElementById('pending-msg').style.display='none';
+  }
+  e.stopPropagation();
+}
+
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+document.addEventListener('mousemove',function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup',function(){ dragging=null; });
+document.addEventListener('touchmove',function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
+document.addEventListener('touchend',function(){ dragging=null; });
+
+document.getElementById('btn-connect').addEventListener('click',function(){ setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click',function(){ setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click',function(){ setMode(mode==='erase'?'move':'erase'); });
+document.getElementById('btn-reset').addEventListener('click',function(){ arrows=[]; calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); updateCount(); updateGabarito(); });
+document.getElementById('btn-gabarito').addEventListener('click',function(){
+  gabVisible=!gabVisible;
+  document.getElementById('gabarito-panel').style.display=gabVisible?'block':'none';
+  document.getElementById('btn-gabarito').textContent=gabVisible?'Ocultar gabarito':'Ver gabarito';
+  if(gabVisible) updateGabarito();
+});
+
+function updateGabarito() {
+  if (!gabVisible) return;
+  var hits=0;
+  GABARITO.forEach(function(pair){ if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++; });
+  var total=GABARITO.length, pct=Math.round((hits/total)*100);
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-label').textContent=hits+' de '+total+' conexões ('+pct+'%)';
+}
+
+window.addEventListener('resize',function(){ calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load',function(){ calcPositions(); renderNodes(); setMode('move'); });
+</script>
+</body>
+</html>

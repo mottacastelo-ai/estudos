@@ -400,11 +400,13 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-cien" onclick="showDisc('cien')">
     <span class="d-icon">🔬</span>
     <span class="d-name">Ciências</span>
-    <span class="d-count">2</span>
+    <span class="d-count">4</span>
   </button>
   <div class="theme-sub" id="sub-cien">
     <button class="theme-link" onclick="showTheme('cien','lixo-que-produzimos')">🗑️ O Lixo que Produzimos</button>
     <button class="theme-link" onclick="showTheme('cien','caminho-do-lixo')">🚛 O Caminho do Lixo</button>
+    <button class="theme-link" onclick="showTheme('cien','ciclo-da-agua')">💧 O Ciclo da Água</button>
+    <button class="theme-link" onclick="showTheme('cien','agua-cidades-consumo')">🏙️ Água, Cidades e Consumo Consciente</button>
   </div>
 
   <div class="sidebar-footer">
@@ -423,8 +425,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>23</span>temas</div>
-        <div class="hstat"><span>99</span>atividades</div>
+        <div class="hstat"><span>25</span>temas</div>
+        <div class="hstat"><span>109</span>atividades</div>
       </div>
     </div>
     <div class="home-body">
@@ -474,9 +476,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Ciências</div>
           <div class="dhc-desc">Natureza, corpo humano e meio ambiente</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#e0f2fe;color:#0284C7">2 temas</span>
-            <span class="chip" style="background:#ECFDF5;color:#065F46">8 atividades</span>
-            <span class="chip" style="background:#FEF3C7;color:#92400E">2 HQs</span>
+            <span class="chip" style="background:#e0f2fe;color:#0284C7">4 temas</span>
+            <span class="chip" style="background:#ECFDF5;color:#065F46">18 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">4 HQs</span>
           </div>
         </button>
       </div>
@@ -1380,6 +1382,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <div class="theme-tabs">
         <button class="theme-tab-btn cien-tab active" onclick="showTheme('cien','lixo-que-produzimos')">🗑️ O Lixo que Produzimos</button>
         <button class="theme-tab-btn cien-tab" onclick="showTheme('cien','caminho-do-lixo')">🚛 O Caminho do Lixo</button>
+        <button class="theme-tab-btn cien-tab" onclick="showTheme('cien','ciclo-da-agua')">💧 O Ciclo da Água</button>
+        <button class="theme-tab-btn cien-tab" onclick="showTheme('cien','agua-cidades-consumo')">🏙️ Água, Cidades e Consumo Consciente</button>
       </div>
 
       <!-- TEMA: O Lixo que Produzimos -->
@@ -1475,6 +1479,116 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qua</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">📊 Gráfico</span></div></div>
           <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qui</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">⭐ 5Rs</span></div></div>
           <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Sex</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: O Ciclo da Água -->
+      <div class="theme-content" id="theme-cien-ciclo-da-agua">
+        <div class="hq-card">
+          <img class="hq-img" src="ciencias/ciclo-da-agua/hq-ciclo-da-agua.png" alt="HQ O Ciclo da Água">
+          <div class="hq-caption"><span>📖</span><span>A aventura de Bia pelo ciclo da água — evaporação, condensação, precipitação e infiltração explicados com personagens e humor.<span style="display:block;margin-top:4px;font-size:0.8em;opacity:0.75;">📚 Livro didático de Ciências · pp. 62–67 · Cap. 7 — "A água circula pelos ambientes"</span></span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card cien" href="ciencias/ciclo-da-agua/quiz-ciclo-da-agua.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre evaporação, condensação, precipitação, infiltração e distribuição da água no planeta.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card cien" href="ciencias/ciclo-da-agua/rotulador-ciclo-da-agua.html" target="_blank">
+            <div class="act-icon">🏷️</div>
+            <div class="act-title">Rotulador do Ciclo</div>
+            <div class="act-desc">Arraste os nomes das etapas para as posições corretas no diagrama do ciclo da água.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card cien" href="ciencias/ciclo-da-agua/ordena-etapas-ciclo-da-agua.html" target="_blank">
+            <div class="act-icon">🔢</div>
+            <div class="act-title">Ordenador de Etapas</div>
+            <div class="act-desc">Organize as 6 etapas do ciclo da água na sequência correta arrastando os cards.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card cien" href="ciencias/ciclo-da-agua/noticia-ciclo-da-agua.html" target="_blank">
+            <div class="act-icon">📰</div>
+            <div class="act-title">Notícia Científica</div>
+            <div class="act-desc">Escreva uma notícia sobre a importância do ciclo da água usando os termos técnicos corretos.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Criação</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card cien" href="ciencias/ciclo-da-agua/mapa-mental-ciclo-da-agua.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do ciclo da água. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Seg</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">💧 Leia a HQ</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Ter</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">❓ Quiz Interativo</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qua</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🏷️ Rotulador do Ciclo</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qui</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🔢 Ordenador de Etapas</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Sex</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">📰 Notícia</span><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: Água, Cidades e Consumo Consciente -->
+      <div class="theme-content" id="theme-cien-agua-cidades-consumo">
+        <div class="hq-card">
+          <img class="hq-img" src="ciencias/agua-cidades-consumo/hq-agua-cidades-consumo.png" alt="HQ Água, Cidades e Consumo Consciente">
+          <div class="hq-caption"><span>📖</span><span>Bia descobre como a urbanização afeta a água — ilha de calor, impermeabilização e soluções para o consumo consciente nas cidades.<span style="display:block;margin-top:4px;font-size:0.8em;opacity:0.75;">📚 Livro didático de Ciências · pp. 68–83 · Cap. 7 — "A água circula pelos ambientes"</span></span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card cien" href="ciencias/agua-cidades-consumo/quiz-agua-cidades-consumo.html" target="_blank">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre ilha de calor, impermeabilização, consumo de água e soluções urbanas.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card cien" href="ciencias/agua-cidades-consumo/fluxo-causal-agua-cidades.html" target="_blank">
+            <div class="act-icon">🔗</div>
+            <div class="act-title">Diagrama de Causas e Efeitos</div>
+            <div class="act-desc">Ligue causas, processos e efeitos das ameaças à qualidade da água nas cidades.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card cien" href="ciencias/agua-cidades-consumo/classificador-agua-cidades-consumo.html" target="_blank">
+            <div class="act-icon">⚖️</div>
+            <div class="act-title">Classificador Ambiental</div>
+            <div class="act-desc">Arraste cada ação para "Prejudica" ou "Protege" a água e o ambiente.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card cien" href="ciencias/agua-cidades-consumo/noticia-agua-cidades.html" target="_blank">
+            <div class="act-icon">📰</div>
+            <div class="act-title">Notícia Científica</div>
+            <div class="act-desc">Escreva uma notícia sobre poluição e desmatamento de rios usando os termos técnicos do livro.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Criação</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card cien" href="ciencias/agua-cidades-consumo/mapa-mental-agua-cidades-consumo.html" target="_blank">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-cien">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Seg</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🏙️ Leia a HQ</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Ter</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">❓ Quiz Interativo</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qua</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🔗 Diagrama de Causas e Efeitos</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Qui</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">⚖️ Classificador Ambiental</span></div></div>
+          <div class="sched-row"><span class="sched-day" style="color:var(--cien-color)">Sex</span><div class="sched-acts"><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">📰 Notícia</span><span class="sched-act" style="background:var(--cien-bg);color:var(--cien-color)">🗺️ Mapa Mental</span></div></div>
         </div>
       </div>
 

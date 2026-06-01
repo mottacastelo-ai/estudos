@@ -228,16 +228,18 @@ Ensinar a **identificar quando usar mdc vs mmc** em problemas contextualizados. 
 
 Regra-chave: **dividir em grupos → Máx (mdc)**; **coincidência / menor múltiplo comum → Mín (mmc)**.
 
+**Novo:** demonstração passo a passo do cálculo de **mmc por fatoração** com números não-triviais — `mmc(12, 18) = 36` — mostrando que o caso geral exige fatoração, não apenas multiplicação direta.
+
 ### Estrutura da página
-5 painéis: pergunta-chave, problema da quadra (mdc), solução do Máx, problema dos voos (mmc), solução do Mín + regra final.
+6 painéis: pergunta-chave, problema da quadra (mdc), solução do Máx, problema dos voos (mmc), **cálculo de mmc(12,18) por fatoração (novo)**, regra final.
 
 ### Termos do livro presentes
-mdc, mmc, intersecção, divisão em partes iguais, múltiplos comuns.
+mdc, mmc, fatoração, fatores primos, maiores expoentes, intersecção, divisão em partes iguais, múltiplos comuns, primos entre si.
 
 ### Prompt da Página 3
 
 ```prompt
-Comic book page, 5 panels, friendly educational cartoon style, vibrant emerald and mint green on light mint background (#ECFDF5).
+Comic book page, 6 panels, friendly educational cartoon style, vibrant emerald and mint green on light mint background (#ECFDF5).
 
 PANEL 1 (wide, top): Bia holds two problem cards. Máx and Mín stand behind her, both raising hands eagerly.
 Card 1 (Portuguese, on left): "Uma quadra de vôlei mede 1440 mm × 840 mm. Qual o MAIOR tamanho de trama (lado de quadrado) para cobrir sem sobras?"
@@ -259,15 +261,27 @@ PANEL 4 (medium, left): Visual of a calendar with two airplanes circling — Pil
 Caption (Portuguese, bold): "Problema 2 — Coincidência de eventos cíclicos."
 Speech bubble Mín (Portuguese, excited): "Esse é meu! Quando o problema pede 'quando dois eventos COINCIDEM de novo' ou 'o MENOR número múltiplo de vários', é mmc!"
 
-PANEL 5 (wide, bottom): Final scene — Máx and Mín hold up a giant golden rule scroll between them. Bia writes the rule in her notebook.
+PANEL 5 (large, center): Mín at the blackboard solving mmc(12, 18) step by step. Each step is numbered with a small green circle (1, 2, 3, 4).
+Blackboard content:
+"① Fatorar cada número:"
+"   12 = 2² × 3"
+"   18 = 2 × 3²"
+"② Pegar TODOS os fatores (comuns e não-comuns): 2 e 3"
+"③ Usar o MAIOR expoente de cada: 2² e 3²"
+"④ mmc(12, 18) = 2² × 3² = 4 × 9 = 36"
+The number 36 glows bright green. A small verification badge shows: "36 ÷ 12 = 3 ✓  •  36 ÷ 18 = 2 ✓"
+Speech bubble Mín (Portuguese, explaining): "Atenção! 12 e 18 NÃO são primos entre si — então preciso fatorar para achar o mmc!"
+Speech bubble Bia (Portuguese, writing in notebook): "Maiores expoentes... anotei!"
+
+PANEL 6 (wide, bottom): Final scene — Máx and Mín hold up a giant golden rule scroll between them. Bia gives a thumbs up.
 Scroll content (Portuguese, large bold text):
 "REGRA DOS IRMÃOS
-• Dividir em grupos iguais sem sobras → Máx (mdc)
-• Coincidência de eventos / menor comum → Mín (mmc)"
-Speech bubble Mín (Portuguese): "mmc(4, 5) = 4 × 5 = 20 — porque 4 e 5 são primos entre si!"
-Speech bubble Bia (Portuguese): "Agora ficou claro!"
+• Dividir em grupos iguais sem sobras → Máx (mdc) — fatores COMUNS, menores expoentes
+• Coincidir eventos / menor comum → Mín (mmc) — TODOS os fatores, maiores expoentes"
+Speech bubble Máx (Portuguese): "Se os números são primos entre si, mmc = produto direto. Senão, fatore!"
+Speech bubble Bia (Portuguese): "Agora sim ficou claro!"
 
-All speech bubbles in Brazilian Portuguese. Math notation (²,³,⁵, ×, mdc, mmc) clean and bold. No English text inside panels.
+All speech bubbles in Brazilian Portuguese. Math notation (², ×, ÷, mdc, mmc) clean and bold. No English text inside panels.
 ```
 
 ---

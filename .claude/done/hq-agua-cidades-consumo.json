@@ -1,0 +1,14 @@
+{
+  "slug": "agua-cidades-consumo",
+  "disciplina": "ciencias",
+  "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "prompt_path": "ciencias/agua-cidades-consumo/hq-agua-cidades-consumo-prompt.md",
+  "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "output_dir": "ciencias/agua-cidades-consumo",
+  "expected_outputs": [
+    "hq-agua-cidades-consumo-pg1.png",
+    "hq-agua-cidades-consumo-pg2.png",
+    "hq-agua-cidades-consumo-pg3.png",
+    "hq-agua-cidades-consumo-pg4.png"
+  ]
+}

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sabendo.app — Portal de Estudos</title>
+  <meta name="description" content="O portal de estudos personalizado para crianças. Atividades interativas, HQs educativas e muito mais para André (5º ano) e Lis (2º ano)." />
+  <meta property="og:title" content="sabendo.app — Portal de Estudos" />
+  <meta property="og:description" content="O portal de estudos personalizado para crianças. 25 temas e 109 atividades para o 5º ano e portal em expansão para o 2º ano." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sabendo.app" />
+  <link rel="canonical" href="https://sabendo.app" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --port-primary: #7C3AED;
+      --port-light: #A78BFA;
+      --port-bg: #F3F0FF;
+      --mat-primary: #059669;
+      --mat-light: #34D399;
+      --mat-bg: #ECFDF5;
+      --cien-primary: #0284C7;
+      --cien-light: #38BDF8;
+      --cien-bg: #F0F9FF;
+      --hist-primary: #B45309;
+      --hist-light: #F59E0B;
+      --hist-bg: #FFFBEB;
+      --geo-primary: #15803D;
+      --geo-light: #4ADE80;
+      --geo-bg: #F0FDF4;
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: "Baloo 2", cursive;
+      background: #080C18;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ── Stars background ── */
+    .stars-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(ellipse at 60% 30%, #0F1829 0%, #080C18 70%);
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite var(--delay, 0s);
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.8); }
+      50% { opacity: var(--max-opacity, 0.7); transform: scale(1); }
+    }
+
+    .star:nth-child(1)  { width:2px; height:2px; top:5%;  left:10%; --dur:2.1s; --delay:0s;    --max-opacity:0.6; }
+    .star:nth-child(2)  { width:3px; height:3px; top:12%; left:25%; --dur:3.4s; --delay:0.5s;  --max-opacity:0.8; }
+    .star:nth-child(3)  { width:1px; height:1px; top:8%;  left:42%; --dur:2.8s; --delay:1.1s;  --max-opacity:0.5; }
+    .star:nth-child(4)  { width:2px; height:2px; top:20%; left:58%; --dur:4.2s; --delay:0.3s;  --max-opacity:0.7; }
+    .star:nth-child(5)  { width:3px; height:3px; top:15%; left:75%; --dur:1.9s; --delay:1.8s;  --max-opacity:0.9; }
+    .star:nth-child(6)  { width:2px; height:2px; top:3%;  left:88%; --dur:3.1s; --delay:0.7s;  --max-opacity:0.6; }
+    .star:nth-child(7)  { width:1px; height:1px; top:30%; left:5%;  --dur:2.5s; --delay:2.2s;  --max-opacity:0.5; }
+    .star:nth-child(8)  { width:3px; height:3px; top:38%; left:18%; --dur:3.8s; --delay:0.9s;  --max-opacity:0.8; }
+    .star:nth-child(9)  { width:2px; height:2px; top:45%; left:35%; --dur:2.3s; --delay:1.5s;  --max-opacity:0.6; }
+    .star:nth-child(10) { width:1px; height:1px; top:42%; left:52%; --dur:4.0s; --delay:0.2s;  --max-opacity:0.4; }
+    .star:nth-child(11) { width:2px; height:2px; top:50%; left:68%; --dur:2.7s; --delay:1.3s;  --max-opacity:0.7; }
+    .star:nth-child(12) { width:3px; height:3px; top:35%; left:82%; --dur:3.3s; --delay:2.0s;  --max-opacity:0.9; }
+    .star:nth-child(13) { width:1px; height:1px; top:55%; left:92%; --dur:1.8s; --delay:0.6s;  --max-opacity:0.5; }
+    .star:nth-child(14) { width:2px; height:2px; top:62%; left:8%;  --dur:3.6s; --delay:1.7s;  --max-opacity:0.6; }
+    .star:nth-child(15) { width:3px; height:3px; top:70%; left:22%; --dur:2.2s; --delay:0.4s;  --max-opacity:0.8; }
+    .star:nth-child(16) { width:1px; height:1px; top:68%; left:40%; --dur:4.5s; --delay:1.0s;  --max-opacity:0.4; }
+    .star:nth-child(17) { width:2px; height:2px; top:75%; left:55%; --dur:2.9s; --delay:2.4s;  --max-opacity:0.7; }
+    .star:nth-child(18) { width:3px; height:3px; top:80%; left:70%; --dur:3.5s; --delay:0.8s;  --max-opacity:0.9; }
+    .star:nth-child(19) { width:1px; height:1px; top:85%; left:85%; --dur:2.0s; --delay:1.6s;  --max-opacity:0.5; }
+    .star:nth-child(20) { width:2px; height:2px; top:90%; left:95%; --dur:3.9s; --delay:0.1s;  --max-opacity:0.6; }
+    .star:nth-child(21) { width:2px; height:2px; top:25%; left:95%; --dur:2.4s; --delay:1.2s;  --max-opacity:0.7; }
+    .star:nth-child(22) { width:1px; height:1px; top:60%; left:30%; --dur:3.2s; --delay:2.6s;  --max-opacity:0.5; }
+    .star:nth-child(23) { width:3px; height:3px; top:72%; left:48%; --dur:1.7s; --delay:0.5s;  --max-opacity:0.8; }
+    .star:nth-child(24) { width:2px; height:2px; top:18%; left:65%; --dur:4.3s; --delay:1.9s;  --max-opacity:0.6; }
+    .star:nth-child(25) { width:1px; height:1px; top:92%; left:15%; --dur:2.6s; --delay:3.0s;  --max-opacity:0.4; }
+
+    /* ── Layout wrapper ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      padding: 56px 24px 40px;
+    }
+
+    .logo {
+      font-family: "Space Mono", monospace;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #7C3AED, #0284C7, #059669);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      display: inline-block;
+    }
+
+    .tagline {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #94A3B8;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 0 24px 64px;
+    }
+
+    .cards-wrapper {
+      display: flex;
+      gap: 32px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* ── Card ── */
+    .card {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 32px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .card--andre::before {
+      background: linear-gradient(90deg, #7C3AED, #059669, #0284C7, #B45309, #15803D);
+    }
+
+    .card--lis::before {
+      background: linear-gradient(90deg, #7C3AED, #A78BFA, #EC4899, #F472B6);
+    }
+
+    .card--andre:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(5, 150, 105, 0.2), 0 8px 24px rgba(2, 132, 199, 0.15);
+    }
+
+    .card--lis:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(124, 58, 237, 0.25), 0 8px 24px rgba(236, 72, 153, 0.15);
+    }
+
+    /* ── Card header ── */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .card-icon {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+
+    .card-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .card-name {
+      font-family: "Space Mono", monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .card-year--andre {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #34D399;
+      letter-spacing: 0.5px;
+    }
+
+    .card-year--lis {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #A78BFA;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Chips ── */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.3px;
+    }
+
+    .chip--port { background: var(--port-bg); color: var(--port-primary); }
+    .chip--mat  { background: var(--mat-bg);  color: var(--mat-primary);  }
+    .chip--cien { background: var(--cien-bg); color: var(--cien-primary); }
+    .chip--hist { background: var(--hist-bg); color: var(--hist-primary); }
+    .chip--geo  { background: var(--geo-bg);  color: var(--geo-primary);  }
+
+    /* ── Stats ── */
+    .stats {
+      font-size: 0.85rem;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .stats-em-expansao {
+      font-size: 0.85rem;
+      color: #64748B;
+      font-style: italic;
+    }
+
+    /* ── Divider ── */
+    .card-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 0 -4px;
+    }
+
+    /* ── Button ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-family: "Baloo 2", cursive;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: auto;
+    }
+
+    .btn:hover {
+      opacity: 0.92;
+      transform: scale(1.02);
+    }
+
+    .btn--andre {
+      background: linear-gradient(135deg, #059669, #0284C7);
+    }
+
+    .btn--lis {
+      background: linear-gradient(135deg, #7C3AED, #EC4899);
+    }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      transform: scale(0);
+      animation: ripple-anim 0.6s linear;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-anim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.8rem;
+      color: #334155;
+      font-family: "Space Mono", monospace;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 639px) {
+      .cards-wrapper {
+        flex-direction: column;
+      }
+
+      .card {
+        width: 100%;
+      }
+
+      header {
+        padding: 40px 20px 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Stars background -->
+<div class="stars-bg" aria-hidden="true">
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+</div>
+
+<div class="page">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">sabendo.app</div>
+    <p class="tagline">O portal de estudos personalizado</p>
+  </header>
+
+  <!-- Hero -->
+  <main class="hero">
+    <div class="cards-wrapper">
+
+      <!-- Card André -->
+      <article class="card card--andre">
+        <div class="card-header">
+          <span class="card-icon" aria-hidden="true">🎓</span>
+          <div class="card-title-block">
+            <span class="card-name">André</span>
+            <span class="card-year--andre">5º ANO</span>
+          </div>
+        </div>
+
+        <div class="chips">
+          <span class="chip chip--port">Português</span>
+          <span class="chip chip--mat">Matemática</span>
+          <span class="chip chip--cien">Ciências</span>
+          <span class="chip chip--hist">História</span>
+          <span class="chip chip--geo">Geografia</span>
+        </div>
+
+        <p class="stats">25 temas · 109 atividades</p>
+
+        <div class="card-divider"></div>
+
+        <a href="https://andre.sabendo.app" class="btn btn--andre" id="btn-andre">
+          Acessar Portal →
+        </a>
+      </article>
+
+      <!-- Card Lis -->
+      <article class="card card--lis">
+        <div class="card-header">
+          <span class="card-icon" aria-hidden="true">⭐</span>
+          <div class="card-title-block">
+            <span class="card-name">Lis</span>
+            <span class="card-year--lis">2º ANO</span>
+          </div>
+        </div>
+
+        <div class="chips">
+          <span class="chip chip--port">Português</span>
+          <span class="chip chip--mat">Matemática</span>
+          <span class="chip chip--cien">Ciências</span>
+          <span class="chip chip--hist">História</span>
+          <span class="chip chip--geo">Geografia</span>
+        </div>
+
+        <p class="stats-em-expansao">Em expansão</p>
+
+        <div class="card-divider"></div>
+
+        <a href="https://lis.sabendo.app" class="btn btn--lis" id="btn-lis">
+          Acessar Portal →
+        </a>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 sabendo.app</p>
+  </footer>
+
+</div>
+
+<script>
+  // Ripple effect on buttons
+  document.querySelectorAll('.btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      var rect = btn.getBoundingClientRect();
+      var size = Math.max(rect.width, rect.height);
+      var x = e.clientX - rect.left - size / 2;
+      var y = e.clientY - rect.top - size / 2;
+      var ripple = document.createElement('span');
+      ripple.classList.add('ripple');
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      btn.appendChild(ripple);
+      setTimeout(function() { ripple.remove(); }, 700);
+    });
+  });
+</script>
+
+</body>
+</html>

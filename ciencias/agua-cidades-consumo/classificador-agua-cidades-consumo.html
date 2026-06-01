@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador — Água, Cidades e Consumo Consciente</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 820px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.1); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 34px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--border); background: var(--cien-bg); line-height: 1.6; }
+.instrucao strong { color: var(--text); }
+.score-bar { display: flex; align-items: center; gap: 12px; padding: 10px 24px; border-bottom: 2px solid var(--border); background: #f8fbff; flex-wrap: wrap; }
+.score-txt { font-size: 13px; font-weight: 800; color: var(--cien); }
+.check-btn { background: var(--cien); color: #fff; border: none; border-radius: 999px; padding: 7px 20px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800; cursor: pointer; margin-left: auto; }
+.check-btn:hover { opacity: .85; }
+.check-btn:disabled { opacity: .4; cursor: default; }
+.reset-btn { background: transparent; color: var(--muted); border: 2px solid var(--border); border-radius: 999px; padding: 6px 16px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; cursor: pointer; }
+.reset-btn:hover { border-color: var(--cien-light); color: var(--cien); }
+.game-area { padding: 20px 20px 8px; }
+/* Item pool */
+.pool-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; margin-bottom: 10px; }
+.pool { display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; padding: 10px; border-radius: var(--radius); border: 2px dashed var(--border); background: var(--cien-bg); margin-bottom: 20px; }
+.drag-item { background: #fff; border: 2px solid var(--border); border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: grab; user-select: none; transition: transform .12s, box-shadow .12s; white-space: nowrap; }
+.drag-item:hover { border-color: var(--cien-light); box-shadow: 0 3px 12px rgba(2,132,199,.15); transform: scale(1.03); }
+.drag-item.dragging { opacity: .5; }
+.drag-item.correct { background: #D1FAE5; border-color: #059669; color: #065F46; cursor: default; }
+.drag-item.wrong { background: #FEE2E2; border-color: #DC2626; color: #991B1B; cursor: default; }
+/* Columns */
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.col-zone { border-radius: var(--radius); border: 2px solid var(--border); overflow: hidden; }
+.col-header { padding: 12px 16px; font-size: 14px; font-weight: 800; }
+.col-header.bad  { background: #FEF2F2; color: #991B1B; border-bottom: 2px solid #FECACA; }
+.col-header.good { background: #ECFDF5; color: #065F46; border-bottom: 2px solid #A7F3D0; }
+.drop-zone { min-height: 120px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; background: #fafafa; }
+.drop-zone.over { background: #E0F2FE; border-radius: 0; }
+/* Feedback final */
+.result-panel { margin: 0 20px 20px; padding: 16px; border-radius: var(--radius); display: none; }
+.result-panel.show { display: block; }
+.result-panel.all-correct { background: #D1FAE5; border: 2px solid #6EE7B7; }
+.result-panel.partial { background: #FEF3C7; border: 2px solid #FCD34D; }
+.result-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.result-msg { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.5; }
+@media (max-width: 600px) {
+  .columns { grid-template-columns: 1fr; }
+  .drag-item { font-size: 12px; padding: 7px 13px; }
+  .game-area { padding: 14px 12px 8px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">💧🏙️</div>
+      <div><h1>Classificador Temático</h1><p>Água, Cidades e Consumo Consciente</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Arraste cada ação ou situação para a categoria correta — <strong>Prejudica</strong> ou <strong>Protege</strong> a água e o ambiente. Quando terminar, clique em <strong>Verificar</strong>.
+    </div>
+    <div class="score-bar">
+      <span class="score-txt" id="score-txt">0 de 12 classificados</span>
+      <button class="reset-btn" id="reset-btn">↺ Recomeçar</button>
+      <button class="check-btn" id="check-btn" disabled>Verificar ✓</button>
+    </div>
+    <div class="game-area">
+      <div class="pool-title">ITENS PARA CLASSIFICAR — arraste para uma das colunas abaixo</div>
+      <div class="pool" id="pool"></div>
+      <div class="columns">
+        <div class="col-zone">
+          <div class="col-header bad">⚠️ Prejudica a água e o ambiente</div>
+          <div class="drop-zone" id="zone-bad" data-zone="bad"></div>
+        </div>
+        <div class="col-zone">
+          <div class="col-header good">✅ Protege a água e o ambiente</div>
+          <div class="drop-zone" id="zone-good" data-zone="good"></div>
+        </div>
+      </div>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-title" id="result-title"></div>
+      <div class="result-msg" id="result-msg"></div>
+    </div>
+  </div>
+</div>
+<script>
+var ITEMS = [
+  { id:'i1',  text:'Tetos verdes nos edifícios',                     cat:'good' },
+  { id:'i2',  text:'Jardins verticais nas fachadas',                  cat:'good' },
+  { id:'i3',  text:'Lançar esgoto nos rios',                          cat:'bad'  },
+  { id:'i4',  text:'Desmatamento às margens dos rios',                cat:'bad'  },
+  { id:'i5',  text:'Plantio de árvores nas calçadas',                 cat:'good' },
+  { id:'i6',  text:'Impermeabilização dos solos com asfalto',         cat:'bad'  },
+  { id:'i7',  text:'Consumo consciente da água',                      cat:'good' },
+  { id:'i8',  text:'Jogar lixo nos rios',                             cat:'bad'  },
+  { id:'i9',  text:'Tratamento de esgoto antes de lançar nos rios',   cat:'good' },
+  { id:'i10', text:'Ocupação irregular de nascentes',                  cat:'bad'  },
+  { id:'i11', text:'Irrigação eficiente na agropecuária',              cat:'good' },
+  { id:'i12', text:'Redução do consumo de carne bovina',              cat:'good' }
+];
+
+var placements = {}; // id -> zone ('pool','bad','good')
+var checked = false;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+
+function buildItems() {
+  var pool = document.getElementById('pool');
+  pool.innerHTML = '';
+  ['zone-bad','zone-good'].forEach(function(z){ document.getElementById(z).innerHTML=''; });
+  placements = {};
+  checked = false;
+  document.getElementById('result-panel').className = 'result-panel';
+  document.getElementById('check-btn').disabled = true;
+  document.getElementById('score-txt').textContent = '0 de 12 classificados';
+
+  shuffle(ITEMS).forEach(function(item) {
+    placements[item.id] = 'pool';
+    var el = createEl(item);
+    pool.appendChild(el);
+  });
+}
+
+function createEl(item) {
+  var el = document.createElement('div');
+  el.className = 'drag-item';
+  el.textContent = item.text;
+  el.id = 'el-' + item.id;
+  el.setAttribute('draggable', 'true');
+  el.dataset.id = item.id;
+
+  // Desktop drag
+  el.addEventListener('dragstart', function(e) {
+    e.dataTransfer.setData('text/plain', item.id);
+    setTimeout(function(){ el.classList.add('dragging'); }, 0);
+  });
+  el.addEventListener('dragend', function() { el.classList.remove('dragging'); });
+
+  // Touch drag
+  var touchStartX, touchStartY, clone = null;
+  el.addEventListener('touchstart', function(e) {
+    if (checked) return;
+    var t = e.touches[0];
+    touchStartX = t.clientX; touchStartY = t.clientY;
+    clone = el.cloneNode(true);
+    clone.style.position = 'fixed'; clone.style.opacity = '.7'; clone.style.pointerEvents = 'none';
+    clone.style.zIndex = '9999'; clone.style.transform = 'scale(1.05)';
+    clone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
+    clone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
+    document.body.appendChild(clone);
+    el.style.opacity = '.4';
+  }, {passive:true});
+  el.addEventListener('touchmove', function(e) {
+    if (!clone) return;
+    var t = e.touches[0];
+    clone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
+    clone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
+    e.preventDefault();
+  }, {passive:false});
+  el.addEventListener('touchend', function(e) {
+    el.style.opacity = '1';
+    if (!clone) return;
+    var t = e.changedTouches[0];
+    clone.remove(); clone = null;
+    var target = document.elementFromPoint(t.clientX, t.clientY);
+    var zone = target && (target.classList.contains('drop-zone') ? target : target.closest('.drop-zone'));
+    if (zone) {
+      moveToZone(item.id, zone.dataset.zone);
+    }
+  });
+
+  return el;
+}
+
+function moveToZone(itemId, zoneName) {
+  if (checked) return;
+  var el = document.getElementById('el-' + itemId);
+  placements[itemId] = zoneName;
+  if (zoneName === 'pool') {
+    document.getElementById('pool').appendChild(el);
+  } else {
+    document.getElementById('zone-' + zoneName).appendChild(el);
+  }
+  updateScore();
+}
+
+function updateScore() {
+  var n = Object.values(placements).filter(function(v){ return v !== 'pool'; }).length;
+  document.getElementById('score-txt').textContent = n + ' de 12 classificados';
+  document.getElementById('check-btn').disabled = n < 12;
+}
+
+// Drop zones
+['pool','zone-bad','zone-good'].forEach(function(zid) {
+  var el = document.getElementById(zid);
+  el.addEventListener('dragover', function(e){ e.preventDefault(); el.classList.add('over'); });
+  el.addEventListener('dragleave', function(){ el.classList.remove('over'); });
+  el.addEventListener('drop', function(e){
+    e.preventDefault(); el.classList.remove('over');
+    var itemId = e.dataTransfer.getData('text/plain');
+    var zoneName = zid === 'pool' ? 'pool' : el.dataset.zone;
+    moveToZone(itemId, zoneName);
+  });
+});
+
+document.getElementById('check-btn').addEventListener('click', function() {
+  checked = true;
+  var correct = 0;
+  ITEMS.forEach(function(item) {
+    var el = document.getElementById('el-' + item.id);
+    el.setAttribute('draggable', 'false');
+    if (placements[item.id] === item.cat) {
+      el.classList.add('correct'); correct++;
+    } else {
+      el.classList.add('wrong');
+    }
+  });
+  var rp = document.getElementById('result-panel');
+  if (correct === 12) {
+    rp.className = 'result-panel all-correct show';
+    document.getElementById('result-title').textContent = '🎉 Perfeito! 12 de 12 corretos!';
+    document.getElementById('result-msg').textContent = 'Você sabe distinguir quais ações prejudicam e quais protegem a qualidade da água e o ambiente. Práticas como tetos verdes, jardins verticais, tratamento de esgoto e consumo consciente da água são fundamentais para cidades sustentáveis!';
+  } else {
+    rp.className = 'result-panel partial show';
+    document.getElementById('result-title').textContent = '✓ ' + correct + ' de 12 corretos';
+    document.getElementById('result-msg').textContent = 'Os itens em vermelho foram classificados de forma errada. Lembre-se: ameaças à qualidade da água incluem poluição, destruição de mananciais e impermeabilização dos solos. As soluções incluem tetos verdes, jardins verticais e consumo consciente da água. Tente novamente!';
+  }
+});
+
+document.getElementById('reset-btn').addEventListener('click', buildItems);
+
+buildItems();
+</script>
+</body>
+</html>

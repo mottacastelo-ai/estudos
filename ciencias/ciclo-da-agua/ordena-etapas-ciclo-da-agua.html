@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordenador de Etapas — O Ciclo da Água</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.12); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--border); background: var(--cien-bg); line-height: 1.6; }
+.instrucao strong { color: var(--text); }
+
+.sort-area { padding: 20px 24px; display: flex; flex-direction: column; gap: 10px; }
+
+.step-card {
+  background: var(--cien-bg);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow .15s, border-color .15s, transform .12s;
+  touch-action: none;
+  position: relative;
+}
+.step-card:active { cursor: grabbing; }
+.step-card.dragging-src { opacity: .4; border-color: var(--cien-light); }
+.step-card.drag-over { border-color: var(--cien); background: #e0f2fe; transform: scale(1.01); }
+.step-card.correct { border-color: #16A34A; background: #DCFCE7; }
+.step-card.wrong   { border-color: #DC2626; background: #FEE2E2; animation: shake .35s; }
+.step-card.locked  { cursor: default; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--cien); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700;
+  flex-shrink: 0;
+}
+.step-card.correct .step-num { background: #16A34A; }
+.step-card.wrong   .step-num { background: #DC2626; }
+.step-icon { font-size: 22px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.step-text { font-size: 14px; font-weight: 600; line-height: 1.5; flex: 1; }
+.drag-handle { color: var(--muted); font-size: 18px; flex-shrink: 0; cursor: grab; align-self: center; }
+
+.actions { padding: 0 24px 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.confirm-btn { background: var(--cien); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s; }
+.confirm-btn:hover { background: var(--cien-dark); }
+.confirm-btn:disabled { background: var(--muted); cursor: default; }
+.reset-btn { background: transparent; color: var(--cien); border: 2px solid var(--cien-light); border-radius: 14px; padding: 12px 20px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .15s; }
+.reset-btn:hover { background: var(--cien-bg); }
+
+.feedback-panel { display: none; margin: 0 24px 20px; padding: 16px; border-radius: 16px; }
+.feedback-panel.all-correct { background: #DCFCE7; border: 2px solid #16A34A; color: #14532D; }
+.feedback-panel.some-wrong  { background: #FEF9C3; border: 2px solid #CA8A04; color: #78350F; }
+.feedback-panel h3 { font-size: 16px; margin-bottom: 8px; }
+.feedback-panel p { font-size: 13px; font-weight: 600; line-height: 1.6; }
+
+/* Animação de ciclo completo */
+.cycle-anim { display: none; margin: 0 24px 20px; }
+.cycle-path { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+.cycle-step { background: var(--cien); color: #fff; border-radius: 999px; padding: 4px 14px; font-size: 12px; font-weight: 700; opacity: 0; transition: opacity .4s; }
+.cycle-arrow { color: var(--cien); font-size: 16px; font-weight: 900; opacity: 0; transition: opacity .4s; }
+
+@media (max-width: 480px) {
+  .step-text { font-size: 13px; }
+  .sort-area { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">💧</div>
+      <div><h1>Ordenador de Etapas</h1><p>O Ciclo da Água</p></div>
+      <div class="hbadge">⚡ Praticar (80%)</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> As etapas do ciclo da água estão embaralhadas. Arraste os cards para colocá-los na ordem correta do ciclo. Quando terminar, clique em <strong>Confirmar ordem</strong>.
+    </div>
+
+    <div class="sort-area" id="sort-area"></div>
+
+    <div class="cycle-anim" id="cycle-anim">
+      <div class="cycle-path" id="cycle-path"></div>
+    </div>
+
+    <div class="feedback-panel" id="feedback-panel"></div>
+
+    <div class="actions">
+      <button class="confirm-btn" id="confirm-btn">Confirmar ordem</button>
+      <button class="reset-btn" id="reset-btn">↺ Embaralhar de novo</button>
+    </div>
+  </div>
+</div>
+<script>
+var STEPS = [
+  { id: 1, icon: '☀️', text: 'O Sol aquece a água dos oceanos, rios e lagos — ocorre a evaporação' },
+  { id: 2, icon: '☁️', text: 'O vapor d\'água sobe e encontra regiões mais frias — ocorre a condensação, formando nuvens' },
+  { id: 3, icon: '🌧️', text: 'As nuvens ficam carregadas de gotas e ocorre a precipitação (chuva, neve ou granizo)' },
+  { id: 4, icon: '💦', text: 'A chuva atinge o solo, os mares e oceanos' },
+  { id: 5, icon: '🌱', text: 'Parte da água se infiltra no solo, podendo formar aquíferos ou nascentes' },
+  { id: 6, icon: '🏞️', text: 'A água escoa pela superfície, formando rios e lagos; as plantas absorvem e liberam vapor por transpiração' },
+];
+
+var order = [];
+var confirmed = false;
+var dragSrc = null;
+var touchSrc = null, touchClone = null, touchSrcIdx = null;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function init() {
+  confirmed = false;
+  order = shuffle(STEPS);
+  render();
+  document.getElementById('feedback-panel').style.display = 'none';
+  document.getElementById('cycle-anim').style.display = 'none';
+  document.getElementById('confirm-btn').disabled = false;
+}
+
+function render() {
+  var area = document.getElementById('sort-area');
+  area.innerHTML = '';
+  order.forEach(function(step, i) {
+    var card = document.createElement('div');
+    card.className = 'step-card';
+    card.dataset.idx = i;
+    card.draggable = true;
+    card.innerHTML =
+      '<div class="step-num">' + (i + 1) + '</div>' +
+      '<div class="step-icon">' + step.icon + '</div>' +
+      '<div class="step-text">' + step.text + '</div>' +
+      '<div class="drag-handle">⠿</div>';
+
+    // Desktop drag
+    card.addEventListener('dragstart', function(e) {
+      if (confirmed) return;
+      dragSrc = i;
+      card.classList.add('dragging-src');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', function() {
+      card.classList.remove('dragging-src');
+      dragSrc = null;
+    });
+    card.addEventListener('dragover', function(e) {
+      if (confirmed) return;
+      e.preventDefault();
+      if (dragSrc !== null && dragSrc !== i) card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', function() { card.classList.remove('drag-over'); });
+    card.addEventListener('drop', function(e) {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      if (confirmed || dragSrc === null || dragSrc === i) return;
+      var moved = order.splice(dragSrc, 1)[0];
+      order.splice(i, 0, moved);
+      render();
+    });
+
+    // Touch drag
+    card.addEventListener('touchstart', function(e) {
+      if (confirmed) return;
+      touchSrcIdx = i;
+      touchSrc = card;
+      card.classList.add('dragging-src');
+      var touch = e.touches[0];
+      touchClone = card.cloneNode(true);
+      touchClone.style.cssText = 'position:fixed;z-index:9999;opacity:.85;pointer-events:none;width:' + card.offsetWidth + 'px;border-radius:16px;background:#e0f2fe;border:2px solid #0284C7;padding:14px 16px;font-family:Baloo 2,cursive;';
+      document.body.appendChild(touchClone);
+      moveTouchClone(touch);
+    }, { passive: true });
+
+    card.addEventListener('touchmove', function(e) {
+      if (!touchClone) return;
+      moveTouchClone(e.touches[0]);
+    }, { passive: true });
+
+    card.addEventListener('touchend', function(e) {
+      if (!touchClone) return;
+      document.body.removeChild(touchClone); touchClone = null;
+      if (touchSrc) touchSrc.classList.remove('dragging-src');
+      var touch = e.changedTouches[0];
+      var el = document.elementFromPoint(touch.clientX, touch.clientY);
+      var target = el && (el.classList.contains('step-card') ? el : el.closest('.step-card'));
+      if (target && target !== touchSrc) {
+        var targetIdx = parseInt(target.dataset.idx);
+        var moved = order.splice(touchSrcIdx, 1)[0];
+        order.splice(targetIdx, 0, moved);
+        render();
+      }
+      touchSrc = null; touchSrcIdx = null;
+    });
+
+    area.appendChild(card);
+  });
+}
+
+function moveTouchClone(touch) {
+  if (!touchClone) return;
+  touchClone.style.left = (touch.clientX - 30) + 'px';
+  touchClone.style.top  = (touch.clientY - 30) + 'px';
+}
+
+document.getElementById('confirm-btn').addEventListener('click', function() {
+  if (confirmed) return;
+  confirmed = true;
+  this.disabled = true;
+
+  var cards = document.querySelectorAll('.step-card');
+  var allCorrect = true;
+  order.forEach(function(step, i) {
+    var card = cards[i];
+    card.classList.add('locked');
+    card.draggable = false;
+    if (step.id === i + 1) {
+      card.classList.add('correct');
+    } else {
+      card.classList.add('wrong');
+      allCorrect = false;
+    }
+  });
+
+  // Animação do ciclo
+  showCycleAnim(allCorrect);
+
+  var panel = document.getElementById('feedback-panel');
+  if (allCorrect) {
+    panel.className = 'feedback-panel all-correct';
+    panel.innerHTML = '<h3>🌊 Perfeito! Você ordenou o ciclo da água corretamente!</h3><p>O ciclo recomeça continuamente: o Sol aquece → <strong>evaporação</strong> → <strong>condensação</strong> (nuvens) → <strong>precipitação</strong> → <strong>infiltração</strong> no solo (formando <strong>aquíferos</strong>) → <strong>escoamento superficial</strong> pelos rios → <strong>transpiração das plantas</strong> → e o ciclo continua!</p>';
+  } else {
+    panel.className = 'feedback-panel some-wrong';
+    panel.innerHTML = '<h3>Quase lá! Veja a ordem correta abaixo:</h3><p>1. Evaporação (Sol aquece) → 2. Condensação (nuvens) → 3. Precipitação (chuva/neve/granizo) → 4. Chuva atinge o solo → 5. Infiltração no solo (aquíferos/nascentes) → 6. Escoamento superficial + transpiração das plantas</p>';
+  }
+  panel.style.display = 'block';
+});
+
+function showCycleAnim(show) {
+  if (!show) return;
+  var labels = ['☀️ Evaporação', '☁️ Condensação', '🌧️ Precipitação', '💦 Solo', '🌱 Infiltração', '🏞️ Escoamento'];
+  var path = document.getElementById('cycle-path');
+  path.innerHTML = '';
+  labels.forEach(function(lbl, i) {
+    var span = document.createElement('span');
+    span.className = 'cycle-step';
+    span.textContent = lbl;
+    path.appendChild(span);
+    if (i < labels.length - 1) {
+      var arr = document.createElement('span');
+      arr.className = 'cycle-arrow';
+      arr.textContent = '→';
+      path.appendChild(arr);
+    }
+  });
+  document.getElementById('cycle-anim').style.display = 'block';
+  var items = path.querySelectorAll('.cycle-step, .cycle-arrow');
+  items.forEach(function(el, i) {
+    setTimeout(function() { el.style.opacity = '1'; }, i * 200);
+  });
+}
+
+document.getElementById('reset-btn').addEventListener('click', init);
+
+init();
+</script>
+</body>
+</html>

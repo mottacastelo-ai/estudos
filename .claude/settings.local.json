@@ -11,7 +11,25 @@
       "Bash(python3 -c ' *)",
       "Bash(python -m pip show Pillow)",
       "Bash(python -m pip install Pillow --quiet)",
-      "Bash(grep -E \"\\\\.html$\")"
+      "Bash(grep -E \"\\\\.html$\")",
+      "Bash(ls \"C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos\\\\\" | grep -i canonica)",
+      "mcp__Claude_in_Chrome__computer",
+      "Bash(del \"C:\\\\Users\\\\wizar\\\\.codex\\\\sessions\\\\2026\\\\05\\\\25\\\\rollout-2026-05-25T23-08-43-019e620a-9ebf-7301-9ec5-22c99b52ddda.jsonl\")",
+      "Bash(rm \"/mnt/c/Users/wizar/.codex/sessions/2026/05/25/rollout-2026-05-25T23-08-43-019e620a-9ebf-7301-9ec5-22c99b52ddda.jsonl\" && echo \"Deletado\" || echo \"Erro\")",
+      "Bash(python -c ' *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos\\\\ciencias\\\\ciclo-da-agua\")",
+      "Bash(Out-Null)",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos\\\\ciencias\\\\ciclo-da-agua\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos\\\\ciencias\" -Directory)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos\\\\.claude\\\\pending\" \"C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos\\\\.claude\\\\done\" \"C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos\\\\.claude\\\\error\" 2>/dev/null; echo \"pastas ok\")",
+      "Bash([ -f \"$DONE\" ])",
+      "Bash(exit 0)",
+      "Bash([ -f \"$ERROR\" ])",
+      "Bash(exit 1)",
+      "Bash(grep -n \"pág\\\\|página\\\\|livro\\\\|p\\\\. [0-9]\" \"C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos-2ano\\\\index.html\" | head -20)"
     ]
   }
 }

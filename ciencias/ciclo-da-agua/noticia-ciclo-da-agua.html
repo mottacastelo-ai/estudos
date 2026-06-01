@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notícia Científica — O Ciclo da Água</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cien: #0284C7; --cien-light: #38BDF8; --cien-bg: #F0F9FF;
+  --cien-dark: #0C4A6E; --border: #BAE6FD;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cien); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(2,132,199,.12); }
+.card-header { background: linear-gradient(135deg, #0C4A6E, #0284C7 60%, #38BDF8); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--border); background: var(--cien-bg); line-height: 1.6; }
+.instrucao strong { color: var(--text); }
+
+/* Jornal / template */
+.newspaper { padding: 20px 24px; }
+.newspaper-head { text-align: center; border-bottom: 3px double var(--cien); padding-bottom: 10px; margin-bottom: 16px; }
+.newspaper-name { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--cien-dark); letter-spacing: .04em; }
+.newspaper-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+.field-block { margin-bottom: 18px; }
+.field-label { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700; color: var(--cien); letter-spacing: .08em; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+.field-hint  { font-size: 10px; color: var(--muted); font-weight: 600; font-family: "Baloo 2", cursive; }
+.field-block input, .field-block textarea {
+  width: 100%; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600;
+  border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px;
+  color: var(--text); background: var(--cien-bg); resize: vertical; outline: none;
+  transition: border-color .15s;
+}
+.field-block input:focus, .field-block textarea:focus { border-color: var(--cien); }
+.field-block textarea { min-height: 80px; }
+#corpo { min-height: 130px; }
+.word-count { font-size: 11px; color: var(--muted); font-weight: 700; text-align: right; margin-top: 4px; }
+
+/* Validação de termos */
+.revisar-btn { background: var(--cien); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s; }
+.revisar-btn:hover { background: var(--cien-dark); }
+.print-btn { background: transparent; color: var(--cien); border: 2px solid var(--cien-light); border-radius: 14px; padding: 12px 20px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; cursor: pointer; display: none; }
+.print-btn:hover { background: var(--cien-bg); }
+
+.actions { padding: 0 24px 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+.result-panel { display: none; margin: 0 24px 20px; padding: 16px; border-radius: 16px; border: 2px solid var(--border); }
+.result-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--cien-dark); letter-spacing: .06em; margin-bottom: 10px; }
+.terms-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.term-tag { padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.term-tag.found { background: #DCFCE7; color: #14532D; border: 1.5px solid #16A34A; }
+.term-tag.missing { background: #FEE2E2; color: #7F1D1D; border: 1.5px solid #DC2626; }
+.result-msg { font-size: 14px; font-weight: 700; line-height: 1.6; }
+.result-msg.great { color: #14532D; }
+.result-msg.partial { color: #78350F; }
+.result-msg.fail { color: #7F1D1D; }
+.score-chips { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.chip { padding: 3px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+.chip-ok { background: #DCFCE7; color: #14532D; }
+.chip-miss { background: #FEE2E2; color: #7F1D1D; }
+.chip-body { background: var(--cien-bg); color: var(--cien); border: 1.5px solid var(--cien-light); }
+
+@media (max-width: 480px) {
+  .newspaper-name { font-size: 14px; }
+  .field-block input, .field-block textarea { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">💧</div>
+      <div><h1>Notícia Científica</h1><p>O Ciclo da Água</p></div>
+      <div class="hbadge">🏆 Ensinar (90%)</div>
+    </div>
+    <div class="instrucao">
+      <strong>Missão:</strong> Você é repórter científico! Escreva uma notícia sobre a importância do ciclo da água. Use os campos abaixo. Ao clicar em <strong>Revisar notícia</strong>, o sistema verifica se você usou os termos técnicos corretos.
+    </div>
+
+    <div class="newspaper">
+      <div class="newspaper-head">
+        <div class="newspaper-name">🌊 JORNAL DA CIÊNCIA — 5º ANO</div>
+        <div class="newspaper-sub">Edição especial: Recursos Naturais da Terra</div>
+      </div>
+
+      <div class="field-block">
+        <div class="field-label">
+          <span>TÍTULO DA NOTÍCIA</span>
+          <span class="field-hint">Uma chamada impactante sobre água ou ciclo</span>
+        </div>
+        <input type="text" id="titulo" placeholder="Ex.: O ciclo da água: o segredo da vida no planeta!" maxlength="120">
+      </div>
+
+      <div class="field-block">
+        <div class="field-label">
+          <span>LEAD — apresentação</span>
+          <span class="field-hint">Quem? O quê? Onde? Quando? (2–3 frases)</span>
+        </div>
+        <textarea id="lead" placeholder="Ex.: Cientistas lembram que o ciclo da água é essencial para a vida na Terra. O processo ocorre continuamente em oceanos, rios e na atmosfera..."></textarea>
+      </div>
+
+      <div class="field-block">
+        <div class="field-label">
+          <span>CORPO — explicação científica</span>
+          <span class="field-hint">Explique pelo menos 2 etapas usando os termos técnicos (mín. 50 palavras)</span>
+        </div>
+        <textarea id="corpo" placeholder="Use os termos: evaporação, condensação, precipitação, infiltração, escoamento superficial, transpiração das plantas, aquífero..."></textarea>
+        <div class="word-count" id="word-count">0 palavras</div>
+      </div>
+
+      <div class="field-block">
+        <div class="field-label">
+          <span>CHAMADA À AÇÃO</span>
+          <span class="field-hint">O que as pessoas podem fazer para cuidar da água?</span>
+        </div>
+        <textarea id="cta" placeholder="Ex.: Por isso, é fundamental que todos economizem água, evitem o desperdício e preservem as nascentes e aquíferos..."></textarea>
+      </div>
+    </div>
+
+    <div class="result-panel" id="result-panel">
+      <div class="result-title">REVISAO DA NOTICIA</div>
+      <div class="score-chips" id="score-chips"></div>
+      <div class="terms-grid" id="terms-grid"></div>
+      <div class="result-msg" id="result-msg"></div>
+    </div>
+
+    <div class="actions">
+      <button class="revisar-btn" id="revisar-btn">Revisar notícia</button>
+      <button class="print-btn" id="print-btn">🖨️ Imprimir / Salvar</button>
+    </div>
+  </div>
+</div>
+<script>
+var TERMOS = [
+  'evaporação',
+  'condensação',
+  'precipitação',
+  'infiltração',
+  'escoamento superficial',
+  'transpiração das plantas',
+  'ciclo da água',
+  'aquífero',
+  'nascente',
+  'água doce',
+  'geleiras',
+  'mudanças de estado físico',
+];
+
+var OBRIGATORIOS = ['evaporação', 'condensação', 'precipitação'];
+var OBRIGATORIO_EXTRA = 1; // pelo menos 1 a mais além dos 3 obrigatórios
+
+// Conta palavras
+document.getElementById('corpo').addEventListener('input', function() {
+  var words = this.value.trim().split(/\s+/).filter(function(w) { return w.length > 0; });
+  document.getElementById('word-count').textContent = words.length + ' palavras' + (words.length < 50 ? ' (mínimo: 50)' : ' ✓');
+});
+
+document.getElementById('revisar-btn').addEventListener('click', function() {
+  var titulo = document.getElementById('titulo').value;
+  var lead   = document.getElementById('lead').value;
+  var corpo  = document.getElementById('corpo').value;
+  var cta    = document.getElementById('cta').value;
+  var full   = (titulo + ' ' + lead + ' ' + corpo + ' ' + cta).toLowerCase();
+
+  // Verifica termos
+  var found = [];
+  var missing = [];
+  TERMOS.forEach(function(t) {
+    if (full.indexOf(t) !== -1) found.push(t);
+    else missing.push(t);
+  });
+
+  var obrigOk = OBRIGATORIOS.filter(function(t) { return found.indexOf(t) !== -1; });
+  var extraOk = found.filter(function(t) { return OBRIGATORIOS.indexOf(t) === -1; }).length;
+
+  // Corpo word count
+  var words = corpo.trim().split(/\s+/).filter(function(w) { return w.length > 0; }).length;
+
+  // Montar resultado
+  var chips = document.getElementById('score-chips');
+  chips.innerHTML =
+    '<span class="chip ' + (obrigOk.length === 3 ? 'chip-ok' : 'chip-miss') + '">' + obrigOk.length + '/3 termos obrigatórios</span>' +
+    '<span class="chip chip-ok">' + extraOk + ' termos extras</span>' +
+    '<span class="chip ' + (words >= 50 ? 'chip-ok' : 'chip-miss') + '">' + words + ' palavras no corpo</span>';
+
+  var grid = document.getElementById('terms-grid');
+  grid.innerHTML = '';
+  found.forEach(function(t) {
+    var span = document.createElement('span');
+    span.className = 'term-tag found';
+    span.textContent = '✓ ' + t;
+    grid.appendChild(span);
+  });
+  missing.forEach(function(t) {
+    var span = document.createElement('span');
+    span.className = 'term-tag missing';
+    span.textContent = '✗ ' + t;
+    grid.appendChild(span);
+  });
+
+  var msg = document.getElementById('result-msg');
+  var pass = obrigOk.length === 3 && extraOk >= OBRIGATORIO_EXTRA && words >= 50;
+  var ok3  = obrigOk.length === 3 && (extraOk >= OBRIGATORIO_EXTRA || words >= 50);
+
+  if (pass) {
+    msg.className = 'result-msg great';
+    msg.innerHTML = '🌊 Excelente notícia! Você usou os termos técnicos corretamente e explicou o ciclo da água de forma científica. Sua notícia está pronta para publicar!';
+    document.getElementById('print-btn').style.display = 'inline-block';
+  } else if (ok3) {
+    msg.className = 'result-msg partial';
+    var hints = [];
+    if (words < 50) hints.push('escreva mais ' + (50 - words) + ' palavras no corpo');
+    if (extraOk < OBRIGATORIO_EXTRA) hints.push('inclua mais um termo técnico além dos 3 obrigatórios');
+    msg.innerHTML = '👍 Bom começo! Para melhorar: ' + hints.join(' e ') + '.';
+  } else {
+    msg.className = 'result-msg fail';
+    var faltam = OBRIGATORIOS.filter(function(t) { return found.indexOf(t) === -1; });
+    msg.innerHTML = '📝 Ainda faltam os termos obrigatórios: <strong>' + faltam.join(', ') + '</strong>. Adicione-os na sua notícia!';
+  }
+
+  document.getElementById('result-panel').style.display = 'block';
+  document.getElementById('result-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+document.getElementById('print-btn').addEventListener('click', function() {
+  window.print();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "slug": "ciclo-da-agua",
+  "disciplina": "ciencias",
+  "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "prompt_path": "ciencias/ciclo-da-agua/hq-ciclo-da-agua-prompt.md",
+  "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "output_dir": "ciencias/ciclo-da-agua",
+  "expected_outputs": [
+    "hq-ciclo-da-agua-pg1.png",
+    "hq-ciclo-da-agua-pg2.png",
+    "hq-ciclo-da-agua-pg3.png",
+    "hq-ciclo-da-agua-pg4.png"
+  ]
+}
