@@ -189,6 +189,11 @@ function createEl(item) {
     }
   });
 
+  el.addEventListener('touchcancel', function() {
+    el.style.opacity = '1';
+    if (clone) { clone.remove(); clone = null; }
+  });
+
   return el;
 }
 

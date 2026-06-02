@@ -184,6 +184,10 @@ function buildPool() {
       }
       draggingId = null;
     });
+    el.addEventListener('touchcancel', () => {
+      const cl = document.getElementById('drag-clone'); if(cl)cl.remove();
+      draggingId = null;
+    });
     pool.appendChild(el);
   });
   renderSlots();
