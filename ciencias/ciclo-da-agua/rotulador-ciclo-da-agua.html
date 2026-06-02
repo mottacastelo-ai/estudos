@@ -320,6 +320,12 @@ document.querySelectorAll('.term').forEach(function(t) {
     if (slot && !slot.dataset.filled) checkDrop(slot, touchEl.dataset.term, touchEl);
     touchEl = null;
   });
+
+  t.addEventListener('touchcancel', function() {
+    if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
+    if (touchEl) touchEl.classList.remove('dragging');
+    touchEl = null;
+  });
 });
 
 function moveTouchClone(touch) {

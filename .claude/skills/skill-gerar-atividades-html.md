@@ -315,12 +315,20 @@ Notebook é o uso principal, mas celular deve ser plenamente navegável. Toda at
 - **Tap targets mínimos de 48×48px** — botões, opções, cards de arrastar.
 - **Scroll vertical apenas** — nunca scroll horizontal; usar `overflow-x: hidden` no body.
 - **Fontes mínimas** — 14px para texto auxiliar, 16px para questões e opções.
-- **Drag-and-drop em mobile** — atividades de arrastar devem usar eventos de touch além dos de mouse:
+- **Drag-and-drop em mobile** — atividades de arrastar devem usar eventos de touch além dos de mouse, e **obrigatoriamente incluir `touchcancel`**:
   ```javascript
-  // Sempre par: mousedown/touchstart, mousemove/touchmove, mouseup/touchend
-  el.addEventListener('mousedown', startDrag);
+  // Sempre trio: touchstart, touchend E touchcancel
   el.addEventListener('touchstart', startDrag, { passive: false });
+  el.addEventListener('touchend', endDrag);
+  el.addEventListener('touchcancel', cancelDrag); // ← OBRIGATÓRIO — limpa clone se SO interromper
+
+  function cancelDrag() {
+    if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
+    if (touchSrc) touchSrc.classList.remove('dragging');
+    touchSrc = null;
+  }
   ```
+  > ⚠️ Sem `touchcancel`, o elemento clone `position:fixed` trava na tela quando o SO interrompe o toque (scroll, notificação, dedo saindo). **Todo drag-and-drop que cria um clone no body DEVE ter `touchcancel`.**
 - **Teclado virtual** — inputs de texto devem ter `font-size: 16px` para evitar zoom automático no iOS.
 
 ### O que nunca fazer

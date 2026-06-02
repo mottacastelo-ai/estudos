@@ -221,6 +221,12 @@ function render() {
       touchSrc = null; touchSrcIdx = null;
     });
 
+    card.addEventListener('touchcancel', function() {
+      if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
+      if (touchSrc) touchSrc.classList.remove('dragging-src');
+      touchSrc = null; touchSrcIdx = null;
+    });
+
     area.appendChild(card);
   });
 }
