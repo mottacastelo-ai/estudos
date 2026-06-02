@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Estudos – 5º Ano</title>
+<title>Portal do André — 5º Ano</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ── Reset & Variables ─────────────────────────────── */
@@ -137,11 +138,12 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 
 /* ── Screens ───────────────────────────────────────── */
 .screen { display: none; }
-.screen.active { display: block; }
+.screen.active { display: block; animation: screenIn 0.15s ease; }
+@keyframes screenIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ── Home screen ───────────────────────────────────── */
 .home-hero {
-  background: linear-gradient(135deg, #2D1B69, #7C3AED 55%, #A78BFA);
+  background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #312E81 100%);
   padding: 56px 40px 52px; color: white;
 }
 .home-hero-badge {
@@ -245,7 +247,11 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .act-card::after { content: "Abrir →"; position: absolute; bottom: 12px; right: 14px; font-size: 11px; font-weight: 800; opacity: 0; transition: opacity .2s; }
 .act-card.port::after { color: var(--port-color); }
 .act-card.mat::after  { color: var(--mat-color); }
+.act-card.port { border-top: 4px solid var(--port-color); }
+.act-card.port::after { color: var(--port-color); }
 .act-card.port:hover { box-shadow: 0 6px 24px rgba(124,58,237,.15); transform: translateY(-3px); border-color: var(--port-light); }
+.act-card.mat { border-top: 4px solid var(--mat-color); }
+.act-card.mat::after  { color: var(--mat-color); }
 .act-card.mat:hover  { box-shadow: 0 6px 24px rgba(5,150,105,.15);  transform: translateY(-3px); border-color: var(--mat-light); }
 .act-card.cien:hover { box-shadow: 0 6px 24px rgba(2,132,199,.15);  transform: translateY(-3px); border-color: var(--cien-light); }
 .act-card.cien { border-top: 4px solid var(--cien-color); }
@@ -378,7 +384,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-geo" onclick="showDisc('geo')">
     <span class="d-icon">🌍</span>
     <span class="d-name">Geografia</span>
-    <span class="d-count">3</span>
+    <span class="d-count">11</span>
   </button>
   <div class="theme-sub" id="sub-geo">
     <button class="theme-link" onclick="showTheme('geo','diversidade-cultural')">🎪 Diversidade Cultural</button>
@@ -389,7 +395,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-hist" onclick="showDisc('hist')">
     <span class="d-icon">📜</span>
     <span class="d-name">História</span>
-    <span class="d-count">3</span>
+    <span class="d-count">11</span>
   </button>
   <div class="theme-sub" id="sub-hist">
     <button class="theme-link" onclick="showTheme('hist','calendarios-povos')">🗓️ Diversos Calendários</button>
@@ -400,7 +406,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-cien" onclick="showDisc('cien')">
     <span class="d-icon">🔬</span>
     <span class="d-name">Ciências</span>
-    <span class="d-count">4</span>
+    <span class="d-count">18</span>
   </button>
   <div class="theme-sub" id="sub-cien">
     <button class="theme-link" onclick="showTheme('cien','lixo-que-produzimos')">🗑️ O Lixo que Produzimos</button>
@@ -411,6 +417,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 
   <div class="sidebar-footer">
     Método ativo de aprendizagem<br>Roediger & Karpicke (2006)
+    <a href="https://sabendo.app" style="display:block;margin-top:10px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:.02em;">← sabendo.app</a>
   </div>
 </aside>
 
