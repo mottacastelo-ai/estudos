@@ -158,6 +158,8 @@ const questions = [
 | `setMode('connect')` no load | `setMode('move')` no load — Mover ativo por padrão |
 | Mais de 10 nós | Máximo 10 nós (exemplos contam para o limite) |
 | `btn-connect` com `class="active"` no HTML inicial | `btn-move` com `class="active"` no HTML inicial |
+| Nó referenciado no SVG do gabarito sem estar em `NODES` | Todo nó visível no SVG do gabarito **deve existir** em `NODES` e em `SHUFFLE` |
+| Par em `GABARITO` usando ID de nó inexistente em `NODES` | Após escrever `GABARITO`, verificar que cada ID referenciado existe em `NODES` |
 
 #### Identificação de padrão correto vs. errado
 

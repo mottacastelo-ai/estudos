@@ -164,15 +164,16 @@ var NODES = [
   {id:'nuv',   label:'Nuvens se formam',               cls:'n-level2'},
   {id:'chuv',  label:'Chuva / neve / granizo',         cls:'n-level2'},
   {id:'aqui',  label:'Aquíferos / nascentes',          cls:'n-level2'},
+  {id:'rios',  label:'Rios e lagos',                   cls:'n-level2'},
 ];
 
 var GABARITO = [
   ['root','evap'],['root','cond'],['root','prec'],['root','infi'],['root','esco'],
   ['evap','sol'],['cond','nuv'],['prec','chuv'],['infi','aqui'],
-  ['esco','nuv'],
+  ['esco','rios'],
 ];
 
-var SHUFFLE = ['nuv','infi','root','chuv','esco','evap','aqui','prec','cond','sol'];
+var SHUFFLE = ['nuv','infi','root','chuv','esco','evap','aqui','prec','cond','sol','rios'];
 
 var stage = document.getElementById('stage');
 var svgEl = document.getElementById('arrows');
