@@ -171,9 +171,14 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 }
 .disc-home-card:hover { box-shadow: 0 8px 28px rgba(124,58,237,.15); transform: translateY(-3px); border-color: var(--port-light); }
 .disc-home-card.mat:hover { border-color: var(--mat-light); box-shadow: 0 8px 28px rgba(5,150,105,.15); }
+.disc-home-card.port { background: linear-gradient(160deg, #F3F0FF 0%, #FAF9FF 100%); border-left: 4px solid var(--port-color); }
+.disc-home-card.mat  { background: linear-gradient(160deg, #ECFDF5 0%, #F9FFFD 100%); border-left: 4px solid var(--mat-color); }
+.disc-home-card.cien { background: linear-gradient(160deg, #F0F9FF 0%, #F9FDFF 100%); border-left: 4px solid var(--cien-color); }
+.disc-home-card.hist { background: linear-gradient(160deg, #FFFBEB 0%, #FFFEF9 100%); border-left: 4px solid var(--hist-color); }
+.disc-home-card.geo  { background: linear-gradient(160deg, #F0FDF4 0%, #F9FFFB 100%); border-left: 4px solid var(--geo-color); }
 .disc-home-card.soon { opacity: .5; cursor: default; }
 .disc-home-card.soon:hover { box-shadow: none; transform: none; border-color: var(--border); }
-.dhc-icon { font-size: 36px; margin-bottom: 12px; }
+.dhc-icon { font-size: 52px; margin-bottom: 14px; }
 .dhc-name { font-family: "Space Mono", monospace; font-size: 17px; margin-bottom: 4px; }
 .dhc-desc { font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 12px; }
 .dhc-chips { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -417,7 +422,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   </div>
 
   <div class="sidebar-footer">
-    Método ativo de aprendizagem<br>Roediger & Karpicke (2006)
+    Aprenda de verdade,<br>não só decore. 💡
     <a href="https://sabendo.app" style="display:block;margin-top:10px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:.02em;">← sabendo.app</a>
   </div>
 </aside>
@@ -430,7 +435,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <div class="home-hero">
       <div class="home-hero-badge">🎓 Portal do André</div>
       <h1>Fala, André! 👋</h1>
-      <p>Atividades e jogos para fixar o conteúdo de cada matéria — baseado no método ativo de aprendizagem</p>
+      <p>Missões e desafios para dominar cada matéria. Escolha e bora! 🚀</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
         <div class="hstat"><span>25</span>temas</div>
@@ -438,9 +443,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       </div>
     </div>
     <div class="home-body">
-      <div class="home-section-title">Escolha uma disciplina</div>
+      <div class="home-section-title">Por onde vai hoje?</div>
       <div class="disc-cards">
-        <button class="disc-home-card" onclick="showDisc('port')">
+        <button class="disc-home-card port" onclick="showDisc('port')">
           <div class="dhc-icon">📝</div>
           <div class="dhc-name">Português</div>
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
