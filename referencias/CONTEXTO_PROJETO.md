@@ -14,6 +14,16 @@ Portal web educacional construído como aplicação de página única (SPA) para
 
 ---
 
+## Ecossistema sabendo.app
+
+| Portal | URL | Repositório |
+|---|---|---|
+| Landing page | https://sabendo.app | sabendo-landing |
+| Portal André (5º ano) | https://andre.sabendo.app | estudos |
+| Portal Lis (2º ano) | https://lis.sabendo.app | estudos-2ano-lis |
+
+---
+
 ## Infraestrutura Técnica
 
 ### Hospedagem & Deploy
@@ -188,6 +198,30 @@ missao / frases / mapa-mental
 - **Cowork** edita `index.html` diretamente e salva todos os arquivos na pasta da disciplina correspondente (`portugues/`, `matematica/`, etc.) — **sem subpastas adicionais dentro do tema, sem ZIPs**
 - O arquivo `hq-[slug].png` **não é colocado pelo Cowork** — Léo o copia manualmente para a pasta do tema após baixar da colagem
 - Fallback Claude.ai: ZIP com `index.html` completo já atualizado + todos os arquivos de atividade
+
+---
+
+## Decisões de Design (sessão 2026-06-02)
+
+- **Home hero:** gradiente neutro dark slate — não vinculado a uma disciplina específica
+- **act-cards:** todas as 5 disciplinas têm `border-top: 4px solid var(--[disc]-color)` para identidade visual consistente
+- **disc-home-cards:** fundo colorido leve com gradiente + borda lateral da cor da disciplina
+- **Linguagem motivacional:** "Por onde vai hoje?", "Missões e desafios", saudação pessoal ao André
+- **Ícones disc-home-cards:** 52px
+- **Transições de tela:** fade 150ms
+- **Favicon:** emoji 🎓 como SVG inline
+
+---
+
+## Arquitetura Futura Planejada
+
+| Componente | Detalhes |
+|---|---|
+| Autenticação | Supabase Auth |
+| Banco de dados | Supabase (PostgreSQL) |
+| Tabelas previstas | `profiles`, `activity_log`, `streaks` |
+| Estado atual | localStorage como base — sem login |
+| Migração | Supabase entra quando o login for implementado |
 
 ---
 

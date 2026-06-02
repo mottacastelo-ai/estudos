@@ -91,6 +91,18 @@ Editar `index.html` para adicionar um novo tema: link na sidebar, conteúdo comp
 </a>
 ```
 
+## Padrões visuais atuais — espelhar ao inserir novos temas
+
+Ao inserir um novo tema, respeitar os padrões visuais vigentes no `index.html`:
+
+### act-cards
+Todos os act-cards devem ter `border-top: 4px solid var(--[disc]-color)` independentemente da disciplina. Verificar que a classe `.act-card.[disc]` já define essa borda; se não definir, adicioná-la no bloco CSS correspondente.
+
+### disc-home-cards
+Os cards de disciplina na home (`disc-home-card`) devem ter fundo colorido com gradiente leve + borda lateral da cor da disciplina. Não inserir cards de disciplina nova com fundo neutro/branco.
+
+---
+
 ## Output JSON (retornar ao orquestrador)
 
 ```json
