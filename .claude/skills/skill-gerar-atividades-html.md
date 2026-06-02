@@ -259,24 +259,34 @@ Viewbox `0 0 700 230`. Layout sugerido para 3 categorias L1:
 - Arrastar ou clicar para reposicionar
 - "Verificar" mostra a ordem correta destacada
 
-**CSS obrigatório para zonas de destino (drop-zone):**
+**CSS obrigatório para zonas de destino (drop-zone) e itens selecionáveis:**
 ```css
+/* Zonas de destino — sempre clickáveis */
 .drop-zone {
-  min-height: 80px;          /* nunca menos — deve acomodar o card arrastado */
-  padding: 12px 16px;        /* espaço interno visível mesmo vazio */
+  min-height: 80px;          /* nunca menos — deve acomodar o card colocado */
+  padding: 12px 16px;
   margin-bottom: 8px;
   border-radius: 12px;
   border: 2px dashed var(--border);
   background: #F9FAFB;
   display: flex; align-items: center;
   position: relative;
+  cursor: pointer;
 }
+/* Items selecionáveis — nunca cursor:grab */
 .drag-card {
   min-height: 56px;          /* cards sempre menores que a drop-zone */
   padding: 10px 16px;
+  cursor: pointer;
+}
+/* Estado selecionado — obrigatório em toda atividade de posicionamento */
+.drag-card.selected {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(5,150,105,.25) !important;
+  transform: scale(1.05);
 }
 ```
-> ⚠️ A `drop-zone` deve ser **sempre maior** que o `drag-card`. Nunca use `min-height` menor que 80px na zona.
 
 ### Complete Lacuna (complete-lacuna-[slug].html)
 
@@ -317,20 +327,43 @@ Notebook é o uso principal, mas celular deve ser plenamente navegável. Toda at
 - **Tap targets mínimos de 48×48px** — botões, opções, cards de arrastar.
 - **Scroll vertical apenas** — nunca scroll horizontal; usar `overflow-x: hidden` no body.
 - **Fontes mínimas** — 14px para texto auxiliar, 16px para questões e opções.
-- **Drag-and-drop em mobile** — atividades de arrastar devem usar eventos de touch além dos de mouse, e **obrigatoriamente incluir `touchcancel`**:
+- **PROIBIDO drag-and-drop** — toda atividade de posicionamento usa **click-to-select + click-to-place**. Nunca usar `touchstart`/`touchmove`/`touchend` para arrastar. Nunca criar clones `position:fixed`. Nunca `cursor: grab`.
   ```javascript
-  // Sempre trio: touchstart, touchend E touchcancel
-  el.addEventListener('touchstart', startDrag, { passive: false });
-  el.addEventListener('touchend', endDrag);
-  el.addEventListener('touchcancel', cancelDrag); // ← OBRIGATÓRIO — limpa clone se SO interromper
+  // Padrão obrigatório: click-select + click-place
+  var selectedId = null; // id do item selecionado
 
-  function cancelDrag() {
-    if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
-    if (touchSrc) touchSrc.classList.remove('dragging');
-    touchSrc = null;
-  }
+  // Cada item clicável:
+  el.addEventListener('click', function(e) {
+    e.stopPropagation(); // impede disparar o handler da zona pai
+    if (locked) return;
+    if (selectedId === item.id) {
+      el.classList.remove('selected');
+      selectedId = null;
+      return;
+    }
+    if (selectedId) {
+      var prev = document.getElementById('el-' + selectedId);
+      if (prev) prev.classList.remove('selected');
+    }
+    selectedId = item.id;
+    el.classList.add('selected');
+  });
+
+  // Cada zona de destino:
+  zoneEl.addEventListener('click', function() {
+    if (locked || !selectedId) return;
+    if (placements[selectedId] === zoneName) {
+      // já está aqui — apenas desselecionar
+      document.getElementById('el-' + selectedId).classList.remove('selected');
+      selectedId = null;
+      return;
+    }
+    moveItem(selectedId, zoneName, zoneEl);
+  });
+
+  // moveItem deve sempre: limpar .selected, setar selectedId = null, mover o elemento
   ```
-  > ⚠️ Sem `touchcancel`, o elemento clone `position:fixed` trava na tela quando o SO interrompe o toque (scroll, notificação, dedo saindo). **Todo drag-and-drop que cria um clone no body DEVE ter `touchcancel`.**
+  > ✅ Funciona em mouse, touch e teclado sem nenhum código extra. Zero clones. Zero `touchcancel`.
 - **Teclado virtual** — inputs de texto devem ter `font-size: 16px` para evitar zoom automático no iOS.
 
 ### O que nunca fazer

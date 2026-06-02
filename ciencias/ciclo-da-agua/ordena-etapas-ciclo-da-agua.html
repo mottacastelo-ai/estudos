@@ -25,43 +25,58 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 .instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--border); background: var(--cien-bg); line-height: 1.6; }
 .instrucao strong { color: var(--text); }
 
-.sort-area { padding: 20px 24px; display: flex; flex-direction: column; gap: 10px; }
-
-.step-card {
-  background: var(--cien-bg);
-  border: 2px solid var(--border);
-  border-radius: 16px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  cursor: grab;
-  user-select: none;
-  transition: box-shadow .15s, border-color .15s, transform .12s;
-  touch-action: none;
-  position: relative;
+/* Seção de slots */
+.section-label {
+  font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .06em; padding: 14px 24px 6px;
 }
-.step-card:active { cursor: grabbing; }
-.step-card.dragging-src { opacity: .4; border-color: var(--cien-light); }
-.step-card.drag-over { border-color: var(--cien); background: #e0f2fe; transform: scale(1.01); }
+
+.slots-area { padding: 0 24px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.slot-empty {
+  border: 2px dashed var(--border); border-radius: 16px;
+  padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+  cursor: pointer; background: #f8fcff; min-height: 58px;
+  transition: border-color .15s, background .15s;
+}
+.slot-empty:hover { border-color: var(--cien-light); background: #e0f2fe; }
+
+/* Card preenchido no slot */
+.step-card {
+  border: 2px solid var(--border); border-radius: 16px;
+  padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px;
+  cursor: pointer; user-select: none;
+  transition: outline .1s, box-shadow .15s;
+  background: var(--cien-bg);
+}
+.step-card:hover { border-color: var(--cien-light); }
 .step-card.correct { border-color: #16A34A; background: #DCFCE7; }
 .step-card.wrong   { border-color: #DC2626; background: #FEE2E2; animation: shake .35s; }
-.step-card.locked  { cursor: default; }
+.step-card.locked  { cursor: default; pointer-events: none; }
+.step-card.selected {
+  outline: 3px solid var(--cien); outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(2,132,199,.2) !important; background: #e0f2fe;
+}
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
 
 .step-num {
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--cien); color: #fff;
+  background: var(--cien); color: #fff; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700;
-  flex-shrink: 0;
 }
 .step-card.correct .step-num { background: #16A34A; }
 .step-card.wrong   .step-num { background: #DC2626; }
+.slot-empty .step-num { background: #BAE6FD; color: var(--cien-dark); }
 .step-icon { font-size: 22px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
 .step-text { font-size: 14px; font-weight: 600; line-height: 1.5; flex: 1; }
-.drag-handle { color: var(--muted); font-size: 18px; flex-shrink: 0; cursor: grab; align-self: center; }
+.slot-hint { font-size: 13px; color: var(--muted); font-weight: 600; }
 
+/* Seção do pool */
+.pool-section { padding: 8px 24px 16px; border-top: 2px dashed var(--border); margin-top: 8px; }
+.pool-label-txt { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; margin-bottom: 10px; }
+.pool-items { display: flex; flex-direction: column; gap: 8px; }
+
+/* Ações */
 .actions { padding: 0 24px 20px; display: flex; gap: 10px; flex-wrap: wrap; }
 .confirm-btn { background: var(--cien); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s; }
 .confirm-btn:hover { background: var(--cien-dark); }
@@ -69,13 +84,14 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 .reset-btn { background: transparent; color: var(--cien); border: 2px solid var(--cien-light); border-radius: 14px; padding: 12px 20px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .15s; }
 .reset-btn:hover { background: var(--cien-bg); }
 
+/* Feedback */
 .feedback-panel { display: none; margin: 0 24px 20px; padding: 16px; border-radius: 16px; }
 .feedback-panel.all-correct { background: #DCFCE7; border: 2px solid #16A34A; color: #14532D; }
 .feedback-panel.some-wrong  { background: #FEF9C3; border: 2px solid #CA8A04; color: #78350F; }
 .feedback-panel h3 { font-size: 16px; margin-bottom: 8px; }
 .feedback-panel p { font-size: 13px; font-weight: 600; line-height: 1.6; }
 
-/* Animação de ciclo completo */
+/* Animação de ciclo */
 .cycle-anim { display: none; margin: 0 24px 20px; }
 .cycle-path { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
 .cycle-step { background: var(--cien); color: #fff; border-radius: 999px; padding: 4px 14px; font-size: 12px; font-weight: 700; opacity: 0; transition: opacity .4s; }
@@ -83,7 +99,8 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 
 @media (max-width: 480px) {
   .step-text { font-size: 13px; }
-  .sort-area { padding: 16px; }
+  .slots-area, .pool-section { padding-left: 16px; padding-right: 16px; }
+  .actions { padding: 0 16px 20px; }
 }
 </style>
 </head>
@@ -97,10 +114,11 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
       <div class="hbadge">⚡ Praticar (80%)</div>
     </div>
     <div class="instrucao">
-      <strong>Como fazer:</strong> As etapas do ciclo da água estão embaralhadas. Arraste os cards para colocá-los na ordem correta do ciclo. Quando terminar, clique em <strong>Confirmar ordem</strong>.
+      <strong>Como fazer:</strong> Toque em uma etapa da lista abaixo para selecioná-la (ficará destacada), depois toque no slot numerado onde ela deve ficar. Toque em uma etapa já colocada para devolvê-la à lista. Quando terminar, clique em <strong>Confirmar ordem</strong>.
     </div>
 
-    <div class="sort-area" id="sort-area"></div>
+    <div class="section-label">SLOTS — clique para colocar a etapa selecionada</div>
+    <div class="slots-area" id="slots-area"></div>
 
     <div class="cycle-anim" id="cycle-anim">
       <div class="cycle-path" id="cycle-path"></div>
@@ -108,8 +126,13 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 
     <div class="feedback-panel" id="feedback-panel"></div>
 
+    <div class="pool-section" id="pool-section">
+      <div class="pool-label-txt">ETAPAS — selecione uma para posicioná-la acima</div>
+      <div class="pool-items" id="pool-items"></div>
+    </div>
+
     <div class="actions">
-      <button class="confirm-btn" id="confirm-btn">Confirmar ordem</button>
+      <button class="confirm-btn" id="confirm-btn" disabled>Confirmar ordem</button>
       <button class="reset-btn" id="reset-btn">↺ Embaralhar de novo</button>
     </div>
   </div>
@@ -124,10 +147,10 @@ var STEPS = [
   { id: 6, icon: '🏞️', text: 'A água escoa pela superfície, formando rios e lagos; as plantas absorvem e liberam vapor por transpiração' },
 ];
 
-var order = [];
+var slots = [null, null, null, null, null, null];
+var pool = [];
+var selectedStepId = null;
 var confirmed = false;
-var dragSrc = null;
-var touchSrc = null, touchClone = null, touchSrcIdx = null;
 
 function shuffle(arr) {
   var a = arr.slice();
@@ -140,101 +163,103 @@ function shuffle(arr) {
 
 function init() {
   confirmed = false;
-  order = shuffle(STEPS);
-  render();
+  selectedStepId = null;
+  slots = [null, null, null, null, null, null];
+  pool = shuffle(STEPS.slice());
+  renderAll();
   document.getElementById('feedback-panel').style.display = 'none';
   document.getElementById('cycle-anim').style.display = 'none';
-  document.getElementById('confirm-btn').disabled = false;
+  document.getElementById('confirm-btn').disabled = true;
 }
 
-function render() {
-  var area = document.getElementById('sort-area');
+function renderAll() {
+  renderSlots();
+  renderPool();
+}
+
+function renderSlots() {
+  var area = document.getElementById('slots-area');
   area.innerHTML = '';
-  order.forEach(function(step, i) {
-    var card = document.createElement('div');
-    card.className = 'step-card';
-    card.dataset.idx = i;
-    card.draggable = true;
-    card.innerHTML =
-      '<div class="step-num">' + (i + 1) + '</div>' +
-      '<div class="step-icon">' + step.icon + '</div>' +
-      '<div class="step-text">' + step.text + '</div>' +
-      '<div class="drag-handle">⠿</div>';
-
-    // Desktop drag
-    card.addEventListener('dragstart', function(e) {
-      if (confirmed) return;
-      dragSrc = i;
-      card.classList.add('dragging-src');
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    card.addEventListener('dragend', function() {
-      card.classList.remove('dragging-src');
-      dragSrc = null;
-    });
-    card.addEventListener('dragover', function(e) {
-      if (confirmed) return;
-      e.preventDefault();
-      if (dragSrc !== null && dragSrc !== i) card.classList.add('drag-over');
-    });
-    card.addEventListener('dragleave', function() { card.classList.remove('drag-over'); });
-    card.addEventListener('drop', function(e) {
-      e.preventDefault();
-      card.classList.remove('drag-over');
-      if (confirmed || dragSrc === null || dragSrc === i) return;
-      var moved = order.splice(dragSrc, 1)[0];
-      order.splice(i, 0, moved);
-      render();
-    });
-
-    // Touch drag
-    card.addEventListener('touchstart', function(e) {
-      if (confirmed) return;
-      touchSrcIdx = i;
-      touchSrc = card;
-      card.classList.add('dragging-src');
-      var touch = e.touches[0];
-      touchClone = card.cloneNode(true);
-      touchClone.style.cssText = 'position:fixed;z-index:9999;opacity:.85;pointer-events:none;width:' + card.offsetWidth + 'px;border-radius:16px;background:#e0f2fe;border:2px solid #0284C7;padding:14px 16px;font-family:Baloo 2,cursive;';
-      document.body.appendChild(touchClone);
-      moveTouchClone(touch);
-    }, { passive: true });
-
-    card.addEventListener('touchmove', function(e) {
-      if (!touchClone) return;
-      moveTouchClone(e.touches[0]);
-    }, { passive: true });
-
-    card.addEventListener('touchend', function(e) {
-      if (!touchClone) return;
-      document.body.removeChild(touchClone); touchClone = null;
-      if (touchSrc) touchSrc.classList.remove('dragging-src');
-      var touch = e.changedTouches[0];
-      var el = document.elementFromPoint(touch.clientX, touch.clientY);
-      var target = el && (el.classList.contains('step-card') ? el : el.closest('.step-card'));
-      if (target && target !== touchSrc) {
-        var targetIdx = parseInt(target.dataset.idx);
-        var moved = order.splice(touchSrcIdx, 1)[0];
-        order.splice(targetIdx, 0, moved);
-        render();
+  for (var i = 0; i < 6; i++) {
+    (function(idx) {
+      var step = slots[idx];
+      var div = document.createElement('div');
+      if (step) {
+        var cls = 'step-card';
+        if (confirmed) cls += step.id === idx + 1 ? ' correct locked' : ' wrong locked';
+        div.className = cls;
+        div.innerHTML =
+          '<div class="step-num">' + (idx + 1) + '</div>' +
+          '<div class="step-icon">' + step.icon + '</div>' +
+          '<div class="step-text">' + step.text + '</div>';
+        if (!confirmed) {
+          div.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (selectedStepId !== null) {
+              // Swap: place selected pool card here, return current to pool
+              var ps = pool.filter(function(x) { return x.id === selectedStepId; })[0];
+              if (ps) {
+                pool.push(slots[idx]);
+                slots[idx] = ps;
+                pool = pool.filter(function(x) { return x.id !== selectedStepId; });
+                selectedStepId = null;
+                renderAll();
+                updateConfirmBtn();
+              }
+            } else {
+              // Return slot card to pool
+              pool.push(slots[idx]);
+              slots[idx] = null;
+              renderAll();
+              updateConfirmBtn();
+            }
+          });
+        }
+      } else {
+        div.className = 'slot-empty';
+        div.innerHTML =
+          '<div class="step-num">' + (idx + 1) + '</div>' +
+          '<div class="slot-hint">Toque para colocar aqui</div>';
+        div.addEventListener('click', function() {
+          if (confirmed || selectedStepId === null) return;
+          var ps = pool.filter(function(x) { return x.id === selectedStepId; })[0];
+          if (!ps) return;
+          slots[idx] = ps;
+          pool = pool.filter(function(x) { return x.id !== selectedStepId; });
+          selectedStepId = null;
+          renderAll();
+          updateConfirmBtn();
+        });
       }
-      touchSrc = null; touchSrcIdx = null;
-    });
-
-    card.addEventListener('touchcancel', function() {
-      if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
-      if (touchSrc) touchSrc.classList.remove('dragging-src');
-      touchSrc = null; touchSrcIdx = null;
-    });
-
-    area.appendChild(card);
-  });
+      area.appendChild(div);
+    })(i);
+  }
 }
 
-function moveTouchClone(touch) {
-  if (!touchClone) return;
-  touchClone.style.left = (touch.clientX - 30) + 'px';
-  touchClone.style.top  = (touch.clientY - 30) + 'px';
+function renderPool() {
+  var poolEl = document.getElementById('pool-items');
+  poolEl.innerHTML = '';
+  pool.forEach(function(step) {
+    var div = document.createElement('div');
+    div.className = 'step-card' + (selectedStepId === step.id ? ' selected' : '');
+    div.innerHTML =
+      '<div class="step-icon">' + step.icon + '</div>' +
+      '<div class="step-text">' + step.text + '</div>';
+    div.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (confirmed) return;
+      selectedStepId = selectedStepId === step.id ? null : step.id;
+      renderPool();
+    });
+    poolEl.appendChild(div);
+  });
+  // Show/hide pool section
+  document.getElementById('pool-section').style.display = pool.length > 0 ? 'block' : 'none';
+}
+
+function updateConfirmBtn() {
+  var allFilled = slots.every(function(s) { return s !== null; });
+  document.getElementById('confirm-btn').disabled = !allFilled || confirmed;
 }
 
 document.getElementById('confirm-btn').addEventListener('click', function() {
@@ -242,21 +267,8 @@ document.getElementById('confirm-btn').addEventListener('click', function() {
   confirmed = true;
   this.disabled = true;
 
-  var cards = document.querySelectorAll('.step-card');
-  var allCorrect = true;
-  order.forEach(function(step, i) {
-    var card = cards[i];
-    card.classList.add('locked');
-    card.draggable = false;
-    if (step.id === i + 1) {
-      card.classList.add('correct');
-    } else {
-      card.classList.add('wrong');
-      allCorrect = false;
-    }
-  });
-
-  // Animação do ciclo
+  var allCorrect = slots.every(function(step, i) { return step && step.id === i + 1; });
+  renderSlots();
   showCycleAnim(allCorrect);
 
   var panel = document.getElementById('feedback-panel');
@@ -265,7 +277,7 @@ document.getElementById('confirm-btn').addEventListener('click', function() {
     panel.innerHTML = '<h3>🌊 Perfeito! Você ordenou o ciclo da água corretamente!</h3><p>O ciclo recomeça continuamente: o Sol aquece → <strong>evaporação</strong> → <strong>condensação</strong> (nuvens) → <strong>precipitação</strong> → <strong>infiltração</strong> no solo (formando <strong>aquíferos</strong>) → <strong>escoamento superficial</strong> pelos rios → <strong>transpiração das plantas</strong> → e o ciclo continua!</p>';
   } else {
     panel.className = 'feedback-panel some-wrong';
-    panel.innerHTML = '<h3>Quase lá! Veja a ordem correta abaixo:</h3><p>1. Evaporação (Sol aquece) → 2. Condensação (nuvens) → 3. Precipitação (chuva/neve/granizo) → 4. Chuva atinge o solo → 5. Infiltração no solo (aquíferos/nascentes) → 6. Escoamento superficial + transpiração das plantas</p>';
+    panel.innerHTML = '<h3>Quase lá! Veja a ordem correta:</h3><p>1. Evaporação (Sol aquece) → 2. Condensação (nuvens) → 3. Precipitação (chuva/neve/granizo) → 4. Chuva atinge o solo → 5. Infiltração no solo (aquíferos/nascentes) → 6. Escoamento superficial + transpiração das plantas</p>';
   }
   panel.style.display = 'block';
 });
@@ -295,7 +307,6 @@ function showCycleAnim(show) {
 }
 
 document.getElementById('reset-btn').addEventListener('click', init);
-
 init();
 </script>
 </body>

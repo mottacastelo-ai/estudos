@@ -100,13 +100,13 @@
     background: var(--dark); color: white;
     border-radius: 10px; padding: 10px 16px;
     font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700;
-    cursor: grab; user-select: none;
-    transition: transform .15s, box-shadow .15s, opacity .2s;
-    touch-action: none;
+    cursor: pointer; user-select: none;
+    transition: transform .15s, box-shadow .15s, outline .1s;
   }
   .drag-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(5,150,105,.25); }
-  .drag-card.dragging { opacity: .4; cursor: grabbing; }
+  .drag-card.selected { outline: 3px solid #34D399; outline-offset: 3px; box-shadow: 0 0 0 6px rgba(5,150,105,.3) !important; transform: scale(1.06); }
   .drag-card.placed { background: #059669; }
+  .drop-zone { cursor: pointer; }
   .drag-card.result-label { background: var(--primary); font-size: 15px; padding: 10px 20px; }
 
   /* Slots de destino com label */
@@ -214,7 +214,7 @@
       <div class="q-subtitle" id="q-subtitle">Coloque os passos da fatoração na ordem correta</div>
     </div>
 
-    <div class="hint">💡 Dica: Na fatoração, dividimos pelo menor primo divisor repetidamente até o quociente ser 1.</div>
+    <div class="hint">💡 Dica: Na fatoração, dividimos pelo menor primo divisor repetidamente até o quociente ser 1. Toque em um passo para selecioná-lo, depois toque no slot numerado.</div>
 
     <div class="drag-pool" id="drag-pool"></div>
 
@@ -281,8 +281,8 @@ const rounds = [
 let currentRound = 0;
 let scores = [0, 0, 0];
 let slots = [];
-let dragSrc = null;
-let dragSrcParent = null;
+let selectedCard = null;
+let selectedCardParent = null;
 
 function shuffle(arr) {
   const a = [...arr];
@@ -303,8 +303,8 @@ function renderRound() {
   document.getElementById('check-btn').style.display = 'block';
   document.getElementById('check-btn').disabled = false;
   document.getElementById('check-btn').textContent = 'Verificar ordem';
+  selectedCard = null;
 
-  // Atualizar dots
   for (let i = 0; i < rounds.length; i++) {
     const dot = document.getElementById(`dot-${i}`);
     dot.className = 'round-dot';
@@ -315,15 +315,12 @@ function renderRound() {
   slots = new Array(r.steps.length).fill(null);
   const shuffled = shuffle(r.steps);
 
-  // Pool
   const pool = document.getElementById('drag-pool');
   pool.innerHTML = '';
   shuffled.forEach((step, i) => {
-    const card = createDragCard(step, `pool-${i}`);
-    pool.appendChild(card);
+    pool.appendChild(createDragCard(step, `pool-${i}`));
   });
 
-  // Slots
   const slotsList = document.getElementById('slots-list');
   slotsList.innerHTML = '';
   r.steps.forEach((_, i) => {
@@ -333,8 +330,8 @@ function renderRound() {
     const zone = document.createElement('div');
     zone.className = 'drop-zone';
     zone.dataset.idx = i;
-    zone.innerHTML = `<span class="slot-num">Arraste aqui</span>`;
-    setupDropZone(zone);
+    zone.innerHTML = `<span class="slot-num">Toque aqui</span>`;
+    zone.addEventListener('click', () => placeOnZone(zone));
     row.appendChild(zone);
     slotsList.appendChild(row);
   });
@@ -345,97 +342,73 @@ function createDragCard(text, id) {
   card.className = 'drag-card';
   card.id = id;
   card.textContent = text;
-  card.draggable = true;
   card.dataset.value = text;
 
-  card.addEventListener('dragstart', e => {
-    dragSrc = card;
-    dragSrcParent = card.parentElement;
-    e.dataTransfer.effectAllowed = 'move';
-    setTimeout(() => card.classList.add('dragging'), 0);
-  });
-  card.addEventListener('dragend', () => card.classList.remove('dragging'));
-
-  // Touch
-  let touchStartX, touchStartY;
-  card.addEventListener('touchstart', e => {
-    const t = e.touches[0];
-    touchStartX = t.clientX; touchStartY = t.clientY;
-    dragSrc = card; dragSrcParent = card.parentElement;
-  }, {passive: true});
-  card.addEventListener('touchmove', e => {
-    e.preventDefault();
-    const t = e.touches[0];
-    card.style.position = 'fixed';
-    card.style.zIndex = 9999;
-    card.style.left = (t.clientX - 60) + 'px';
-    card.style.top = (t.clientY - 20) + 'px';
-    card.style.opacity = '.7';
-  }, {passive: false});
-  card.addEventListener('touchend', e => {
-    card.style.position = '';
-    card.style.zIndex = '';
-    card.style.left = '';
-    card.style.top = '';
-    card.style.opacity = '';
-    const t = e.changedTouches[0];
-    const el = document.elementFromPoint(t.clientX, t.clientY);
-    const zone = el && el.closest('.drop-zone');
-    if (zone) dropOnZone(zone);
-    dragSrc = null;
+  card.addEventListener('click', e => {
+    e.stopPropagation();
+    if (selectedCard === card) {
+      card.classList.remove('selected');
+      selectedCard = null;
+      selectedCardParent = null;
+      return;
+    }
+    if (selectedCard) selectedCard.classList.remove('selected');
+    selectedCard = card;
+    selectedCardParent = card.parentElement;
+    card.classList.add('selected');
   });
 
   return card;
 }
 
-function setupDropZone(zone) {
-  zone.addEventListener('dragover', e => {
-    e.preventDefault();
-    zone.classList.add('drag-over');
-  });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('drag-over');
-    dropOnZone(zone);
-  });
-}
-
-function dropOnZone(zone) {
-  if (!dragSrc) return;
-  const idx = parseInt(zone.dataset.idx);
-
-  // Se já tem card, devolve ao pool
-  if (zone.children.length > 0 && !zone.querySelector('.slot-num')) {
+function placeOnZone(zone) {
+  if (!selectedCard) {
+    // Click on occupied slot: return card to pool
     const existing = zone.querySelector('.drag-card');
     if (existing) {
+      existing.classList.remove('selected');
       existing.remove();
-      document.getElementById('drag-pool').appendChild(createDragCard(existing.dataset.value, 'pool-' + Date.now()));
+      zone.innerHTML = '';
+      zone.classList.remove('has-item');
+      zone.innerHTML = `<span class="slot-num">Toque aqui</span>`;
+      slots[parseInt(zone.dataset.idx)] = null;
+      document.getElementById('drag-pool').appendChild(createDragCard(existing.dataset.value, 'pool-' + existing.dataset.value));
     }
+    return;
   }
 
-  // Remover do pai atual
-  dragSrc.parentElement.removeChild(dragSrc);
-  dragSrc.style.position = '';
+  const idx = parseInt(zone.dataset.idx);
 
-  // Se o pai era um slot, limpar esse slot
-  if (dragSrcParent && dragSrcParent.classList.contains('drop-zone')) {
-    dragSrcParent.classList.remove('has-item');
-    const num = document.createElement('span');
-    num.className = 'slot-num';
-    num.textContent = 'Arraste aqui';
-    dragSrcParent.appendChild(num);
+  // If slot occupied, return existing card to pool
+  const existing = zone.querySelector('.drag-card');
+  if (existing) {
+    existing.remove();
+    document.getElementById('drag-pool').appendChild(createDragCard(existing.dataset.value, 'pool-' + existing.dataset.value));
   }
 
-  // Colocar no novo slot
+  // If card came from a slot, clear that slot
+  if (selectedCardParent && selectedCardParent.classList.contains('drop-zone')) {
+    selectedCardParent.innerHTML = '';
+    selectedCardParent.classList.remove('has-item');
+    selectedCardParent.innerHTML = `<span class="slot-num">Toque aqui</span>`;
+    slots[parseInt(selectedCardParent.dataset.idx)] = null;
+  } else {
+    selectedCard.remove();
+  }
+
+  const newCard = createDragCard(selectedCard.dataset.value, 'slot-card-' + idx);
   zone.innerHTML = '';
   zone.classList.add('has-item');
-  zone.appendChild(dragSrc);
-  slots[idx] = dragSrc.dataset.value;
-  dragSrc = null;
+  zone.appendChild(newCard);
+  slots[idx] = selectedCard.dataset.value;
+
+  selectedCard = null;
+  selectedCardParent = null;
 }
 
 function checkOrder() {
+  // Limpar seleção pendente
+  if (selectedCard) { selectedCard.classList.remove('selected'); selectedCard = null; selectedCardParent = null; }
   const r = rounds[currentRound];
   const slotZones = document.querySelectorAll('.drop-zone');
   let correct = 0;

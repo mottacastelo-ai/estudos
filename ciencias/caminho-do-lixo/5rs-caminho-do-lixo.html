@@ -19,9 +19,10 @@ header p{font-size:.9rem;opacity:.85;margin-top:4px;}
 .card-sub{font-size:.88rem;color:#475569;margin-bottom:16px;line-height:1.5;}
 /* Parte 1 - ordenação */
 .rs-pool{display:flex;flex-wrap:wrap;gap:10px;min-height:56px;padding:10px;background:#f0f9ff;border:2px dashed #bae6fd;border-radius:12px;margin-bottom:14px;}
-.rs-card{background:white;border:2px solid #bae6fd;border-radius:12px;padding:12px 16px;font-weight:800;font-size:.95rem;cursor:grab;user-select:none;display:flex;align-items:center;gap:8px;touch-action:none;transition:box-shadow .15s;}
-.rs-card:active{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.15);}
-.rs-card.dragging{opacity:.4;}
+.rs-card{background:white;border:2px solid #bae6fd;border-radius:12px;padding:12px 16px;font-weight:800;font-size:.95rem;cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;transition:box-shadow .15s, outline .1s;}
+.rs-card:hover{box-shadow:0 3px 12px rgba(2,132,199,.15);}
+.rs-card.selected{outline:3px solid var(--primary);outline-offset:3px;box-shadow:0 0 0 6px rgba(2,132,199,.2)!important;transform:scale(1.04);}
+.slot{cursor:pointer;}
 .order-slots{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
 .slot{min-width:120px;height:56px;background:#f8fafc;border:2px dashed #94a3b8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:#94a3b8;font-weight:700;flex:1;}
 .slot.filled{border-color:var(--primary);background:#e0f2fe;}
@@ -71,7 +72,7 @@ footer{text-align:center;padding:16px;font-size:.78rem;color:#94a3b8;}
   <!-- Parte 1 -->
   <div class="card">
     <div class="card-title">🔢 Parte 1 — Coloque os 5Rs na ordem correta</div>
-    <div class="card-sub">Arraste os cartões abaixo para as 5 posições na ordem certa (do primeiro ao último passo).</div>
+    <div class="card-sub">Toque em um cartão para selecioná-lo, depois toque no slot numerado onde ele deve ficar. Toque novamente no cartão para desselecionar.</div>
 
     <div class="order-labels">
       <div class="order-label">1º</div>
@@ -81,11 +82,11 @@ footer{text-align:center;padding:16px;font-size:.78rem;color:#94a3b8;}
       <div class="order-label">5º</div>
     </div>
     <div class="order-slots" id="slots">
-      <div class="slot" id="slot-0" ondragover="slotOver(event)" ondrop="slotDrop(event,0)" ondragleave="slotLeave(event)">Arraste aqui</div>
-      <div class="slot" id="slot-1" ondragover="slotOver(event)" ondrop="slotDrop(event,1)" ondragleave="slotLeave(event)">Arraste aqui</div>
-      <div class="slot" id="slot-2" ondragover="slotOver(event)" ondrop="slotDrop(event,2)" ondragleave="slotLeave(event)">Arraste aqui</div>
-      <div class="slot" id="slot-3" ondragover="slotOver(event)" ondrop="slotDrop(event,3)" ondragleave="slotLeave(event)">Arraste aqui</div>
-      <div class="slot" id="slot-4" ondragover="slotOver(event)" ondrop="slotDrop(event,4)" ondragleave="slotLeave(event)">Arraste aqui</div>
+      <div class="slot" id="slot-0" onclick="slotClick(0)">Toque aqui</div>
+      <div class="slot" id="slot-1" onclick="slotClick(1)">Toque aqui</div>
+      <div class="slot" id="slot-2" onclick="slotClick(2)">Toque aqui</div>
+      <div class="slot" id="slot-3" onclick="slotClick(3)">Toque aqui</div>
+      <div class="slot" id="slot-4" onclick="slotClick(4)">Toque aqui</div>
     </div>
 
     <div class="rs-pool" id="pool"></div>
@@ -137,56 +138,33 @@ footer{text-align:center;padding:16px;font-size:.78rem;color:#94a3b8;}
 <footer>Portal Educacional 5º Ano • Ciências — O Caminho do Lixo</footer>
 <script>
 const rsCards = [
-  { id:'repensar', label:'🤔 Repensar', pos:0 },
-  { id:'recusar',  label:'✋ Recusar',  pos:1 },
-  { id:'reduzir',  label:'📉 Reduzir',  pos:2 },
-  { id:'reutilizar',label:'🔄 Reutilizar',pos:3},
-  { id:'reciclar', label:'♻️ Reciclar', pos:4 },
+  { id:'repensar',   label:'🤔 Repensar'   },
+  { id:'recusar',    label:'✋ Recusar'    },
+  { id:'reduzir',    label:'📉 Reduzir'    },
+  { id:'reutilizar', label:'🔄 Reutilizar' },
+  { id:'reciclar',   label:'♻️ Reciclar'  },
 ];
 const correctOrder = ['repensar','recusar','reduzir','reutilizar','reciclar'];
 let slotContent = [null,null,null,null,null];
-let draggingId = null;
+let selectedId = null;
 
 function buildPool() {
   const pool = document.getElementById('pool');
   pool.innerHTML = '';
   rsCards.filter(c => !slotContent.includes(c.id)).forEach(c => {
     const el = document.createElement('div');
-    el.className = 'rs-card';
+    el.className = 'rs-card' + (selectedId === c.id ? ' selected' : '');
     el.id = 'rc-' + c.id;
     el.textContent = c.label;
-    el.draggable = true;
-    el.addEventListener('dragstart', e => { draggingId = c.id; el.classList.add('dragging'); });
-    el.addEventListener('dragend', () => el.classList.remove('dragging'));
-    // touch
-    el.addEventListener('touchstart', e => {
-      draggingId = c.id;
-      const clone = el.cloneNode(true);
-      clone.id = 'drag-clone';
-      clone.style.cssText = 'position:fixed;opacity:.85;pointer-events:none;z-index:9999;transform:scale(1.05);';
-      document.body.appendChild(clone);
-    }, {passive:true});
-    el.addEventListener('touchmove', e => {
-      e.preventDefault();
-      const cl = document.getElementById('drag-clone');
-      if (cl) { cl.style.left=(e.touches[0].clientX-40)+'px'; cl.style.top=(e.touches[0].clientY-20)+'px'; }
-    }, {passive:false});
-    el.addEventListener('touchend', e => {
-      const cl = document.getElementById('drag-clone'); if(cl)cl.remove();
-      const t = e.changedTouches[0];
-      const target = document.elementFromPoint(t.clientX, t.clientY);
-      if (target) {
-        const slot = target.closest('.slot');
-        if (slot) {
-          const idx = parseInt(slot.id.split('-')[1]);
-          placeCard(idx);
-        }
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      if (selectedId === c.id) {
+        selectedId = null;
+      } else {
+        selectedId = c.id;
       }
-      draggingId = null;
-    });
-    el.addEventListener('touchcancel', () => {
-      const cl = document.getElementById('drag-clone'); if(cl)cl.remove();
-      draggingId = null;
+      buildPool();
+      document.getElementById('fb-order').className = 'fb-order';
     });
     pool.appendChild(el);
   });
@@ -202,30 +180,33 @@ function renderSlots() {
       slot.textContent = card.label;
       slot.classList.add('filled');
     } else {
-      slot.textContent = 'Arraste aqui';
+      slot.textContent = 'Toque aqui';
     }
   }
 }
 
-function slotOver(e) { e.preventDefault(); e.currentTarget.style.background='#bae6fd'; }
-function slotLeave(e) { e.currentTarget.style.background=''; }
-function slotDrop(e, idx) {
-  e.preventDefault(); e.currentTarget.style.background='';
-  if (!draggingId) return;
-  placeCard(idx);
-  draggingId = null;
+function slotClick(idx) {
+  if (selectedId !== null) {
+    // Remove from other slots if present
+    slotContent = slotContent.map(s => s === selectedId ? null : s);
+    // If slot occupied, that card goes back to pool (handled by buildPool filtering)
+    slotContent[idx] = selectedId;
+    selectedId = null;
+    buildPool();
+    document.getElementById('fb-order').className = 'fb-order';
+  } else if (slotContent[idx]) {
+    // Return card to pool
+    slotContent[idx] = null;
+    buildPool();
+    document.getElementById('fb-order').className = 'fb-order';
+  }
 }
 
 function placeCard(idx) {
-  if (!draggingId) return;
-  // if slot already has card, return it to pool
-  if (slotContent[idx]) {
-    const prev = slotContent[idx];
-    slotContent[idx] = null;
-  }
-  // remove from other slots if present
-  slotContent = slotContent.map(s => s === draggingId ? null : s);
-  slotContent[idx] = draggingId;
+  if (!selectedId) return;
+  slotContent = slotContent.map(s => s === selectedId ? null : s);
+  slotContent[idx] = selectedId;
+  selectedId = null;
   buildPool();
   document.getElementById('fb-order').className = 'fb-order';
 }
@@ -252,6 +233,7 @@ function checkOrder() {
 
 function resetOrder() {
   slotContent = [null,null,null,null,null];
+  selectedId = null;
   buildPool();
   document.getElementById('fb-order').className = 'fb-order';
   for (let i=0;i<5;i++) { const s=document.getElementById('slot-'+i); s.classList.remove('correct-slot','wrong-slot'); }

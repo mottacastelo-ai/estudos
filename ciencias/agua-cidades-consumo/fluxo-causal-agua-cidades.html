@@ -43,14 +43,15 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 .arrow-col { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 8px; }
 .arrow-svg { width: 32px; height: 100%; }
 /* Node cards */
-.node-card { width: 100%; border-radius: 14px; padding: 10px 12px; font-size: 12px; font-weight: 700; text-align: center; cursor: grab; border: 2px solid var(--border); background: #fff; transition: transform .12s, box-shadow .12s; line-height: 1.4; user-select: none; }
+.node-card { width: 100%; border-radius: 14px; padding: 10px 12px; font-size: 12px; font-weight: 700; text-align: center; cursor: pointer; border: 2px solid var(--border); background: #fff; transition: transform .12s, box-shadow .12s, outline .1s; line-height: 1.4; user-select: none; }
 .node-card:hover { transform: scale(1.03); box-shadow: 0 4px 14px rgba(2,132,199,.15); }
 .node-card.causa-card  { border-color: #C4B5FD; background: #F5F3FF; color: #4C1D95; }
 .node-card.proc-card   { border-color: var(--cien-light); background: #E0F2FE; color: var(--cien-dark); }
 .node-card.efeito-card { border-color: #FCD34D; background: #FFFBEB; color: #78350F; }
 .node-card.correct { border-color: #059669 !important; background: #D1FAE5 !important; color: #065F46 !important; cursor: default; }
 .node-card.wrong   { border-color: #DC2626 !important; background: #FEE2E2 !important; color: #991B1B !important; cursor: default; }
-.node-card.dragging { opacity: .4; }
+.node-card.selected { outline: 3px solid var(--cien); outline-offset: 3px; box-shadow: 0 0 0 6px rgba(2,132,199,.25) !important; transform: scale(1.05); }
+.drop-col { cursor: pointer; }
 /* Pool */
 .pool-wrap { margin: 0 20px 8px; }
 .pool-label { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; margin-bottom: 8px; }
@@ -88,7 +89,7 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
       <div class="hbadge">⚡ Praticar</div>
     </div>
     <div class="instrucao">
-      <strong>Como fazer:</strong> Cada causa produz um processo, que gera um efeito. Arraste os cartões da área de itens para a coluna correta — <strong>CAUSA</strong>, <strong>PROCESSO</strong> ou <strong>EFEITO</strong>. Quando terminar, clique em <strong>Verificar</strong>.
+      <strong>Como fazer:</strong> Toque em um cartão para selecioná-lo (ficará destacado com borda azul), depois toque na coluna correta — <strong>CAUSA</strong>, <strong>PROCESSO</strong> ou <strong>EFEITO</strong>. Toque no mesmo cartão novamente para desselecionar. Quando todos estiverem posicionados, clique em <strong>Verificar</strong>.
     </div>
     <div class="score-bar">
       <span class="score-txt" id="score-txt">0 de 12 posicionados</span>
@@ -96,7 +97,7 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
       <button class="check-btn" id="check-btn" disabled>Verificar ✓</button>
     </div>
     <div class="pool-wrap">
-      <div class="pool-label">ITENS — arraste para CAUSA, PROCESSO ou EFEITO</div>
+      <div class="pool-label">ITENS — selecione um cartão e toque na coluna destino</div>
       <div class="pool" id="pool"></div>
     </div>
     <div class="grid-area">
@@ -158,40 +159,29 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 </div>
 <script>
 var ITEMS = [
-  // causas
-  { id:'c1', text:'Desmatamento',                    col:'causa',  cls:'causa-card'  },
-  { id:'c2', text:'Impermeabilização dos solos',     col:'causa',  cls:'causa-card'  },
-  { id:'c3', text:'Lançamento de esgoto nos rios',   col:'causa',  cls:'causa-card'  },
-  { id:'c4', text:'Excesso de construções e asfalto',col:'causa',  cls:'causa-card'  },
-  // processos
-  { id:'p1', text:'Solo não absorve a água da chuva',     col:'proc', cls:'proc-card' },
-  { id:'p2', text:'Água contamina os mananciais',          col:'proc', cls:'proc-card' },
-  { id:'p3', text:'Calor não é dissipado naturalmente',    col:'proc', cls:'proc-card' },
-  { id:'p4', text:'Árvores não seguram o solo',            col:'proc', cls:'proc-card' },
-  // efeitos
-  { id:'e1', text:'Enchentes nas cidades',           col:'efeito', cls:'efeito-card' },
-  { id:'e2', text:'Destruição de mananciais',        col:'efeito', cls:'efeito-card' },
-  { id:'e3', text:'Ilha de calor',                   col:'efeito', cls:'efeito-card' },
-  { id:'e4', text:'Deslizamentos de terra',          col:'efeito', cls:'efeito-card' },
+  { id:'c1', text:'Desmatamento',                     col:'causa',  cls:'causa-card'  },
+  { id:'c2', text:'Impermeabilização dos solos',      col:'causa',  cls:'causa-card'  },
+  { id:'c3', text:'Lançamento de esgoto nos rios',    col:'causa',  cls:'causa-card'  },
+  { id:'c4', text:'Excesso de construções e asfalto', col:'causa',  cls:'causa-card'  },
+  { id:'p1', text:'Solo não absorve a água da chuva', col:'proc',   cls:'proc-card'   },
+  { id:'p2', text:'Água contamina os mananciais',     col:'proc',   cls:'proc-card'   },
+  { id:'p3', text:'Calor não é dissipado naturalmente',col:'proc',  cls:'proc-card'   },
+  { id:'p4', text:'Árvores não seguram o solo',       col:'proc',   cls:'proc-card'   },
+  { id:'e1', text:'Enchentes nas cidades',            col:'efeito', cls:'efeito-card' },
+  { id:'e2', text:'Destruição de mananciais',         col:'efeito', cls:'efeito-card' },
+  { id:'e3', text:'Ilha de calor',                    col:'efeito', cls:'efeito-card' },
+  { id:'e4', text:'Deslizamentos de terra',           col:'efeito', cls:'efeito-card' },
 ];
 
 var placements = {};
 var checked = false;
-var activeClone = null;
-var activeDragEl = null;
-
-// Cleanup global — garante que o clone nunca trava na tela em nenhum cenário
-function cleanupDrag() {
-  if (activeClone) { activeClone.remove(); activeClone = null; }
-  if (activeDragEl) { activeDragEl.style.opacity = '1'; activeDragEl = null; }
-}
-document.addEventListener('touchend',    cleanupDrag, {capture: true, passive: true});
-document.addEventListener('touchcancel', cleanupDrag, {capture: true, passive: true});
+var selectedId = null;
 
 function shuffle(a){ var b=a.slice(); for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;} return b; }
 
 function buildItems() {
   checked = false;
+  selectedId = null;
   placements = {};
   document.getElementById('pool').innerHTML = '';
   ['causa','proc','efeito'].forEach(function(c){ document.getElementById('col-'+c).innerHTML=''; });
@@ -199,7 +189,6 @@ function buildItems() {
   document.getElementById('gab-panel').className = 'gabarito-panel';
   document.getElementById('check-btn').disabled = true;
   document.getElementById('score-txt').textContent = '0 de 12 posicionados';
-
   shuffle(ITEMS).forEach(function(item) {
     placements[item.id] = 'pool';
     document.getElementById('pool').appendChild(createEl(item));
@@ -211,55 +200,31 @@ function createEl(item) {
   el.id = 'el-' + item.id;
   el.className = 'node-card ' + item.cls;
   el.textContent = item.text;
-  el.setAttribute('draggable', 'true');
   el.dataset.id = item.id;
-
-  el.addEventListener('dragstart', function(e) {
-    e.dataTransfer.setData('text/plain', item.id);
-    setTimeout(function(){ el.classList.add('dragging'); }, 0);
-  });
-  el.addEventListener('dragend', function(){ el.classList.remove('dragging'); });
-
-  // Touch
-  el.addEventListener('touchstart', function(e) {
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
     if (checked) return;
-    cleanupDrag(); // limpa qualquer drag anterior que não foi encerrado
-    var t = e.touches[0];
-    activeClone = el.cloneNode(true);
-    activeClone.style.cssText = 'position:fixed;opacity:.7;pointer-events:none;z-index:9999;width:'+el.offsetWidth+'px;';
-    activeClone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
-    activeClone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
-    document.body.appendChild(activeClone);
-    activeDragEl = el;
-    el.style.opacity = '.3';
-  }, {passive:false});
-  el.addEventListener('touchmove', function(e) {
-    if (!activeClone) return;
-    e.preventDefault();
-    var t = e.touches[0];
-    activeClone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
-    activeClone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
-  }, {passive:false});
-  el.addEventListener('touchend', function(e) {
-    if (!activeClone) return;
-    var t = e.changedTouches[0];
-    cleanupDrag();
-    var target = document.elementFromPoint(t.clientX, t.clientY);
-    var zone = target && (target.classList.contains('drop-col') ? target : target.closest('.drop-col'));
-    if (!zone) zone = target && (target.classList.contains('pool') ? target : target.closest('.pool'));
-    if (zone) {
-      var col = zone.dataset.col || 'pool';
-      moveTo(item.id, col, zone);
+    if (selectedId === item.id) {
+      el.classList.remove('selected');
+      selectedId = null;
+      return;
     }
+    if (selectedId) {
+      var prev = document.getElementById('el-' + selectedId);
+      if (prev) prev.classList.remove('selected');
+    }
+    selectedId = item.id;
+    el.classList.add('selected');
   });
-
   return el;
 }
 
 function moveTo(itemId, colName, zoneEl) {
   if (checked) return;
   var el = document.getElementById('el-' + itemId);
+  el.classList.remove('selected');
   placements[itemId] = colName;
+  selectedId = null;
   if (colName === 'pool') {
     document.getElementById('pool').appendChild(el);
   } else {
@@ -275,23 +240,27 @@ function updateScore() {
 }
 
 ['pool','col-causa','col-proc','col-efeito'].forEach(function(zid) {
-  var el = document.getElementById(zid);
-  el.addEventListener('dragover', function(e){ e.preventDefault(); el.classList.add('over'); });
-  el.addEventListener('dragleave', function(){ el.classList.remove('over'); });
-  el.addEventListener('drop', function(e) {
-    e.preventDefault(); el.classList.remove('over');
-    var itemId = e.dataTransfer.getData('text/plain');
-    var col = zid === 'pool' ? 'pool' : el.dataset.col;
-    moveTo(itemId, col, el);
+  var zoneEl = document.getElementById(zid);
+  var col = zid === 'pool' ? 'pool' : zoneEl.dataset.col;
+  zoneEl.addEventListener('click', function() {
+    if (checked || !selectedId) return;
+    if (placements[selectedId] === col) {
+      var el = document.getElementById('el-' + selectedId);
+      if (el) el.classList.remove('selected');
+      selectedId = null;
+      return;
+    }
+    moveTo(selectedId, col, zoneEl);
   });
 });
 
 document.getElementById('check-btn').addEventListener('click', function() {
   checked = true;
+  selectedId = null;
   var correct = 0;
   ITEMS.forEach(function(item) {
     var el = document.getElementById('el-' + item.id);
-    el.setAttribute('draggable', 'false');
+    el.classList.remove('selected');
     if (placements[item.id] === item.col) { el.classList.add('correct'); correct++; }
     else el.classList.add('wrong');
   });

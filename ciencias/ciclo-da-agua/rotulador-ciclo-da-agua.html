@@ -29,10 +29,11 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 .bank-wrap { padding: 14px 24px 10px; border-bottom: 2px solid var(--border); }
 .bank-title { font-size: 11px; font-weight: 800; color: var(--cien); letter-spacing: .06em; margin-bottom: 8px; font-family: "Space Mono", monospace; }
 .bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
-.term { background: var(--cien); color: #fff; border-radius: 999px; padding: 6px 16px; font-size: 13px; font-weight: 700; cursor: grab; user-select: none; transition: transform .12s, box-shadow .12s; box-shadow: 0 2px 8px rgba(2,132,199,.25); touch-action: none; }
-.term:active { cursor: grabbing; }
-.term.dragging { opacity: .45; transform: scale(.95); }
+.term { background: var(--cien); color: #fff; border-radius: 999px; padding: 6px 16px; font-size: 13px; font-weight: 700; cursor: pointer; user-select: none; transition: transform .12s, box-shadow .12s, outline .1s; box-shadow: 0 2px 8px rgba(2,132,199,.25); }
+.term:hover { transform: scale(1.04); }
+.term.selected { outline: 3px solid #fff; outline-offset: 3px; box-shadow: 0 0 0 6px rgba(2,132,199,.4) !important; transform: scale(1.08); }
 .term.used { opacity: .3; pointer-events: none; }
+.slot-zone { cursor: pointer; }
 
 /* Diagrama SVG + slots */
 .diagram-wrap { padding: 20px 24px; }
@@ -79,7 +80,7 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
       <div class="hbadge">⚡ Praticar (80%)</div>
     </div>
     <div class="instrucao">
-      <strong>Como fazer:</strong> Arraste cada termo do banco para o local correto no diagrama do ciclo da água. Cada posição numerada corresponde a um processo específico. Você verá verde se acertar e vermelho se errar!
+      <strong>Como fazer:</strong> Toque em um termo do banco para selecioná-lo (ficará destacado), depois toque no slot numerado correspondente no diagrama. Você verá verde se acertar e vermelho se errar!
     </div>
     <div class="bank-wrap">
       <div class="bank-title">BANCO DE TERMOS</div>
@@ -211,32 +212,32 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
         <!-- 1 — evaporação: próximo ao círculo 1 -->
         <div class="slot-zone" id="slot-1" data-answer="evaporação"
           style="left:27%;top:44%;width:18%;min-height:32px;">
-          arraste aqui
+          toque aqui
         </div>
         <!-- 2 — condensação: acima da nuvem -->
         <div class="slot-zone" id="slot-2" data-answer="condensação"
           style="left:38%;top:10%;width:18%;min-height:32px;">
-          arraste aqui
+          toque aqui
         </div>
         <!-- 3 — precipitação: à direita da chuva -->
         <div class="slot-zone" id="slot-3" data-answer="precipitação"
           style="left:57%;top:38%;width:18%;min-height:32px;">
-          arraste aqui
+          toque aqui
         </div>
         <!-- 4 — infiltração: abaixo do solo -->
         <div class="slot-zone" id="slot-4" data-answer="infiltração"
           style="left:62%;top:78%;width:16%;min-height:32px;">
-          arraste aqui
+          toque aqui
         </div>
         <!-- 5 — escoamento superficial: à direita do rio -->
         <div class="slot-zone" id="slot-5" data-answer="escoamento superficial"
           style="left:72%;top:65%;width:22%;min-height:32px;">
-          arraste aqui
+          toque aqui
         </div>
         <!-- 6 — transpiração: acima das plantas -->
         <div class="slot-zone" id="slot-6" data-answer="transpiração das plantas"
           style="left:38%;top:54%;width:22%;min-height:32px;">
-          arraste aqui
+          toque aqui
         </div>
       </div>
     </div>
@@ -263,82 +264,41 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
   </div>
 </div>
 <script>
-var dragged = null;
+var selectedTerm = null; // { el, term }
 var correct = 0;
 var total = 6;
 
-// Drag & Drop — desktop
 document.querySelectorAll('.term').forEach(function(t) {
-  t.addEventListener('dragstart', function(e) {
-    dragged = t;
-    t.classList.add('dragging');
-    e.dataTransfer.setData('text/plain', t.dataset.term);
+  t.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (t.classList.contains('used')) return;
+    if (selectedTerm && selectedTerm.el === t) {
+      // Deselect
+      t.classList.remove('selected');
+      selectedTerm = null;
+      return;
+    }
+    // Deselect previous
+    if (selectedTerm) selectedTerm.el.classList.remove('selected');
+    selectedTerm = { el: t, term: t.dataset.term };
+    t.classList.add('selected');
   });
-  t.addEventListener('dragend', function() { t.classList.remove('dragging'); });
 });
 
 document.querySelectorAll('.slot-zone').forEach(function(slot) {
-  slot.addEventListener('dragover', function(e) { e.preventDefault(); slot.classList.add('over'); });
-  slot.addEventListener('dragleave', function() { slot.classList.remove('over'); });
-  slot.addEventListener('drop', function(e) {
-    e.preventDefault();
-    slot.classList.remove('over');
-    if (!dragged || slot.dataset.filled) return;
-    var term = dragged.dataset.term;
-    checkDrop(slot, term, dragged);
+  slot.addEventListener('click', function() {
+    if (!selectedTerm || slot.dataset.filled) return;
+    checkDrop(slot, selectedTerm.term, selectedTerm.el);
+    selectedTerm = null;
   });
 });
-
-// Touch support
-var touchEl = null, touchClone = null;
-
-document.querySelectorAll('.term').forEach(function(t) {
-  t.addEventListener('touchstart', function(e) {
-    touchEl = t;
-    t.classList.add('dragging');
-    var touch = e.touches[0];
-    touchClone = t.cloneNode(true);
-    touchClone.style.position = 'fixed';
-    touchClone.style.pointerEvents = 'none';
-    touchClone.style.zIndex = 9999;
-    touchClone.style.opacity = '.85';
-    touchClone.style.transform = 'scale(1.08)';
-    document.body.appendChild(touchClone);
-    moveTouchClone(touch);
-  }, {passive: true});
-  t.addEventListener('touchmove', function(e) {
-    if (!touchEl) return;
-    moveTouchClone(e.touches[0]);
-  }, {passive: true});
-  t.addEventListener('touchend', function(e) {
-    if (!touchEl) return;
-    if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
-    touchEl.classList.remove('dragging');
-    var touch = e.changedTouches[0];
-    var el = document.elementFromPoint(touch.clientX, touch.clientY);
-    var slot = el && (el.classList.contains('slot-zone') ? el : el.closest('.slot-zone'));
-    if (slot && !slot.dataset.filled) checkDrop(slot, touchEl.dataset.term, touchEl);
-    touchEl = null;
-  });
-
-  t.addEventListener('touchcancel', function() {
-    if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
-    if (touchEl) touchEl.classList.remove('dragging');
-    touchEl = null;
-  });
-});
-
-function moveTouchClone(touch) {
-  if (!touchClone) return;
-  touchClone.style.left = (touch.clientX - 60) + 'px';
-  touchClone.style.top  = (touch.clientY - 20) + 'px';
-}
 
 function checkDrop(slot, term, termEl) {
   slot.dataset.filled = '1';
   if (term === slot.dataset.answer) {
     slot.textContent = term;
     slot.classList.add('correct');
+    termEl.classList.remove('selected');
     termEl.classList.add('used');
     correct++;
     updateScore();
@@ -347,7 +307,7 @@ function checkDrop(slot, term, termEl) {
     slot.textContent = term + ' ✗';
     slot.classList.add('wrong');
     setTimeout(function() {
-      slot.textContent = 'arraste aqui';
+      slot.textContent = 'toque aqui';
       slot.classList.remove('wrong');
       delete slot.dataset.filled;
     }, 900);
