@@ -177,6 +177,16 @@ var ITEMS = [
 
 var placements = {};
 var checked = false;
+var activeClone = null;
+var activeDragEl = null;
+
+// Cleanup global — garante que o clone nunca trava na tela em nenhum cenário
+function cleanupDrag() {
+  if (activeClone) { activeClone.remove(); activeClone = null; }
+  if (activeDragEl) { activeDragEl.style.opacity = '1'; activeDragEl = null; }
+}
+document.addEventListener('touchend',    cleanupDrag, {capture: true, passive: true});
+document.addEventListener('touchcancel', cleanupDrag, {capture: true, passive: true});
 
 function shuffle(a){ var b=a.slice(); for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;} return b; }
 
@@ -211,29 +221,29 @@ function createEl(item) {
   el.addEventListener('dragend', function(){ el.classList.remove('dragging'); });
 
   // Touch
-  var clone = null;
   el.addEventListener('touchstart', function(e) {
     if (checked) return;
+    cleanupDrag(); // limpa qualquer drag anterior que não foi encerrado
     var t = e.touches[0];
-    clone = el.cloneNode(true);
-    clone.style.cssText = 'position:fixed;opacity:.7;pointer-events:none;z-index:9999;width:'+el.offsetWidth+'px;';
-    clone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
-    clone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
-    document.body.appendChild(clone);
+    activeClone = el.cloneNode(true);
+    activeClone.style.cssText = 'position:fixed;opacity:.7;pointer-events:none;z-index:9999;width:'+el.offsetWidth+'px;';
+    activeClone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
+    activeClone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
+    document.body.appendChild(activeClone);
+    activeDragEl = el;
     el.style.opacity = '.3';
-  }, {passive:true});
+  }, {passive:false});
   el.addEventListener('touchmove', function(e) {
-    if (!clone) return;
-    var t = e.touches[0];
-    clone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
-    clone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
+    if (!activeClone) return;
     e.preventDefault();
+    var t = e.touches[0];
+    activeClone.style.left = (t.clientX - el.offsetWidth/2) + 'px';
+    activeClone.style.top  = (t.clientY - el.offsetHeight/2) + 'px';
   }, {passive:false});
   el.addEventListener('touchend', function(e) {
-    el.style.opacity = '1';
-    if (!clone) return;
+    if (!activeClone) return;
     var t = e.changedTouches[0];
-    clone.remove(); clone = null;
+    cleanupDrag();
     var target = document.elementFromPoint(t.clientX, t.clientY);
     var zone = target && (target.classList.contains('drop-col') ? target : target.closest('.drop-col'));
     if (!zone) zone = target && (target.classList.contains('pool') ? target : target.closest('.pool'));
@@ -241,11 +251,6 @@ function createEl(item) {
       var col = zone.dataset.col || 'pool';
       moveTo(item.id, col, zone);
     }
-  });
-
-  el.addEventListener('touchcancel', function() {
-    el.style.opacity = '1';
-    if (clone) { clone.remove(); clone = null; }
   });
 
   return el;
