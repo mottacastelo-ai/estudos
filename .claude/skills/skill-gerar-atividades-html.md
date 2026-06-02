@@ -348,6 +348,7 @@ Notebook é o uso principal, mas celular deve ser plenamente navegável. Toda at
 4. **Evitar `!important`** — estruturar CSS com especificidade adequada
 5. **Consistência visual** — espaçamentos múltiplos de 4px, border-radius de 18px para cards
 6. **Sem conteúdo inventado** — perguntas e gabaritos derivam exclusivamente dos `conceitos_chave` e `termos_tecnicos` do JSON
+7. **Placeholders nunca contêm termos validados** — em atividades de escrita livre (notícia, criador, missão), o texto de `placeholder` deve orientar a estrutura ("Descreva o que aconteceu...") mas **jamais conter os termos técnicos que a validação vai checar**. Copiar o placeholder não pode resultar em aprovação.
 
 ---
 
