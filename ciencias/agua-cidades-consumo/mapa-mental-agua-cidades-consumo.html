@@ -161,30 +161,27 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 </div>
 <script>
 var NODES = [
-  {id:'root',    label:'💧 Água, Cidades e Consumo', cls:'n-root'},
-  {id:'ameacas', label:'⚠️ Ameaças à qualidade',     cls:'n-level1'},
-  {id:'impactos',label:'🏙️ Impactos urbanos',        cls:'n-level1'},
-  {id:'solucoes',label:'🌿 Soluções nas cidades',     cls:'n-level1'},
-  {id:'consumo', label:'💡 Consumo consciente',       cls:'n-level1'},
-  {id:'poluicao',label:'Poluição',                    cls:'n-level2'},
-  {id:'mananciais',label:'Destruição de mananciais',  cls:'n-level2'},
-  {id:'calor',   label:'Ilha de calor',               cls:'n-level2'},
-  {id:'impermeab',label:'Impermeabilização dos solos',cls:'n-level2'},
-  {id:'tetos',   label:'Tetos verdes',                cls:'n-level2'},
-  {id:'jardins', label:'Jardins verticais',           cls:'n-level2'},
-  {id:'agropec', label:'Agropecuária 70%',            cls:'n-level2'},
-  {id:'virtual', label:'Água virtual nos alimentos',  cls:'n-level2'},
+  {id:'root',      label:'💧 Água, Cidades e Consumo', cls:'n-root'},
+  {id:'ameacas',   label:'⚠️ Ameaças à qualidade',    cls:'n-level1'},
+  {id:'impactos',  label:'🏙️ Impactos urbanos',       cls:'n-level1'},
+  {id:'solucoes',  label:'🌿 Soluções nas cidades',    cls:'n-level1'},
+  {id:'consumo',   label:'💡 Consumo consciente',      cls:'n-level1'},
+  {id:'poluicao',  label:'Poluição',                   cls:'n-level2'},
+  {id:'mananciais',label:'Destruição de mananciais',   cls:'n-level2'},
+  {id:'calor',     label:'Ilha de calor',              cls:'n-level2'},
+  {id:'tetos',     label:'Tetos verdes',               cls:'n-level2'},
+  {id:'agropec',   label:'Agropecuária 70%',           cls:'n-level2'},
 ];
 
 var GABARITO = [
   ['root','ameacas'],['root','impactos'],['root','solucoes'],['root','consumo'],
   ['ameacas','poluicao'],['ameacas','mananciais'],
-  ['impactos','calor'],['impactos','impermeab'],
-  ['solucoes','tetos'],['solucoes','jardins'],
-  ['consumo','agropec'],['consumo','virtual'],
+  ['impactos','calor'],
+  ['solucoes','tetos'],
+  ['consumo','agropec'],
 ];
 
-var SHUFFLE = ['virtual','impactos','tetos','poluicao','consumo','root','jardins','ameacas','calor','solucoes','impermeab','mananciais','agropec'];
+var SHUFFLE = ['impactos','tetos','poluicao','consumo','root','ameacas','calor','solucoes','mananciais','agropec'];
 
 var stage = document.getElementById('stage');
 var svgEl = document.getElementById('arrows');

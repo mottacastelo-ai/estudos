@@ -68,7 +68,9 @@ Abrir `mapa-mental-[slug].html` e verificar:
 - [ ] Nenhum nó possui propriedade `connects`? (ex: `connects:['central']` = padrão proibido)
 - [ ] Não existe função `drawConnections()` ou equivalente que auto-desenha no load?
 - [ ] Gabarito é painel inline (`display:none`) abaixo do stage? (não overlay/modal)
-- [ ] Total de nós ≤ 10?
+- [ ] **Contar os itens de `NODES` e registrar o número exato** — escrever explicitamente "NODES tem X nós". X deve ser ≤ 10. Se X > 10 → falha crítica imediata, sem continuar.
+- [ ] Todos os IDs em `SHUFFLE` existem em `NODES`? Listar os IDs do SHUFFLE e comparar um a um.
+- [ ] Todos os IDs em cada par de `GABARITO` existem em `NODES`? Listar e comparar.
 - [ ] Score bar exibe "X de N conexões"?
 
 Se qualquer item falhar, classificar como `tipo: "mapa_mental_implementacao_errada"`, `severidade: "critica"`.

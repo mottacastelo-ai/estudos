@@ -156,7 +156,7 @@ const questions = [
 | Função que desenha conexões automaticamente no load | Conexões desenhadas SOMENTE pelo usuário em modo Conectar |
 | Gabarito como overlay/modal sobre o stage | Gabarito como painel inline ABAIXO do stage |
 | `setMode('connect')` no load | `setMode('move')` no load — Mover ativo por padrão |
-| Mais de 10 nós | Máximo 10 nós (exemplos contam para o limite) |
+| Mais de 10 nós | **Máximo 10 nós** — contar em voz alta antes de fechar: "tenho X nós, X ≤ 10?" |
 | `btn-connect` com `class="active"` no HTML inicial | `btn-move` com `class="active"` no HTML inicial |
 | Nó referenciado no SVG do gabarito sem estar em `NODES` | Todo nó visível no SVG do gabarito **deve existir** em `NODES` e em `SHUFFLE` |
 | Par em `GABARITO` usando ID de nó inexistente em `NODES` | Após escrever `GABARITO`, verificar que cada ID referenciado existe em `NODES` |
@@ -192,6 +192,12 @@ var GABARITO = [
 // 3. Ordem embaralhada para posicionamento inicial no grid
 var SHUFFLE = ['det1','cat2','central','cat3','cat1','det2'];
 ```
+
+> ⛔ **VERIFICAÇÃO OBRIGATÓRIA antes de salvar** — responder as 3 perguntas em voz alta:
+> 1. `NODES.length` = ? → deve ser ≤ 10. Se passar, remover nós até caber.
+> 2. Cada ID em `SHUFFLE` existe em `NODES`? Listar e conferir um a um.
+> 3. Cada ID em `GABARITO[n][0]` e `GABARITO[n][1]` existe em `NODES`? Listar e conferir.
+> Se qualquer resposta for "não" → corrigir antes de continuar.
 
 #### Toolbar HTML — estrutura exata (5 botões)
 
