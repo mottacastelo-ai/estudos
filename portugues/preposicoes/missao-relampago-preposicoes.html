@@ -404,7 +404,7 @@ function restartGame() {
       var el = m.target;
       if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
         var sig = (el.id || "") + " " + (el.className || "");
-        if (/result|score-section|gabarito/i.test(sig)) showBtn();
+        if (/result|score|gabarito/i.test(sig)) showBtn();
       }
       if (m.attributeName === "style" && el.style && el.style.display === "block") {
         var sig = (el.id || "");
