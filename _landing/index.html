@@ -382,9 +382,63 @@
       .scroll-hint.visible { animation: none; }
       .bubble { animation: none; }
     }
+
+  /* ── NAV / LOGIN ──────────────────────────────── */
+  .site-nav {
+    position: sticky; top: 0; z-index: 500;
+    background: rgba(13,13,13,.92); backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    padding: 12px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+  }
+  .site-nav-brand {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
+    color: white; white-space: nowrap; flex-shrink: 0;
+  }
+  .site-nav-brand .dot { color: var(--verde); }
+  .nav-login-form {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+  }
+  .nav-input {
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px; padding: 8px 14px; color: white;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+  }
+  .nav-input::placeholder { color: rgba(255,255,255,.35); }
+  .nav-input:focus { border-color: var(--verde); }
+  .nav-input-email { width: 190px; }
+  .nav-input-pwd   { width: 130px; }
+  .nav-login-btn {
+    background: linear-gradient(135deg, var(--verde-d), var(--verde));
+    border: none; border-radius: 8px; padding: 9px 20px;
+    color: white; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+    cursor: pointer; white-space: nowrap; transition: opacity .15s;
+  }
+  .nav-login-btn:hover { opacity: .88; }
+  .nav-login-btn:disabled { opacity: .5; cursor: default; }
+  .nav-login-error {
+    font-size: 12px; color: #F87171; white-space: nowrap; display: none;
+  }
+  @media (max-width: 620px) {
+    .site-nav { flex-direction: column; align-items: flex-start; padding: 12px 20px; }
+    .nav-input-email, .nav-input-pwd { width: 140px; }
+  }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
+
+  <!-- NAV / LOGIN -->
+  <nav class="site-nav">
+    <span class="site-nav-brand">sabendo<span class="dot">.</span></span>
+    <div class="nav-login-form">
+      <input id="nav-email" class="nav-input nav-input-email" type="email" placeholder="Email" autocomplete="email">
+      <input id="nav-password" class="nav-input nav-input-pwd" type="password" placeholder="Senha" autocomplete="current-password">
+      <button class="nav-login-btn" id="nav-login-btn" onclick="doNavLogin()">Entrar →</button>
+      <span id="nav-login-error" class="nav-login-error"></span>
+    </div>
+  </nav>
 
   <!-- SPLASH -->
   <div id="splash">
@@ -457,7 +511,7 @@
   </footer>
 
   <script>
-    // Scroll hint: aparece após animação, some ao rolar
+    // Scroll hint
     const hint = document.querySelector('.scroll-hint');
     setTimeout(() => hint.classList.add('visible'), 2800);
     window.addEventListener('scroll', () => {
@@ -465,6 +519,52 @@
     }, { passive: true });
     hint.addEventListener('click', () => {
       document.querySelector('.portais').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ── SUPABASE AUTH ──────────────────────────
+    const SUPA_URL = 'https://mmtrzxmitklpibfilbio.supabase.co';
+    const SUPA_KEY = 'sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_';
+    const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+    const PORTAL_URLS = {
+      'estudos':      'https://andre.sabendo.app',
+      'estudos-2ano': 'https://lis.sabendo.app',
+    };
+
+    async function doNavLogin() {
+      const email = document.getElementById('nav-email').value.trim();
+      const pwd   = document.getElementById('nav-password').value;
+      const btn   = document.getElementById('nav-login-btn');
+      const err   = document.getElementById('nav-login-error');
+      err.style.display = 'none';
+      btn.textContent = 'Entrando…';
+      btn.disabled = true;
+
+      const { data, error } = await supa.auth.signInWithPassword({ email, password: pwd });
+      btn.textContent = 'Entrar →';
+      btn.disabled = false;
+
+      if (error) {
+        err.textContent = 'Email ou senha incorretos.';
+        err.style.display = 'inline';
+        return;
+      }
+
+      // Busca portal do usuário
+      const { data: profile } = await supa
+        .from('profiles').select('portal').eq('id', data.user.id).single();
+      const portal = profile?.portal || 'estudos';
+      const dest = PORTAL_URLS[portal] || PORTAL_URLS['estudos'];
+
+      // Passa tokens via hash para o portal (cross-domain session)
+      const { access_token, refresh_token, expires_in } = data.session;
+      window.location.href =
+        `${dest}/#access_token=${access_token}&refresh_token=${refresh_token}&token_type=bearer&expires_in=${expires_in}`;
+    }
+
+    // Enter no campo senha
+    document.getElementById('nav-password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doNavLogin();
     });
   </script>
 </body>

@@ -333,38 +333,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   .home-hero h1 { font-size: 26px; }
 }
 
-/* ── Auth / Login ─────────────────────────────── */
-#login-overlay {
-  position:fixed;inset:0;background:#0D0A1E;
-  display:flex;align-items:center;justify-content:center;
-  z-index:9999;
-}
-#login-overlay.hidden { display:none; }
-.login-card {
-  background:#1A1035;border:1px solid rgba(167,139,250,.25);
-  border-radius:24px;padding:48px 40px;width:100%;max-width:380px;
-  text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.6);
-}
-.login-emoji { font-size:56px;margin-bottom:16px;display:block;line-height:1; }
-.login-title { font-family:"Space Mono",monospace;color:white;font-size:22px;margin-bottom:6px; }
-.login-sub { color:rgba(255,255,255,.4);font-size:13px;margin-bottom:32px; }
-.login-input {
-  width:100%;padding:12px 16px;
-  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
-  border-radius:12px;color:white;font-family:"Baloo 2",cursive;
-  font-size:14px;margin-bottom:12px;outline:none;display:block;
-}
-.login-input:focus { border-color:rgba(167,139,250,.5); }
-.login-btn {
-  width:100%;padding:14px;margin-top:4px;
-  background:linear-gradient(135deg,#7C3AED,#A78BFA);
-  border:none;border-radius:12px;color:white;
-  font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;
-  cursor:pointer;transition:opacity .15s;
-}
-.login-btn:hover { opacity:.88; }
-.login-btn:disabled { opacity:.5;cursor:default; }
-.login-error { color:#F87171;font-size:12px;margin-top:12px;min-height:16px; }
+/* ── Auth ─────────────────────────────────────── */
 .logout-btn {
   display:block;width:100%;padding:7px 0;margin-top:10px;
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
@@ -379,19 +348,6 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
-
-<!-- ── LOGIN OVERLAY ──────────────────────────── -->
-<div id="login-overlay">
-  <div class="login-card">
-    <span class="login-emoji">🎓</span>
-    <h1 class="login-title">Portal do André</h1>
-    <p class="login-sub">5º Ano · sabendo.app</p>
-    <input id="login-email" class="login-input" type="email" placeholder="Email" autocomplete="email">
-    <input id="login-password" class="login-input" type="password" placeholder="Senha" autocomplete="current-password">
-    <button class="login-btn" onclick="doLogin()">Entrar 🚀</button>
-    <p id="login-error" class="login-error"></p>
-  </div>
-</div>
 
 <!-- Mobile hamburger -->
 <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
@@ -2054,45 +2010,28 @@ function closeSidebar() {
 var SUPA_URL = 'https://mmtrzxmitklpibfilbio.supabase.co';
 var SUPA_KEY = 'sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_';
 var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
-var PORTAL_ID = 'estudos';
 var sbUser = null;
 var sbStreak = { current_streak: 0, longest_streak: 0, total_activities: 0 };
 
 async function initAuth() {
+  // Se chegou via redirect com tokens no hash, aguarda processamento
+  if (window.location.hash.includes('access_token')) {
+    await new Promise(function(r) { setTimeout(r, 400); });
+    window.history.replaceState(null, '', window.location.pathname);
+  }
   var result = await supa.auth.getSession();
   var session = result.data.session;
   if (session) {
     sbUser = session.user;
-    document.getElementById('login-overlay').classList.add('hidden');
     await loadStreak();
+  } else {
+    window.location.href = 'https://sabendo.app';
   }
-}
-
-async function doLogin() {
-  var email = document.getElementById('login-email').value.trim();
-  var pwd = document.getElementById('login-password').value;
-  var errEl = document.getElementById('login-error');
-  var btn = document.querySelector('.login-btn');
-  errEl.textContent = '';
-  btn.textContent = 'Entrando…';
-  btn.disabled = true;
-  var result = await supa.auth.signInWithPassword({ email: email, password: pwd });
-  btn.textContent = 'Entrar 🚀';
-  btn.disabled = false;
-  if (result.error) {
-    errEl.textContent = 'Email ou senha incorretos.';
-    return;
-  }
-  sbUser = result.data.user;
-  document.getElementById('login-overlay').classList.add('hidden');
-  await loadStreak();
 }
 
 async function doLogout() {
   await supa.auth.signOut();
-  sbUser = null;
-  document.getElementById('streak-banner').classList.remove('visible');
-  document.getElementById('login-overlay').classList.remove('hidden');
+  window.location.href = 'https://sabendo.app';
 }
 
 async function loadStreak() {
@@ -2138,10 +2077,6 @@ async function logActivity(discipline, themeSlug, activityType, score) {
   sbStreak = Object.assign({}, streak, { current_streak: newStreak, total_activities: streak.total_activities + 1 });
   renderStreak();
 }
-
-document.getElementById('login-password').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') doLogin();
-});
 
 initAuth();
 </script>
