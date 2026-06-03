@@ -383,6 +383,35 @@
       .bubble { animation: none; }
     }
 
+  /* ── PILARES ──────────────────────────────────── */
+  .pilares {
+    padding: 80px 32px 100px;
+    background: var(--preto);
+  }
+  .pilares-inner {
+    max-width: 960px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+  }
+  .pilar {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 20px; padding: 36px 28px;
+    text-align: center;
+    transition: border-color .2s, transform .2s;
+  }
+  .pilar:hover { border-color: rgba(0,200,150,.3); transform: translateY(-4px); }
+  .pilar-icon { font-size: 40px; margin-bottom: 18px; line-height: 1; }
+  .pilar-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px;
+    color: white; margin-bottom: 12px;
+  }
+  .pilar-desc {
+    font-size: 14px; color: rgba(255,255,255,.5); line-height: 1.65;
+  }
+  @media (max-width: 700px) {
+    .pilares-inner { grid-template-columns: 1fr; }
+  }
+
   /* ── NAV / LOGIN ──────────────────────────────── */
   .site-nav {
     position: sticky; top: 0; z-index: 1001;
@@ -395,9 +424,11 @@
     animation: fadeUp 0.4s ease 2.3s forwards;
   }
   .site-nav-brand {
+    display: flex; align-items: center; gap: 10px;
     font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
-    color: white; white-space: nowrap; flex-shrink: 0;
+    color: white; white-space: nowrap; flex-shrink: 0; text-decoration: none;
   }
+  .site-nav-brand img { height: 32px; width: auto; }
   .site-nav-brand .dot { color: var(--verde); }
   .nav-login-form {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
@@ -433,7 +464,7 @@
 
   <!-- NAV / LOGIN -->
   <nav class="site-nav">
-    <span class="site-nav-brand">sabendo<span class="dot">.</span></span>
+    <span class="site-nav-brand"><img src="prepo-hd.png" alt="Prepo">sabendo<span class="dot">.</span></span>
     <div class="nav-login-form">
       <input id="nav-email" class="nav-input nav-input-email" type="email" placeholder="Email" autocomplete="email">
       <input id="nav-password" class="nav-input nav-input-pwd" type="password" placeholder="Senha" autocomplete="current-password">
@@ -461,45 +492,34 @@
       <p class="hero-tagline">Suas matérias <strong>viram game.</strong></p>
     </div>
     <div class="scroll-hint">
-      <span>ver portais</span>
+      <span>saiba mais</span>
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <path d="M7 11L14 18L21 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
   </section>
 
-  <section class="portais">
-    <div class="portais-inner">
+  <!-- PILARES — placeholder até copy/vídeo definitivos -->
+  <section class="pilares">
+    <div class="pilares-inner">
 
-      <a class="card card-andre" href="#" onclick="document.getElementById('nav-email').focus();window.scrollTo({top:0,behavior:'smooth'});return false;">
-        <div class="card-icon">🎓</div>
-        <div class="card-name">André</div>
-        <div class="card-grade card-grade-verde">5º ANO</div>
-        <p class="card-desc">HQs, quizzes e jogos interativos para todas as matérias do 5º ano.</p>
-        <div class="chips">
-          <span class="chip chip-port">Português</span>
-          <span class="chip chip-mat">Matemática</span>
-          <span class="chip chip-cien">Ciências</span>
-          <span class="chip chip-hist">História</span>
-          <span class="chip chip-geo">Geografia</span>
-        </div>
-        <span class="card-btn btn-andre">Fazer login para acessar →</span>
-      </a>
+      <div class="pilar">
+        <div class="pilar-icon">📚</div>
+        <h3 class="pilar-title">Conteúdo exclusivo</h3>
+        <p class="pilar-desc">HQs, quizzes e jogos criados especificamente para o ano escolar de cada aluno.</p>
+      </div>
 
-      <a class="card card-lis" href="#" onclick="document.getElementById('nav-email').focus();window.scrollTo({top:0,behavior:'smooth'});return false;">
-        <div class="card-icon">⭐</div>
-        <div class="card-name">Lis</div>
-        <div class="card-grade card-grade-roxo">2º ANO</div>
-        <p class="card-desc">Aventuras de aprendizado com personagens e atividades do 2º ano.</p>
-        <div class="chips">
-          <span class="chip chip-port">Português</span>
-          <span class="chip chip-mat">Matemática</span>
-          <span class="chip chip-cien">Ciências</span>
-          <span class="chip chip-hist">História</span>
-          <span class="chip chip-geo">Geografia</span>
-        </div>
-        <span class="card-btn btn-lis">Fazer login para acessar →</span>
-      </a>
+      <div class="pilar">
+        <div class="pilar-icon">🎮</div>
+        <h3 class="pilar-title">Aprender jogando</h3>
+        <p class="pilar-desc">Atividades interativas que transformam matéria em missão — sem decoreba.</p>
+      </div>
+
+      <div class="pilar">
+        <div class="pilar-icon">🔥</div>
+        <h3 class="pilar-title">Progresso visível</h3>
+        <p class="pilar-desc">Streak diário e histórico de atividades para manter o ritmo e a motivação.</p>
+      </div>
 
     </div>
   </section>
@@ -520,7 +540,7 @@
       if (window.scrollY > 40) hint.style.opacity = '0';
     }, { passive: true });
     hint.addEventListener('click', () => {
-      document.querySelector('.portais').scrollIntoView({ behavior: 'smooth' });
+      document.querySelector('.pilares').scrollIntoView({ behavior: 'smooth' });
     });
 
     // ── SUPABASE AUTH ──────────────────────────
