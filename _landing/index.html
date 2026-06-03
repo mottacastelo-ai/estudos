@@ -385,12 +385,14 @@
 
   /* ── NAV / LOGIN ──────────────────────────────── */
   .site-nav {
-    position: sticky; top: 0; z-index: 500;
-    background: rgba(13,13,13,.92); backdrop-filter: blur(14px);
+    position: sticky; top: 0; z-index: 1001;
+    background: rgba(13,13,13,.95); backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(255,255,255,.06);
     padding: 12px 32px;
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.4s ease 2.3s forwards;
   }
   .site-nav-brand {
     font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
@@ -469,7 +471,7 @@
   <section class="portais">
     <div class="portais-inner">
 
-      <a class="card card-andre" href="https://andre.sabendo.app">
+      <a class="card card-andre" href="#" onclick="document.getElementById('nav-email').focus();window.scrollTo({top:0,behavior:'smooth'});return false;">
         <div class="card-icon">🎓</div>
         <div class="card-name">André</div>
         <div class="card-grade card-grade-verde">5º ANO</div>
@@ -481,10 +483,10 @@
           <span class="chip chip-hist">História</span>
           <span class="chip chip-geo">Geografia</span>
         </div>
-        <span class="card-btn btn-andre">Acessar Portal →</span>
+        <span class="card-btn btn-andre">Fazer login para acessar →</span>
       </a>
 
-      <a class="card card-lis" href="https://lis.sabendo.app">
+      <a class="card card-lis" href="#" onclick="document.getElementById('nav-email').focus();window.scrollTo({top:0,behavior:'smooth'});return false;">
         <div class="card-icon">⭐</div>
         <div class="card-name">Lis</div>
         <div class="card-grade card-grade-roxo">2º ANO</div>
@@ -496,7 +498,7 @@
           <span class="chip chip-hist">História</span>
           <span class="chip chip-geo">Geografia</span>
         </div>
-        <span class="card-btn btn-lis">Acessar Portal →</span>
+        <span class="card-btn btn-lis">Fazer login para acessar →</span>
       </a>
 
     </div>
