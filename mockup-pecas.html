@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Peças</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#1e1b4b; font-family:"Baloo 2",sans-serif; display:flex; flex-direction:column; align-items:center; gap:40px; padding:40px 16px; }
+h2 { color:white; font-size:13px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; opacity:.6; margin-bottom:-24px; }
+.label { color:white; font-size:18px; font-weight:800; background:rgba(255,255,255,.1); padding:8px 20px; border-radius:99px; }
+
+/* ── Modal base ── */
+.modal {
+  background:#fff; border-radius:20px; padding:24px 20px 20px;
+  width:320px; text-align:center;
+  box-shadow:0 16px 48px rgba(0,0,0,.4);
+}
+.modal-title { font-size:18px; font-weight:800; color:#1e1b4b; margin-bottom:3px; }
+.modal-sub { font-size:13px; color:#6b7280; margin-bottom:18px; }
+
+/* Progress bar */
+.bar-wrap { background:#e5e7eb; border-radius:99px; height:10px; margin-bottom:6px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#7C3AED,#A78BFA); }
+.bar-label { font-size:12px; color:#9ca3af; margin-bottom:16px; }
+
+/* Button */
+.btn {
+  background:linear-gradient(135deg,#7C3AED,#A78BFA);
+  color:#fff; border:none; border-radius:50px;
+  padding:12px 28px; font-size:15px; font-weight:800;
+  cursor:pointer; width:100%; font-family:inherit;
+}
+
+/* ══════════════════════════════════════════
+   OPÇÃO A — Grade 4×N
+══════════════════════════════════════════ */
+.grid-4n {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom:14px;
+}
+.slot {
+  aspect-ratio:1;
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+}
+.slot-empty { background:#f3f4f6; }
+.slot-empty::after { content:"❓"; opacity:.3; font-size:14px; }
+.slot-collected { background:#EDE9FE; }
+.slot-new {
+  background:#EDE9FE;
+  border:2px solid #7C3AED;
+  animation:bounce .5s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes bounce { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+
+/* ══════════════════════════════════════════
+   OPÇÃO B — Barra + Novas peças
+══════════════════════════════════════════ */
+.new-pieces {
+  display:flex; gap:10px; justify-content:center;
+  margin-bottom:16px;
+}
+.new-slot {
+  width:64px; height:64px; border-radius:14px;
+  background:#EDE9FE; border:2px solid #7C3AED;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:22px; gap:2px;
+  animation:bounce .5s cubic-bezier(.22,1,.36,1) both;
+}
+.new-slot:nth-child(2) { animation-delay:.08s; }
+.new-slot:nth-child(3) { animation-delay:.16s; }
+.new-slot:nth-child(4) { animation-delay:.24s; }
+.new-slot-label { font-size:9px; font-weight:800; color:#7C3AED; }
+
+.progress-ring-wrap { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:14px; }
+.ring { position:relative; width:56px; height:56px; }
+.ring svg { transform:rotate(-90deg); }
+.ring-track { fill:none; stroke:#e5e7eb; stroke-width:5; }
+.ring-fill  { fill:none; stroke:#7C3AED; stroke-width:5; stroke-linecap:round; stroke-dasharray:138.2; stroke-dashoffset:86; }
+.ring-text  { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#1e1b4b; line-height:1; }
+.ring-text small { font-size:8px; color:#9ca3af; }
+.progress-info { text-align:left; }
+.progress-info strong { display:block; font-size:15px; color:#1e1b4b; font-weight:800; }
+.progress-info span { font-size:12px; color:#9ca3af; }
+</style>
+</head>
+<body>
+
+<div class="label">Opção A — Grade 4×N (todos os slots visíveis)</div>
+
+<div class="modal">
+  <div class="modal-title">✨ 4 peças novas!</div>
+  <div class="modal-sub">Prepo — Preposições</div>
+
+  <!-- Grade 4×8 = 32 peças — simulando 12 coletadas, 4 novas -->
+  <div class="grid-4n">
+    <!-- Linha 1: coletadas -->
+    <div class="slot slot-collected">🔵</div>
+    <div class="slot slot-collected">🟣</div>
+    <div class="slot slot-collected">🦾</div>
+    <div class="slot slot-collected">⚙️</div>
+    <!-- Linha 2: coletadas -->
+    <div class="slot slot-collected">🔵</div>
+    <div class="slot slot-collected">🟣</div>
+    <div class="slot slot-collected">🦾</div>
+    <div class="slot slot-collected">⚙️</div>
+    <!-- Linha 3: novas (animação) -->
+    <div class="slot slot-new">🔵</div>
+    <div class="slot slot-new">⚙️</div>
+    <div class="slot slot-new">🟣</div>
+    <div class="slot slot-new">🦾</div>
+    <!-- Linhas 4–8: vazias -->
+    <div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div>
+    <div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div>
+    <div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div>
+    <div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div>
+    <div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div><div class="slot slot-empty"></div>
+  </div>
+
+  <div class="bar-wrap"><div class="bar-fill" style="width:37%"></div></div>
+  <div class="bar-label">12 / 32 peças · 3ª atividade de 8</div>
+  <button class="btn">Continuar →</button>
+</div>
+
+
+<div class="label">Opção B — Barra de progresso + novas peças</div>
+
+<div class="modal">
+  <div class="modal-title">✨ 4 peças novas!</div>
+  <div class="modal-sub">Prepo — Preposições</div>
+
+  <!-- Anel de progresso + texto -->
+  <div class="progress-ring-wrap">
+    <div class="ring">
+      <svg width="56" height="56" viewBox="0 0 56 56">
+        <circle class="ring-track" cx="28" cy="28" r="22"/>
+        <circle class="ring-fill"  cx="28" cy="28" r="22"/>
+      </svg>
+      <div class="ring-text">37%<small>montado</small></div>
+    </div>
+    <div class="progress-info">
+      <strong>12 / 32 peças</strong>
+      <span>3ª atividade de 8</span>
+    </div>
+  </div>
+
+  <!-- Só as 4 peças novas, maiores e com destaque -->
+  <div class="new-pieces">
+    <div class="new-slot">🔵<span class="new-slot-label">nova</span></div>
+    <div class="new-slot">⚙️<span class="new-slot-label">nova</span></div>
+    <div class="new-slot">🟣<span class="new-slot-label">nova</span></div>
+    <div class="new-slot">🦾<span class="new-slot-label">nova</span></div>
+  </div>
+
+  <div class="bar-wrap"><div class="bar-fill" style="width:37%"></div></div>
+  <div class="bar-label">12 / 32 peças</div>
+  <button class="btn">Continuar →</button>
+</div>
+
+</body>
+</html>
