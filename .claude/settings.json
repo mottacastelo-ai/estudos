@@ -7,6 +7,12 @@
           {
             "type": "command",
             "command": "python \"C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\scripts\\update-docs.py\""
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\.claude\\deploy.ps1\"",
+            "timeout": 60,
+            "statusMessage": "Publicando portal..."
           }
         ]
       }
