@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Reveal</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#1e1b4b; font-family:"Baloo 2",sans-serif; display:flex; flex-direction:column; align-items:center; gap:36px; padding:36px 16px; min-height:100vh; }
+.row { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; }
+.label { color:white; font-size:13px; font-weight:800; background:rgba(255,255,255,.12); padding:6px 16px; border-radius:99px; text-align:center; }
+
+/* Modal */
+.modal { background:#fff; border-radius:20px; padding:22px 20px 18px; width:290px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+.modal-title { font-size:17px; font-weight:800; color:#1e1b4b; margin-bottom:2px; }
+.modal-sub { font-size:12px; color:#6b7280; margin-bottom:14px; }
+
+/* Character reveal area */
+.char-wrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #EDE9FE;
+}
+
+/* The actual character (emoji as placeholder — será a imagem real do Codex) */
+.char-image {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 110px;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Grid de sombras (4×4 = 16 cells para 4 atividades × 4 peças) */
+.shadow-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+.shadow-cell {
+  background: rgba(15, 12, 50, 0.88);
+  transition: opacity 0.4s ease;
+}
+.shadow-cell.revealed {
+  background: transparent;
+}
+
+/* Progress */
+.bar-wrap { background:#e5e7eb; border-radius:99px; height:8px; margin-bottom:4px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#7C3AED,#A78BFA); transition: width 0.5s ease; }
+.bar-label { font-size:11px; color:#9ca3af; margin-bottom:12px; }
+.btn { background:linear-gradient(135deg,#7C3AED,#A78BFA); color:#fff; border:none; border-radius:50px; padding:10px; font-size:13px; font-weight:800; cursor:pointer; width:100%; font-family:inherit; }
+
+/* Complete state */
+.complete-glow .char-wrap {
+  box-shadow: 0 0 0 4px #7C3AED, 0 0 32px rgba(124,58,237,.6);
+  animation: pulse 1.5s ease infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 3px #7C3AED, 0 0 24px rgba(124,58,237,.5); }
+  50%      { box-shadow: 0 0 0 5px #A78BFA, 0 0 44px rgba(167,139,250,.8); }
+}
+.carta { background:#EDE9FE; border-radius:12px; padding:10px; margin-bottom:12px; }
+.carta-title { font-size:13px; font-weight:800; color:#1e1b4b; }
+.carta-badge { display:inline-block; background:#7C3AED; color:white; padding:2px 12px; border-radius:99px; font-size:11px; font-weight:800; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="label">Progressão do personagem — Prepo montando ao longo das 4 atividades</div>
+
+<div class="row">
+
+  <!-- ESTADO 1: início — só 4 peças de 16 reveladas -->
+  <div>
+    <div class="label" style="margin-bottom:10px;">1ª atividade</div>
+    <div class="modal">
+      <div class="modal-title">✨ 4 peças novas!</div>
+      <div class="modal-sub">Preposições · 1 de 4 atividades</div>
+      <div class="char-wrap">
+        <div class="char-image">🤖</div>
+        <div class="shadow-grid">
+          <!-- Linha 1: linha 0 revelada -->
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <!-- Resto escuro -->
+          <div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div>
+          <div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div>
+          <div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div>
+        </div>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:25%"></div></div>
+      <div class="bar-label">4 / 16 peças</div>
+      <button class="btn">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ESTADO 2: metade revelada -->
+  <div>
+    <div class="label" style="margin-bottom:10px;">2ª atividade</div>
+    <div class="modal">
+      <div class="modal-title">✨ 4 peças novas!</div>
+      <div class="modal-sub">Preposições · 2 de 4 atividades</div>
+      <div class="char-wrap">
+        <div class="char-image">🤖</div>
+        <div class="shadow-grid">
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div>
+          <div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div>
+        </div>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:50%"></div></div>
+      <div class="bar-label">8 / 16 peças</div>
+      <button class="btn">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ESTADO 3: 3/4 revelado -->
+  <div>
+    <div class="label" style="margin-bottom:10px;">3ª atividade</div>
+    <div class="modal">
+      <div class="modal-title">✨ 4 peças novas!</div>
+      <div class="modal-sub">Preposições · 3 de 4 atividades</div>
+      <div class="char-wrap">
+        <div class="char-image">🤖</div>
+        <div class="shadow-grid">
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div><div class="shadow-cell"></div>
+        </div>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:75%"></div></div>
+      <div class="bar-label">12 / 16 peças</div>
+      <button class="btn">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ESTADO 4: completo! -->
+  <div>
+    <div class="label" style="margin-bottom:10px;">4ª atividade — Completo! 🎉</div>
+    <div class="modal complete-glow">
+      <div class="modal-title">🎉 Prepo Montado!</div>
+      <div class="modal-sub">Você completou todas as atividades!</div>
+      <div class="char-wrap">
+        <div class="char-image" style="animation:celebrate .6s cubic-bezier(.22,1,.36,1) both">🤖</div>
+        <div class="shadow-grid">
+          <!-- tudo revelado -->
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+          <div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div><div class="shadow-cell revealed"></div>
+        </div>
+      </div>
+      <div class="carta">
+        <div class="carta-title">🃏 Carta desbloqueada!</div>
+        <div style="font-size:32px;margin:4px 0">🤖</div>
+        <div style="font-size:13px;font-weight:800;color:#1e1b4b">Prepo</div>
+        <div class="carta-badge">🟣 Épica</div>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:100%"></div></div>
+      <div class="bar-label">16 / 16 peças ✓</div>
+      <button class="btn">Ver minha coleção →</button>
+    </div>
+  </div>
+
+</div>
+
+<style>
+@keyframes celebrate {
+  0% { transform: scale(0) rotate(-15deg); opacity:0; }
+  60% { transform: scale(1.15) rotate(5deg); }
+  100% { transform: scale(1) rotate(0); opacity:1; }
+}
+</style>
+
+</body>
+</html>
