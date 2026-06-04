@@ -337,6 +337,7 @@
 </style>
 </head>
 <body>
+<a href="../../index.html#theme-port-preposicoes" style="position:fixed;top:16px;left:16px;z-index:1000;background:rgba(124,58,237,.12);color:#7C3AED;border:none;border-radius:99px;padding:8px 16px;font-size:13px;font-weight:700;text-decoration:none;font-family:sans-serif;">← Preposições</a>
 <div class="container">
 
   <div class="header">
@@ -639,8 +640,12 @@ loadQuestion();
   btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
   document.body.appendChild(btn);
 
+  var _capturedScore = null;
   function showBtn() {
-    if (btn.style.display === "none") btn.style.display = "block";
+    if (btn.style.display === "none") {
+      _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
+      btn.style.display = "block";
+    }
   }
 
   var observer = new MutationObserver(function(mutations) {
@@ -672,7 +677,7 @@ loadQuestion();
     }
 
     var uid = session.user.id;
-    var score = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
+    var score = _capturedScore;
     var today = new Date().toISOString().split("T")[0];
 
     var existCheck = await supa.from("activity_log")

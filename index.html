@@ -2019,6 +2019,13 @@ async function initAuth() {
     await new Promise(function(r) { setTimeout(r, 400); });
     window.history.replaceState(null, '', window.location.pathname);
   }
+  // Deep link via hash: #theme-port-preposicoes → navega direto ao tema
+  var hashTheme = window.location.hash.match(/^#theme-(\w+)-(.+)$/);
+  if (hashTheme) {
+    window.history.replaceState(null, '', window.location.pathname);
+    var disc = hashTheme[1], slug = hashTheme[2];
+    setTimeout(function() { showTheme(disc, slug); }, 300);
+  }
   var result = await supa.auth.getSession();
   var session = result.data.session;
   if (session) {
