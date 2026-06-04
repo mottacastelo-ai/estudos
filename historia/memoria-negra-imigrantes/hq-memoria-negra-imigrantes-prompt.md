@@ -6,7 +6,7 @@
 
 ## INSTRUÇÕES DE USO
 
-Cole o bloco de cada página diretamente no GPT Quadrinhos Sabendo.
+Cole o bloco de cada página diretamente no Codex.
 URL: https://chatgpt.com/g/g-69ff2b40169881918c5f75a8d9767f30-gpt-quadrinhos-sabendo
 Gere uma página por vez, na ordem definida abaixo.
 Antes de qualquer página, envie a Folha de Personagens junto com ref-prepo.png e ref-bia.png para ancorar o estilo visual.

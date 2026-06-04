@@ -7,7 +7,7 @@
 ## INSTRUÇÕES DE USO
 
 Este arquivo é processado automaticamente pelo Claude in Chrome.
-Ferramenta: ChatGPT com Images 2.0 (GPT Quadrinhos Sabendo).
+Ferramenta: ChatGPT com Images 2.0 (Codex).
 URL: https://chatgpt.com/g/g-69ff2b40169881918c5f75a8d9767f30-gpt-quadrinhos-sabendo
 Gere uma página por vez, na ordem definida abaixo.
 Antes de qualquer página, envie a Folha de Personagens junto com as imagens ref-prepo.png e ref-bia.png para ancorar o estilo visual.

@@ -133,7 +133,7 @@ font-family: "Space Mono", monospace;  /* títulos/headers */
 | Agente | Responsabilidade |
 |---|---|
 | `analisador-pedagogico` | Analisa fotos, extrai conceitos, propõe estrutura de temas |
-| `gerador-hq-prompt` | Cria `hq-[slug]-prompt.md` com prompts para o GPT Quadrinhos Sabendo |
+| `gerador-hq-prompt` | Cria `hq-[slug]-prompt.md` com prompts para o Codex |
 | `gerador-atividades` | Cria arquivos HTML das atividades interativas |
 | `atualizador-index` | Atualiza `index.html` para registrar o novo tema |
 | `revisor-qualidade` | Audita arquivos gerados e reporta conformidade pedagógica |

@@ -6,7 +6,7 @@
 
 ## INSTRUÇÕES DE USO
 
-Cole o bloco de cada página diretamente no **GPT Quadrinhos Sabendo**.
+Cole o bloco de cada página diretamente no **Codex**.
 Gere **uma página por vez**, na ordem indicada abaixo:
 
 1. Folha de Personagens (primeiro!)
@@ -169,7 +169,7 @@ Panel 5 (bottom, wide): Final review panel. A big circular diagram of the WATER 
 4. **Página 3** → `hq-ciclo-da-agua-pg3.png`
 5. **Página 4** → `hq-ciclo-da-agua-pg4.png`
 
-**Dicas para o GPT Quadrinhos Sabendo:**
+**Dicas para o Codex:**
 - Sempre faça upload das imagens canônicas (Bia.png, Prepo.png, Ciclao.png) ANTES de gerar cada página, para manter consistência visual.
 - Reforce em cada prompt: "use the reference sheet for Ciclão and Bia".
 - Se algum painel ficar confuso, peça regeneração mencionando o número do painel — não regenere a página toda.

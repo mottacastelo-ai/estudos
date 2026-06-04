@@ -1,5 +1,5 @@
 # HQ — Poliedros, Prismas e Pirâmides
-**Destino:** GPT Quadrinhos Sabendo  
+**Destino:** Codex  
 **Personagem:** Poli  
 **Apoio:** Bia (amiga humana, cabelos cacheados castanhos, uniforme escolar)  
 **Páginas:** 4 páginas + 1 folha de personagens

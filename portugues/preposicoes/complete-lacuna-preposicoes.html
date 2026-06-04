@@ -366,6 +366,7 @@ function checkAll() {
   document.getElementById('score-val').textContent = `${correct}/${total}`;
 
   const pct = correct / total;
+  window.sabendoScore = Math.round(pct * 100);
   let medal;
   if (pct === 1) medal = '🏆 Perfeito!';
   else if (pct >= 0.8) medal = '🌟 Muito bem!';
@@ -386,50 +387,9 @@ function resetAll() {
 init();
 </script>
 
-<script>
-(function() {
-  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
-  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
-  var DISCIPLINE = "port";
-  var THEME_SLUG = "preposicoes";
-  var ACTIVITY_TYPE = "complete-lacuna";
-  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
-  var btn = document.createElement("button");
-  btn.id = "concluir-btn";
-  btn.textContent = "Concluir atividade";
-  btn.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
-  document.body.appendChild(btn);
-  btn.addEventListener("click", async function() {
-    btn.textContent = "Registrando...";
-    btn.disabled = true;
-    var res = await supa.auth.getSession();
-    var session = res.data.session;
-    if (!session) {
-      btn.textContent = "Faca login no portal";
-      btn.style.background = "#EF4444";
-      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
-      return;
-    }
-    var uid = session.user.id;
-    var today = new Date().toISOString().split("T")[0];
-    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: null });
-    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
-    if (sr.data) {
-      var s = sr.data;
-      var yest = new Date(); yest.setDate(yest.getDate() - 1);
-      var yStr = yest.toISOString().split("T")[0];
-      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
-      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
-    }
-    btn.textContent = "Atividade concluida!";
-    btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
-    btn.style.cursor = "default";
-  });
-})();
-</script>
-
 <!-- concluir-btn -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
 <script>
 (function() {
   var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
@@ -438,6 +398,21 @@ init();
   var THEME_SLUG = "preposicoes";
   var ACTIVITY_TYPE = "complete-lacuna";
   var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Prepo",
+    characterEmoji: "🤖",
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    pieces: [
+      { id: 1, name: "Cabeça", emoji: "🔵" },
+      { id: 2, name: "Tronco", emoji: "🟣" },
+      { id: 3, name: "Braços", emoji: "🦾" },
+      { id: 4, name: "Rodas", emoji: "⚙️" }
+    ]
+  };
 
   var btn = document.createElement("button");
   btn.id = "concluir-btn";
@@ -449,7 +424,6 @@ init();
     if (btn.style.display === "none") btn.style.display = "block";
   }
 
-  // Detecta conclusao via MutationObserver
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       var el = m.target;
@@ -458,24 +432,17 @@ init();
         if (/result|score|gabarito/i.test(sig)) showBtn();
       }
       if (m.attributeName === "style" && el.style && el.style.display === "block") {
-        var sig = (el.id || "");
-        if (/result|score.section|gabarito/i.test(sig)) showBtn();
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito/i.test(sig2)) showBtn();
       }
     });
   });
-  observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class", "style"] });
-
-  // Domino: apos clicar imprimir
-  var printBtn = document.querySelector(".btn-print");
-  if (printBtn) printBtn.addEventListener("click", function() { setTimeout(showBtn, 800); });
-
-  // Mapa-mental: apos clicar gabarito
-  var gabBtn = document.getElementById("btn-gabarito");
-  if (gabBtn) gabBtn.addEventListener("click", function() { setTimeout(showBtn, 400); });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
 
   btn.addEventListener("click", async function() {
     btn.textContent = "Registrando...";
     btn.disabled = true;
+
     var res = await supa.auth.getSession();
     var session = res.data.session;
     if (!session) {
@@ -484,9 +451,20 @@ init();
       setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
       return;
     }
+
     var uid = session.user.id;
+    var score = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
     var today = new Date().toISOString().split("T")[0];
-    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: null });
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
     var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
     if (sr.data) {
       var s = sr.data;
@@ -495,9 +473,12 @@ init();
       var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
       await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
     }
-    btn.textContent = "Atividade concluida!";
-    btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
-    btn.style.cursor = "default";
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
   });
 })();
 </script>

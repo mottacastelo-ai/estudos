@@ -1,6 +1,6 @@
 ---
 name: gerador-hq-prompt
-description: Gera o arquivo hq-[slug]-prompt.md com os prompts de cada página da HQ para o GPT Quadrinhos Sabendo. Acione com o JSON do analisador-pedagogico após aprovação de Léo. Salva o arquivo na pasta correta da disciplina e retorna o path.
+description: Gera o arquivo hq-[slug]-prompt.md com os prompts de cada página da HQ para o Codex. Acione com o JSON do analisador-pedagogico após aprovação de Léo. Salva o arquivo na pasta correta da disciplina e retorna o path.
 model: claude-opus-4-7
 ---
 
@@ -8,7 +8,7 @@ model: claude-opus-4-7
 
 ## Missão
 
-Criar o arquivo `hq-[slug]-prompt.md` com os prompts detalhados para geração das imagens da HQ no GPT Quadrinhos Sabendo.
+Criar o arquivo `hq-[slug]-prompt.md` com os prompts detalhados para geração das imagens da HQ no Codex.
 
 ## Input esperado (JSON do analisador-pedagogico)
 
@@ -34,13 +34,13 @@ Criar o arquivo `hq-[slug]-prompt.md` com os prompts detalhados para geração d
 6. **Folha de personagens primeiro** — descrever o novo personagem com 3 emoções distintas + Bia de apoio.
 7. Tom: didático e divertido; adequado para André (10 anos).
 8. **Salvar em:** `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\[disciplina]\[slug]\hq-[slug]-prompt.md`
-9. **NUNCA usar reticências (`...`) para subentender elementos visuais.** O GPT Quadrinhos Sabendo renderiza apenas o que está escrito — ele não infere nem completa sequências. Todo elemento visual deve ser enumerado explicitamente. Ver regra detalhada na skill.
+9. **NUNCA usar reticências (`...`) para subentender elementos visuais.** O Codex renderiza apenas o que está escrito — ele não infere nem completa sequências. Todo elemento visual deve ser enumerado explicitamente. Ver regra detalhada na skill.
 
 ## Estrutura obrigatória do arquivo de saída
 
 ```markdown
 # HQ — [Nome do Tema]
-**Destino:** GPT Quadrinhos Sabendo
+**Destino:** Codex
 **Personagem:** [Nome do personagem]
 **Apoio:** Bia (amiga humana, cabelos cacheados preto, uniforme escolar azul)
 **Páginas:** 4 páginas + 1 folha de personagens

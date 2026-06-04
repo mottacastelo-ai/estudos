@@ -1,5 +1,5 @@
 # HQ — mdc, mmc e Problemas
-**Destino:** GPT Quadrinhos Sabendo
+**Destino:** Codex
 **Personagens principais:** Máx (robô do mdc) e Mín (robô do mmc) — irmãos
 **Apoio:** Bia (amiga humana, cabelos cacheados pretos, uniforme escolar azul)
 **Páginas:** 4 páginas + 1 folha de personagens
@@ -11,8 +11,8 @@
 ## INSTRUÇÕES DE USO DESTE ARQUIVO
 
 1. **Sequência obrigatória de geração:** primeiro a folha de personagens, depois as páginas 1 → 4 nesta ordem. Isso garante que o estilo dos personagens fique consistente.
-2. **Imagens canônicas:** antes de iniciar, faça upload no GPT Quadrinhos Sabendo das imagens canônicas em `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\` (arquivos `versao canonica *.png`) para travar o estilo visual da Bia. Os robôs Máx e Mín são novos e serão definidos na folha de personagens.
-3. **Prompts em inglês:** os blocos de código `prompt` estão em inglês porque o GPT Quadrinhos Sabendo gera resultados mais previsíveis com instruções nesse idioma. As **falas dentro dos balões devem permanecer em português brasileiro** — está marcado explicitamente em cada prompt.
+2. **Imagens canônicas:** antes de iniciar, faça upload no Codex das imagens canônicas em `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\` (arquivos `versao canonica *.png`) para travar o estilo visual da Bia. Os robôs Máx e Mín são novos e serão definidos na folha de personagens.
+3. **Prompts em inglês:** os blocos de código `prompt` estão em inglês porque o Codex gera resultados mais previsíveis com instruções nesse idioma. As **falas dentro dos balões devem permanecer em português brasileiro** — está marcado explicitamente em cada prompt.
 4. **Termos exatos do livro (NÃO traduzir nas falas):** `mdc`, `mmc`, `máximo divisor comum`, `mínimo múltiplo comum`, `divisores comuns`, `múltiplos comuns`, `intersecção`, `símbolo ∩`, `fatoração`, `menores expoentes`, `maiores expoentes`, `primos entre si`.
 5. **Notação matemática nas falas:** o GPT pode renderizar com pequenos defeitos. Sempre revise a imagem final antes de aceitar. Se o símbolo `∩` falhar, peça regeração do painel específico.
 6. **Salvamento:** os arquivos PNG devem ser salvos em `matematica\mdc-mmc-problemas\` com os nomes listados na seção final.

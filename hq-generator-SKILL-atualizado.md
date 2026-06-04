@@ -1,13 +1,13 @@
 ---
 name: hq-generator
-description: "Gera automaticamente todas as imagens de uma HQ (folha de personagens + 4 páginas) no GPT Quadrinhos Sabendo, solicitando ao usuário o upload manual das imagens canônicas uma única vez antes de iniciar, capturando as imagens via network interception e salvando os arquivos PNG na pasta do projeto. Skill genérica — funciona para qualquer portal (estudos-2ano, estudos, etc.)."
+description: "Gera automaticamente todas as imagens de uma HQ (folha de personagens + 4 páginas) no Codex, solicitando ao usuário o upload manual das imagens canônicas uma única vez antes de iniciar, capturando as imagens via network interception e salvando os arquivos PNG na pasta do projeto. Skill genérica — funciona para qualquer portal (estudos-2ano, estudos, etc.)."
 ---
 
-# Skill: Gerador de HQ — GPT Quadrinhos Sabendo
+# Skill: Gerador de HQ — Codex
 
 ## Visão geral
 
-Gera automaticamente todas as imagens de uma HQ (folha de personagens + 4 páginas) no GPT Quadrinhos Sabendo, solicitando ao usuário o upload manual das imagens canônicas de referência uma única vez antes de iniciar, capturando as imagens via network interception, e salvando os arquivos PNG na pasta do projeto.
+Gera automaticamente todas as imagens de uma HQ (folha de personagens + 4 páginas) no Codex, solicitando ao usuário o upload manual das imagens canônicas de referência uma única vez antes de iniciar, capturando as imagens via network interception, e salvando os arquivos PNG na pasta do projeto.
 
 **Esta skill é genérica — funciona para qualquer projeto** (estudos-2ano, estudos, etc.). A pasta do projeto e o slug do tema são passados por quem a invoca (normalmente a skill do portal correspondente).
 
@@ -21,7 +21,7 @@ Gera automaticamente todas as imagens de uma HQ (folha de personagens + 4 págin
 | `SLUG` | `marcos-memoria` | Identificador do tema (usado nos nomes dos arquivos) |
 | `SUBFOLDER` | `historia/marcos-memoria` | Subpasta relativa dentro de `PASTA_PROJETO` onde as imagens HQ serão salvas. Para estudos-2ano (sem subpastas), passar `""`. |
 | `PROMPT_MD` | `C:\...\estudos\historia\marcos-memoria\hq-marcos-memoria-prompt.md` | Arquivo .md com os prompts de cada página |
-| `CONVERSA_URL` | `https://chatgpt.com/g/g-69ff2b40169881918c5f75a8d9767f30-gpt-quadrinhos-sabendo/c/...` | URL da conversa ativa no GPT Quadrinhos Sabendo |
+| `CONVERSA_URL` | `https://chatgpt.com/g/g-69ff2b40169881918c5f75a8d9767f30-gpt-quadrinhos-sabendo/c/...` | URL da conversa ativa no Codex |
 | `TAB_ID` | `2093235551` | ID da aba do Chrome com o GPT aberto |
 
 ---
@@ -54,7 +54,7 @@ Todos os arquivos são salvos na raiz de `PASTA_PROJETO`.
 
 6. **Upload das canônicas uma única vez, manualmente pelo usuário** — antes de enviar o primeiro prompt (folha de personagens), exibir ao usuário a lista de imagens canônicas encontradas e pedir que as suba no ChatGPT. Aguardar confirmação via `AskUserQuestion` antes de prosseguir. Nos prompts seguintes (pg1–pg4), enviar somente o texto — o contexto da conversa já mantém a referência visual.
 
-7. **Nova conversa por tema** — iniciar sempre uma nova conversa no GPT Quadrinhos Sabendo para cada tema, evitando que o contexto anterior influencie o novo personagem.
+7. **Nova conversa por tema** — iniciar sempre uma nova conversa no Codex para cada tema, evitando que o contexto anterior influencie o novo personagem.
 
 8. **Folha de personagens primeiro** — é sempre a primeira geração da conversa, estabelecendo referência visual para as páginas seguintes dentro da mesma sessão do GPT.
 
@@ -85,7 +85,7 @@ for c in canonicas:
     print(f"  {c}")
 ```
 
-### 0.2 Abrir o GPT Quadrinhos Sabendo no Chrome
+### 0.2 Abrir o Codex no Chrome
 
 Usar `mcp__Claude_in_Chrome__tabs_context_mcp` para obter a lista de abas. Se já houver uma aba com URL contendo `gpt-quadrinhos-sabendo`, usar essa aba como `TAB_ID`. Caso contrário, criar uma nova aba e navegar para a URL base:
 
@@ -104,7 +104,7 @@ Usar `AskUserQuestion` para exibir ao usuário a lista de imagens canônicas enc
 > [lista de nomes dos arquivos]
 >
 > Por favor:
-> 1. Clique no botão **+** (anexar) no input do GPT Quadrinhos Sabendo
+> 1. Clique no botão **+** (anexar) no input do Codex
 > 2. Selecione e faça upload de TODAS as imagens listadas acima
 > 3. **NÃO envie ainda** — aguarde eu injetar o prompt automaticamente
 > 4. Confirme aqui quando as imagens aparecerem no campo de texto"
@@ -375,7 +375,7 @@ MONTAR        = True
 
 ---
 
-## GPT Quadrinhos Sabendo
+## Codex
 
 URL base: `https://chatgpt.com/g/g-69ff2b40169881918c5f75a8d9767f30-gpt-quadrinhos-sabendo`
 

@@ -1,5 +1,5 @@
 # HQ — Água, Cidades e Consumo Consciente
-**Destino:** GPT Quadrinhos Sabendo
+**Destino:** Codex
 **Personagem principal:** Gotinha (gota d'água animada com capacete amarelo de construção)
 **Apoio:** Bia (menina humana de 11 anos, cabelos pretos cacheados, uniforme escolar azul) + Prepo (robô roxo mascote)
 **Páginas:** 4 páginas + 1 folha de personagens
@@ -273,7 +273,7 @@ Gotinha: *"Vamos juntos salvar nossa água! 💧✨"*
 - `hq-agua-cidades-consumo-pg3.png`
 - `hq-agua-cidades-consumo-pg4.png`
 
-**Dicas finais para o operador do GPT Quadrinhos Sabendo:**
+**Dicas finais para o operador do Codex:**
 - Antes de cada página, lembrar o GPT da paleta de Gotinha (azul `#0284C7` + capacete amarelo `#FCD34D`) — o GPT não tem memória entre sessões
 - Verificar que Bia mantém o cabelo cacheado preto e o uniforme azul-marinho em todas as páginas
 - Garantir que cada página tenha pelo menos 1 painel com diagrama/gráfico/tabela visual (regra didática)

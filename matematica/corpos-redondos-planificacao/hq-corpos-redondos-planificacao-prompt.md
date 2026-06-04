@@ -1,5 +1,5 @@
 # HQ — Corpos Redondos e Planificação
-**Destino:** GPT Quadrinhos Sabendo  
+**Destino:** Codex  
 **Personagem:** Esfe  
 **Apoio:** Bia (amiga humana, cabelos cacheados castanhos, uniforme escolar)  
 **Páginas:** 4 páginas + 1 folha de personagens

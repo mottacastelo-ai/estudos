@@ -1,6 +1,6 @@
 ---
 name: skill-gerar-hq-prompt
-description: "Guia procedural para criar o arquivo hq-[slug]-prompt.md com os prompts de cada página da HQ para o GPT Quadrinhos Sabendo. Usado pelo agente gerador-hq-prompt."
+description: "Guia procedural para criar o arquivo hq-[slug]-prompt.md com os prompts de cada página da HQ para o Codex. Usado pelo agente gerador-hq-prompt."
 ---
 
 # Skill: Gerador de Prompt HQ
@@ -38,7 +38,7 @@ Deve conter:
 
 ## Regra absoluta — Sem reticências, sem subentendidos
 
-**O GPT Quadrinhos Sabendo renderiza apenas o que está escrito. Ele não infere, não completa sequências, não interpreta reticências.**
+**O Codex renderiza apenas o que está escrito. Ele não infere, não completa sequências, não interpreta reticências.**
 
 ❌ **Errado:**
 > "The numbers 4, 6, 8, 10... have a red X drawn through them"
@@ -89,7 +89,7 @@ Pelo menos 1 painel por página deve incluir um elemento visual explícito:
 
 ---
 
-## Estilo visual do GPT Quadrinhos Sabendo
+## Estilo visual do Codex
 
 - Traços expressivos, cores vibrantes, quadrinhos ocidentais
 - Personagens com expressões exageradas (emoções claras)

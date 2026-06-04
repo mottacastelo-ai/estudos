@@ -6,7 +6,7 @@
 
 ## INSTRUÇÕES DE USO
 
-Cole o bloco de cada página diretamente no ChatGPT (Images 2.0 / GPT Quadrinhos Sabendo).
+Cole o bloco de cada página diretamente no ChatGPT (Images 2.0 / Codex).
 Gere uma página por vez, na ordem definida abaixo.
 Gere a Folha de Personagens PRIMEIRO e use-a como referência visual durante toda a sessão.
 

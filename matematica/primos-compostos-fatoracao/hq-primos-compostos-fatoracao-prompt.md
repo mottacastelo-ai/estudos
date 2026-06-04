@@ -6,7 +6,7 @@
 
 ## INSTRUÇÕES DE USO
 
-Cole o bloco de cada página diretamente no ChatGPT (Images 2.0 / GPT Quadrinhos Sabendo).
+Cole o bloco de cada página diretamente no ChatGPT (Images 2.0 / Codex).
 Gere uma página por vez, na ordem definida abaixo.
 **SEMPRE gere a Folha de Personagens PRIMEIRO** e mantenha-a aberta como referência visual durante toda a sessão — o GPT não tem memória entre prompts e precisa "ver" o personagem para manter a consistência.
 Após cada página gerada, baixe a imagem com o nome indicado na seção "Nomes para salvar".
@@ -243,7 +243,7 @@ Style: school notebook page background, vibrant greens, golden highlights on the
 
 ## DICAS DE GERAÇÃO
 
-- **Antes de cada página**, anexe a folha de personagens como referência na conversa do GPT Quadrinhos Sabendo, ou cole novamente a descrição completa do Primo (corpo, coroa, lupa, paleta). O modelo NÃO mantém consistência sem isso.
+- **Antes de cada página**, anexe a folha de personagens como referência na conversa do Codex, ou cole novamente a descrição completa do Primo (corpo, coroa, lupa, paleta). O modelo NÃO mantém consistência sem isso.
 - Se o número "1" do personagem Primo for desenhado pequeno demais, peça regeneração com a instrução: *"make Primo larger, fill at least 1/3 of the panel vertically"*.
 - A **coroa dourada de 3 pontas** é o marcador visual mais importante de identidade — confira em cada painel se ela aparece.
 - A **lupa de detetive** deve aparecer em pelo menos 1 painel por página.
