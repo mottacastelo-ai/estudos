@@ -328,9 +328,28 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   .hamburger { display: flex; }
   .overlay.open { display: block; }
   .sidebar-brand { padding-left: 62px; }
-  .home-hero, .disc-hero { padding: 60px 20px 36px; }
-  .home-body, .disc-body { padding: 24px 16px; }
+  .home-hero, .disc-hero { padding: 48px 20px 32px; }
+  .home-body, .disc-body { padding: 20px 16px; }
   .home-hero h1 { font-size: 26px; }
+
+  /* Stats cards — mobile */
+  .home-stats { gap: 8px; }
+  .hstat { flex: 1 1 0; min-width: 0; padding: 10px 12px; font-size: 11px; text-align: center; }
+  .hstat span { font-size: 22px; }
+
+  /* Discipline cards — 1 coluna no mobile */
+  .disc-cards { grid-template-columns: 1fr; }
+  .disc-home-card { padding: 18px; }
+
+  /* Theme tabs — scroll horizontal */
+  .theme-tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .theme-tab-btn { flex-shrink: 0; }
+
+  /* HQ image — full width */
+  .hq-img { width: 100%; height: auto; }
+
+  /* Activity grid — 1 coluna */
+  .act-grid { grid-template-columns: 1fr; }
 }
 
 /* ── Auth ─────────────────────────────────────── */
