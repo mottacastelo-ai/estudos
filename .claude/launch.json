@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["serve", "_landing", "-p", "3456", "--no-clipboard"],
       "port": 3456
+    },
+    {
+      "name": "portal",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", ".", "-p", "3458", "--no-clipboard"],
+      "port": 3458
     }
   ],
   "configurations_extra": [

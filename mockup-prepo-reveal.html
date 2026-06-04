@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Prepo Reveal</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#1e1b4b;
+  font-family:"Baloo 2",sans-serif;
+  display:flex; flex-direction:column; align-items:center;
+  gap:24px; padding:32px 16px; min-height:100vh;
+}
+h1 { color:white; font-size:14px; opacity:.6; text-transform:uppercase; letter-spacing:.1em; }
+
+.modal {
+  background:#fff; border-radius:20px; padding:20px 18px 16px;
+  width:300px; text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.modal-title { font-size:17px; font-weight:800; color:#1e1b4b; margin-bottom:2px; }
+.modal-sub   { font-size:12px; color:#6b7280; margin-bottom:14px; }
+
+/* ── Character reveal ── */
+.char-stage {
+  position:relative; width:200px; height:240px;
+  margin:0 auto 12px;
+}
+.char-stage img {
+  width:100%; height:100%; object-fit:contain;
+  display:block;
+}
+
+/* Each shadow region is an absolute div over the image */
+.piece {
+  position:absolute;
+  background:rgba(15,10,50,.82);
+  border-radius:6px;
+  transition:opacity .45s ease, background .45s ease;
+  cursor:pointer;
+}
+.piece.revealed { opacity:0; pointer-events:none; }
+.piece.new-glow {
+  background:rgba(124,58,237,.35);
+  box-shadow:0 0 0 2px #7C3AED;
+  animation:glow-pulse 1.2s ease-in-out 3;
+}
+@keyframes glow-pulse {
+  0%,100% { box-shadow:0 0 0 2px #7C3AED, 0 0 8px rgba(124,58,237,.4); }
+  50%      { box-shadow:0 0 0 3px #A78BFA, 0 0 16px rgba(167,139,250,.7); }
+}
+
+/* ── New pieces strip ── */
+.new-pieces { display:flex; gap:6px; justify-content:center; margin-bottom:10px; flex-wrap:wrap; }
+.piece-chip {
+  background:#EDE9FE; border:1.5px solid #7C3AED;
+  border-radius:8px; padding:4px 8px;
+  font-size:11px; font-weight:800; color:#5B21B6;
+  animation:chip-in .35s cubic-bezier(.22,1,.36,1) both;
+}
+.piece-chip:nth-child(2) { animation-delay:.07s; }
+.piece-chip:nth-child(3) { animation-delay:.14s; }
+.piece-chip:nth-child(4) { animation-delay:.21s; }
+@keyframes chip-in {
+  from { transform:scale(0) translateY(6px); opacity:0; }
+  to   { transform:none; opacity:1; }
+}
+
+/* ── Progress ── */
+.bar-wrap { background:#e5e7eb; border-radius:99px; height:8px; margin-bottom:4px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#7C3AED,#A78BFA); transition:width .5s cubic-bezier(.22,1,.36,1); }
+.bar-label { font-size:11px; color:#9ca3af; margin-bottom:12px; }
+.btn {
+  background:linear-gradient(135deg,#7C3AED,#A78BFA);
+  color:#fff; border:none; border-radius:50px;
+  padding:10px; font-size:13px; font-weight:800;
+  cursor:pointer; width:100%; font-family:inherit;
+}
+.btn:disabled { opacity:.5; cursor:default; }
+
+/* ── Complete state ── */
+.complete-banner {
+  display:none; background:#EDE9FE; border-radius:12px;
+  padding:10px; margin-bottom:10px;
+}
+.complete-banner.show { display:block; animation:chip-in .4s cubic-bezier(.22,1,.36,1) both; }
+.complete-banner strong { display:block; font-size:14px; color:#1e1b4b; }
+.badge { display:inline-block; background:#7C3AED; color:white; padding:2px 12px; border-radius:99px; font-size:11px; font-weight:800; margin-top:4px; }
+
+/* ── Controls ── */
+.controls { display:flex; gap:8px; }
+.ctrl-btn {
+  background:rgba(255,255,255,.12); color:white; border:1.5px solid rgba(255,255,255,.2);
+  border-radius:10px; padding:8px 14px; font-size:12px; font-weight:800;
+  cursor:pointer; font-family:inherit; transition:.15s;
+}
+.ctrl-btn:hover { background:rgba(255,255,255,.22); }
+</style>
+</head>
+<body>
+
+<h1>Mockup — Prepo sendo montado (imagem real)</h1>
+
+<div class="modal" id="modal">
+  <div class="modal-title" id="modal-title">✨ Atividade concluída!</div>
+  <div class="modal-sub" id="modal-sub">Preposições · 0 de 4 atividades</div>
+
+  <!-- Character with shadow overlay regions -->
+  <div class="char-stage">
+    <img src="_landing/prepo-hd.png" alt="Prepo">
+
+    <!-- Cada div cobre uma parte do Prepo. Posições em % do 200×240px container -->
+    <!-- Antenas -->
+    <div class="piece" id="p1"  style="left:20%;top:0%;width:18%;height:13%" title="Antena D"></div>
+    <div class="piece" id="p2"  style="left:60%;top:0%;width:18%;height:13%" title="Antena E"></div>
+    <!-- Cabeça / Conectores laterais -->
+    <div class="piece" id="p3"  style="left:12%;top:10%;width:18%;height:14%" title="Conector esquerdo"></div>
+    <div class="piece" id="p4"  style="left:70%;top:10%;width:18%;height:14%" title="Conector direito"></div>
+    <!-- Face -->
+    <div class="piece" id="p5"  style="left:22%;top:10%;width:56%;height:15%" title="Topo da cabeça"></div>
+    <div class="piece" id="p6"  style="left:22%;top:23%;width:56%;height:18%" title="Face"></div>
+    <!-- Olhos (sobrepostos finos) -->
+    <div class="piece" id="p7"  style="left:26%;top:24%;width:16%;height:13%;border-radius:50%" title="Olho esquerdo"></div>
+    <div class="piece" id="p8"  style="left:58%;top:24%;width:16%;height:13%;border-radius:50%" title="Olho direito"></div>
+    <!-- Boca -->
+    <div class="piece" id="p9"  style="left:34%;top:35%;width:32%;height:10%;border-radius:8px" title="Boca"></div>
+    <!-- Corpo -->
+    <div class="piece" id="p10" style="left:26%;top:43%;width:48%;height:12%" title="Pescoço / Ombros"></div>
+    <div class="piece" id="p11" style="left:22%;top:53%;width:56%;height:15%" title="Corpo superior"></div>
+    <div class="piece" id="p12" style="left:28%;top:66%;width:44%;height:12%" title="Placa PREPO"></div>
+    <!-- Braços -->
+    <div class="piece" id="p13" style="left:2%;top:46%;width:22%;height:22%;border-radius:8px" title="Braço esquerdo"></div>
+    <div class="piece" id="p14" style="left:76%;top:46%;width:22%;height:22%;border-radius:8px" title="Braço direito"></div>
+    <!-- Pernas -->
+    <div class="piece" id="p15" style="left:26%;top:76%;width:20%;height:22%;border-radius:8px" title="Perna esquerda"></div>
+    <div class="piece" id="p16" style="left:54%;top:76%;width:20%;height:22%;border-radius:8px" title="Perna direita"></div>
+  </div>
+
+  <!-- Novas peças desta rodada -->
+  <div class="new-pieces" id="new-pieces-strip"></div>
+
+  <!-- Completo -->
+  <div class="complete-banner" id="complete-banner">
+    <strong>🎉 Prepo Montado!</strong>
+    <br><span style="font-size:12px;color:#6b7280">Você completou preposições!</span><br>
+    <span class="badge">🟣 Épica</span>
+  </div>
+
+  <!-- Progress -->
+  <div class="bar-wrap"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+  <div class="bar-label" id="bar-label">0 / 16 peças</div>
+
+  <button class="btn" id="btn-activity" onclick="doActivity()">▶ Fazer atividade</button>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <button class="ctrl-btn" onclick="resetAll()">↺ Reiniciar</button>
+</div>
+
+<script>
+// State
+var TOTAL = 16;
+var PIECES_PER_ACTIVITY = 4;
+var MAX_ACTIVITIES = TOTAL / PIECES_PER_ACTIVITY; // 4
+
+var PIECE_NAMES = {
+  p1:  "Antena D",       p2:  "Antena E",
+  p3:  "Conector E",     p4:  "Conector D",
+  p5:  "Topo da cabeça", p6:  "Face",
+  p7:  "Olho esquerdo",  p8:  "Olho direito",
+  p9:  "Boca",           p10: "Ombros",
+  p11: "Corpo",          p12: "Placa PREPO",
+  p13: "Braço esquerdo", p14: "Braço direito",
+  p15: "Perna esquerda", p16: "Perna direita"
+};
+
+var collected = [];   // piece ids collected
+var activity = 0;     // how many activities done
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function doActivity() {
+  if (activity >= MAX_ACTIVITIES) return;
+  activity++;
+
+  // Get uncollected pieces
+  var allIds = Object.keys(PIECE_NAMES);
+  var available = allIds.filter(function(id) { return collected.indexOf(id) === -1; });
+  var picks = shuffle(available).slice(0, PIECES_PER_ACTIVITY);
+
+  // Clear previous new-glow
+  document.querySelectorAll('.piece.new-glow').forEach(function(el) {
+    el.classList.remove('new-glow');
+  });
+
+  // Reveal picked pieces with staggered animation
+  picks.forEach(function(id, i) {
+    setTimeout(function() {
+      var el = document.getElementById(id);
+      el.classList.add('revealed');
+      el.classList.add('new-glow');
+      collected.push(id);
+      updateUI(picks);
+    }, i * 120);
+  });
+
+  setTimeout(function() { updateBtn(); }, picks.length * 120 + 100);
+}
+
+function updateUI(newPicks) {
+  var count = collected.length;
+
+  // Update title
+  document.getElementById('modal-title').textContent =
+    count < TOTAL ? '✨ ' + PIECES_PER_ACTIVITY + ' peças novas!' : '🎉 Prepo Montado!';
+  document.getElementById('modal-sub').textContent =
+    'Preposições · ' + activity + ' de ' + MAX_ACTIVITIES + ' atividades';
+
+  // Update chips strip
+  var strip = document.getElementById('new-pieces-strip');
+  strip.innerHTML = '';
+  if (newPicks && count < TOTAL + 1) {
+    newPicks.forEach(function(id) {
+      var chip = document.createElement('span');
+      chip.className = 'piece-chip';
+      chip.textContent = PIECE_NAMES[id];
+      strip.appendChild(chip);
+    });
+  }
+
+  // Update bar
+  var pct = Math.round((count / TOTAL) * 100);
+  document.getElementById('bar').style.width = pct + '%';
+  document.getElementById('bar-label').textContent = count + ' / ' + TOTAL + ' peças';
+
+  // Complete?
+  if (count >= TOTAL) {
+    document.getElementById('complete-banner').classList.add('show');
+    document.getElementById('new-pieces-strip').innerHTML = '';
+  }
+}
+
+function updateBtn() {
+  var btn = document.getElementById('btn-activity');
+  if (activity >= MAX_ACTIVITIES) {
+    btn.textContent = '✓ Todas as atividades feitas!';
+    btn.disabled = true;
+  } else {
+    btn.textContent = '▶ Fazer atividade ' + (activity + 1) + ' de ' + MAX_ACTIVITIES;
+  }
+}
+
+function resetAll() {
+  collected = [];
+  activity = 0;
+  document.querySelectorAll('.piece').forEach(function(el) {
+    el.classList.remove('revealed', 'new-glow');
+  });
+  document.getElementById('modal-title').textContent = '✨ Atividade concluída!';
+  document.getElementById('modal-sub').textContent = 'Preposições · 0 de ' + MAX_ACTIVITIES + ' atividades';
+  document.getElementById('new-pieces-strip').innerHTML = '';
+  document.getElementById('complete-banner').classList.remove('show');
+  document.getElementById('bar').style.width = '0%';
+  document.getElementById('bar-label').textContent = '0 / ' + TOTAL + ' peças';
+  document.getElementById('btn-activity').textContent = '▶ Fazer atividade 1 de ' + MAX_ACTIVITIES;
+  document.getElementById('btn-activity').disabled = false;
+}
+
+// Init
+updateBtn();
+</script>
+</body>
+</html>
