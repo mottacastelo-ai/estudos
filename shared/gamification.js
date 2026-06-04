@@ -143,21 +143,20 @@
   async function fetchCollected(supa, uid, themeSlug) {
     var res = await supa
       .from("pieces")
-      .select("piece_id")
+      .select("piece_number")
       .eq("user_id", uid)
       .eq("theme_slug", themeSlug);
-    return (res.data || []).map(function (r) { return r.piece_id; });
+    return (res.data || []).map(function (r) { return r.piece_number; });
   }
 
   /* ------------------------------------------------------------------ */
   /* Salvar peça                                                           */
   /* ------------------------------------------------------------------ */
-  async function savePiece(supa, uid, themeSlug, discipline, pieceId) {
+  async function savePiece(supa, uid, themeSlug, pieceId) {
     await supa.from("pieces").insert({
       user_id: uid,
       theme_slug: themeSlug,
-      discipline: discipline,
-      piece_id: pieceId,
+      piece_number: pieceId,
     });
   }
 
@@ -171,7 +170,6 @@
         theme_slug: themeSlug,
         discipline: discipline,
         rarity: rarity,
-        obtained_at: new Date().toISOString(),
       },
       { onConflict: "user_id,theme_slug" }
     );
@@ -268,7 +266,7 @@
     return html;
   }
 
-  function showOverlay(html) {
+  function showOverlay(html, backUrl) {
     return new Promise(function (resolve) {
       var overlay = document.createElement("div");
       overlay.id = "sgami-overlay";
@@ -280,6 +278,9 @@
         setTimeout(function () {
           overlay.remove();
           resolve();
+          if (backUrl) {
+            window.location.href = backUrl;
+          }
         }, 250);
       });
     });
@@ -318,7 +319,7 @@
       newPieceId = available[Math.floor(Math.random() * available.length)];
 
       // Save piece
-      await savePiece(supa, uid, themeSlug, discipline, newPieceId);
+      await savePiece(supa, uid, themeSlug, newPieceId);
 
       // Check if set is now complete
       isComplete = available.length === 1; // was the last one
@@ -339,7 +340,7 @@
       config: config,
     });
 
-    await showOverlay(html);
+    await showOverlay(html, config.backUrl);
   }
 
   /* ------------------------------------------------------------------ */
