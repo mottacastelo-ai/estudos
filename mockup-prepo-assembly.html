@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mockup — Montagem Real do Prepo</title>
+<title>Mockup — Prepo Pixelado</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -13,9 +13,8 @@ body {
   display: flex; flex-direction: column; align-items: center;
   gap: 24px; padding: 32px 16px; min-height: 100vh;
 }
-h1 { color: white; font-size: 12px; opacity: .5; text-transform: uppercase; letter-spacing: .12em; }
+h1 { color: white; font-size: 12px; opacity: .45; text-transform: uppercase; letter-spacing: .12em; }
 
-/* Modal */
 .modal {
   background: #fff; border-radius: 20px; padding: 20px 18px 16px;
   width: 300px; text-align: center;
@@ -26,91 +25,72 @@ h1 { color: white; font-size: 12px; opacity: .5; text-transform: uppercase; lett
 
 /* Stage */
 .char-stage {
-  position: relative;
-  width: 200px; height: 240px;
+  position: relative; width: 200px; height: 240px;
   margin: 0 auto 14px;
-  overflow: visible;
+}
+#prepo-canvas {
+  display: block; width: 200px; height: 240px;
+  border-radius: 12px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
-/* Silhueta escura */
-.char-silhouette {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: contain;
-  filter: brightness(0.12) saturate(0);
-  transition: opacity .8s ease;
-  pointer-events: none;
-  z-index: 0;
-}
-.char-silhouette.hidden { opacity: 0 !important; }
-
-/* Pecas - cada uma e 200x240 (0,0) transparente */
-.piece {
-  position: absolute;
-  top: 0; left: 0;
-  width: 200px; height: 240px;
-  background-repeat: no-repeat;
-  background-size: 200px 240px;
-  background-position: 0 0;
-  pointer-events: none;
-  opacity: 0;
-}
-
-/* Glow ao encaixar */
-@keyframes piece-glow {
-  0%   { filter: brightness(2.2) saturate(2); }
-  100% { filter: brightness(1) saturate(1); }
-}
-.piece.glow { animation: piece-glow .7s ease forwards; }
-
-/* Glow ring completo */
-.char-stage.done::after {
-  content: '';
-  position: absolute; inset: -8px;
-  border-radius: 24px;
-  box-shadow: 0 0 0 3px #7C3AED, 0 0 48px rgba(124,58,237,.7);
+/* Glow ring final */
+.char-stage.done #prepo-canvas {
+  box-shadow: 0 0 0 3px #7C3AED, 0 0 40px rgba(124,58,237,.6);
   animation: ring-pulse 1.5s ease infinite;
-  pointer-events: none;
-  z-index: 100;
 }
 @keyframes ring-pulse {
   0%,100% { box-shadow: 0 0 0 3px #7C3AED, 0 0 24px rgba(124,58,237,.4); }
-  50%      { box-shadow: 0 0 0 5px #A78BFA, 0 0 56px rgba(167,139,250,.8); }
+  50%      { box-shadow: 0 0 0 5px #A78BFA, 0 0 52px rgba(167,139,250,.8); }
 }
+
+/* Flash de atividade desbloqueada */
+.unlock-flash {
+  position: absolute; inset: 0; border-radius: 12px;
+  background: rgba(167,139,250,.35);
+  pointer-events: none; opacity: 0;
+  animation: flash-anim .5s ease forwards;
+}
+@keyframes flash-anim {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Barra de progresso */
+.bar-wrap { background: #e5e7eb; border-radius: 99px; height: 8px; margin-bottom: 4px; overflow: hidden; }
+.bar-fill  { height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg,#7C3AED,#A78BFA);
+  transition: width .6s cubic-bezier(.22,1,.36,1); }
+.bar-label { font-size: 11px; color: #9ca3af; margin-bottom: 12px; }
 
 /* Chips */
 .pieces-strip { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; min-height: 28px; margin-bottom: 10px; }
 .piece-chip {
   background: #EDE9FE; border: 1.5px solid #7C3AED;
-  border-radius: 8px; padding: 3px 9px;
+  border-radius: 8px; padding: 3px 10px;
   font-size: 11px; font-weight: 800; color: #5B21B6;
   animation: chip-in .35s cubic-bezier(.22,1,.36,1) both;
 }
-.piece-chip:nth-child(2) { animation-delay: .07s; }
 @keyframes chip-in {
   from { transform: scale(0) translateY(6px); opacity: 0; }
   to   { transform: none; opacity: 1; }
 }
-
-/* Barra */
-.bar-wrap { background: #e5e7eb; border-radius: 99px; height: 8px; margin-bottom: 4px; overflow: hidden; }
-.bar-fill  { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#7C3AED,#A78BFA); transition: width .5s cubic-bezier(.22,1,.36,1); }
-.bar-label { font-size: 11px; color: #9ca3af; margin-bottom: 12px; }
 
 /* Carta */
 .carta { display: none; background: #EDE9FE; border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; }
 .carta.show { display: block; animation: chip-in .5s cubic-bezier(.22,1,.36,1) both; }
 .carta-title { font-size: 13px; font-weight: 800; color: #1e1b4b; margin-bottom: 4px; }
 .carta-char  { font-size: 13px; font-weight: 800; color: #5B21B6; }
-.carta-badge { display: inline-block; background: #7C3AED; color: #fff; padding: 2px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; margin-top: 4px; }
+.carta-badge { display: inline-block; background: #7C3AED; color: #fff;
+  padding: 2px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; margin-top: 4px; }
 
-/* Botao */
+/* Botão */
 .btn {
   background: linear-gradient(135deg,#7C3AED,#A78BFA);
   color: #fff; border: none; border-radius: 50px;
   padding: 10px; font-size: 13px; font-weight: 800;
-  cursor: pointer; width: 100%; font-family: inherit;
-  transition: opacity .2s;
+  cursor: pointer; width: 100%; font-family: inherit; transition: opacity .2s;
 }
 .btn:disabled { opacity: .45; cursor: default; }
 .btn:hover:not(:disabled) { opacity: .88; }
@@ -128,15 +108,14 @@ h1 { color: white; font-size: 12px; opacity: .5; text-transform: uppercase; lett
 </head>
 <body>
 
-<h1>Mockup &mdash; Montagem Real do Prepo &middot; Pecas Transparentes</h1>
+<h1>Mockup &mdash; Prepo Pixelado &middot; Reveal Progressivo</h1>
 
 <div class="modal">
   <div class="modal-title" id="modal-title">&#128274; Prepo aguarda montagem</div>
-  <div class="modal-sub" id="modal-sub">Preposicoes &middot; 0 de 8 atividades</div>
+  <div class="modal-sub"   id="modal-sub">Preposicoes &middot; 0 de 8 atividades</div>
 
   <div class="char-stage" id="char-stage">
-    <img src="_landing/prepo-hd.png" class="char-silhouette" id="silhouette" alt="">
-    <!-- pecas injetadas por JS -->
+    <canvas id="prepo-canvas" width="200" height="240"></canvas>
   </div>
 
   <div class="pieces-strip" id="pieces-strip"></div>
@@ -144,225 +123,226 @@ h1 { color: white; font-size: 12px; opacity: .5; text-transform: uppercase; lett
   <div class="carta" id="carta">
     <div class="carta-title">&#127183; Carta desbloqueada!</div>
     <div class="carta-char">Prepo &mdash; O Rob&ocirc; das Preposicoes</div>
-    <div class="carta-badge">&#128995; Epica</div>
+    <div class="carta-badge">&#128995; &Eacute;pica</div>
   </div>
 
   <div class="bar-wrap"><div class="bar-fill" id="bar" style="width:0%"></div></div>
-  <div class="bar-label" id="bar-label">0 / 16 pecas</div>
+  <div class="bar-label" id="bar-label">0 / 8 atividades</div>
 
   <button class="btn" id="btn" onclick="doActivity()">&#9654; Fazer atividade 1 de 8</button>
 </div>
 
 <div class="controls">
   <button class="ctrl-btn" onclick="resetAll()">&#8635; Reiniciar</button>
-  <button class="ctrl-btn" onclick="revealAll()">&#9889; Revelar tudo</button>
+  <button class="ctrl-btn" onclick="skipAll()">&#9889; Revelar tudo</button>
 </div>
 
 <script>
-// Pecas — ordem = z-index (estrutura base primeiro, detalhes por cima)
-var PIECES = [
-  { id:'p13', name:'Braco E',       z:1  },
-  { id:'p14', name:'Braco D',       z:1  },
-  { id:'p15', name:'Perna E',       z:1  },
-  { id:'p16', name:'Perna D',       z:1  },
-  { id:'p5',  name:'Topo da cabeca',z:2  },
-  { id:'p10', name:'Ombros',        z:3  },
-  { id:'p11', name:'Corpo',         z:4  },
-  { id:'p6',  name:'Face',          z:5  },
-  { id:'p12', name:'Placa PREPO',   z:6  },
-  { id:'p3',  name:'Conector E',    z:7  },
-  { id:'p4',  name:'Conector D',    z:7  },
-  { id:'p7',  name:'Olho E',        z:8  },
-  { id:'p8',  name:'Olho D',        z:8  },
-  { id:'p9',  name:'Boca',          z:9  },
-  { id:'p1',  name:'Antena D',      z:10 },
-  { id:'p2',  name:'Antena E',      z:10 },
+// ─── Estágios de revelação (9 estados: início + 8 atividades) ────────────────
+// pixelSize: tamanho do bloco em pixels (1 = nítido)
+// gray:      porcentagem de escala de cinza (0 = cor plena)
+// bright:    brilho (100 = normal; menor = mais escuro)
+var STAGES = [
+  { pixelSize: 30, gray: 100, bright: 45 },  // 0 — bloqueado
+  { pixelSize: 22, gray: 90,  bright: 55 },  // 1 — ativ 1
+  { pixelSize: 16, gray: 75,  bright: 65 },  // 2
+  { pixelSize: 12, gray: 60,  bright: 73 },  // 3
+  { pixelSize:  9, gray: 44,  bright: 80 },  // 4
+  { pixelSize:  6, gray: 28,  bright: 88 },  // 5
+  { pixelSize:  4, gray: 14,  bright: 94 },  // 6
+  { pixelSize:  2, gray:  4,  bright: 98 },  // 7
+  { pixelSize:  1, gray:  0,  bright: 100 }, // 8 — completo
 ];
 
-// Scatter: [dx, dy] — peca voa de (dx, dy) para (0,0) no stage
-var SCATTER = {
-  p1:  [ -80, -170],
-  p2:  [  80, -170],
-  p3:  [-150,  -50],
-  p4:  [ 150,  -50],
-  p5:  [   0, -170],
-  p6:  [   0, -130],
-  p7:  [-150,  -70],
-  p8:  [ 150,  -70],
-  p9:  [   0, -100],
-  p10: [   0,  170],
-  p11: [   0,  150],
-  p12: [   0,  120],
-  p13: [-170,   10],
-  p14: [ 170,   10],
-  p15: [-140,  170],
-  p16: [ 140,  170],
-};
+var MAX_ACT   = 8;
+var activity  = 0;
+var busy      = false;
+var img       = new Image();
+var canvas    = document.getElementById('prepo-canvas');
+var ctx       = canvas.getContext('2d');
 
-var MAX_ACT = 8;
-var TOTAL   = PIECES.length;
-var ORDER, collected, activity, busy;
+// Animação de transição entre estágios
+var animFrom  = STAGES[0];
+var animTo    = STAGES[0];
+var animT     = 1;           // 0..1; quando 1 = parado no destino
+var animRAF   = null;
+var ANIM_DUR  = 900;         // ms da transição
+var animStart = 0;
 
-function randRot() { return (Math.random() - 0.5) * 45; }
+function lerp(a, b, t) { return a + (b - a) * t; }
 
-function shuffle(arr) {
-  var a = arr.slice();
-  for (var i = a.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var t = a[i]; a[i] = a[j]; a[j] = t;
+// Ease out cubic
+function ease(t) { return 1 - Math.pow(1 - t, 3); }
+
+function drawFrame() {
+  var now  = performance.now();
+  var raw  = Math.min(1, (now - animStart) / ANIM_DUR);
+  var t    = ease(raw);
+
+  var ps   = lerp(animFrom.pixelSize, animTo.pixelSize, t);
+  var gray = lerp(animFrom.gray,      animTo.gray,      t);
+  var br   = lerp(animFrom.bright,    animTo.bright,    t);
+
+  renderPixelated(Math.max(1, Math.round(ps)), gray, br);
+
+  if (raw < 1) {
+    animRAF = requestAnimationFrame(drawFrame);
+  } else {
+    animRAF = null;
+    animFrom = animTo;
+    animT = 1;
   }
-  return a;
 }
 
-// Cria divs das pecas no stage
-function buildStage() {
-  var stage = document.getElementById('char-stage');
-  // remove pecas antigas
-  stage.querySelectorAll('.piece').forEach(function(el){ el.remove(); });
-
-  PIECES.forEach(function(p) {
-    var el = document.createElement('div');
-    el.className = 'piece';
-    el.id = 'piece-' + p.id;
-    el.style.backgroundImage = 'url(_landing/prepo-pieces/piece-' + p.id + '.png)';
-    el.style.zIndex = p.z;
-    var sc = SCATTER[p.id];
-    el.style.transform = 'translate(' + sc[0] + 'px,' + sc[1] + 'px) scale(0.25) rotate(' + randRot() + 'deg)';
-    stage.appendChild(el);
-  });
+function transitionTo(stageIndex) {
+  animFrom = { pixelSize: animFrom.pixelSize, gray: animFrom.gray, bright: animFrom.bright };
+  // captura estado atual interpolado
+  if (animRAF) {
+    cancelAnimationFrame(animRAF);
+    var now = performance.now();
+    var raw = Math.min(1, (now - animStart) / ANIM_DUR);
+    var t   = ease(raw);
+    animFrom = {
+      pixelSize: lerp(animFrom.pixelSize, animTo.pixelSize, t),
+      gray:      lerp(animFrom.gray,      animTo.gray,      t),
+      bright:    lerp(animFrom.bright,    animTo.bright,    t),
+    };
+  }
+  animTo    = STAGES[stageIndex];
+  animStart = performance.now();
+  animRAF   = requestAnimationFrame(drawFrame);
 }
 
-// Voa uma peca para a posicao final
-function revealPiece(id, delay) {
-  setTimeout(function() {
-    var el = document.getElementById('piece-' + id);
-    if (!el) return;
+function renderPixelated(pixelSize, grayPct, brightPct) {
+  if (!img.complete || !img.naturalWidth) return;
 
-    // Aparece no scatter (sem transicao)
-    el.style.transition = 'none';
-    el.style.opacity = '1';
+  var W = canvas.width;   // 200
+  var H = canvas.height;  // 240
 
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        // Voa para (0,0) com spring
-        el.style.transition = 'transform 0.55s cubic-bezier(.22,1,.36,1), opacity 0.15s ease';
-        el.style.transform = 'translate(0,0) scale(1) rotate(0deg)';
+  if (pixelSize <= 1) {
+    // Nítido — desenha direto
+    ctx.clearRect(0, 0, W, H);
+    ctx.filter = 'grayscale(' + grayPct + '%) brightness(' + brightPct + '%)';
+    ctx.drawImage(img, 0, 0, W, H);
+    ctx.filter = 'none';
+    return;
+  }
 
-        // Over-scale bounce ao chegar
-        setTimeout(function() {
-          el.style.transition = 'transform 0.15s cubic-bezier(.34,1.56,.64,1)';
-          el.style.transform = 'translate(0,0) scale(1.05) rotate(0deg)';
-          setTimeout(function() {
-            el.style.transition = 'transform 0.12s ease';
-            el.style.transform = 'translate(0,0) scale(1) rotate(0deg)';
-            el.classList.add('glow');
-          }, 150);
-        }, 560);
-      });
-    });
-  }, delay);
+  // 1) Desenha na resolução reduzida
+  var sw   = Math.ceil(W / pixelSize);
+  var sh   = Math.ceil(H / pixelSize);
+  var off  = document.createElement('canvas');
+  off.width  = sw;
+  off.height = sh;
+  var octx = off.getContext('2d');
+  octx.filter = 'grayscale(' + grayPct + '%) brightness(' + brightPct + '%)';
+  octx.drawImage(img, 0, 0, sw, sh);
+
+  // 2) Amplia sem suavização → blocos pixelados
+  ctx.clearRect(0, 0, W, H);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(off, 0, 0, W, H);
+  ctx.imageSmoothingEnabled = true;
 }
 
-// Acao principal
+// ─── Imagem carregada ────────────────────────────────────────────────────────
+img.onload = function() {
+  renderPixelated(STAGES[0].pixelSize, STAGES[0].gray, STAGES[0].bright);
+};
+img.src = '_landing/prepo-hd.png';
+
+// ─── Ação principal ──────────────────────────────────────────────────────────
 function doActivity() {
   if (busy || activity >= MAX_ACT) return;
   busy = true;
   activity++;
 
-  var available = ORDER.filter(function(id){ return collected.indexOf(id) === -1; });
-  var picks = available.slice(0, 2);
+  // Flash na imagem
+  var flash = document.createElement('div');
+  flash.className = 'unlock-flash';
+  document.getElementById('char-stage').appendChild(flash);
+  setTimeout(function(){ flash.remove(); }, 500);
 
-  picks.forEach(function(id, i) {
-    collected.push(id);
-    revealPiece(id, i * 250);
-  });
+  // Transição para o próximo estágio
+  transitionTo(activity);
 
-  setTimeout(function() { afterRevealed(picks); }, picks.length * 250 + 800);
-}
+  // UI
+  var coverage = activity / MAX_ACT;
+  document.getElementById('bar').style.width = Math.round(coverage * 100) + '%';
+  document.getElementById('bar-label').textContent = activity + ' / ' + MAX_ACT + ' atividades';
 
-function afterRevealed(picks) {
-  var coverage = collected.length / TOTAL;
-
-  // Silhueta: fade proporcional
-  document.getElementById('silhouette').style.opacity = String(Math.max(0, 1 - coverage * 1.35));
-
-  // Chips
+  // Chip descritivo do estágio
   var strip = document.getElementById('pieces-strip');
   strip.innerHTML = '';
-  picks.forEach(function(id) {
-    var p = PIECES.filter(function(x){ return x.id === id; })[0];
-    var chip = document.createElement('span');
-    chip.className = 'piece-chip';
-    chip.textContent = p ? p.name : id;
-    strip.appendChild(chip);
-  });
+  var chip = document.createElement('span');
+  chip.className = 'piece-chip';
+  chip.textContent = stageLabel(activity);
+  strip.appendChild(chip);
 
-  // Barra
-  document.getElementById('bar').style.width = Math.round(coverage * 100) + '%';
-  document.getElementById('bar-label').textContent = collected.length + ' / ' + TOTAL + ' pecas';
-
-  if (collected.length >= TOTAL) {
-    finishComplete();
+  if (activity >= MAX_ACT) {
+    setTimeout(finishComplete, 1000);
   } else {
-    document.getElementById('modal-title').textContent = '✨ +2 pecas reveladas!';
-    document.getElementById('modal-sub').textContent = 'Preposicoes · ' + activity + ' de ' + MAX_ACT + ' atividades';
-    document.getElementById('btn').textContent = '▶ Fazer atividade ' + (activity + 1) + ' de ' + MAX_ACT;
+    document.getElementById('modal-title').textContent = '✨ Prepo ficou mais nítido!';
+    document.getElementById('modal-sub').textContent =
+      'Preposicoes · ' + activity + ' de ' + MAX_ACT + ' atividades';
+    document.getElementById('btn').textContent =
+      '▶ Fazer atividade ' + (activity + 1) + ' de ' + MAX_ACT;
     busy = false;
   }
 }
 
+function stageLabel(n) {
+  var labels = [
+    '', // 0 (unused)
+    'Quase nada...', 'Uma sombra roxa', 'Parece um robô!',
+    'Tomando forma...', 'Reconhecível!', 'Quase lá!',
+    'Só falta um toque', 'Perfeito!'
+  ];
+  return labels[n] || '';
+}
+
 function finishComplete() {
-  document.getElementById('silhouette').classList.add('hidden');
   document.getElementById('char-stage').classList.add('done');
-  document.getElementById('modal-title').textContent = '🎉 Prepo Montado!';
+  document.getElementById('modal-title').textContent = '🎉 Prepo Revelado!';
   document.getElementById('modal-sub').textContent = 'Você completou todas as atividades!';
   document.getElementById('pieces-strip').innerHTML = '';
   setTimeout(function() {
     document.getElementById('carta').classList.add('show');
     var btn = document.getElementById('btn');
-    btn.textContent = '→ Ver minha colecao';
+    btn.textContent = '→ Ver minha coleção';
     btn.disabled = false;
     busy = false;
-  }, 900);
+  }, 600);
 }
 
-function revealAll() {
-  if (collected.length >= TOTAL) return;
-  var remaining = ORDER.filter(function(id){ return collected.indexOf(id) === -1; });
-  remaining.forEach(function(id, i) {
-    collected.push(id);
-    revealPiece(id, i * 60);
-  });
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function skipAll() {
+  if (activity >= MAX_ACT) return;
   activity = MAX_ACT;
-  setTimeout(function() { afterRevealed([]); }, remaining.length * 60 + 900);
+  transitionTo(MAX_ACT);
+  document.getElementById('bar').style.width = '100%';
+  document.getElementById('bar-label').textContent = MAX_ACT + ' / ' + MAX_ACT + ' atividades';
+  document.getElementById('pieces-strip').innerHTML = '';
+  setTimeout(finishComplete, 1000);
 }
 
 function resetAll() {
-  collected = []; activity = 0; busy = false;
-  ORDER = shuffle(PIECES.map(function(p){ return p.id; }));
+  if (animRAF) { cancelAnimationFrame(animRAF); animRAF = null; }
+  activity = 0; busy = false;
+  animFrom = STAGES[0]; animTo = STAGES[0];
 
-  var sil = document.getElementById('silhouette');
-  sil.style.opacity = '1';
-  sil.classList.remove('hidden');
+  renderPixelated(STAGES[0].pixelSize, STAGES[0].gray, STAGES[0].bright);
   document.getElementById('char-stage').classList.remove('done');
-
-  buildStage();
-
-  document.getElementById('modal-title').textContent = '🔒 Prepo aguarda montagem';
+  document.getElementById('modal-title').textContent = '🔒 Prepo aguarda revelação';
   document.getElementById('modal-sub').textContent = 'Preposicoes · 0 de ' + MAX_ACT + ' atividades';
   document.getElementById('pieces-strip').innerHTML = '';
   document.getElementById('carta').classList.remove('show');
   document.getElementById('bar').style.width = '0%';
-  document.getElementById('bar-label').textContent = '0 / ' + TOTAL + ' pecas';
+  document.getElementById('bar-label').textContent = '0 / ' + MAX_ACT + ' atividades';
   var btn = document.getElementById('btn');
   btn.textContent = '▶ Fazer atividade 1 de ' + MAX_ACT;
   btn.disabled = false;
 }
-
-// Init
-ORDER = shuffle(PIECES.map(function(p){ return p.id; }));
-collected = []; activity = 0; busy = false;
-buildStage();
 </script>
 </body>
 </html>
