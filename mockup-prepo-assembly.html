@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Montagem do Prepo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: #1e1b4b;
+  font-family: "Baloo 2", sans-serif;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 24px; padding: 32px 16px; min-height: 100vh;
+}
+h1 { color: white; font-size: 13px; opacity: .5; text-transform: uppercase; letter-spacing: .1em; }
+
+/* ── Modal ── */
+.modal {
+  background: #fff; border-radius: 20px; padding: 20px 18px 16px;
+  width: 300px; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.55);
+}
+.modal-title { font-size: 17px; font-weight: 800; color: #1e1b4b; margin-bottom: 2px; }
+.modal-sub   { font-size: 12px; color: #6b7280; margin-bottom: 14px; }
+
+/* ── Character stage ── */
+.char-stage {
+  position: relative;
+  width: 200px; height: 240px;
+  margin: 0 auto 14px;
+  overflow: visible; /* pieces can fly in from outside */
+}
+
+/* Silhouette base — fades as pieces cover it */
+.char-silhouette {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: brightness(0.1) saturate(0);
+  transition: opacity .8s ease;
+  z-index: 1;
+}
+.char-silhouette.hidden { opacity: 0; }
+
+/* Each piece — sprite extracted from sheet */
+.piece {
+  position: absolute;
+  background-image: url('_landing/prepo-pecas-sheet.png');
+  background-repeat: no-repeat;
+  background-size: 192px 192px; /* 800 × 0.24 = 192 */
+  opacity: 0;
+  transform: scale(0) rotate(0deg);
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  border-radius: 4px;
+  /* transition set by JS on reveal */
+}
+.piece.placed {
+  opacity: 1 !important;
+  transform: translate(0,0) scale(1) rotate(0deg) !important;
+}
+
+/* ── Piece chips ── */
+.pieces-strip {
+  display: flex; gap: 5px; justify-content: center; flex-wrap: wrap;
+  min-height: 26px; margin-bottom: 10px;
+}
+.piece-chip {
+  background: #EDE9FE; border: 1.5px solid #7C3AED;
+  border-radius: 8px; padding: 3px 7px;
+  font-size: 11px; font-weight: 800; color: #5B21B6;
+  animation: chip-in .35s cubic-bezier(.22,1,.36,1) both;
+}
+.piece-chip:nth-child(2) { animation-delay: .08s; }
+@keyframes chip-in {
+  from { transform: scale(0) translateY(6px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+/* ── Progress ── */
+.bar-wrap { background: #e5e7eb; border-radius: 99px; height: 8px; margin-bottom: 4px; overflow: hidden; }
+.bar-fill  { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#7C3AED,#A78BFA); transition: width .5s cubic-bezier(.22,1,.36,1); }
+.bar-label { font-size: 11px; color: #9ca3af; margin-bottom: 12px; }
+
+/* ── Carta ── */
+.carta {
+  display: none; background: #EDE9FE; border-radius: 14px;
+  padding: 10px 14px; margin-bottom: 12px;
+  animation: chip-in .5s cubic-bezier(.22,1,.36,1) both;
+}
+.carta.show { display: block; }
+.carta-title { font-size: 13px; font-weight: 800; color: #1e1b4b; }
+.carta-badge { display: inline-block; background: #7C3AED; color: #fff;
+  padding: 2px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; margin-top: 4px; }
+
+/* ── Complete glow ── */
+.char-stage.done::after {
+  content: '';
+  position: absolute; inset: -8px;
+  border-radius: 20px;
+  box-shadow: 0 0 0 4px #7C3AED, 0 0 40px rgba(124,58,237,.7);
+  animation: ring-pulse 1.4s ease infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes ring-pulse {
+  0%,100% { box-shadow: 0 0 0 3px #7C3AED, 0 0 24px rgba(124,58,237,.4); }
+  50%      { box-shadow: 0 0 0 5px #A78BFA, 0 0 50px rgba(167,139,250,.8); }
+}
+
+/* ── Button ── */
+.btn {
+  background: linear-gradient(135deg,#7C3AED,#A78BFA);
+  color: #fff; border: none; border-radius: 50px;
+  padding: 10px; font-size: 13px; font-weight: 800;
+  cursor: pointer; width: 100%; font-family: inherit;
+}
+.btn:disabled { opacity: .45; cursor: default; }
+
+/* ── Controls ── */
+.controls { display: flex; gap: 8px; }
+.ctrl-btn {
+  background: rgba(255,255,255,.12); color: white; border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: 10px; padding: 8px 16px; font-size: 12px; font-weight: 800;
+  cursor: pointer; font-family: inherit; transition: .15s;
+}
+.ctrl-btn:hover { background: rgba(255,255,255,.22); }
+</style>
+</head>
+<body>
+
+<h1>Mockup — Montagem real do Prepo · sprite sheet</h1>
+
+<div class="modal" id="modal">
+  <div class="modal-title" id="modal-title">🔒 Prepo aguarda montagem</div>
+  <div class="modal-sub"   id="modal-sub">Preposições · 0 de 8 atividades</div>
+
+  <div class="char-stage" id="char-stage">
+    <!-- Base: silhueta escura — vai desaparecendo conforme peças cobrem -->
+    <img src="_landing/prepo-hd.png" class="char-silhouette" id="silhouette" alt="">
+
+    <!-- 16 peças do sprite sheet, inicialmente invisíveis -->
+    <!-- Cada peça: bg-position calculado de (col*48)px (row*48)px negativo, tamanho 48×48 -->
+  </div>
+
+  <div class="pieces-strip" id="pieces-strip"></div>
+
+  <div class="carta" id="carta">
+    <div class="carta-title">🃏 Carta desbloqueada!</div>
+    <div style="font-size:12px;color:#5B21B6;font-weight:800;margin:2px 0">Prepo — O Robô das Preposições</div>
+    <div class="carta-badge">🟣 Épica</div>
+  </div>
+
+  <div class="bar-wrap"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+  <div class="bar-label" id="bar-label">0 / 16 peças</div>
+
+  <button class="btn" id="btn" onclick="doActivity()">▶ Fazer atividade 1 de 8</button>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" onclick="resetAll()">↺ Reiniciar</button>
+</div>
+
+<script>
+// ── Config ───────────────────────────────────────────────────────────────────
+var MAX_ACT = 8, PIECES_PER = 2, TOTAL = 16;
+
+// sprite cell size displayed: 48px
+// background-size = 800 * (48/200) = 192px
+// bg-position = -(col * 48)px -(row * 48)px
+// col = sprite_x / 200, row = sprite_y / 200
+
+// Assembly positions in 200×240 char-stage (top-left corner of each 48×48 piece div)
+// Z-index controls layering (higher = in front)
+var PIECES = [
+  // --- Row 0 of sprite (sy=0) ---
+  { id:'p1',  name:'Antena D',    col:0, row:0, tx:122, ty:4,   z:10 },
+  { id:'p2',  name:'Antena E',    col:1, row:0, tx:30,  ty:4,   z:10 },
+  { id:'p3',  name:'Conector D',  col:2, row:0, tx:152, ty:70,  z:6  },
+  { id:'p4',  name:'Conector E',  col:3, row:0, tx:0,   ty:70,  z:6  },
+  // --- Row 1 (sy=200) ---
+  { id:'p5',  name:'Topo cabeça', col:0, row:1, tx:62,  ty:40,  z:5  },
+  { id:'p6',  name:'Face',        col:1, row:1, tx:62,  ty:68,  z:7  },
+  { id:'p7',  name:'Olho D',      col:2, row:1, tx:108, ty:65,  z:8  },
+  { id:'p8',  name:'Olho E',      col:3, row:1, tx:44,  ty:65,  z:8  },
+  // --- Row 2 (sy=400) ---
+  { id:'p9',  name:'Boca',        col:0, row:2, tx:76,  ty:96,  z:9  },
+  { id:'p10', name:'Ombros',      col:1, row:2, tx:62,  ty:108, z:4  },
+  { id:'p11', name:'Corpo',       col:2, row:2, tx:58,  ty:118, z:3  },
+  { id:'p12', name:'Placa PREPO', col:3, row:2, tx:76,  ty:150, z:5  },
+  // --- Row 3 (sy=600) ---
+  { id:'p13', name:'Braço D',     col:0, row:3, tx:148, ty:108, z:2  },
+  { id:'p14', name:'Braço E',     col:1, row:3, tx:4,   ty:108, z:2  },
+  { id:'p15', name:'Perna D',     col:2, row:3, tx:112, ty:185, z:1  },
+  { id:'p16', name:'Perna E',     col:3, row:3, tx:40,  ty:185, z:1  }
+];
+
+// Scatter start positions (where each piece "flies in from")
+var SCATTER = {
+  p1:  { x:170,  y:-50  }, p2:  { x:30,   y:-50  },
+  p3:  { x:250,  y:60   }, p4:  { x:-50,  y:60   },
+  p5:  { x:100,  y:-60  }, p6:  { x:100,  y:-30  },
+  p7:  { x:240,  y:40   }, p8:  { x:-40,  y:40   },
+  p9:  { x:100,  y:-20  }, p10: { x:100,  y:270  },
+  p11: { x:260,  y:130  }, p12: { x:-60,  y:150  },
+  p13: { x:260,  y:100  }, p14: { x:-60,  y:100  },
+  p15: { x:150,  y:300  }, p16: { x:50,   y:300  }
+};
+
+// ── Build piece elements ─────────────────────────────────────────────────────
+var stage = document.getElementById('char-stage');
+PIECES.forEach(function(p) {
+  var el = document.createElement('div');
+  el.id = p.id;
+  el.className = 'piece';
+  el.style.cssText = [
+    'left:' + p.tx + 'px',
+    'top:' + p.ty + 'px',
+    'width:48px',
+    'height:48px',
+    'z-index:' + p.z,
+    'background-position:-' + (p.col * 48) + 'px -' + (p.row * 48) + 'px'
+  ].join(';');
+  // Start at scatter position
+  var dx = SCATTER[p.id].x - p.tx;
+  var dy = SCATTER[p.id].y - p.ty;
+  var rot = (Math.random() - 0.5) * 60;
+  el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0) rotate(' + rot + 'deg)';
+  stage.appendChild(el);
+});
+
+// ── State ────────────────────────────────────────────────────────────────────
+var collected = [];
+var activity  = 0;
+var busy      = false;
+var pieceMap  = {};
+PIECES.forEach(function(p) { pieceMap[p.id] = p; });
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+// ── Reveal a single piece with fly-in ────────────────────────────────────────
+function revealPiece(id, delay) {
+  setTimeout(function() {
+    var el = document.getElementById(id);
+    // Transition: fly to assembled position with spring bounce
+    el.style.transition = 'transform 0.55s cubic-bezier(.22,1,.36,1), opacity 0.25s ease';
+    el.style.transform   = 'translate(0,0) scale(1.1) rotate(0deg)';
+    el.style.opacity     = '1';
+    setTimeout(function() {
+      el.style.transition = 'transform 0.2s cubic-bezier(.22,1,.36,1)';
+      el.style.transform  = 'translate(0,0) scale(1) rotate(0deg)';
+    }, 560);
+  }, delay);
+}
+
+// ── Main action ───────────────────────────────────────────────────────────────
+function doActivity() {
+  if (busy || activity >= MAX_ACT) return;
+  busy = true;
+  activity++;
+
+  var available = PIECES.filter(function(p) { return collected.indexOf(p.id) === -1; });
+  var picks = shuffle(available).slice(0, PIECES_PER);
+
+  picks.forEach(function(p, i) {
+    revealPiece(p.id, i * 220);
+    collected.push(p.id);
+  });
+
+  var totalDelay = (picks.length - 1) * 220 + 700;
+
+  setTimeout(function() {
+    // Update silhouette opacity based on coverage
+    var coverage = collected.length / TOTAL;
+    document.getElementById('silhouette').style.opacity = Math.max(0, 1 - coverage * 1.3);
+
+    // Chips
+    var strip = document.getElementById('pieces-strip');
+    strip.innerHTML = '';
+    picks.forEach(function(p) {
+      var chip = document.createElement('span');
+      chip.className = 'piece-chip';
+      chip.textContent = p.name;
+      strip.appendChild(chip);
+    });
+
+    // Title + sub
+    document.getElementById('modal-title').textContent = '✨ ' + picks.length + ' peça' + (picks.length > 1 ? 's' : '') + ' montada' + (picks.length > 1 ? 's' : '') + '!';
+    document.getElementById('modal-sub').textContent = 'Preposições · ' + activity + ' de ' + MAX_ACT + ' atividades';
+
+    // Bar
+    var pct = Math.round(collected.length / TOTAL * 100);
+    document.getElementById('bar').style.width = pct + '%';
+    document.getElementById('bar-label').textContent = collected.length + ' / ' + TOTAL + ' peças';
+
+    if (collected.length >= TOTAL) {
+      finishComplete();
+    } else {
+      var btn = document.getElementById('btn');
+      btn.textContent = '▶ Fazer atividade ' + (activity + 1) + ' de ' + MAX_ACT;
+      busy = false;
+    }
+  }, totalDelay);
+}
+
+function finishComplete() {
+  // Hide silhouette entirely
+  document.getElementById('silhouette').classList.add('hidden');
+  document.getElementById('char-stage').classList.add('done');
+  document.getElementById('modal-title').textContent = '🎉 Prepo Montado!';
+  document.getElementById('modal-sub').textContent = 'Você completou todas as atividades!';
+  document.getElementById('pieces-strip').innerHTML = '';
+
+  setTimeout(function() {
+    document.getElementById('carta').classList.add('show');
+    var btn = document.getElementById('btn');
+    btn.textContent = '→ Ver minha coleção';
+    btn.disabled = false;
+    busy = false;
+  }, 600);
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+function resetAll() {
+  collected = []; activity = 0; busy = false;
+
+  // Reset silhouette
+  var sil = document.getElementById('silhouette');
+  sil.style.opacity = '1';
+  sil.classList.remove('hidden');
+  document.getElementById('char-stage').classList.remove('done');
+
+  // Reset pieces
+  PIECES.forEach(function(p) {
+    var el = document.getElementById(p.id);
+    el.style.transition = 'none';
+    var dx = SCATTER[p.id].x - p.tx;
+    var dy = SCATTER[p.id].y - p.ty;
+    var rot = (Math.random() - 0.5) * 60;
+    el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0) rotate(' + rot + 'deg)';
+    el.style.opacity = '0';
+  });
+
+  document.getElementById('modal-title').textContent = '🔒 Prepo aguarda montagem';
+  document.getElementById('modal-sub').textContent = 'Preposições · 0 de ' + MAX_ACT + ' atividades';
+  document.getElementById('pieces-strip').innerHTML = '';
+  document.getElementById('carta').classList.remove('show');
+  document.getElementById('bar').style.width = '0%';
+  document.getElementById('bar-label').textContent = '0 / ' + TOTAL + ' peças';
+  var btn = document.getElementById('btn');
+  btn.textContent = '▶ Fazer atividade 1 de ' + MAX_ACT;
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
