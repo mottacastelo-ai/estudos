@@ -1,0 +1,9 @@
+{
+  "slug": "prepo-pecas",
+  "disciplina": "portugues",
+  "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "prompt_path": "portugues/preposicoes/prepo-pecas-prompt.md",
+  "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "output_dir": "_landing",
+  "expected_outputs": ["prepo-pecas-sheet.png"]
+}
