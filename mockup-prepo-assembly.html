@@ -142,16 +142,17 @@ h1 { color: white; font-size: 12px; opacity: .45; text-transform: uppercase; let
 // pixelSize: tamanho do bloco em pixels (1 = nítido)
 // gray:      porcentagem de escala de cinza (0 = cor plena)
 // bright:    brilho (100 = normal; menor = mais escuro)
+// Curva exponencial: fica irreconhecível até a atividade 6, revela na 7-8
 var STAGES = [
-  { pixelSize: 30, gray: 100, bright: 45 },  // 0 — bloqueado
-  { pixelSize: 22, gray: 90,  bright: 55 },  // 1 — ativ 1
-  { pixelSize: 16, gray: 75,  bright: 65 },  // 2
-  { pixelSize: 12, gray: 60,  bright: 73 },  // 3
-  { pixelSize:  9, gray: 44,  bright: 80 },  // 4
-  { pixelSize:  6, gray: 28,  bright: 88 },  // 5
-  { pixelSize:  4, gray: 14,  bright: 94 },  // 6
-  { pixelSize:  2, gray:  4,  bright: 98 },  // 7
-  { pixelSize:  1, gray:  0,  bright: 100 }, // 8 — completo
+  { pixelSize: 42, gray: 100, bright: 38 },  // 0 — bloqueado (massa escura)
+  { pixelSize: 38, gray: 100, bright: 42 },  // 1
+  { pixelSize: 34, gray: 100, bright: 46 },  // 2
+  { pixelSize: 30, gray: 95,  bright: 50 },  // 3
+  { pixelSize: 26, gray: 88,  bright: 55 },  // 4
+  { pixelSize: 20, gray: 78,  bright: 61 },  // 5
+  { pixelSize: 13, gray: 55,  bright: 72 },  // 6 — vaga silhueta
+  { pixelSize:  4, gray: 15,  bright: 90 },  // 7 — quase lá (salto dramático)
+  { pixelSize:  1, gray:  0,  bright: 100 }, // 8 — revelação total
 ];
 
 var MAX_ACT   = 8;
@@ -166,7 +167,7 @@ var animFrom  = STAGES[0];
 var animTo    = STAGES[0];
 var animT     = 1;           // 0..1; quando 1 = parado no destino
 var animRAF   = null;
-var ANIM_DUR  = 900;         // ms da transição
+var ANIM_DUR  = 700;         // ms da transição (sobrescrito dinamicamente)
 var animStart = 0;
 
 function lerp(a, b, t) { return a + (b - a) * t; }
@@ -195,6 +196,8 @@ function drawFrame() {
 }
 
 function transitionTo(stageIndex) {
+  // Atividades 7 e 8 = reveal dramático, animação mais lenta
+  ANIM_DUR = stageIndex >= 7 ? 1500 : 700;
   animFrom = { pixelSize: animFrom.pixelSize, gray: animFrom.gray, bright: animFrom.bright };
   // captura estado atual interpolado
   if (animRAF) {
