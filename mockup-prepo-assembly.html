@@ -169,6 +169,8 @@ var LEGENDARY_PCT  = 95;          // limiar para carta Lendária
 var activity       = 0;
 var totalCorrect   = 0;           // acertos acumulados
 var busy           = false;
+// Mockup: sorteia se esta sessão será de alto ou baixo desempenho (50/50)
+var highScoreRun   = Math.random() < 0.5;
 var img       = new Image();
 var canvas    = document.getElementById('prepo-canvas');
 var ctx       = canvas.getContext('2d');
@@ -285,8 +287,12 @@ function doActivity() {
   document.getElementById('bar').style.width = Math.round(coverage * 100) + '%';
   document.getElementById('bar-label').textContent = activity + ' / ' + MAX_ACT + ' atividades';
 
-  // Simula score desta atividade (mockup: 60–100% aleatório)
-  var correct = Math.floor(Math.random() * 5) + 6;   // 6–10 de 10
+  // Simula score desta atividade
+  // highScoreRun (50% das sessões): 9–10 → média ~95%+ → Lendária
+  // normalRun    (50% das sessões): 6–8  → média ~70%  → Épica
+  var correct = highScoreRun
+    ? Math.floor(Math.random() * 2) + 9    // 9 ou 10
+    : Math.floor(Math.random() * 3) + 6;   // 6, 7 ou 8
   totalCorrect += correct;
   var actPct = Math.round(correct / QUESTIONS_EACH * 100);
   var totalPct = Math.round(totalCorrect / (activity * QUESTIONS_EACH) * 100);
@@ -368,6 +374,7 @@ function skipAll() {
 function resetAll() {
   if (animRAF) { cancelAnimationFrame(animRAF); animRAF = null; }
   activity = 0; totalCorrect = 0; busy = false;
+  highScoreRun = Math.random() < 0.5;
   animFrom = STAGES[0]; animTo = STAGES[0];
 
   renderPixelated(STAGES[0].pixelSize, STAGES[0].gray, STAGES[0].bright);
