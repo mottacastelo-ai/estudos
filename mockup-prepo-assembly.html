@@ -80,17 +80,21 @@ h1 { color: white; font-size: 12px; opacity: .45; text-transform: uppercase; let
 /* Carta */
 .carta { display: none; border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; }
 .carta.show { display: block; animation: chip-in .5s cubic-bezier(.22,1,.36,1) both; }
+.carta.comum    { background: #F9FAFB; border: 1.5px solid #D1D5DB; }
+.carta.rara     { background: #EFF6FF; border: 1.5px solid #93C5FD; }
 .carta.epica    { background: #EDE9FE; border: 1.5px solid #C4B5FD; }
 .carta.lendaria { background: #FFFBEB; border: 1.5px solid #FCD34D;
-  box-shadow: 0 0 18px rgba(251,191,36,.35); }
+  box-shadow: 0 0 20px rgba(251,191,36,.4); }
 .carta-title { font-size: 13px; font-weight: 800; color: #1e1b4b; margin-bottom: 2px; }
 .carta-char  { font-size: 13px; font-weight: 800; color: #5B21B6; }
 .carta-score { font-size: 11px; color: #6b7280; margin-top: 3px; }
 .carta-badge { display: inline-block; color: #fff;
   padding: 2px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; margin-top: 6px; }
+.carta.comum    .carta-badge { background: #6B7280; }
+.carta.rara     .carta-badge { background: #2563EB; }
 .carta.epica    .carta-badge { background: #7C3AED; }
 .carta.lendaria .carta-badge { background: linear-gradient(135deg,#F59E0B,#EF4444);
-  box-shadow: 0 2px 8px rgba(245,158,11,.4); }
+  box-shadow: 0 2px 8px rgba(245,158,11,.45); letter-spacing: .03em; }
 
 /* Botão */
 .btn {
@@ -169,8 +173,9 @@ var LEGENDARY_PCT  = 95;          // limiar para carta Lendária
 var activity       = 0;
 var totalCorrect   = 0;           // acertos acumulados
 var busy           = false;
-// Mockup: sorteia se esta sessão será de alto ou baixo desempenho (50/50)
-var highScoreRun   = Math.random() < 0.5;
+// Mockup: sorteia cenário de desempenho (25% cada tier)
+// 0=comum(<70%), 1=rara(70-89%), 2=epica(90-94%), 3=lendaria(≥95%)
+var scoreScenario  = Math.floor(Math.random() * 4);
 var img       = new Image();
 var canvas    = document.getElementById('prepo-canvas');
 var ctx       = canvas.getContext('2d');
@@ -287,12 +292,16 @@ function doActivity() {
   document.getElementById('bar').style.width = Math.round(coverage * 100) + '%';
   document.getElementById('bar-label').textContent = activity + ' / ' + MAX_ACT + ' atividades';
 
-  // Simula score desta atividade
-  // highScoreRun (50% das sessões): 9–10 → média ~95%+ → Lendária
-  // normalRun    (50% das sessões): 6–8  → média ~70%  → Épica
-  var correct = highScoreRun
-    ? Math.floor(Math.random() * 2) + 9    // 9 ou 10
-    : Math.floor(Math.random() * 3) + 6;   // 6, 7 ou 8
+  // Simula score desta atividade por cenário de sessão:
+  // 0=comum: 4–6/10  (~50%)  → avg <70%
+  // 1=rara:  7–8/10  (~75%)  → avg 70–89%
+  // 2=epica: 9/10    (~90%)  → avg 90–94%
+  // 3=lend:  9–10/10 (~97%)  → avg ≥95%
+  var correct;
+  if      (scoreScenario === 0) correct = Math.floor(Math.random() * 3) + 4;  // 4,5,6
+  else if (scoreScenario === 1) correct = Math.floor(Math.random() * 2) + 7;  // 7,8
+  else if (scoreScenario === 2) correct = 9;
+  else                          correct = Math.random() < 0.6 ? 10 : 9;       // 9 ou 10
   totalCorrect += correct;
   var actPct = Math.round(correct / QUESTIONS_EACH * 100);
   var totalPct = Math.round(totalCorrect / (activity * QUESTIONS_EACH) * 100);
@@ -340,16 +349,19 @@ function finishComplete() {
   document.getElementById('modal-sub').textContent = 'Você completou todas as atividades!';
   document.getElementById('pieces-strip').innerHTML = '';
 
-  // Calcula % final e decide tier da carta
-  var finalPct = Math.round(totalCorrect / (MAX_ACT * QUESTIONS_EACH) * 100);
-  var isLendaria = finalPct >= LEGENDARY_PCT;
+  // Calcula % final e decide tier
+  var finalPct   = Math.round(totalCorrect / (MAX_ACT * QUESTIONS_EACH) * 100);
+  var tier, tierClass, tierLabel;
+  if      (finalPct >= 95) { tier = 'lendaria'; tierLabel = '⭐ Lendária'; }
+  else if (finalPct >= 90) { tier = 'epica';    tierLabel = '🟣 Épica';    }
+  else if (finalPct >= 70) { tier = 'rara';     tierLabel = '🔵 Rara';     }
+  else                     { tier = 'comum';    tierLabel = '⚪ Comum';    }
 
   var carta = document.getElementById('carta');
-  carta.classList.add(isLendaria ? 'lendaria' : 'epica');
+  carta.classList.add(tier);
   document.getElementById('carta-score').textContent =
     'Acerto geral: ' + finalPct + '% (' + totalCorrect + '/' + (MAX_ACT * QUESTIONS_EACH) + ')';
-  document.getElementById('carta-badge').textContent =
-    isLendaria ? '⭐ Lendária' : '🟣 Épica';
+  document.getElementById('carta-badge').textContent = tierLabel;
 
   setTimeout(function() {
     carta.classList.add('show');
@@ -374,7 +386,7 @@ function skipAll() {
 function resetAll() {
   if (animRAF) { cancelAnimationFrame(animRAF); animRAF = null; }
   activity = 0; totalCorrect = 0; busy = false;
-  highScoreRun = Math.random() < 0.5;
+  scoreScenario = Math.floor(Math.random() * 4);
   animFrom = STAGES[0]; animTo = STAGES[0];
 
   renderPixelated(STAGES[0].pixelSize, STAGES[0].gray, STAGES[0].bright);
