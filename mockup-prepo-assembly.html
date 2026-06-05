@@ -78,12 +78,19 @@ h1 { color: white; font-size: 12px; opacity: .45; text-transform: uppercase; let
 }
 
 /* Carta */
-.carta { display: none; background: #EDE9FE; border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; }
+.carta { display: none; border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; }
 .carta.show { display: block; animation: chip-in .5s cubic-bezier(.22,1,.36,1) both; }
-.carta-title { font-size: 13px; font-weight: 800; color: #1e1b4b; margin-bottom: 4px; }
+.carta.epica    { background: #EDE9FE; border: 1.5px solid #C4B5FD; }
+.carta.lendaria { background: #FFFBEB; border: 1.5px solid #FCD34D;
+  box-shadow: 0 0 18px rgba(251,191,36,.35); }
+.carta-title { font-size: 13px; font-weight: 800; color: #1e1b4b; margin-bottom: 2px; }
 .carta-char  { font-size: 13px; font-weight: 800; color: #5B21B6; }
-.carta-badge { display: inline-block; background: #7C3AED; color: #fff;
-  padding: 2px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; margin-top: 4px; }
+.carta-score { font-size: 11px; color: #6b7280; margin-top: 3px; }
+.carta-badge { display: inline-block; color: #fff;
+  padding: 2px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; margin-top: 6px; }
+.carta.epica    .carta-badge { background: #7C3AED; }
+.carta.lendaria .carta-badge { background: linear-gradient(135deg,#F59E0B,#EF4444);
+  box-shadow: 0 2px 8px rgba(245,158,11,.4); }
 
 /* Botão */
 .btn {
@@ -121,9 +128,10 @@ h1 { color: white; font-size: 12px; opacity: .45; text-transform: uppercase; let
   <div class="pieces-strip" id="pieces-strip"></div>
 
   <div class="carta" id="carta">
-    <div class="carta-title">&#127183; Carta desbloqueada!</div>
+    <div class="carta-title" id="carta-title">&#127183; Carta desbloqueada!</div>
     <div class="carta-char">Prepo &mdash; O Rob&ocirc; das Preposicoes</div>
-    <div class="carta-badge">&#128995; &Eacute;pica</div>
+    <div class="carta-score" id="carta-score"></div>
+    <div class="carta-badge" id="carta-badge"></div>
   </div>
 
   <div class="bar-wrap"><div class="bar-fill" id="bar" style="width:0%"></div></div>
@@ -155,9 +163,12 @@ var STAGES = [
   { pixelSize:  1, gray:  0,  bright: 100 }, // 8 — revelação total
 ];
 
-var MAX_ACT   = 8;
-var activity  = 0;
-var busy      = false;
+var MAX_ACT        = 8;
+var QUESTIONS_EACH = 10;          // questões por atividade
+var LEGENDARY_PCT  = 95;          // limiar para carta Lendária
+var activity       = 0;
+var totalCorrect   = 0;           // acertos acumulados
+var busy           = false;
 var img       = new Image();
 var canvas    = document.getElementById('prepo-canvas');
 var ctx       = canvas.getContext('2d');
@@ -274,13 +285,26 @@ function doActivity() {
   document.getElementById('bar').style.width = Math.round(coverage * 100) + '%';
   document.getElementById('bar-label').textContent = activity + ' / ' + MAX_ACT + ' atividades';
 
-  // Chip descritivo do estágio
+  // Simula score desta atividade (mockup: 60–100% aleatório)
+  var correct = Math.floor(Math.random() * 5) + 6;   // 6–10 de 10
+  totalCorrect += correct;
+  var actPct = Math.round(correct / QUESTIONS_EACH * 100);
+  var totalPct = Math.round(totalCorrect / (activity * QUESTIONS_EACH) * 100);
+
+  // Chips: estágio + score da atividade
   var strip = document.getElementById('pieces-strip');
   strip.innerHTML = '';
-  var chip = document.createElement('span');
-  chip.className = 'piece-chip';
-  chip.textContent = stageLabel(activity);
-  strip.appendChild(chip);
+  var chipStage = document.createElement('span');
+  chipStage.className = 'piece-chip';
+  chipStage.textContent = stageLabel(activity);
+  strip.appendChild(chipStage);
+  var chipScore = document.createElement('span');
+  chipScore.className = 'piece-chip';
+  chipScore.style.background = actPct >= 70 ? '#ECFDF5' : '#FEF2F2';
+  chipScore.style.borderColor = actPct >= 70 ? '#059669' : '#EF4444';
+  chipScore.style.color       = actPct >= 70 ? '#065F46' : '#991B1B';
+  chipScore.textContent = correct + '/' + QUESTIONS_EACH + ' (' + actPct + '%)';
+  strip.appendChild(chipScore);
 
   if (activity >= MAX_ACT) {
     setTimeout(finishComplete, 1000);
@@ -309,8 +333,20 @@ function finishComplete() {
   document.getElementById('modal-title').textContent = '🎉 Personagem revelado!';
   document.getElementById('modal-sub').textContent = 'Você completou todas as atividades!';
   document.getElementById('pieces-strip').innerHTML = '';
+
+  // Calcula % final e decide tier da carta
+  var finalPct = Math.round(totalCorrect / (MAX_ACT * QUESTIONS_EACH) * 100);
+  var isLendaria = finalPct >= LEGENDARY_PCT;
+
+  var carta = document.getElementById('carta');
+  carta.classList.add(isLendaria ? 'lendaria' : 'epica');
+  document.getElementById('carta-score').textContent =
+    'Acerto geral: ' + finalPct + '% (' + totalCorrect + '/' + (MAX_ACT * QUESTIONS_EACH) + ')';
+  document.getElementById('carta-badge').textContent =
+    isLendaria ? '⭐ Lendária' : '🟣 Épica';
+
   setTimeout(function() {
-    document.getElementById('carta').classList.add('show');
+    carta.classList.add('show');
     var btn = document.getElementById('btn');
     btn.textContent = '→ Ver minha coleção';
     btn.disabled = false;
@@ -331,7 +367,7 @@ function skipAll() {
 
 function resetAll() {
   if (animRAF) { cancelAnimationFrame(animRAF); animRAF = null; }
-  activity = 0; busy = false;
+  activity = 0; totalCorrect = 0; busy = false;
   animFrom = STAGES[0]; animTo = STAGES[0];
 
   renderPixelated(STAGES[0].pixelSize, STAGES[0].gray, STAGES[0].bright);
@@ -339,7 +375,8 @@ function resetAll() {
   document.getElementById('modal-title').textContent = '🔒 ??? aguarda revelação';
   document.getElementById('modal-sub').textContent = 'Preposicoes · 0 de ' + MAX_ACT + ' atividades';
   document.getElementById('pieces-strip').innerHTML = '';
-  document.getElementById('carta').classList.remove('show');
+  var carta = document.getElementById('carta');
+  carta.className = 'carta';   // remove show + epica/lendaria
   document.getElementById('bar').style.width = '0%';
   document.getElementById('bar-label').textContent = '0 / ' + MAX_ACT + ' atividades';
   var btn = document.getElementById('btn');
