@@ -111,7 +111,7 @@ h1 { color: white; font-size: 12px; opacity: .45; text-transform: uppercase; let
 <h1>Mockup &mdash; Prepo Pixelado &middot; Reveal Progressivo</h1>
 
 <div class="modal">
-  <div class="modal-title" id="modal-title">&#128274; Prepo aguarda montagem</div>
+  <div class="modal-title" id="modal-title">&#128274; ??? aguarda revela&ccedil;&atilde;o</div>
   <div class="modal-sub"   id="modal-sub">Preposicoes &middot; 0 de 8 atividades</div>
 
   <div class="char-stage" id="char-stage">
@@ -282,7 +282,7 @@ function doActivity() {
   if (activity >= MAX_ACT) {
     setTimeout(finishComplete, 1000);
   } else {
-    document.getElementById('modal-title').textContent = '✨ Prepo ficou mais nítido!';
+    document.getElementById('modal-title').textContent = '✨ Ficou mais nítido!';
     document.getElementById('modal-sub').textContent =
       'Preposicoes · ' + activity + ' de ' + MAX_ACT + ' atividades';
     document.getElementById('btn').textContent =
@@ -294,16 +294,16 @@ function doActivity() {
 function stageLabel(n) {
   var labels = [
     '', // 0 (unused)
-    'Quase nada...', 'Uma sombra roxa', 'Parece um robô!',
-    'Tomando forma...', 'Reconhecível!', 'Quase lá!',
-    'Só falta um toque', 'Perfeito!'
+    'Quase nada...', 'Algo está se formando...', 'Uma figura misteriosa!',
+    'Tomando forma...', 'Quem será?', 'Quase lá!',
+    'Só falta um toque...', 'Revelado!'
   ];
   return labels[n] || '';
 }
 
 function finishComplete() {
   document.getElementById('char-stage').classList.add('done');
-  document.getElementById('modal-title').textContent = '🎉 Prepo Revelado!';
+  document.getElementById('modal-title').textContent = '🎉 Personagem revelado!';
   document.getElementById('modal-sub').textContent = 'Você completou todas as atividades!';
   document.getElementById('pieces-strip').innerHTML = '';
   setTimeout(function() {
@@ -333,7 +333,7 @@ function resetAll() {
 
   renderPixelated(STAGES[0].pixelSize, STAGES[0].gray, STAGES[0].bright);
   document.getElementById('char-stage').classList.remove('done');
-  document.getElementById('modal-title').textContent = '🔒 Prepo aguarda revelação';
+  document.getElementById('modal-title').textContent = '🔒 ??? aguarda revelação';
   document.getElementById('modal-sub').textContent = 'Preposicoes · 0 de ' + MAX_ACT + ' atividades';
   document.getElementById('pieces-strip').innerHTML = '';
   document.getElementById('carta').classList.remove('show');
