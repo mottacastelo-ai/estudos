@@ -625,49 +625,45 @@
       // ── Animação de reveal do personagem ──────────────────────────────
       // Somente na primeira tentativa de cada atividade (não em retries)
       if (opts.isFirstAttempt && idx > 0) {
-        var ANIM_DUR = idx >= total - 1 ? 1600 : 1000;
+        // Duração cresce com o estágio: mais atividades concluídas = jornada mais longa
+        var ANIM_DUR = 600 + idx * 175; // estágio 1≈775ms, 4≈1300ms, 8≈2000ms
 
-        // animFrom: sempre parte de um estado visivelmente mais bloqueado que o destino.
-        // O usuário precisa ver um "antes" claro para ter sensação de revelação.
-        // Quanto mais avançado o estágio destino, mais dramática a diferença.
-        var animFrom = {
-          pixelSize: Math.min(44, stage.pixelSize + 28),
-          gray:      100,
-          bright:    30
-        };
-        var animTo = { pixelSize: stage.pixelSize, gray: stage.gray, bright: stage.bright };
+        // SEMPRE anima do estágio 0 (máximo bloqueio) até o estágio atual.
+        // Isso garante que o usuário veja a jornada completa de transformação
+        // a cada nova atividade concluída, independente do estágio anterior.
+        var s0 = opts.stages[0];
+        var animFrom = { pixelSize: s0.pixelSize, gray: s0.gray, bright: s0.bright };
+        var animTo   = { pixelSize: stage.pixelSize, gray: stage.gray, bright: stage.bright };
 
         function ease(t) { return 1 - Math.pow(1 - t, 3); }
         function lerp(a, b, t) { return a + (b - a) * t; }
         var raf = null;
 
-        // PASSO 1: Renderiza o estado "de" imediatamente assim que o modal abre.
-        // O usuário tem um ponto de referência claro (imagem muito pixelada).
+        // Renderiza estágio 0 imediatamente: o usuário vê o ponto de partida
         renderPixelated(ctx, opts.img, canvas, animFrom.pixelSize, animFrom.gray, animFrom.bright);
 
-        // PASSO 2: Após breve pausa (deixa o "antes" registrar visualmente),
-        // dispara flash + anima suavemente para o estado destino.
+        // Breve pausa para registrar o "antes", depois dispara a animação
         setTimeout(function() {
-          // Flash de luz sobre o canvas
+          // Flash de luz
           var flash = document.createElement("div");
           flash.className = "sgami-unlock-flash";
           wrap.appendChild(flash);
           setTimeout(function() { if (flash.parentNode) flash.remove(); }, 700);
 
-          // Scan-line decorativa que acompanha a de-pixelação
+          // Scan-line visual acompanhando a de-pixelação
           var scan = document.createElement("div");
           scan.className = "sgami-scan-line";
           scan.style.animationDuration = ANIM_DUR + "ms";
           wrap.appendChild(scan);
           setTimeout(function() { if (scan.parentNode) scan.remove(); }, ANIM_DUR + 100);
 
-          // Wrap pop (escala de pulso)
+          // Wrap pop (pulso de escala)
           wrap.classList.remove("sgami-wrap-pop");
           void wrap.offsetWidth;
           wrap.classList.add("sgami-wrap-pop");
           setTimeout(function() { wrap.classList.remove("sgami-wrap-pop"); }, 600);
 
-          // PASSO 3: Anima de animFrom → animTo (de-pixelação visível)
+          // Animação: estágio 0 → estágio atual (de-pixelação suave)
           var animStart = performance.now();
           function drawFrame() {
             var raw = Math.min(1, (performance.now() - animStart) / ANIM_DUR);
@@ -684,18 +680,18 @@
             }
           }
           drawFrame();
-        }, 350); // pausa de 350ms no estado "de" antes de animar
+        }, 250); // 250ms no estágio 0 antes de animar
 
-        // Carta aparece após animação completar (ao terminar todas as atividades)
+        // Carta aparece após a animação concluir (somente ao terminar todas as atividades)
         if (isComplete) {
           setTimeout(function() {
             var el = overlay.querySelector("#sgami-carta-el");
             if (el) el.classList.add("show");
-          }, 350 + ANIM_DUR + 300);
+          }, 250 + ANIM_DUR + 300);
         }
 
       } else {
-        // Retry ou estágio 0: mostra o estado atual direto, sem animação
+        // Retry ou estágio 0: mostra estado atual direto, sem animação
         renderPixelated(ctx, opts.img, canvas, stage.pixelSize, stage.gray, stage.bright);
         if (isComplete) { wrap.classList.add("done"); }
       }
