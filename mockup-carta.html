@@ -18,7 +18,29 @@ h2 {
   text-transform: uppercase; letter-spacing: .18em;
 }
 
+/* Toggle de layout */
+.toggle-bar {
+  display: flex; gap: 8px; align-items: center;
+}
+.toggle-btn {
+  font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 8px 18px; border-radius: 99px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.05); color: rgba(255,255,255,.4);
+  transition: all .2s;
+}
+.toggle-btn.active {
+  background: #7C3AED; border-color: #A78BFA; color: #fff;
+}
+
 .row { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; align-items: flex-end; }
+
+/* Modo CONTIDO: Prepo dentro do círculo */
+body.modo-contido .card-char {
+  bottom: 170px;
+  width: 170px; height: 170px;
+}
 
 /* ══════════════════════════════════════════
    ESTRUTURA DA CARTA
@@ -106,10 +128,11 @@ h2 {
 
 .card-badge {
   position: absolute;
-  top: 14px; right: 14px;
+  top: 222px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
   font-family: "Space Mono", monospace;
   font-size: 10px; font-weight: 700;
-  padding: 4px 10px; border-radius: 99px;
+  padding: 4px 12px; border-radius: 99px;
   z-index: 12;
   letter-spacing: .04em;
 }
@@ -349,6 +372,11 @@ h2 {
 
 <h2>Mockup — Cartas sabendo. · 5 tiers</h2>
 
+<div class="toggle-bar">
+  <button class="toggle-btn active" id="btn-overflow" onclick="setModo('overflow')">⬆ Prepo transborda</button>
+  <button class="toggle-btn" id="btn-contido" onclick="setModo('contido')">⭕ Prepo no círculo</button>
+</div>
+
 <div class="row">
 
   <!-- COMUM -->
@@ -452,5 +480,13 @@ h2 {
   </div>
 
 </div>
+
+<script>
+function setModo(modo) {
+  document.body.classList.toggle('modo-contido', modo === 'contido');
+  document.getElementById('btn-overflow').classList.toggle('active', modo === 'overflow');
+  document.getElementById('btn-contido').classList.toggle('active', modo === 'contido');
+}
+</script>
 </body>
 </html>
