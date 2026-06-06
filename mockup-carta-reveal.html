@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reveal Cinematográfico — sabendo.</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #0a0914;
+  font-family: "Baloo 2", sans-serif;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 100vh; gap: 32px;
+  padding: 40px 20px;
+}
+
+/* ─── Demo controls ─────────────────────────────────────────── */
+.demo-title {
+  font-family: "Space Mono", monospace;
+  font-size: 10px; color: rgba(255,255,255,.2);
+  text-transform: uppercase; letter-spacing: .2em;
+}
+.demo-sub {
+  font-family: "Space Mono", monospace;
+  font-size: 9px; color: rgba(255,255,255,.15);
+  letter-spacing: .1em;
+}
+.tier-btns {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+}
+.tier-btn {
+  font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700;
+  letter-spacing: .06em; padding: 10px 18px; border-radius: 99px;
+  border: none; cursor: pointer; transition: all .2s;
+  text-transform: uppercase;
+}
+.tier-btn:hover { transform: scale(1.06); }
+.btn-comum   { background:#1f2937; color:#9CA3AF; border:1px solid #374151; }
+.btn-rara    { background:#1e3a8a; color:#93C5FD; border:1px solid #3B82F6; box-shadow:0 0 12px rgba(59,130,246,.3); }
+.btn-epica   { background:#2d1b69; color:#C4B5FD; border:1px solid #7C3AED; box-shadow:0 0 12px rgba(124,58,237,.35); }
+.btn-lendepica { background:linear-gradient(135deg,#2d1b69,#78350F); color:#fff; border:1px solid rgba(255,255,255,.25); box-shadow:0 0 16px rgba(167,139,250,.3),0 0 16px rgba(245,158,11,.2); }
+.btn-lendaria{ background:#78350F; color:#FDE68A; border:1px solid #F59E0B; box-shadow:0 0 16px rgba(245,158,11,.4); }
+
+/* ─── Card base (same as mockup-carta.html) ─────────────────── */
+.card {
+  position: relative;
+  width: 280px; height: 400px;
+  border-radius: 20px;
+  overflow: visible;
+  margin-top: 64px;
+}
+.card-frame {
+  position: absolute; inset: 0;
+  border-radius: 20px; overflow: hidden;
+}
+.card-frame-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center top;
+}
+.card-frame-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    transparent 0%, transparent 45%,
+    rgba(5,4,15,.7) 65%, rgba(5,4,15,.95) 100%);
+}
+.card-char {
+  position: absolute;
+  bottom: 150px; left: 50%; transform: translateX(-50%);
+  width: 163px; height: 163px;
+  z-index: 10; pointer-events: none;
+}
+.card-char img { width:100%; height:100%; object-fit:contain; }
+.card-info {
+  position: absolute; bottom:0; left:0; right:0;
+  height: 148px; z-index: 11;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 48px 18px 16px; gap: 2px;
+}
+.card-name  { font-size:22px; font-weight:900; line-height:1; text-align:center; }
+.card-theme { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; opacity:.65; text-align:center; }
+.card-score { font-family:"Space Mono",monospace; font-size:10px; font-weight:700; margin-top:3px; }
+.card-logo  { margin-top:auto; font-family:"Space Mono",monospace; font-size:11px; font-weight:700; }
+.card-badge {
+  position: absolute;
+  top: 240px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: "Space Mono", monospace;
+  font-size: 10px; font-weight: 700;
+  padding: 4px 12px; border-radius: 99px;
+  z-index: 12; letter-spacing: .04em;
+}
+.card-ring { position:absolute; inset:-2px; border-radius:22px; z-index:-1; }
+
+/* Tier styles */
+.comum .card-frame-bg { background-image:url('_landing/cartas/carta-fundo-comum.png'); background-color:#1A1035; }
+.comum .card-ring { background:linear-gradient(135deg,#6B7280,#374151,#9CA3AF); }
+.comum .card-char img { filter:drop-shadow(0 8px 24px rgba(0,0,0,.7)); }
+.comum .card-name  { color:#E5E0FF; }
+.comum .card-theme { color:#A78BFA; }
+.comum .card-score { color:rgba(255,255,255,.4); }
+.comum .card-badge { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#94A3B8; }
+.comum .card-logo  { color:rgba(255,255,255,.55); }
+.comum .card-logo span { color:#2DD4BF; }
+
+.rara .card-frame-bg { background-image:url('_landing/cartas/carta-fundo-rara.png'); background-color:#0a1628; }
+.rara .card-ring { background:linear-gradient(135deg,#60A5FA,#1D4ED8,#93C5FD,#2563EB); box-shadow:0 0 24px rgba(37,99,235,.5); }
+.rara .card-char img { filter:drop-shadow(0 0 20px rgba(96,165,250,.5)) drop-shadow(0 8px 24px rgba(0,0,0,.7)); }
+.rara .card-name  { color:#fff; text-shadow:0 0 20px rgba(96,165,250,.7); }
+.rara .card-theme { color:#60A5FA; }
+.rara .card-score { color:rgba(147,197,253,.6); }
+.rara .card-badge { background:rgba(37,99,235,.45); border:1px solid #3B82F6; color:#93C5FD; box-shadow:0 0 12px rgba(59,130,246,.5); }
+.rara .card-logo  { color:#93C5FD; }
+.rara .card-logo span { color:#2DD4BF; }
+
+.epica .card-frame-bg { background-image:url('_landing/cartas/carta-fundo-epica.png'); background-color:#0d0b1a; }
+.epica .card-ring { background:linear-gradient(135deg,#A78BFA,#6D28D9,#C4B5FD,#7C3AED); box-shadow:0 0 32px rgba(124,58,237,.65); }
+.epica .card-char img { filter:drop-shadow(0 0 28px rgba(167,139,250,.65)) drop-shadow(0 8px 24px rgba(0,0,0,.8)); }
+.epica .card-name  { color:#fff; text-shadow:0 0 24px rgba(167,139,250,.9),0 0 48px rgba(124,58,237,.5); }
+.epica .card-theme { color:#A78BFA; }
+.epica .card-score { color:rgba(196,181,253,.6); }
+.epica .card-badge { background:rgba(109,40,217,.5); border:1px solid #7C3AED; color:#C4B5FD; box-shadow:0 0 16px rgba(124,58,237,.65); }
+.epica .card-logo  { color:#C4B5FD; }
+.epica .card-logo span { color:#2DD4BF; }
+
+.lendepica .card-frame-bg { background-image:url('_landing/cartas/carta-fundo-lend-epica.png'); background-color:#0d0b1a; }
+.lendepica .card-ring {
+  background: conic-gradient(from 0deg,#7C3AED,#3B82F6,#06B6D4,#10B981,#F59E0B,#EF4444,#EC4899,#7C3AED);
+  box-shadow:0 0 20px rgba(124,58,237,.5),0 0 40px rgba(245,158,11,.4);
+  animation: rainbow-spin 4s linear infinite;
+}
+@keyframes rainbow-spin { from{filter:hue-rotate(0deg)} to{filter:hue-rotate(360deg)} }
+.lendepica .card-char img { filter:drop-shadow(0 0 20px rgba(124,58,237,.7)) drop-shadow(0 0 40px rgba(245,158,11,.5)) drop-shadow(0 8px 24px rgba(0,0,0,.9)); }
+.lendepica .card-name {
+  background:linear-gradient(90deg,#A78BFA,#FCD34D,#F472B6,#A78BFA);
+  background-size:200% auto;
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation: name-shine 3s linear infinite;
+}
+@keyframes name-shine { from{background-position:0% center} to{background-position:200% center} }
+.lendepica .card-theme { color:#C4B5FD; }
+.lendepica .card-score { color:rgba(252,211,77,.6); }
+.lendepica .card-badge { background:linear-gradient(135deg,rgba(124,58,237,.6),rgba(245,158,11,.5)); border:1px solid rgba(255,255,255,.4); color:#fff; box-shadow:0 0 20px rgba(124,58,237,.5); }
+.lendepica .card-logo { background:linear-gradient(90deg,#A78BFA,#FCD34D); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.lendepica .card-logo span { background:none; -webkit-text-fill-color:#2DD4BF; }
+.lendepica .card-frame::after {
+  content:''; position:absolute; inset:0; border-radius:20px;
+  background:linear-gradient(75deg,transparent 20%,rgba(167,139,250,.1) 35%,rgba(255,255,255,.18) 50%,rgba(245,158,11,.1) 65%,transparent 80%);
+  background-size:300% 100%; animation:shimmer-dual 2s ease-in-out infinite; pointer-events:none; z-index:9;
+}
+@keyframes shimmer-dual { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+.lendaria .card-frame-bg { background-image:url('_landing/cartas/carta-fundo-lendaria.png'); background-color:#451a03; }
+.lendaria .card-ring { background:linear-gradient(135deg,#FCD34D,#B45309,#FDE68A,#92400E,#FCD34D); box-shadow:0 0 40px rgba(245,158,11,.7),0 0 80px rgba(245,158,11,.25); }
+.lendaria .card-char img { filter:drop-shadow(0 0 30px rgba(245,158,11,.6)) drop-shadow(0 0 60px rgba(245,158,11,.25)) drop-shadow(0 8px 24px rgba(0,0,0,.9)); }
+.lendaria .card-name { background:linear-gradient(135deg,#FDE68A,#F59E0B,#FDE68A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 12px rgba(245,158,11,.8)); }
+.lendaria .card-theme { color:#FCD34D; }
+.lendaria .card-score { color:rgba(252,211,77,.6); }
+.lendaria .card-badge { background:linear-gradient(135deg,rgba(245,158,11,.5),rgba(180,83,9,.5)); border:1px solid #F59E0B; color:#FDE68A; box-shadow:0 0 20px rgba(245,158,11,.7); }
+.lendaria .card-logo { background:linear-gradient(90deg,#FDE68A,#F59E0B,#FDE68A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 8px rgba(245,158,11,.9)); }
+.lendaria .card-logo span { background:none; -webkit-text-fill-color:#2DD4BF; filter:none; }
+.lendaria .card-frame::after {
+  content:''; position:absolute; inset:0; border-radius:20px;
+  background:linear-gradient(105deg,transparent 25%,rgba(255,220,100,.08) 40%,rgba(255,255,255,.12) 50%,rgba(255,220,100,.08) 60%,transparent 75%);
+  background-size:300% 100%; animation:shimmer 2.5s ease-in-out infinite; pointer-events:none; z-index:9;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ─── Cinematic overlay ──────────────────────────────────────── */
+#overlay {
+  display: none;
+  position: fixed; inset: 0;
+  z-index: 1000;
+  align-items: center; justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  overflow: hidden;
+}
+#overlay.active { display: flex; }
+
+#overlay-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, #120d28 0%, #05040f 70%);
+  opacity: 0;
+  animation: bgFadeIn .5s ease forwards;
+}
+@keyframes bgFadeIn { to { opacity: 1; } }
+
+/* Ambient glow — cor muda por tier */
+#overlay-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0; transition: opacity .4s;
+}
+
+/* Canvas de partículas e raios */
+#fx-canvas {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 2;
+}
+
+/* Flash de entrada */
+#flash {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 3;
+  opacity: 0;
+}
+#flash.pop {
+  animation: flashPop .7s ease-out forwards;
+}
+@keyframes flashPop {
+  0%  { opacity: 0; }
+  15% { opacity: 1; }
+  100%{ opacity: 0; }
+}
+
+/* Título */
+#reveal-title {
+  position: relative; z-index: 5;
+  font-family: "Space Mono", monospace;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  height: 24px;
+  display: flex; align-items: center; gap: 1px;
+  margin-bottom: 20px;
+}
+#reveal-title .letter {
+  display: inline-block;
+  opacity: 0; transform: translateY(-40px) rotate(-8deg);
+  animation: letterFall .35s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes letterFall {
+  to { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+#reveal-title .space { width: 8px; }
+
+/* Palco da carta */
+#card-stage {
+  position: relative; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+}
+#reveal-card {
+  opacity: 0; transform: scale(0.05) rotate(-10deg);
+}
+#reveal-card.enter {
+  animation: cardSpring .85s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes cardSpring {
+  0%   { opacity:0; transform:scale(0.05) rotate(-10deg); }
+  55%  { opacity:1; transform:scale(1.1) rotate(1.5deg); }
+  75%  { transform:scale(0.96) rotate(-0.5deg); }
+  100% { opacity:1; transform:scale(1) rotate(0deg); }
+}
+#reveal-card.floating {
+  animation: cardFloat 3.2s ease-in-out infinite;
+}
+@keyframes cardFloat {
+  0%,100% { transform:translateY(0) rotate(0deg); }
+  50%     { transform:translateY(-10px) rotate(.4deg); }
+}
+
+/* Ring pulse extra (class injetada) */
+.ring-pulse .card-ring {
+  animation: ringPulse .5s ease-out !important;
+}
+@keyframes ringPulse {
+  0%   { filter:brightness(1); }
+  40%  { filter:brightness(2.5) blur(2px); }
+  100% { filter:brightness(1); }
+}
+
+/* Nome do tier revelado */
+#tier-reveal {
+  position: relative; z-index: 5;
+  font-family: "Space Mono", monospace;
+  font-size: 18px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-top: 22px;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+#tier-reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Continue */
+#continue-hint {
+  position: absolute; bottom: 32px;
+  font-family: "Space Mono", monospace;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+  z-index: 6;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .4s, transform .4s;
+  animation: blink 2s ease-in-out infinite;
+}
+#continue-hint.visible { opacity: 1; transform: translateY(0); }
+@keyframes blink {
+  0%,100% { opacity:.2; }
+  50%     { opacity:.55; }
+}
+</style>
+</head>
+<body>
+
+<div class="demo-title">Reveal Cinematográfico — Cartas sabendo.</div>
+<div class="demo-sub">clique em um tier para disparar a animação</div>
+
+<div class="tier-btns">
+  <button class="tier-btn btn-comum"    onclick="reveal('comum')">⚪ Comum</button>
+  <button class="tier-btn btn-rara"     onclick="reveal('rara')">🔵 Rara</button>
+  <button class="tier-btn btn-epica"    onclick="reveal('epica')">🟣 Épica</button>
+  <button class="tier-btn btn-lendepica"onclick="reveal('lendepica')">✨ Lend-Épica</button>
+  <button class="tier-btn btn-lendaria" onclick="reveal('lendaria')">🌟 Lendária</button>
+</div>
+
+<!-- ═══ OVERLAY CINEMATOGRÁFICO ═══════════════════════════════ -->
+<div id="overlay" onclick="closeOverlay()">
+  <div id="overlay-bg"></div>
+  <div id="overlay-glow"></div>
+  <canvas id="fx-canvas"></canvas>
+  <div id="flash"></div>
+
+  <div id="reveal-title"></div>
+
+  <div id="card-stage">
+    <div class="card" id="reveal-card">
+      <div class="card-ring"></div>
+      <div class="card-frame">
+        <div class="card-frame-bg"></div>
+        <div class="card-frame-overlay"></div>
+      </div>
+      <div class="card-char"><img src="_landing/prepo-hd.png" alt="Prepo"></div>
+      <div class="card-badge" id="rc-badge"></div>
+      <div class="card-info">
+        <div class="card-name">Prepo</div>
+        <div class="card-theme">Preposições · Português</div>
+        <div class="card-score" id="rc-score"></div>
+        <div class="card-logo">sabendo<span>.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tier-reveal"></div>
+  <div id="continue-hint">toque para continuar</div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   TIER CONFIG
+═══════════════════════════════════════════════════════════════ */
+const TIERS = {
+  comum: {
+    cls:        'comum',
+    badge:      '⚪ Comum',
+    score:      'Acerto: 65%',
+    tierLabel:  '⚪ Comum',
+    tierColor:  '#9CA3AF',
+    glowColor:  'rgba(107,114,128,.15)',
+    flash:      null,
+    rays:       false,
+    particles: {
+      count: 28, speed: 2.8, gravity: 0.06,
+      colors: ['#9CA3AF','#D1D5DB','#E5E7EB','#F3F4F6'],
+      sizeMin: 2, sizeMax: 4, type: 'circle', decay: .016
+    }
+  },
+  rara: {
+    cls:        'rara',
+    badge:      '🔵 Rara',
+    score:      'Acerto: 79%',
+    tierLabel:  '🔵 Rara',
+    tierColor:  '#60A5FA',
+    glowColor:  'rgba(37,99,235,.2)',
+    flash:      null,
+    rays:       false,
+    particles: {
+      count: 45, speed: 5, gravity: 0.06,
+      colors: ['#60A5FA','#93C5FD','#3B82F6','#BFDBFE','#ffffff'],
+      sizeMin: 2, sizeMax: 5, type: 'spark', decay: .013
+    }
+  },
+  epica: {
+    cls:        'epica',
+    badge:      '🟣 Épica',
+    score:      'Acerto: 92%',
+    tierLabel:  '🟣 Épica',
+    tierColor:  '#A78BFA',
+    glowColor:  'rgba(124,58,237,.25)',
+    flash:      null,
+    rays:       false,
+    shockwave:  true,
+    particles: {
+      count: 60, speed: 6, gravity: 0.045,
+      colors: ['#A78BFA','#7C3AED','#C4B5FD','#DDD6FE','#ffffff'],
+      sizeMin: 3, sizeMax: 6, type: 'circle', decay: .011
+    }
+  },
+  lendepica: {
+    cls:        'lendepica',
+    badge:      '✨ Lend-Épica',
+    score:      'Ocasião especial',
+    tierLabel:  '✨ Lend-Épica',
+    tierColor:  '#FCD34D',
+    glowColor:  'rgba(124,58,237,.2)',
+    flash:      'rgba(180,100,255,0.75)',
+    rays:       false,
+    double:     true,
+    particles: {
+      count: 75, speed: 7, gravity: 0.035,
+      colors: ['#A78BFA','#FCD34D','#F472B6','#60A5FA','#34D399','#fff'],
+      sizeMin: 3, sizeMax: 7, type: 'mixed', decay: .010
+    }
+  },
+  lendaria: {
+    cls:        'lendaria',
+    badge:      '🌟 Lendária',
+    score:      'Acerto: 97%',
+    tierLabel:  '🌟 Lendária',
+    tierColor:  '#F59E0B',
+    glowColor:  'rgba(245,158,11,.22)',
+    flash:      'rgba(255,248,200,0.95)',
+    rays:       true,
+    rayCount:   14,
+    double:     true,
+    particles: {
+      count: 95, speed: 9, gravity: 0.025,
+      colors: ['#FCD34D','#F59E0B','#FDE68A','#ffffff','#FBBF24','#FEF3C7'],
+      sizeMin: 3, sizeMax: 8, type: 'star', decay: .009
+    }
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   PARTICLE SYSTEM
+═══════════════════════════════════════════════════════════════ */
+const canvas = document.getElementById('fx-canvas');
+const ctx    = canvas.getContext('2d');
+let particles = [];
+let raysData  = [];
+let shockwaves = [];
+let animId    = null;
+
+function resizeCanvas() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+class Particle {
+  constructor(x, y, cfg) {
+    this.x = x; this.y = y;
+    const angle = Math.random() * Math.PI * 2;
+    const spd   = cfg.speed * (.4 + Math.random() * .9);
+    this.vx = Math.cos(angle) * spd;
+    this.vy = Math.sin(angle) * spd - cfg.speed * .3;
+    this.alpha   = 1;
+    this.color   = cfg.colors[Math.floor(Math.random() * cfg.colors.length)];
+    this.size    = cfg.sizeMin + Math.random() * (cfg.sizeMax - cfg.sizeMin);
+    this.decay   = cfg.decay + Math.random() * .008;
+    this.gravity = cfg.gravity;
+    this.rot     = Math.random() * Math.PI * 2;
+    this.rotSpd  = (Math.random() - .5) * .15;
+    const t = cfg.type;
+    this.type = t === 'mixed' ? (Math.random() > .5 ? 'circle' : 'spark') : t;
+  }
+  update() {
+    this.x   += this.vx;
+    this.y   += this.vy;
+    this.vy  += this.gravity;
+    this.vx  *= .985;
+    this.rot += this.rotSpd;
+    this.alpha -= this.decay;
+  }
+  draw(c) {
+    if (this.alpha <= 0) return;
+    c.save();
+    c.globalAlpha = Math.max(0, this.alpha);
+    c.fillStyle   = this.color;
+    c.strokeStyle = this.color;
+
+    if (this.type === 'circle') {
+      c.beginPath();
+      c.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      c.fill();
+
+    } else if (this.type === 'spark') {
+      c.translate(this.x, this.y);
+      c.rotate(Math.atan2(this.vy, this.vx));
+      c.beginPath();
+      c.ellipse(0, 0, this.size * 3.5, this.size * .7, 0, 0, Math.PI * 2);
+      c.fill();
+
+    } else if (this.type === 'star') {
+      c.translate(this.x, this.y);
+      c.rotate(this.rot);
+      c.beginPath();
+      for (let i = 0; i < 4; i++) {
+        const a  = (i / 4) * Math.PI * 2;
+        const a2 = a + Math.PI / 4;
+        c.lineTo(Math.cos(a)  * this.size * 2.2, Math.sin(a)  * this.size * 2.2);
+        c.lineTo(Math.cos(a2) * this.size * .55,  Math.sin(a2) * this.size * .55);
+      }
+      c.closePath();
+      c.fill();
+    }
+    c.restore();
+  }
+}
+
+class Shockwave {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    this.r = 10; this.maxR = 220;
+    this.alpha = .7; this.color = color;
+  }
+  update() { this.r += 14; this.alpha -= .055; }
+  draw(c) {
+    if (this.alpha <= 0) return;
+    c.save();
+    c.globalAlpha = Math.max(0, this.alpha);
+    c.strokeStyle = this.color;
+    c.lineWidth   = 3;
+    c.beginPath();
+    c.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    c.stroke();
+    c.restore();
+  }
+}
+
+class Ray {
+  constructor(cx, cy, angle, color) {
+    this.cx = cx; this.cy = cy;
+    this.angle = angle; this.color = color;
+    this.len = 0; this.maxLen = Math.hypot(window.innerWidth, window.innerHeight) * .55;
+    this.alpha = 0; this.growing = true;
+  }
+  update() {
+    if (this.growing) {
+      this.len   += this.maxLen * .045;
+      this.alpha  = Math.min(.65, this.alpha + .065);
+      if (this.len >= this.maxLen) this.growing = false;
+    } else {
+      this.alpha -= .028;
+    }
+  }
+  draw(c) {
+    if (this.alpha <= 0) return;
+    c.save();
+    c.globalAlpha = Math.max(0, this.alpha);
+    const grd = c.createLinearGradient(
+      this.cx, this.cy,
+      this.cx + Math.cos(this.angle) * this.len,
+      this.cy + Math.sin(this.angle) * this.len
+    );
+    grd.addColorStop(0, this.color);
+    grd.addColorStop(1, 'transparent');
+    c.strokeStyle = grd;
+    c.lineWidth   = 4 + Math.random() * 2;
+    c.beginPath();
+    c.moveTo(this.cx, this.cy);
+    c.lineTo(
+      this.cx + Math.cos(this.angle) * this.len,
+      this.cy + Math.sin(this.angle) * this.len
+    );
+    c.stroke();
+    c.restore();
+  }
+}
+
+function spawnParticles(x, y, cfg, count) {
+  for (let i = 0; i < count; i++) particles.push(new Particle(x, y, cfg));
+}
+
+function spawnRays(x, y, count, color) {
+  for (let i = 0; i < count; i++) {
+    raysData.push(new Ray(x, y, (i / count) * Math.PI * 2, color));
+  }
+}
+
+function spawnShockwave(x, y, color) {
+  shockwaves.push(new Shockwave(x, y, color));
+}
+
+function fxLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  raysData   = raysData.filter(r => r.alpha > 0);
+  shockwaves = shockwaves.filter(s => s.alpha > 0);
+  particles  = particles.filter(p => p.alpha > 0);
+  raysData.forEach(r => { r.update(); r.draw(ctx); });
+  shockwaves.forEach(s => { s.update(); s.draw(ctx); });
+  particles.forEach(p => { p.update(); p.draw(ctx); });
+  if (raysData.length || shockwaves.length || particles.length) {
+    animId = requestAnimationFrame(fxLoop);
+  } else {
+    animId = null;
+  }
+}
+
+function startFx() {
+  if (animId) cancelAnimationFrame(animId);
+  animId = requestAnimationFrame(fxLoop);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REVEAL CONTROLLER
+═══════════════════════════════════════════════════════════════ */
+let currentTimeouts = [];
+
+function clearTimeouts() {
+  currentTimeouts.forEach(clearTimeout);
+  currentTimeouts = [];
+}
+
+function t(fn, delay) {
+  currentTimeouts.push(setTimeout(fn, delay));
+}
+
+function reveal(tierKey) {
+  clearTimeouts();
+  resizeCanvas();
+  particles = []; raysData = []; shockwaves = [];
+  if (animId) cancelAnimationFrame(animId);
+
+  const cfg = TIERS[tierKey];
+  const overlay = document.getElementById('overlay');
+
+  // Setup card
+  const card = document.getElementById('reveal-card');
+  card.className = 'card ' + cfg.cls;
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.05) rotate(-10deg)';
+  card.style.animation = 'none';
+  document.getElementById('rc-badge').textContent = cfg.badge;
+  document.getElementById('rc-score').textContent = cfg.score;
+
+  // Setup title
+  const titleEl = document.getElementById('reveal-title');
+  const TEXT = 'NOVA CARTA OBTIDA';
+  titleEl.innerHTML = '';
+  [...TEXT].forEach((ch, i) => {
+    if (ch === ' ') {
+      const sp = document.createElement('span');
+      sp.className = 'space';
+      titleEl.appendChild(sp);
+    } else {
+      const s = document.createElement('span');
+      s.className = 'letter';
+      s.textContent = ch;
+      s.style.animationDelay = (i * 38) + 'ms';
+      titleEl.appendChild(s);
+    }
+  });
+
+  // Tier label
+  const tierRev = document.getElementById('tier-reveal');
+  tierRev.textContent = cfg.tierLabel;
+  tierRev.style.color = cfg.tierColor;
+  tierRev.style.textShadow = `0 0 24px ${cfg.tierColor}`;
+  tierRev.classList.remove('visible');
+
+  // Continue
+  const cont = document.getElementById('continue-hint');
+  cont.classList.remove('visible');
+
+  // Ambient glow
+  const glow = document.getElementById('overlay-glow');
+  glow.style.background = `radial-gradient(ellipse at center, ${cfg.glowColor} 0%, transparent 65%)`;
+  glow.style.opacity = '0';
+
+  // Show overlay
+  overlay.style.display = 'flex';
+  // Force reflow
+  overlay.offsetHeight;
+  overlay.className = 'active';
+
+  // Glow fade in
+  t(() => { glow.style.transition = 'opacity 1s'; glow.style.opacity = '1'; }, 300);
+
+  // Card enter
+  t(() => {
+    card.style.animation = '';
+    void card.offsetWidth; // reflow
+    card.classList.add('enter');
+  }, 820);
+
+  // Flash
+  if (cfg.flash) {
+    t(() => doFlash(cfg.flash), 900);
+  }
+
+  // Shockwave (épica+)
+  if (cfg.shockwave || cfg.double) {
+    t(() => {
+      const r = card.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top  + r.height / 2;
+      spawnShockwave(cx, cy, cfg.tierColor);
+      startFx();
+    }, 1050);
+  }
+
+  // Raios (lendária)
+  if (cfg.rays) {
+    t(() => {
+      const r = card.getBoundingClientRect();
+      spawnRays(r.left + r.width/2, r.top + r.height/2, cfg.rayCount, '#FDE68A');
+      startFx();
+    }, 1020);
+  }
+
+  // Particles burst 1
+  t(() => {
+    const r = card.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top  + r.height / 3;
+    spawnParticles(cx, cy, cfg.particles, cfg.particles.count);
+    startFx();
+  }, 1100);
+
+  // Double burst (lendária/lend-épica)
+  if (cfg.double) {
+    t(() => {
+      const r = card.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top  + r.height / 2;
+      spawnParticles(cx, cy, cfg.particles, Math.floor(cfg.particles.count * .7));
+    }, 1400);
+  }
+
+  // Ring pulse + switch to float
+  t(() => {
+    card.classList.add('ring-pulse');
+    setTimeout(() => card.classList.remove('ring-pulse'), 600);
+  }, 1350);
+
+  t(() => {
+    card.classList.remove('enter');
+    card.classList.add('floating');
+  }, 1700);
+
+  // Tier name reveal
+  t(() => { tierRev.classList.add('visible'); }, 1800);
+
+  // Continue
+  t(() => { cont.classList.add('visible'); }, 2700);
+}
+
+function doFlash(color) {
+  const fl = document.getElementById('flash');
+  fl.style.background = color;
+  fl.className = '';
+  fl.offsetHeight;
+  fl.classList.add('pop');
+}
+
+function closeOverlay() {
+  const overlay = document.getElementById('overlay');
+  overlay.style.transition = 'opacity .35s';
+  overlay.style.opacity = '0';
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    overlay.style.opacity = '';
+    overlay.style.transition = '';
+    overlay.className = '';
+    const glow = document.getElementById('overlay-glow');
+    glow.style.opacity = '0';
+    glow.style.transition = '';
+    particles = []; raysData = []; shockwaves = [];
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }, 350);
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+</script>
+</body>
+</html>
