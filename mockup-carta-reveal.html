@@ -242,7 +242,7 @@ body {
   display: flex; align-items: center; justify-content: center;
 }
 #reveal-card {
-  opacity: 0; transform: scale(0.05) rotate(-10deg);
+  /* estado inicial definido via inline style no JS */
 }
 #reveal-card.enter {
   animation: cardSpring .85s cubic-bezier(.34,1.56,.64,1) forwards;
@@ -625,12 +625,10 @@ function reveal(tierKey) {
   const cfg = TIERS[tierKey];
   const overlay = document.getElementById('overlay');
 
-  // Setup card
+  // Setup card — estado inicial via inline style
   const card = document.getElementById('reveal-card');
   card.className = 'card ' + cfg.cls;
-  card.style.opacity = '0';
-  card.style.transform = 'scale(0.05) rotate(-10deg)';
-  card.style.animation = 'none';
+  card.style.cssText = 'opacity:0; transform:scale(0.05) rotate(-10deg); animation:none;';
   document.getElementById('rc-badge').textContent = cfg.badge;
   document.getElementById('rc-score').textContent = cfg.score;
 
@@ -679,8 +677,8 @@ function reveal(tierKey) {
 
   // Card enter
   t(() => {
-    card.style.animation = '';
-    void card.offsetWidth; // reflow
+    card.style.animation = 'none';
+    void card.offsetWidth;
     card.classList.add('enter');
   }, 820);
 
@@ -735,7 +733,12 @@ function reveal(tierKey) {
   }, 1350);
 
   t(() => {
+    // Trava o estado final antes de trocar a animação — evita piscar para opacity:0
+    card.style.opacity = '1';
+    card.style.transform = 'scale(1) rotate(0deg)';
     card.classList.remove('enter');
+    void card.offsetWidth; // reflow
+    card.style.transform = ''; // limpa para o float assumir
     card.classList.add('floating');
   }, 1700);
 

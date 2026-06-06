@@ -10,8 +10,9 @@
     {
       "name": "portal",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", ".", "-p", "3458", "--no-clipboard"],
-      "port": 3458
+      "runtimeArgs": ["serve", ".", "--no-clipboard"],
+      "port": 3458,
+      "autoPort": true
     }
   ],
   "configurations_extra": [
