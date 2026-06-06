@@ -623,26 +623,28 @@
       var wrap   = overlay.querySelector("#sgami-canvas-wrap");
 
       // ── Animação de reveal do personagem ──────────────────────────────
-      // Somente na primeira tentativa de cada atividade (não em retries)
-      if (opts.isFirstAttempt && idx > 0) {
+      // Sempre anima do estágio 0 (máximo bloqueio) até o estágio atual,
+      // independente de ser primeira tentativa ou retry.
+      // Exceção: idx === 0 (nenhuma atividade concluída — mostra bloqueio estático).
+      if (idx > 0) {
         // Duração cresce com o estágio: mais atividades concluídas = jornada mais longa
-        var ANIM_DUR = 600 + idx * 175; // estágio 1≈775ms, 4≈1300ms, 8≈2000ms
+        var ANIM_DUR = 800 + idx * 200; // estágio 1≈1000ms, 4≈1600ms, 8≈2400ms
 
-        // SEMPRE anima do estágio 0 (máximo bloqueio) até o estágio atual.
-        // Isso garante que o usuário veja a jornada completa de transformação
-        // a cada nova atividade concluída, independente do estágio anterior.
-        var s0 = opts.stages[0];
-        var animFrom = { pixelSize: s0.pixelSize, gray: s0.gray, bright: s0.bright };
+        // Anima de um ponto de partida EXTREMO até o estágio atual.
+        // Começar do estágio 0 é insuficiente pois a diferença visual é mínima.
+        // Partimos de quase-escuridão total (pixelSize grande + brilho muito baixo)
+        // para garantir que a transformação seja sempre dramaticamente visível.
+        var animFrom = { pixelSize: 80, gray: 100, bright: 15 };
         var animTo   = { pixelSize: stage.pixelSize, gray: stage.gray, bright: stage.bright };
 
         function ease(t) { return 1 - Math.pow(1 - t, 3); }
         function lerp(a, b, t) { return a + (b - a) * t; }
         var raf = null;
 
-        // Renderiza estágio 0 imediatamente: o usuário vê o ponto de partida
+        // Renderiza estágio 0 imediatamente: o usuário vê o ponto de partida (totalmente pixelado)
         renderPixelated(ctx, opts.img, canvas, animFrom.pixelSize, animFrom.gray, animFrom.bright);
 
-        // Breve pausa para registrar o "antes", depois dispara a animação
+        // Pausa de 500ms para o usuário registrar o "antes", depois dispara a animação
         setTimeout(function() {
           // Flash de luz
           var flash = document.createElement("div");
@@ -680,20 +682,19 @@
             }
           }
           drawFrame();
-        }, 250); // 250ms no estágio 0 antes de animar
+        }, 500); // 500ms no estágio 0 — tempo suficiente para perceber o "antes"
 
         // Carta aparece após a animação concluir (somente ao terminar todas as atividades)
         if (isComplete) {
           setTimeout(function() {
             var el = overlay.querySelector("#sgami-carta-el");
             if (el) el.classList.add("show");
-          }, 250 + ANIM_DUR + 300);
+          }, 500 + ANIM_DUR + 300);
         }
 
       } else {
-        // Retry ou estágio 0: mostra estado atual direto, sem animação
+        // Nenhuma atividade concluída ainda: mostra estágio 0 (bloqueio total) estático
         renderPixelated(ctx, opts.img, canvas, stage.pixelSize, stage.gray, stage.bright);
-        if (isComplete) { wrap.classList.add("done"); }
       }
 
       // Botão
