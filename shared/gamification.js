@@ -477,13 +477,24 @@
   /* Raridade                                                              */
   /* ------------------------------------------------------------------ */
   async function calcRarity(supa, uid, themeSlug) {
-    var res = await supa.from("activity_log").select("score,is_first_attempt")
+    var res = await supa.from("activity_log").select("score,is_first_attempt,activity_type")
       .eq("user_id", uid).eq("theme_slug", themeSlug).not("score", "is", null);
     var rows = res.data || [];
     if (!rows.length) return { rarity: "comum", avg: 0 };
+
+    // Lendária: TODOS os registros são primeira tentativa com 100%
     var allPerfect = rows.every(function(r) { return r.is_first_attempt === true && r.score === 100; });
     if (allPerfect) return { rarity: "lendaria", avg: 100 };
-    var avg = rows.reduce(function(acc, r) { return acc + r.score; }, 0) / rows.length;
+
+    // Melhor score por tipo de atividade (cada atividade tem um "slot")
+    var best = {};
+    rows.forEach(function(r) {
+      var key = r.activity_type || "unknown";
+      if (best[key] === undefined || r.score > best[key]) best[key] = r.score;
+    });
+    var keys = Object.keys(best);
+    var avg = keys.reduce(function(acc, k) { return acc + best[k]; }, 0) / keys.length;
+
     return { rarity: avg >= 90 ? "epica" : avg >= 70 ? "rara" : "comum", avg: avg };
   }
 
