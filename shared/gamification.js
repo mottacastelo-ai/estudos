@@ -64,6 +64,7 @@
       "#sgami-char-canvas {",
       "  display:block;width:200px;height:240px;border-radius:12px;",
       "  image-rendering:pixelated;image-rendering:crisp-edges;",
+      "  background:#120D28;",
       "}",
       ".sgami-canvas-wrap.done #sgami-char-canvas {",
       "  animation:sgami-ring-pulse 1.5s ease infinite;",
@@ -467,14 +468,20 @@
   /* ------------------------------------------------------------------ */
   /* Canvas — renderização pixelada                                        */
   /* ------------------------------------------------------------------ */
-  function renderPixelated(ctx, img, canvas, pixelSize, grayPct, brightPct) {
+  // clipH (opcional): só renderiza até essa altura (efeito de scanner top→bottom).
+  // Pixels abaixo de clipH ficam transparentes, revelando o fundo escuro do canvas via CSS.
+  function renderPixelated(ctx, img, canvas, pixelSize, grayPct, brightPct, clipH) {
     if (!img || !img.complete || !img.naturalWidth) return;
     var W = canvas.width, H = canvas.height;
+    var doClip = (clipH != null && clipH < H);
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    if (doClip) { ctx.beginPath(); ctx.rect(0, 0, W, clipH); ctx.clip(); }
     if (pixelSize <= 1) {
-      ctx.clearRect(0, 0, W, H);
       ctx.filter = "grayscale(" + grayPct + "%) brightness(" + brightPct + "%)";
       ctx.drawImage(img, 0, 0, W, H);
       ctx.filter = "none";
+      ctx.restore();
       return;
     }
     var sw = Math.ceil(W / pixelSize), sh = Math.ceil(H / pixelSize);
@@ -483,10 +490,10 @@
     var octx = off.getContext("2d");
     octx.filter = "grayscale(" + grayPct + "%) brightness(" + brightPct + "%)";
     octx.drawImage(img, 0, 0, sw, sh);
-    ctx.clearRect(0, 0, W, H);
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(off, 0, 0, W, H);
     ctx.imageSmoothingEnabled = true;
+    ctx.restore();
   }
 
   /* ------------------------------------------------------------------ */
@@ -615,14 +622,21 @@
       var ctx    = canvas.getContext("2d");
       var wrap   = overlay.querySelector("#sgami-canvas-wrap");
 
-      // Render inicial (estágio anterior)
-      renderPixelated(ctx, opts.img, canvas, prevStage.pixelSize, prevStage.gray, prevStage.bright);
+      // Começa com o canvas escuro — o fundo #120D28 aparece via CSS background
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Animação para o estágio atual (somente primeira tentativa)
       if (opts.isFirstAttempt && idx > 0) {
-        var ANIM_DUR = idx >= total - 1 ? 1500 : 700;
-        var animFrom = { pixelSize: prevStage.pixelSize, gray: prevStage.gray, bright: prevStage.bright };
-        var animTo   = { pixelSize: stage.pixelSize,     gray: stage.gray,     bright: stage.bright };
+        var ANIM_DUR = idx >= total - 1 ? 1500 : 900;
+
+        // animFrom sempre parte de um estado visivelmente mais bloqueado
+        // independente do stage anterior, para garantir uma reveal visível em qualquer estágio
+        var animFrom = {
+          pixelSize: Math.max(stage.pixelSize + 22, 40),
+          gray:      100,
+          bright:    32
+        };
+        var animTo   = { pixelSize: stage.pixelSize, gray: stage.gray, bright: stage.bright };
         var animStart = performance.now();
         var raf = null;
 
@@ -630,12 +644,16 @@
         function lerp(a, b, t) { return a + (b - a) * t; }
 
         function drawFrame() {
-          var raw = Math.min(1, (performance.now() - animStart) / ANIM_DUR);
-          var t   = ease(raw);
+          var raw  = Math.min(1, (performance.now() - animStart) / ANIM_DUR);
+          var t    = ease(raw);
+          // scanT avança ligeiramente na frente — o scanner "puxa" a revelação
+          var scanT = Math.min(1, Math.pow(raw, 0.5));
+          var clipH = raw < 1 ? Math.round(canvas.height * scanT) : null;
           renderPixelated(ctx, opts.img, canvas,
             Math.max(1, Math.round(lerp(animFrom.pixelSize, animTo.pixelSize, t))),
-            Math.round(lerp(animFrom.gray,  animTo.gray,  t)),
-            Math.round(lerp(animFrom.bright, animTo.bright, t))
+            Math.round(lerp(animFrom.gray,   animTo.gray,   t)),
+            Math.round(lerp(animFrom.bright, animTo.bright, t)),
+            clipH
           );
           if (raw < 1) { raf = requestAnimationFrame(drawFrame); }
           else {
@@ -652,7 +670,7 @@
           wrap.appendChild(flash);
           setTimeout(function() { if (flash.parentNode) flash.remove(); }, 700);
 
-          // Scan-line sweeping top→bottom
+          // Scan-line visual (raio de luz que percorre o scanner)
           var scan = document.createElement("div");
           scan.className = "sgami-scan-line";
           scan.style.animationDuration = ANIM_DUR + "ms";
@@ -666,7 +684,7 @@
           setTimeout(function() { wrap.classList.remove("sgami-wrap-pop"); }, 600);
 
           drawFrame();
-        }, 150);
+        }, 180);
 
         // Carta aparece após animação (ao completar)
         if (isComplete) {
