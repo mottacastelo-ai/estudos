@@ -622,80 +622,80 @@
       var ctx    = canvas.getContext("2d");
       var wrap   = overlay.querySelector("#sgami-canvas-wrap");
 
-      // Começa com o canvas escuro — o fundo #120D28 aparece via CSS background
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Animação para o estágio atual (somente primeira tentativa)
+      // ── Animação de reveal do personagem ──────────────────────────────
+      // Somente na primeira tentativa de cada atividade (não em retries)
       if (opts.isFirstAttempt && idx > 0) {
-        var ANIM_DUR = idx >= total - 1 ? 1500 : 900;
+        var ANIM_DUR = idx >= total - 1 ? 1600 : 1000;
 
-        // animFrom sempre parte de um estado visivelmente mais bloqueado
-        // independente do stage anterior, para garantir uma reveal visível em qualquer estágio
+        // animFrom: sempre parte de um estado visivelmente mais bloqueado que o destino.
+        // O usuário precisa ver um "antes" claro para ter sensação de revelação.
+        // Quanto mais avançado o estágio destino, mais dramática a diferença.
         var animFrom = {
-          pixelSize: Math.max(stage.pixelSize + 22, 40),
+          pixelSize: Math.min(44, stage.pixelSize + 28),
           gray:      100,
-          bright:    32
+          bright:    30
         };
-        var animTo   = { pixelSize: stage.pixelSize, gray: stage.gray, bright: stage.bright };
-        var animStart = performance.now();
-        var raf = null;
+        var animTo = { pixelSize: stage.pixelSize, gray: stage.gray, bright: stage.bright };
 
         function ease(t) { return 1 - Math.pow(1 - t, 3); }
         function lerp(a, b, t) { return a + (b - a) * t; }
+        var raf = null;
 
-        function drawFrame() {
-          var raw  = Math.min(1, (performance.now() - animStart) / ANIM_DUR);
-          var t    = ease(raw);
-          // scanT avança ligeiramente na frente — o scanner "puxa" a revelação
-          var scanT = Math.min(1, Math.pow(raw, 0.5));
-          var clipH = raw < 1 ? Math.round(canvas.height * scanT) : null;
-          renderPixelated(ctx, opts.img, canvas,
-            Math.max(1, Math.round(lerp(animFrom.pixelSize, animTo.pixelSize, t))),
-            Math.round(lerp(animFrom.gray,   animTo.gray,   t)),
-            Math.round(lerp(animFrom.bright, animTo.bright, t)),
-            clipH
-          );
-          if (raw < 1) { raf = requestAnimationFrame(drawFrame); }
-          else {
-            raf = null;
-            if (isComplete) { wrap.classList.add("done"); }
-          }
-        }
+        // PASSO 1: Renderiza o estado "de" imediatamente assim que o modal abre.
+        // O usuário tem um ponto de referência claro (imagem muito pixelada).
+        renderPixelated(ctx, opts.img, canvas, animFrom.pixelSize, animFrom.gray, animFrom.bright);
 
-        // Flash + scan-line + wrap-pop + início da animação
+        // PASSO 2: Após breve pausa (deixa o "antes" registrar visualmente),
+        // dispara flash + anima suavemente para o estado destino.
         setTimeout(function() {
-          // Flash
+          // Flash de luz sobre o canvas
           var flash = document.createElement("div");
           flash.className = "sgami-unlock-flash";
           wrap.appendChild(flash);
           setTimeout(function() { if (flash.parentNode) flash.remove(); }, 700);
 
-          // Scan-line visual (raio de luz que percorre o scanner)
+          // Scan-line decorativa que acompanha a de-pixelação
           var scan = document.createElement("div");
           scan.className = "sgami-scan-line";
           scan.style.animationDuration = ANIM_DUR + "ms";
           wrap.appendChild(scan);
           setTimeout(function() { if (scan.parentNode) scan.remove(); }, ANIM_DUR + 100);
 
-          // Wrap pop (escala)
+          // Wrap pop (escala de pulso)
           wrap.classList.remove("sgami-wrap-pop");
           void wrap.offsetWidth;
           wrap.classList.add("sgami-wrap-pop");
           setTimeout(function() { wrap.classList.remove("sgami-wrap-pop"); }, 600);
 
+          // PASSO 3: Anima de animFrom → animTo (de-pixelação visível)
+          var animStart = performance.now();
+          function drawFrame() {
+            var raw = Math.min(1, (performance.now() - animStart) / ANIM_DUR);
+            var t   = ease(raw);
+            renderPixelated(ctx, opts.img, canvas,
+              Math.max(1, Math.round(lerp(animFrom.pixelSize, animTo.pixelSize, t))),
+              Math.round(lerp(animFrom.gray,   animTo.gray,   t)),
+              Math.round(lerp(animFrom.bright, animTo.bright, t))
+            );
+            if (raw < 1) { raf = requestAnimationFrame(drawFrame); }
+            else {
+              raf = null;
+              if (isComplete) { wrap.classList.add("done"); }
+            }
+          }
           drawFrame();
-        }, 180);
+        }, 350); // pausa de 350ms no estado "de" antes de animar
 
-        // Carta aparece após animação (ao completar)
+        // Carta aparece após animação completar (ao terminar todas as atividades)
         if (isComplete) {
           setTimeout(function() {
             var el = overlay.querySelector("#sgami-carta-el");
             if (el) el.classList.add("show");
-          }, ANIM_DUR + 400);
+          }, 350 + ANIM_DUR + 300);
         }
 
       } else {
-        // Retry: renderiza estágio atual direto, sem animação
+        // Retry ou estágio 0: mostra o estado atual direto, sem animação
         renderPixelated(ctx, opts.img, canvas, stage.pixelSize, stage.gray, stage.bright);
         if (isComplete) { wrap.classList.add("done"); }
       }
