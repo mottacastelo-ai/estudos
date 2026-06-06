@@ -375,8 +375,8 @@ function restartGame() {
       _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
       btn.style.display = "block";
     } else if (_capturedScore !== null) {
-      // Score ja travado na 1a tentativa — avisar o aluno
-      btn.textContent = "✓ Nota: " + _capturedScore + "% registrada · Concluir";
+      // Nota desta sessao ja travada; retry em nova sessao pode melhorar a carta
+      btn.textContent = "✓ Nota desta sessão: " + _capturedScore + "% · Concluir";
       btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
     }
   }

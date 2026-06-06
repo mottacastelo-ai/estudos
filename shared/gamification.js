@@ -790,11 +790,20 @@
     var prevStageIndex = Math.max(0, progress.isFirstAttempt ? stageIndex - 1 : stageIndex);
     var isComplete = stageIndex >= totalActivities;
 
-    var rarity = null, avgPct = null;
+    var rarity = null, avgPct = null, prevRarity = null, rarityImproved = false;
     if (isComplete) {
+      // Busca raridade atual armazenada (antes de recalcular)
+      var cardRes = await supa.from("cards").select("rarity")
+        .eq("user_id", uid).eq("theme_slug", themeSlug).single();
+      prevRarity = cardRes.data ? cardRes.data.rarity : null;
+
       var result = await calcRarity(supa, uid, themeSlug);
       rarity = result.rarity; avgPct = result.avg;
       await saveCard(supa, uid, themeSlug, discipline, rarity);
+
+      // Reveal só se: primeira vez OU raridade melhorou
+      var RARITY_ORDER = ["comum", "rara", "epica", "lendepica", "lendaria"];
+      rarityImproved = RARITY_ORDER.indexOf(rarity) > RARITY_ORDER.indexOf(prevRarity || "");
     }
 
     // Carrega imagem do personagem
@@ -819,12 +828,14 @@
       isFirstAttempt: progress.isFirstAttempt,
       isComplete: isComplete,
       rarity: rarity,
+      prevRarity: prevRarity,
+      rarityImproved: rarityImproved,
       avgPct: avgPct,
       config: config
     });
 
-    // Reveal cinematográfico da carta (somente ao completar)
-    if (isComplete) {
+    // Reveal cinematográfico: primeira conclusão OU raridade melhorou
+    if (isComplete && (!prevRarity || rarityImproved)) {
       await showReveal(rarity, config, avgPct);
     }
 
