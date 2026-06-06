@@ -29,12 +29,14 @@
       "@keyframes sgami-slideup   { from{transform:translateY(40px);opacity:0} to{transform:none;opacity:1} }",
       "@keyframes sgami-fillbar   { from{width:0} to{width:var(--sgami-bar-w)} }",
       "@keyframes sgami-chip-in   { from{transform:scale(0) translateY(6px);opacity:0} to{transform:none;opacity:1} }",
-      "@keyframes sgami-flash     { 0%{opacity:1} 100%{opacity:0} }",
+      "@keyframes sgami-flash     { 0%{opacity:0} 18%{opacity:1} 100%{opacity:0} }",
       "@keyframes sgami-ring-pulse {",
       "  0%,100% { box-shadow:0 0 0 3px SGAMI_PRIMARY, 0 0 24px rgba(SGAMI_GLOW,.4); }",
       "  50%     { box-shadow:0 0 0 5px SGAMI_LIGHT,   0 0 52px rgba(SGAMI_GLOW,.8); }",
       "}",
       "@keyframes sgami-celebrate { 0%{transform:scale(0)rotate(-20deg);opacity:0} 50%{transform:scale(1.3)rotate(5deg)} 100%{transform:scale(1)rotate(0);opacity:1} }",
+      "@keyframes sgami-scan-sweep { 0%{top:-50px;opacity:.9} 100%{top:100%;opacity:0} }",
+      "@keyframes sgami-wrap-pop   { 0%{transform:scale(1)} 30%{transform:scale(1.06)} 100%{transform:scale(1)} }",
 
       "#sgami-overlay {",
       "  position:fixed;inset:0;z-index:99999;",
@@ -68,9 +70,15 @@
       "}",
       ".sgami-unlock-flash {",
       "  position:absolute;inset:0;border-radius:12px;",
-      "  background:rgba(SGAMI_GLOW,.22);pointer-events:none;opacity:0;",
-      "  animation:sgami-flash .5s ease forwards;",
+      "  background:rgba(SGAMI_GLOW,.48);pointer-events:none;opacity:0;",
+      "  animation:sgami-flash .65s ease forwards;",
       "}",
+      ".sgami-scan-line {",
+      "  position:absolute;left:0;right:0;height:52px;pointer-events:none;z-index:2;",
+      "  background:linear-gradient(to bottom,transparent,rgba(SGAMI_GLOW,.55),transparent);",
+      "  animation:sgami-scan-sweep linear forwards;",
+      "}",
+      ".sgami-canvas-wrap.sgami-wrap-pop { animation:sgami-wrap-pop .55s cubic-bezier(.22,1,.36,1) both; }",
 
       /* Chips */
       ".sgami-chips { display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:28px;margin-bottom:10px; }",
@@ -609,12 +617,27 @@
           }
         }
 
-        // Flash + início da animação
+        // Flash + scan-line + wrap-pop + início da animação
         setTimeout(function() {
+          // Flash
           var flash = document.createElement("div");
           flash.className = "sgami-unlock-flash";
           wrap.appendChild(flash);
-          setTimeout(function() { if (flash.parentNode) flash.remove(); }, 500);
+          setTimeout(function() { if (flash.parentNode) flash.remove(); }, 700);
+
+          // Scan-line sweeping top→bottom
+          var scan = document.createElement("div");
+          scan.className = "sgami-scan-line";
+          scan.style.animationDuration = ANIM_DUR + "ms";
+          wrap.appendChild(scan);
+          setTimeout(function() { if (scan.parentNode) scan.remove(); }, ANIM_DUR + 100);
+
+          // Wrap pop (escala)
+          wrap.classList.remove("sgami-wrap-pop");
+          void wrap.offsetWidth;
+          wrap.classList.add("sgami-wrap-pop");
+          setTimeout(function() { wrap.classList.remove("sgami-wrap-pop"); }, 600);
+
           drawFrame();
         }, 150);
 

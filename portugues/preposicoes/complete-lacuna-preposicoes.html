@@ -425,6 +425,10 @@ init();
     if (btn.style.display === "none") {
       _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
       btn.style.display = "block";
+    } else if (_capturedScore !== null) {
+      // Score ja travado na 1a tentativa — avisar o aluno
+      btn.textContent = "✓ Nota: " + _capturedScore + "% registrada · Concluir";
+      btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
     }
   }
 
