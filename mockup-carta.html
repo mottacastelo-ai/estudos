@@ -44,25 +44,27 @@ h2 {
 
 .card-frame-bg {
   position: absolute; inset: 0;
-  background-size: cover; background-position: center top;
+  background-size: 120% auto;
+  background-position: center 22%;
 }
 
 .card-frame-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(
     to bottom,
-    transparent 0%,
-    transparent 45%,
-    rgba(5,4,15,.7) 65%,
+    rgba(5,4,15,.55) 0%,
+    transparent 12%,
+    transparent 44%,
+    rgba(5,4,15,.7) 64%,
     rgba(5,4,15,.95) 100%
   );
 }
 
 .card-char {
   position: absolute;
-  bottom: 140px;
+  bottom: 132px;
   left: 50%; transform: translateX(-50%);
-  width: 220px; height: 260px;
+  width: 240px; height: 280px;
   z-index: 10;
   pointer-events: none;
 }
