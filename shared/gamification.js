@@ -294,6 +294,16 @@
       .sgami-rev-card.lendepica .sgami-rev-logo { background:linear-gradient(90deg,#A78BFA,#FCD34D); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
       .sgami-rev-card.lendepica .sgami-rev-logo span { background:none; -webkit-text-fill-color:#2DD4BF; }
 
+      .sgami-rev-card.revisional .sgami-rev-frame-bg { background-color:#0c1a2e; }
+      .sgami-rev-card.revisional .sgami-rev-ring { background:linear-gradient(135deg,#38BDF8,#0284C7,#BAE6FD,#0EA5E9); box-shadow:0 0 28px rgba(14,165,233,.5); }
+      .sgami-rev-card.revisional .sgami-rev-char img { filter:drop-shadow(0 0 22px rgba(56,189,248,.5)) drop-shadow(0 8px 24px rgba(0,0,0,.7)); }
+      .sgami-rev-card.revisional .sgami-rev-name  { color:#fff; text-shadow:0 0 20px rgba(56,189,248,.7); }
+      .sgami-rev-card.revisional .sgami-rev-theme { color:#38BDF8; }
+      .sgami-rev-card.revisional .sgami-rev-score { color:rgba(186,230,253,.6); }
+      .sgami-rev-card.revisional .sgami-rev-badge { background:rgba(2,132,199,.45); border:1px solid #0EA5E9; color:#BAE6FD; box-shadow:0 0 14px rgba(14,165,233,.5); }
+      .sgami-rev-card.revisional .sgami-rev-logo  { color:#BAE6FD; }
+      .sgami-rev-card.revisional .sgami-rev-logo span { color:#2DD4BF; }
+
       .sgami-rev-card.rev-enter    { animation:sgami-rev-card-spring .85s cubic-bezier(.34,1.56,.64,1) forwards; }
       .sgami-rev-card.rev-floating { animation:sgami-rev-card-float 3.2s ease-in-out infinite; }
       .sgami-rev-card.rev-ring-pulse .sgami-rev-ring { animation:sgami-rev-ring-pulse .5s ease-out !important; }
@@ -397,6 +407,12 @@
       glowColor: "rgba(245,158,11,.22)", flash: "rgba(255,248,200,0.95)",
       rays: true, rayCount: 14, double: true, shockwave: false,
       particles: { count:95, speed:9, gravity:.025, colors:["#FCD34D","#F59E0B","#FDE68A","#ffffff","#FBBF24","#FEF3C7"], sizeMin:3, sizeMax:8, type:"star", decay:.009 }
+    },
+    revisional: {
+      badge: "📚 Revisional", tierLabel: "📚 Revisional", tierColor: "#0EA5E9",
+      glowColor: "rgba(14,165,233,.2)", flash: null,
+      rays: false, double: false, shockwave: true,
+      particles: { count:55, speed:5.5, gravity:.05, colors:["#38BDF8","#0EA5E9","#BAE6FD","#ffffff","#E0F2FE"], sizeMin:2, sizeMax:5, type:"circle", decay:.012 }
     }
   };
 
@@ -677,15 +693,16 @@
   /* ------------------------------------------------------------------ */
   /* Reveal cinematográfico da carta                                       */
   /* ------------------------------------------------------------------ */
-  function showReveal(rarity, config, avgPct) {
+  function showReveal(rarity, config, avgPct, opts) {
     return new Promise(function(resolve) {
       injectRevealStyles();
+      opts = opts || {};
 
       var tierCfg  = REVEAL_TIERS[rarity] || REVEAL_TIERS.comum;
       var base     = config.assetBase || "../../";
       var bgSuffix = rarity === "lendepica" ? "lend-epica" : rarity;
       var cardBgUrl = base + "_landing/cartas/carta-fundo-" + bgSuffix + ".png";
-      var scoreText = avgPct != null ? "Acerto: " + Math.round(avgPct) + "%" : "";
+      var scoreText = opts.scoreText != null ? opts.scoreText : (avgPct != null ? "Acerto: " + Math.round(avgPct) + "%" : "");
 
       var charInner = config.characterImg
         ? '<img src="' + base + "_landing/" + config.characterImg + '" alt="' + config.characterName + '">'
@@ -739,7 +756,7 @@
 
       card.style.cssText = "opacity:0; transform:scale(0.05) rotate(-10deg); animation:none;";
 
-      var TEXT = "NOVA CARTA OBTIDA";
+      var TEXT = opts.titleText || "NOVA CARTA OBTIDA";
       titleEl.innerHTML = "";
       TEXT.split("").forEach(function(ch, i) {
         if (ch === " ") { var sp=document.createElement("span"); sp.className="sgami-rev-space"; titleEl.appendChild(sp); }
@@ -785,6 +802,53 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* Sistema de Reforço Adaptativo                                         */
+  /* ------------------------------------------------------------------ */
+
+  // Popula a fila de reforço na primeira conclusão total do tema.
+  // Insere uma entrada por activity_type com first_attempt score < 80%,
+  // excluindo mapa-mental. due_date = agora + 5 dias.
+  async function populateReinforcementQueue(supa, uid, themeSlug) {
+    var res = await supa.from("activity_log")
+      .select("activity_type,score")
+      .eq("user_id", uid).eq("theme_slug", themeSlug)
+      .eq("is_first_attempt", true).lt("score", 80)
+      .neq("activity_type", "mapa-mental");
+    var rows = res.data || [];
+    if (!rows.length) return;
+    var dueDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString();
+    var inserts = rows.map(function(r) {
+      return { user_id: uid, theme_slug: themeSlug, activity_type: r.activity_type,
+               first_score: r.score, due_date: dueDate };
+    });
+    await supa.from("reinforcement_queue").upsert(inserts,
+      { onConflict: "user_id,theme_slug,activity_type", ignoreDuplicates: true });
+  }
+
+  // Verifica se o retry atual resolve um item de reforço pendente (due_date <= now, score >= 80).
+  // Retorna true se TODOS os itens do tema foram resolvidos (→ desbloqueia carta revisional).
+  async function checkAndResolveReinforcement(supa, uid, themeSlug, activityType, score) {
+    if (score === null || score < 80) return false;
+    var now = new Date().toISOString();
+    var checkRes = await supa.from("reinforcement_queue")
+      .select("id")
+      .eq("user_id", uid).eq("theme_slug", themeSlug)
+      .eq("activity_type", activityType)
+      .is("resolved_at", null)
+      .lte("due_date", now)
+      .maybeSingle();
+    if (!checkRes.data) return false;
+    await supa.from("reinforcement_queue")
+      .update({ resolved_at: now })
+      .eq("id", checkRes.data.id);
+    var pendingRes = await supa.from("reinforcement_queue")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", uid).eq("theme_slug", themeSlug)
+      .is("resolved_at", null);
+    return (pendingRes.count || 0) === 0;
+  }
+
+  /* ------------------------------------------------------------------ */
   /* run()                                                                 */
   /* ------------------------------------------------------------------ */
   async function run(supa, uid, themeSlug, discipline, config) {
@@ -815,6 +879,18 @@
       // Reveal só se: primeira vez OU raridade melhorou
       var RARITY_ORDER = ["comum", "rara", "epica", "lendepica", "lendaria"];
       rarityImproved = RARITY_ORDER.indexOf(rarity) > RARITY_ORDER.indexOf(prevRarity || "");
+    }
+
+    // Reinforcement: popula fila na primeira conclusão total
+    if (isComplete && !prevRarity) {
+      await populateReinforcementQueue(supa, uid, themeSlug);
+    }
+
+    // Reinforcement: verifica resolução de item pendente
+    var revisionalUnlocked = false;
+    var activityType = config.activityType || null;
+    if (activityType && activityType !== "mapa-mental" && !progress.isFirstAttempt && progress.lastScore !== null) {
+      revisionalUnlocked = await checkAndResolveReinforcement(supa, uid, themeSlug, activityType, progress.lastScore);
     }
 
     // Carrega imagem do personagem
@@ -848,6 +924,12 @@
     // Reveal cinematográfico: primeira conclusão OU raridade melhorou
     if (isComplete && (!prevRarity || rarityImproved)) {
       await showReveal(rarity, config, avgPct);
+    }
+
+    // Carta Revisional: todos os reforços do tema concluídos
+    if (revisionalUnlocked) {
+      await showReveal("revisional", config, null,
+        { titleText: "REFORÇO CONCLUÍDO", scoreText: "Consolidado! ✓" });
     }
 
     if (config.backUrl) window.location.href = config.backUrl;
