@@ -362,6 +362,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   cursor:pointer;transition:all .15s;text-align:center;
 }
 .logout-btn:hover { background:rgba(255,255,255,.08);color:rgba(255,255,255,.6); }
+.reset-test-btn { display:none;width:100%;padding:7px 0;margin-top:6px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:8px;color:#FCD34D;font-family:"Baloo 2",cursive;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center; }
+.reset-test-btn:hover { background:rgba(245,158,11,.22);color:#FDE68A; }
+.test-mode-tag { display:none;font-size:9px;text-align:center;color:rgba(252,211,77,.5);margin-top:8px;letter-spacing:.06em;text-transform:uppercase;font-family:"Space Mono",monospace; }
 #streak-banner { display:none; }
 #streak-banner.visible { display:flex; }
 
@@ -486,6 +489,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     Aprenda de verdade,<br>não só decore. 💡
     <a href="https://sabendo.app" style="display:block;margin-top:10px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:.02em;">← sabendo.app</a>
     <button class="logout-btn" onclick="doLogout()">🚪 Sair</button>
+    <button class="reset-test-btn" id="reset-test-btn" onclick="resetTestUser()">🔄 Resetar dados de teste</button>
+    <div class="test-mode-tag" id="test-mode-tag">🧪 modo teste</div>
   </div>
 </aside>
 
@@ -2088,6 +2093,10 @@ async function initAuth() {
     sbUser = session.user;
     await loadStreak();
     await loadReinforcement();
+    if (sbUser.email && sbUser.email.startsWith('teste-')) {
+      document.getElementById('reset-test-btn').style.display = 'block';
+      document.getElementById('test-mode-tag').style.display = 'block';
+    }
   } else {
     window.location.href = 'https://sabendo.app';
   }
@@ -2164,6 +2173,21 @@ async function loadReinforcement() {
   navCount.textContent = items.length;
   section.style.display = 'block';
   navBtn.classList.add('visible');
+}
+
+async function resetTestUser() {
+  if (!confirm('Resetar todos os dados de teste? Esta ação não pode ser desfeita.')) return;
+  var btn = document.getElementById('reset-test-btn');
+  btn.textContent = '⏳ Resetando...';
+  btn.disabled = true;
+  var result = await supa.rpc('reset_test_user');
+  if (result.error) {
+    alert('Erro ao resetar: ' + result.error.message);
+    btn.textContent = '🔄 Resetar dados de teste';
+    btn.disabled = false;
+  } else {
+    window.location.reload();
+  }
 }
 
 function showReinforcement() {
