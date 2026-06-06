@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -389,6 +389,40 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   .reinf-item { flex-wrap:wrap; }
   .reinf-btn { width:100%; text-align:center; margin-top:8px; display:block; }
 }
+/* ── Busca Global ─────────────────────────────────── */
+.search-wrap { position:relative; margin-bottom:24px; }
+.search-input-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:16px; pointer-events:none; }
+.search-input {
+  width:100%; padding:12px 18px 12px 42px;
+  border:2px solid var(--border); border-radius:14px;
+  font-family:"Baloo 2",cursive; font-size:14px; font-weight:700;
+  background:var(--card); color:var(--text);
+  outline:none; transition:border-color .18s, box-shadow .18s;
+}
+.search-input:focus { border-color:#A78BFA; box-shadow:0 0 0 3px rgba(167,139,250,.15); }
+.search-results {
+  position:absolute; top:calc(100% + 6px); left:0; right:0;
+  background:var(--card); border:2px solid var(--border); border-radius:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,.12);
+  z-index:100; display:none; overflow:hidden;
+  max-height:400px; overflow-y:auto;
+}
+.search-results.open { display:block; }
+.search-result-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 18px; cursor:pointer;
+  border-bottom:1px solid var(--border); transition:background .12s;
+}
+.search-result-item:last-child { border-bottom:none; }
+.search-result-item:hover { background:var(--bg); }
+.sri-emoji { font-size:22px; flex-shrink:0; }
+.sri-info { flex:1; min-width:0; }
+.sri-label { font-weight:800; font-size:14px; }
+.sri-disc { font-size:11px; color:var(--muted); font-weight:600; }
+.sri-pages { font-family:"Space Mono",monospace; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:var(--border); color:var(--muted); flex-shrink:0; white-space:nowrap; }
+.search-empty { padding:20px; text-align:center; font-size:13px; color:var(--muted); font-weight:600; }
+/* Badge de página nos theme-tabs */
+.tab-pages { font-size:9px; color:var(--muted); display:block; opacity:.65; margin-top:1px; font-family:"Space Mono",monospace; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
@@ -521,6 +555,17 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <span class="reinf-badge" id="reinf-badge">0 itens</span>
         </div>
         <div class="reinf-list" id="reinforcement-list"></div>
+      </div>
+      <!-- Busca global por tema / página do livro -->
+      <div class="search-wrap" id="search-wrap">
+        <span class="search-input-icon">🔍</span>
+        <input class="search-input" id="search-input" type="text"
+          placeholder="Buscar tema ou página do livro (ex: 62)…"
+          autocomplete="off"
+          oninput="onSearchInput(this.value)"
+          onblur="hideSearchResults()"
+          onfocus="onSearchInput(this.value)">
+        <div class="search-results" id="search-results"></div>
       </div>
       <div class="home-section-title">Por onde vai hoje?</div>
       <div class="disc-cards">
@@ -2121,6 +2166,130 @@ function renderStreak() {
   document.getElementById('streak-count').textContent = sbStreak.current_streak;
   document.getElementById('total-acts').textContent = sbStreak.total_activities;
 }
+
+// ── Catálogo de Temas — fonte única de verdade ────────────────────────
+// pages: [inicio, fim] conforme o livro didático. null = ainda não mapeado.
+// Para adicionar páginas: edite apenas este array.
+var THEME_CATALOG = [
+  // ── Português
+  { disc:'port', slug:'preposicoes',    label:'Preposições',              emoji:'🔗', pages:null },
+  { disc:'port', slug:'teatral',        label:'Texto Teatral',            emoji:'🎭', pages:null },
+  { disc:'port', slug:'verbais',        label:'Tempos Verbais',           emoji:'⏱', pages:null },
+  { disc:'port', slug:'letral',         label:'Letra ℓ e U',              emoji:'🏄', pages:null },
+  { disc:'port', slug:'variacao',       label:'Variação Linguística',     emoji:'🗺️', pages:null },
+  { disc:'port', slug:'pontuacao',      label:'Pontuação',                emoji:'❗', pages:null },
+  { disc:'port', slug:'instrucional',   label:'Texto Instrucional',       emoji:'📋', pages:null },
+  { disc:'port', slug:'entonacao',      label:'Entonação',                emoji:'🎵', pages:null },
+  // ── Matemática
+  { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null },
+  { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null },
+  { disc:'mat',  slug:'poliedros-prismas-piramides',   label:'Poliedros, Prismas e Pirâmides', emoji:'🏛️', pages:null },
+  { disc:'mat',  slug:'corpos-redondos-planificacao',  label:'Corpos Redondos e Planificação', emoji:'🌀', pages:null },
+  { disc:'mat',  slug:'multiplos-divisores-criterios', label:'Múltiplos e Divisores',          emoji:'🔢', pages:null },
+  { disc:'mat',  slug:'primos-compostos-fatoracao',    label:'Primos e Fatoração',             emoji:'🔍', pages:null },
+  { disc:'mat',  slug:'mdc-mmc-problemas',             label:'mdc e mmc',                      emoji:'📐', pages:null },
+  // ── Ciências
+  { disc:'cien', slug:'lixo-que-produzimos',   label:'O Lixo que Produzimos',              emoji:'🗑️', pages:null },
+  { disc:'cien', slug:'caminho-do-lixo',        label:'O Caminho do Lixo',                  emoji:'🚛', pages:null },
+  { disc:'cien', slug:'ciclo-da-agua',          label:'O Ciclo da Água',                    emoji:'💧', pages:[62,67] },
+  { disc:'cien', slug:'agua-cidades-consumo',   label:'Água, Cidades e Consumo Consciente', emoji:'🏙️', pages:[68,83] },
+  // ── Geografia
+  { disc:'geo',  slug:'diversidade-cultural',    label:'Diversidade Cultural',    emoji:'🎪', pages:null },
+  { disc:'geo',  slug:'pais-de-contrastes',      label:'País de Contrastes',      emoji:'⚖️', pages:null },
+  { disc:'geo',  slug:'tecnologia-agropecuaria', label:'Tecnologia Agropecuária', emoji:'🌾', pages:null },
+  // ── História
+  { disc:'hist', slug:'calendarios-povos',        label:'Diversos Calendários', emoji:'🗓️', pages:null },
+  { disc:'hist', slug:'marcos-memoria',            label:'Marcos de Memória',    emoji:'🗿', pages:null },
+  { disc:'hist', slug:'memoria-negra-imigrantes', label:'Zumbi e Imigrantes',   emoji:'✊🏽', pages:null }
+];
+
+var DISC_NAMES = { port:'Português', mat:'Matemática', cien:'Ciências', geo:'Geografia', hist:'História' };
+
+// ── Busca Global ──────────────────────────────────────────────────────
+function onSearchInput(val) {
+  val = (val || '').trim();
+  var results = document.getElementById('search-results');
+  if (!val) { results.classList.remove('open'); return; }
+  var isPage = /^\d+$/.test(val);
+  var pageNum = isPage ? parseInt(val, 10) : null;
+  var matches = THEME_CATALOG.filter(function(t) {
+    if (isPage) { return t.pages && pageNum >= t.pages[0] && pageNum <= t.pages[1]; }
+    var q = val.toLowerCase();
+    return t.label.toLowerCase().indexOf(q) >= 0 ||
+           (DISC_NAMES[t.disc] || '').toLowerCase().indexOf(q) >= 0;
+  });
+  if (!matches.length) {
+    results.innerHTML = '<div class="search-empty">' +
+      (isPage ? 'Nenhum tema mapeado para a página ' + pageNum + '.' : 'Nenhum tema encontrado.') + '</div>';
+  } else {
+    results.innerHTML = matches.map(function(t) {
+      var pg = t.pages ? '<span class="sri-pages">pp. ' + t.pages[0] + '–' + t.pages[1] + '</span>' : '';
+      var d = t.disc, s = t.slug;
+      return '<div class="search-result-item" onmousedown="navigateToTheme(\'' + d + '\',\'' + s + '\')">' +
+        '<div class="sri-emoji">' + t.emoji + '</div>' +
+        '<div class="sri-info"><div class="sri-label">' + t.label + '</div><div class="sri-disc">' + DISC_NAMES[t.disc] + '</div></div>' +
+        pg + '</div>';
+    }).join('');
+  }
+  results.classList.add('open');
+}
+
+function hideSearchResults() {
+  setTimeout(function() {
+    var r = document.getElementById('search-results');
+    if (r) r.classList.remove('open');
+  }, 160);
+}
+
+function navigateToTheme(disc, slug) {
+  var inp = document.getElementById('search-input');
+  if (inp) inp.value = '';
+  var r = document.getElementById('search-results');
+  if (r) r.classList.remove('open');
+  showTheme(disc, slug);
+}
+
+// ── Ordenar tabs por página e adicionar badge ─────────────────────────
+function sortTabsByPages() {
+  ['port','mat','cien','geo','hist'].forEach(function(disc) {
+    var screen = document.getElementById('screen-' + disc);
+    if (!screen) return;
+    var tabs = screen.querySelector('.theme-tabs');
+    if (!tabs) return;
+    var buttons = Array.prototype.slice.call(tabs.querySelectorAll('.theme-tab-btn'));
+    // Adicionar badge pp. XX–YY onde as páginas forem conhecidas
+    buttons.forEach(function(btn) {
+      var slug = extractSlug(btn);
+      var t = null;
+      for (var i = 0; i < THEME_CATALOG.length; i++) { if (THEME_CATALOG[i].slug === slug) { t = THEME_CATALOG[i]; break; } }
+      if (t && t.pages) {
+        var badge = btn.querySelector('.tab-pages');
+        if (!badge) { badge = document.createElement('span'); badge.className = 'tab-pages'; btn.appendChild(badge); }
+        badge.textContent = 'pp. ' + t.pages[0] + '–' + t.pages[1];
+      }
+    });
+    // Ordenar: temas com página primeiro (crescente); sem página mantêm ordem relativa no final
+    var withPages = [], withoutPages = [];
+    buttons.forEach(function(btn) {
+      var slug = extractSlug(btn);
+      var t = null;
+      for (var i = 0; i < THEME_CATALOG.length; i++) { if (THEME_CATALOG[i].slug === slug) { t = THEME_CATALOG[i]; break; } }
+      if (t && t.pages) { withPages.push({ btn: btn, page: t.pages[0] }); }
+      else { withoutPages.push(btn); }
+    });
+    withPages.sort(function(a, b) { return a.page - b.page; });
+    withPages.forEach(function(o) { tabs.appendChild(o.btn); });
+    withoutPages.forEach(function(btn) { tabs.appendChild(btn); });
+  });
+}
+
+function extractSlug(btn) {
+  var oc = btn.getAttribute('onclick') || '';
+  var m = oc.match(/'([^']+)'\s*\)/);
+  return m ? m[m.length - 1] : '';
+}
+
+document.addEventListener('DOMContentLoaded', sortTabsByPages);
 
 // ── Reforço Adaptativo ────────────────────────────────
 var THEME_META = {
