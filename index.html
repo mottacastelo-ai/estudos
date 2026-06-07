@@ -365,6 +365,33 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .reset-test-btn { display:none;width:100%;padding:7px 0;margin-top:6px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:8px;color:#FCD34D;font-family:"Baloo 2",cursive;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center; }
 .reset-test-btn:hover { background:rgba(245,158,11,.22);color:#FDE68A; }
 .test-mode-tag { display:none;font-size:9px;text-align:center;color:rgba(252,211,77,.5);margin-top:8px;letter-spacing:.06em;text-transform:uppercase;font-family:"Space Mono",monospace; }
+
+/* ── Minhas Cartas ─────────────────────────────────── */
+.cartas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:16px; padding-bottom:40px; }
+.carta-mini {
+  border-radius:16px; padding:20px 12px 14px; text-align:center;
+  cursor:default; transition:transform .2s,box-shadow .2s;
+  position:relative; overflow:hidden; font-family:"Baloo 2",cursive;
+}
+.carta-mini:hover { transform:translateY(-4px); }
+.cm-emoji  { font-size:42px; margin-bottom:10px; line-height:1; }
+.cm-name   { font-weight:800; font-size:13px; line-height:1.3; margin-bottom:4px; }
+.cm-disc   { font-size:11px; opacity:.65; margin-bottom:10px; }
+.cm-badge  { display:inline-block; font-size:10px; font-weight:800; padding:3px 10px;
+             border-radius:99px; font-family:"Space Mono",monospace; letter-spacing:.03em; }
+.carta-mini-comum   { background:#1A1035; color:#E5E0FF; border:1.5px solid #374151; box-shadow:0 4px 16px rgba(0,0,0,.35); }
+.carta-mini-comum   .cm-badge { background:rgba(255,255,255,.1); color:#9CA3AF; }
+.carta-mini-rara    { background:#0a1628; color:#fff; border:1.5px solid #1D4ED8; box-shadow:0 4px 20px rgba(37,99,235,.3); }
+.carta-mini-rara    .cm-badge { background:rgba(37,99,235,.4); color:#93C5FD; }
+.carta-mini-epica   { background:#0d0b1a; color:#fff; border:1.5px solid #6D28D9; box-shadow:0 4px 24px rgba(124,58,237,.4); }
+.carta-mini-epica   .cm-badge { background:rgba(109,40,217,.4); color:#C4B5FD; }
+.carta-mini-lendaria{ background:#1c1000; color:#fff; border:1.5px solid #B45309; box-shadow:0 4px 28px rgba(245,158,11,.4); }
+.carta-mini-lendaria .cm-badge{ background:linear-gradient(135deg,rgba(245,158,11,.5),rgba(180,83,9,.5)); color:#FDE68A; }
+.cartas-empty { text-align:center; padding:60px 20px; }
+.cartas-empty-icon { font-size:56px; margin-bottom:16px; }
+.cartas-empty-title { font-weight:800; color:#1e1b4b; font-size:18px; margin-bottom:8px; font-family:"Baloo 2",cursive; }
+.cartas-empty-desc  { color:#6b7280; font-size:14px; line-height:1.5; font-family:"Baloo 2",cursive; }
+@media (max-width:600px) { .cartas-grid { grid-template-columns:repeat(2,1fr); } }
 #streak-banner { display:none; }
 #streak-banner.visible { display:flex; }
 
@@ -448,6 +475,11 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <span class="d-name">Início</span>
   </button>
 
+  <button class="disc-nav-btn" id="nav-cartas" onclick="showCartas()">
+    <span class="d-icon">🃏</span>
+    <span class="d-name">Minhas Cartas</span>
+    <span class="d-count" id="cartas-sidebar-count">0</span>
+  </button>
   <button class="disc-nav-btn" id="nav-reinf" onclick="showReinforcement()">
     <span class="d-icon">⚡</span>
     <span class="d-name">Para reforçar</span>
@@ -616,6 +648,14 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
             <span class="chip" style="background:#F0FDFA;color:#0D9488">4 temas</span>
             <span class="chip" style="background:#EFF6FF;color:#1E3A8A">18 atividades</span>
             <span class="chip" style="background:#FEF3C7;color:#92400E">4 HQs</span>
+          </div>
+        </button>
+        <button class="disc-home-card" style="background:linear-gradient(160deg,#1A1035,#2D1B69);border-left:4px solid #A78BFA;" onclick="showCartas()">
+          <div class="dhc-icon">🃏</div>
+          <div class="dhc-name" style="color:#E5E0FF">Minhas Cartas</div>
+          <div class="dhc-desc" style="color:rgba(200,185,255,.7)">Cartas conquistadas ao completar todos os temas</div>
+          <div class="dhc-chips">
+            <span class="chip" id="home-cartas-chip" style="background:rgba(167,139,250,.2);color:#A78BFA">0 cartas</span>
           </div>
         </button>
       </div>
@@ -2040,6 +2080,24 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     </div>
   </div>
 
+  <!-- MINHAS CARTAS -->
+  <div class="screen" id="screen-cartas">
+    <div class="disc-hero" style="background:linear-gradient(135deg,#120D28 0%,#1e1045 55%,#2D1B69 100%)">
+      <div class="disc-hero-badge">🃏 Coleção</div>
+      <h1>MINHAS CARTAS</h1>
+      <p>Conquistas das missões completadas</p>
+    </div>
+    <div class="disc-body">
+      <div id="cartas-loading" style="text-align:center;padding:40px;color:#6b7280;font-family:'Baloo 2',cursive">⏳ Carregando cartas...</div>
+      <div id="cartas-empty" class="cartas-empty" style="display:none">
+        <div class="cartas-empty-icon">🎴</div>
+        <div class="cartas-empty-title">Nenhuma carta ainda</div>
+        <div class="cartas-empty-desc">Complete <strong>todas</strong> as atividades de um tema para ganhar sua primeira carta!</div>
+      </div>
+      <div class="cartas-grid" id="cartas-grid"></div>
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -2138,6 +2196,7 @@ async function initAuth() {
     sbUser = session.user;
     await loadStreak();
     await loadReinforcement();
+    loadCartasCount();
     if (sbUser.email && sbUser.email.startsWith('teste-')) {
       document.getElementById('reset-test-btn').style.display = 'block';
       document.getElementById('test-mode-tag').style.display = 'block';
@@ -2365,6 +2424,78 @@ function showReinforcement() {
     var el = document.getElementById('reinforcement-section');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 100);
+}
+
+// ── Minhas Cartas ─────────────────────────────────────
+function showCartas() {
+  setScreen('cartas');
+  setNavActive('nav-cartas');
+  closeAllSubs();
+  closeSidebar();
+  loadCartas();
+}
+
+function cartaRarityLabel(r) {
+  return { comum:'⚪ Comum', rara:'🔵 Rara', epica:'🟣 Épica', lendaria:'🌟 Lendária' }[r] || (r || 'Comum');
+}
+
+async function loadCartas() {
+  if (!sbUser) return;
+  var loading = document.getElementById('cartas-loading');
+  var empty   = document.getElementById('cartas-empty');
+  var grid    = document.getElementById('cartas-grid');
+  if (!loading || !empty || !grid) return;
+
+  loading.style.display = 'block';
+  empty.style.display   = 'none';
+  grid.innerHTML        = '';
+
+  var res   = await supa.from('cards').select('*').eq('user_id', sbUser.id);
+  var cards = res.data || [];
+
+  // Ordena: lendaria → epica → rara → comum
+  var ORDER = { lendaria:4, epica:3, rara:2, comum:1 };
+  cards.sort(function(a,b) { return (ORDER[b.rarity]||0) - (ORDER[a.rarity]||0); });
+
+  // Atualiza contadores (sidebar + home chip)
+  var count = cards.length;
+  var sideEl = document.getElementById('cartas-sidebar-count');
+  var chipEl = document.getElementById('home-cartas-chip');
+  if (sideEl) sideEl.textContent = count;
+  if (chipEl) chipEl.textContent = count + (count === 1 ? ' carta' : ' cartas');
+
+  loading.style.display = 'none';
+
+  if (!count) { empty.style.display = 'block'; return; }
+
+  var DISC_LABEL = { port:'Português', mat:'Matemática', cien:'Ciências', geo:'Geografia', hist:'História' };
+
+  cards.forEach(function(card) {
+    var theme   = THEME_CATALOG.find(function(t) { return t.slug === card.theme_slug; });
+    var label   = theme ? theme.label : card.theme_slug;
+    var emoji   = theme ? theme.emoji : '⭐';
+    var disc    = DISC_LABEL[card.discipline] || card.discipline;
+    var rarity  = card.rarity || 'comum';
+
+    var el = document.createElement('div');
+    el.className = 'carta-mini carta-mini-' + rarity;
+    el.innerHTML =
+      '<div class="cm-emoji">' + emoji + '</div>' +
+      '<div class="cm-name">'  + label + '</div>' +
+      '<div class="cm-disc">'  + disc  + '</div>' +
+      '<span class="cm-badge">' + cartaRarityLabel(rarity) + '</span>';
+    grid.appendChild(el);
+  });
+}
+
+async function loadCartasCount() {
+  if (!sbUser) return;
+  var res   = await supa.from('cards').select('id', { count:'exact', head:true }).eq('user_id', sbUser.id);
+  var count = res.count || 0;
+  var sideEl = document.getElementById('cartas-sidebar-count');
+  var chipEl = document.getElementById('home-cartas-chip');
+  if (sideEl) sideEl.textContent = count;
+  if (chipEl) chipEl.textContent = count + (count === 1 ? ' carta' : ' cartas');
 }
 
 // Chamado pelas atividades para registrar conclusão
