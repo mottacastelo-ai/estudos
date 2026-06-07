@@ -367,26 +367,48 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .test-mode-tag { display:none;font-size:9px;text-align:center;color:rgba(252,211,77,.5);margin-top:8px;letter-spacing:.06em;text-transform:uppercase;font-family:"Space Mono",monospace; }
 
 /* ── Minhas Cartas ─────────────────────────────────── */
-.cartas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:16px; padding-bottom:40px; }
+.cartas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:20px; padding-bottom:40px; }
 .carta-mini {
-  border-radius:16px; padding:20px 12px 14px; text-align:center;
-  cursor:default; transition:transform .2s,box-shadow .2s;
-  position:relative; overflow:hidden; font-family:"Baloo 2",cursive;
+  position:relative; border-radius:18px; overflow:hidden;
+  width:100%; aspect-ratio:160/230;
+  cursor:default; transition:transform .25s,box-shadow .25s;
+  font-family:"Baloo 2",cursive;
+  box-shadow:0 6px 24px rgba(0,0,0,.45);
 }
-.carta-mini:hover { transform:translateY(-4px); }
-.cm-emoji  { font-size:42px; margin-bottom:10px; line-height:1; }
-.cm-name   { font-weight:800; font-size:13px; line-height:1.3; margin-bottom:4px; }
-.cm-disc   { font-size:11px; opacity:.65; margin-bottom:10px; }
-.cm-badge  { display:inline-block; font-size:10px; font-weight:800; padding:3px 10px;
-             border-radius:99px; font-family:"Space Mono",monospace; letter-spacing:.03em; }
-.carta-mini-comum   { background:#1A1035; color:#E5E0FF; border:1.5px solid #374151; box-shadow:0 4px 16px rgba(0,0,0,.35); }
+.carta-mini:hover { transform:translateY(-6px) scale(1.03); }
+.cm-bg {
+  position:absolute; inset:0;
+  background-size:cover; background-position:center top;
+}
+.cm-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to bottom, transparent 0%, transparent 42%, rgba(5,4,15,.72) 65%, rgba(5,4,15,.96) 100%);
+}
+.cm-ring {
+  position:absolute; inset:-2px; border-radius:20px; z-index:0;
+}
+.cm-emoji {
+  position:absolute; top:18%; left:50%; transform:translateX(-50%);
+  font-size:52px; line-height:1; z-index:2; filter:drop-shadow(0 4px 12px rgba(0,0,0,.6));
+}
+.cm-info {
+  position:absolute; bottom:0; left:0; right:0; z-index:2;
+  padding:10px 12px 12px; display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.cm-name  { font-weight:900; font-size:12px; line-height:1.25; text-align:center; color:#fff; }
+.cm-disc  { font-size:10px; opacity:.65; color:#fff; text-align:center; }
+.cm-badge { display:inline-block; font-size:9px; font-weight:800; padding:2px 9px; margin-top:4px;
+            border-radius:99px; font-family:"Space Mono",monospace; letter-spacing:.03em; }
+
+.carta-mini-comum   .cm-ring { background:linear-gradient(135deg,#6B7280,#374151,#9CA3AF); }
 .carta-mini-comum   .cm-badge { background:rgba(255,255,255,.1); color:#9CA3AF; }
-.carta-mini-rara    { background:#0a1628; color:#fff; border:1.5px solid #1D4ED8; box-shadow:0 4px 20px rgba(37,99,235,.3); }
-.carta-mini-rara    .cm-badge { background:rgba(37,99,235,.4); color:#93C5FD; }
-.carta-mini-epica   { background:#0d0b1a; color:#fff; border:1.5px solid #6D28D9; box-shadow:0 4px 24px rgba(124,58,237,.4); }
-.carta-mini-epica   .cm-badge { background:rgba(109,40,217,.4); color:#C4B5FD; }
-.carta-mini-lendaria{ background:#1c1000; color:#fff; border:1.5px solid #B45309; box-shadow:0 4px 28px rgba(245,158,11,.4); }
-.carta-mini-lendaria .cm-badge{ background:linear-gradient(135deg,rgba(245,158,11,.5),rgba(180,83,9,.5)); color:#FDE68A; }
+.carta-mini-rara    .cm-ring { background:linear-gradient(135deg,#60A5FA,#1D4ED8,#93C5FD); box-shadow:0 0 16px rgba(37,99,235,.4); }
+.carta-mini-rara    .cm-badge { background:rgba(37,99,235,.5); color:#93C5FD; }
+.carta-mini-epica   .cm-ring { background:linear-gradient(135deg,#A78BFA,#6D28D9,#C4B5FD); box-shadow:0 0 20px rgba(124,58,237,.5); }
+.carta-mini-epica   .cm-badge { background:rgba(109,40,217,.5); color:#C4B5FD; }
+.carta-mini-lendaria .cm-ring { background:linear-gradient(135deg,#FCD34D,#B45309,#FDE68A); box-shadow:0 0 24px rgba(245,158,11,.5); }
+.carta-mini-lendaria .cm-badge { background:linear-gradient(135deg,rgba(245,158,11,.5),rgba(180,83,9,.5)); color:#FDE68A; }
+
 .cartas-empty { text-align:center; padding:60px 20px; }
 .cartas-empty-icon { font-size:56px; margin-bottom:16px; }
 .cartas-empty-title { font-weight:800; color:#1e1b4b; font-size:18px; margin-bottom:8px; font-family:"Baloo 2",cursive; }
@@ -476,7 +498,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   </button>
 
   <button class="disc-nav-btn" id="nav-cartas" onclick="showCartas()">
-    <span class="d-icon">🃏</span>
+    <span class="d-icon">✨</span>
     <span class="d-name">Minhas Cartas</span>
     <span class="d-count" id="cartas-sidebar-count">0</span>
   </button>
@@ -651,7 +673,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           </div>
         </button>
         <button class="disc-home-card" style="background:linear-gradient(160deg,#1A1035,#2D1B69);border-left:4px solid #A78BFA;" onclick="showCartas()">
-          <div class="dhc-icon">🃏</div>
+          <div class="dhc-icon">✨</div>
           <div class="dhc-name" style="color:#E5E0FF">Minhas Cartas</div>
           <div class="dhc-desc" style="color:rgba(200,185,255,.7)">Cartas conquistadas ao completar todos os temas</div>
           <div class="dhc-chips">
@@ -914,7 +936,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
             <div class="level lv1">💬 Discutir (70%)</div>
           </a>
           <a class="act-card port" href="portugues/letra-l/memoria-letra-l.html" target="sabendo-atividade">
-            <div class="act-icon">🃏</div><div class="act-title">Jogo da Memória</div>
+            <div class="act-icon">✨</div><div class="act-title">Jogo da Memória</div>
             <div class="act-desc">Pare cada palavra com sua pronúncia correta (com som de L ou U). 8 pares para encontrar.</div>
             <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Memória</span></div>
             <div class="level lv2">⚡ Praticar (80%)</div>
@@ -931,7 +953,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <div class="sched">
           <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">🔎 Detetive da Sílaba</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🤠🏄 Sortidor de Sons</span><span class="sched-act port">🏭 Fábrica de Palavras</span></div></div>
-          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🃏 Jogo da Memória</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✨ Jogo da Memória</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
         </div>
       </div>
@@ -1810,7 +1832,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
             <div class="level lv4">📖 Retrieval practice</div>
           </a>
           <a class="act-card geo" href="historia/diversidade-cultural/memoria-festas-diversidade-cultural.html" target="sabendo-atividade">
-            <div class="act-icon">🃏</div>
+            <div class="act-icon">✨</div>
             <div class="act-title">Memória das Festas</div>
             <div class="act-desc">Encontre os 8 pares: nome da festa ↔ descrição ou estado onde acontece.</div>
             <div class="act-tags"><span class="tag tag-geo">Digital</span><span class="tag tag-a">Memória</span></div>
@@ -1835,7 +1857,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <div class="sched-title">📅 Sugestão de uso semanal</div>
         <div class="sched">
           <div class="sched-row"><div class="sched-day geo">Dia 1</div><div class="sched-acts"><span class="sched-act geo">📖 Ler HQ</span><span class="sched-act geo">❓ Quiz</span></div></div>
-          <div class="sched-row"><div class="sched-day geo">Dia 2</div><div class="sched-acts"><span class="sched-act geo">🃏 Memória das Festas</span></div></div>
+          <div class="sched-row"><div class="sched-day geo">Dia 2</div><div class="sched-acts"><span class="sched-act geo">✨ Memória das Festas</span></div></div>
           <div class="sched-row"><div class="sched-day geo">Dia 3</div><div class="sched-acts"><span class="sched-act geo">🗺️ Cartógrafo Cultural</span></div></div>
           <div class="sched-row"><div class="sched-day geo">Dia 4</div><div class="sched-acts"><span class="sched-act geo">🌐 Mapa Mental — síntese final</span></div></div>
         </div>
@@ -2083,7 +2105,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <!-- MINHAS CARTAS -->
   <div class="screen" id="screen-cartas">
     <div class="disc-hero" style="background:linear-gradient(135deg,#120D28 0%,#1e1045 55%,#2D1B69 100%)">
-      <div class="disc-hero-badge">🃏 Coleção</div>
+      <div class="disc-hero-badge">✨ Coleção</div>
       <h1>MINHAS CARTAS</h1>
       <p>Conquistas das missões completadas</p>
     </div>
@@ -2470,20 +2492,28 @@ async function loadCartas() {
 
   var DISC_LABEL = { port:'Português', mat:'Matemática', cien:'Ciências', geo:'Geografia', hist:'História' };
 
+  var BASE = '_landing/';
   cards.forEach(function(card) {
     var theme   = THEME_CATALOG.find(function(t) { return t.slug === card.theme_slug; });
     var label   = theme ? theme.label : card.theme_slug;
     var emoji   = theme ? theme.emoji : '⭐';
     var disc    = DISC_LABEL[card.discipline] || card.discipline;
     var rarity  = card.rarity || 'comum';
+    var bgFile  = rarity === 'lendepica' ? 'lend-epica' : rarity;
+    var bgUrl   = BASE + 'cartas/carta-fundo-' + bgFile + '.png';
 
     var el = document.createElement('div');
     el.className = 'carta-mini carta-mini-' + rarity;
     el.innerHTML =
+      '<div class="cm-bg" style="background-image:url(\'' + bgUrl + '\')"></div>' +
+      '<div class="cm-overlay"></div>' +
+      '<div class="cm-ring"></div>' +
       '<div class="cm-emoji">' + emoji + '</div>' +
-      '<div class="cm-name">'  + label + '</div>' +
-      '<div class="cm-disc">'  + disc  + '</div>' +
-      '<span class="cm-badge">' + cartaRarityLabel(rarity) + '</span>';
+      '<div class="cm-info">' +
+        '<div class="cm-name">'  + label + '</div>' +
+        '<div class="cm-disc">'  + disc  + '</div>' +
+        '<span class="cm-badge">' + cartaRarityLabel(rarity) + '</span>' +
+      '</div>';
     grid.appendChild(el);
   });
 }
