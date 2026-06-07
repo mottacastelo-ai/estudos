@@ -561,17 +561,17 @@
       var isComplete = opts.isComplete;
       var barPct   = Math.round((idx / total) * 100) + "%";
 
-      // Título
+      // Título — nome do personagem só aparece quando a revelação é total
       var title, subtitle;
       if (isComplete) {
-        title    = "🎉 Personagem revelado!";
+        title    = "🎉 " + cfg.characterName + " revelado!";
         subtitle = "Você completou todas as atividades!";
       } else if (!opts.isFirstAttempt) {
         title    = "✅ Atividade concluída";
-        subtitle = cfg.characterName + " · " + idx + " de " + total + " atividades";
+        subtitle = "Personagem misterioso · " + idx + " de " + total + " atividades";
       } else {
         title    = idx <= 2 ? "✨ Algo está se formando..." : "✨ Ficou mais nítido!";
-        subtitle = cfg.characterName + " · " + idx + " de " + total + " atividades";
+        subtitle = "Personagem misterioso · " + idx + " de " + total + " atividades";
       }
 
       // Carta (somente ao completar)
