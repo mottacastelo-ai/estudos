@@ -367,61 +367,107 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .test-mode-tag { display:none;font-size:9px;text-align:center;color:rgba(252,211,77,.5);margin-top:8px;letter-spacing:.06em;text-transform:uppercase;font-family:"Space Mono",monospace; }
 
 /* ── Minhas Cartas ─────────────────────────────────── */
-.cartas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:20px; padding-bottom:40px; }
-.carta-mini {
-  position:relative; border-radius:18px; overflow:hidden;
-  width:100%; aspect-ratio:160/230;
-  cursor:default; transition:transform .25s,box-shadow .25s;
-  font-family:"Baloo 2",cursive;
-  box-shadow:0 6px 24px rgba(0,0,0,.45);
+/* Carta idêntica ao reveal (280×400), escalada via transform para caber na grade */
+.cartas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 28px;
+  padding-bottom: 40px;
+  align-items: start;
 }
-.carta-mini:hover { transform:translateY(-6px) scale(1.03); }
-.cm-bg {
-  position:absolute; inset:0;
-  background-size:cover; background-position:center top;
+.carta-coll-outer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 280 / 400;
+  cursor: default;
+  transition: filter .2s;
 }
-.cm-overlay {
-  position:absolute; inset:0;
-  background:linear-gradient(to bottom, transparent 0%, transparent 42%, rgba(5,4,15,.72) 65%, rgba(5,4,15,.96) 100%);
+.carta-coll-outer:hover { filter: brightness(1.1); }
+.carta-coll-scaler {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 20px;
 }
-.cm-ring {
-  position:absolute; inset:-2px; border-radius:20px; z-index:0;
+/* A .sgami-rev-card dentro do painel não flutua */
+.carta-coll-scaler .sgami-rev-card {
+  flex-shrink: 0;
+  transform-origin: top left;
+  animation: none !important;
+  cursor: default;
 }
-.cm-char {
-  position:absolute; top:10%; left:50%; transform:translateX(-50%);
-  z-index:2; display:flex; align-items:center; justify-content:center;
-}
-.cm-char img {
-  width:100px; height:100px; object-fit:contain;
-  filter:drop-shadow(0 4px 16px rgba(0,0,0,.7));
-}
-.cm-char-emoji {
-  font-size:52px; line-height:1;
-  filter:drop-shadow(0 4px 12px rgba(0,0,0,.6));
-}
-.cm-info {
-  position:absolute; bottom:0; left:0; right:0; z-index:2;
-  padding:10px 12px 12px; display:flex; flex-direction:column; align-items:center; gap:2px;
-}
-.cm-name  { font-weight:900; font-size:12px; line-height:1.25; text-align:center; color:#fff; }
-.cm-disc  { font-size:10px; opacity:.65; color:#fff; text-align:center; }
-.cm-badge { display:inline-block; font-size:9px; font-weight:800; padding:2px 9px; margin-top:4px;
-            border-radius:99px; font-family:"Space Mono",monospace; letter-spacing:.03em; }
-
-.carta-mini-comum   .cm-ring { background:linear-gradient(135deg,#6B7280,#374151,#9CA3AF); }
-.carta-mini-comum   .cm-badge { background:rgba(255,255,255,.1); color:#9CA3AF; }
-.carta-mini-rara    .cm-ring { background:linear-gradient(135deg,#60A5FA,#1D4ED8,#93C5FD); box-shadow:0 0 16px rgba(37,99,235,.4); }
-.carta-mini-rara    .cm-badge { background:rgba(37,99,235,.5); color:#93C5FD; }
-.carta-mini-epica   .cm-ring { background:linear-gradient(135deg,#A78BFA,#6D28D9,#C4B5FD); box-shadow:0 0 20px rgba(124,58,237,.5); }
-.carta-mini-epica   .cm-badge { background:rgba(109,40,217,.5); color:#C4B5FD; }
-.carta-mini-lendaria .cm-ring { background:linear-gradient(135deg,#FCD34D,#B45309,#FDE68A); box-shadow:0 0 24px rgba(245,158,11,.5); }
-.carta-mini-lendaria .cm-badge { background:linear-gradient(135deg,rgba(245,158,11,.5),rgba(180,83,9,.5)); color:#FDE68A; }
-
+.carta-coll-scaler .sgami-rev-card.rev-floating { animation: none !important; }
 .cartas-empty { text-align:center; padding:60px 20px; }
 .cartas-empty-icon { font-size:56px; margin-bottom:16px; }
 .cartas-empty-title { font-weight:800; color:#1e1b4b; font-size:18px; margin-bottom:8px; font-family:"Baloo 2",cursive; }
 .cartas-empty-desc  { color:#6b7280; font-size:14px; line-height:1.5; font-family:"Baloo 2",cursive; }
-@media (max-width:600px) { .cartas-grid { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:600px) { .cartas-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── CSS das cartas de reveal (espelhado de gamification.js para o painel) ── */
+@keyframes sgami-rev-shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+@keyframes sgami-rev-rainbow-spin { from{filter:hue-rotate(0deg)} to{filter:hue-rotate(360deg)} }
+@keyframes sgami-rev-name-shine { from{background-position:0% center} to{background-position:200% center} }
+.sgami-rev-card { position:relative; width:280px; height:400px; border-radius:20px; overflow:visible; }
+.sgami-rev-frame { position:absolute; inset:0; border-radius:20px; overflow:hidden; }
+.sgami-rev-frame-bg { position:absolute; inset:0; background-size:cover; background-position:center top; }
+.sgami-rev-frame-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,transparent 0%,transparent 45%,rgba(5,4,15,.7) 65%,rgba(5,4,15,.95) 100%); }
+.sgami-rev-char { position:absolute; bottom:150px; left:50%; transform:translateX(-50%); width:163px; height:163px; z-index:10; pointer-events:none; display:flex; align-items:center; justify-content:center; }
+.sgami-rev-char img { width:100%; height:100%; object-fit:contain; }
+.sgami-rev-char-emoji { font-size:72px; line-height:1; }
+.sgami-rev-info { position:absolute; bottom:0; left:0; right:0; height:148px; z-index:11; display:flex; flex-direction:column; align-items:center; padding:48px 18px 16px; gap:2px; }
+.sgami-rev-name  { font-size:22px; font-weight:900; line-height:1; text-align:center; }
+.sgami-rev-theme { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; opacity:.65; text-align:center; }
+.sgami-rev-score { font-family:"Space Mono",monospace; font-size:10px; font-weight:700; margin-top:3px; }
+.sgami-rev-logo  { margin-top:auto; font-family:"Space Mono",monospace; font-size:11px; font-weight:700; }
+.sgami-rev-badge { position:absolute; top:256px; left:50%; transform:translateX(-50%); white-space:nowrap; font-family:"Space Mono",monospace; font-size:10px; font-weight:700; padding:4px 12px; border-radius:99px; z-index:12; letter-spacing:.04em; }
+.sgami-rev-ring  { position:absolute; inset:-2px; border-radius:22px; z-index:-1; }
+.sgami-rev-card.comum .sgami-rev-frame-bg { background-color:#1A1035; }
+.sgami-rev-card.comum .sgami-rev-ring { background:linear-gradient(135deg,#6B7280,#374151,#9CA3AF); }
+.sgami-rev-card.comum .sgami-rev-char img { filter:drop-shadow(0 8px 24px rgba(0,0,0,.7)); }
+.sgami-rev-card.comum .sgami-rev-name  { color:#E5E0FF; }
+.sgami-rev-card.comum .sgami-rev-theme { color:#A78BFA; }
+.sgami-rev-card.comum .sgami-rev-badge { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#94A3B8; }
+.sgami-rev-card.comum .sgami-rev-logo  { color:rgba(255,255,255,.55); }
+.sgami-rev-card.comum .sgami-rev-logo span { color:#2DD4BF; }
+.sgami-rev-card.rara .sgami-rev-frame-bg { background-color:#0a1628; }
+.sgami-rev-card.rara .sgami-rev-ring { background:linear-gradient(135deg,#60A5FA,#1D4ED8,#93C5FD,#2563EB); box-shadow:0 0 24px rgba(37,99,235,.5); }
+.sgami-rev-card.rara .sgami-rev-char img { filter:drop-shadow(0 0 20px rgba(96,165,250,.5)) drop-shadow(0 8px 24px rgba(0,0,0,.7)); }
+.sgami-rev-card.rara .sgami-rev-name  { color:#fff; text-shadow:0 0 20px rgba(96,165,250,.7); }
+.sgami-rev-card.rara .sgami-rev-theme { color:#60A5FA; }
+.sgami-rev-card.rara .sgami-rev-badge { background:rgba(37,99,235,.45); border:1px solid #3B82F6; color:#93C5FD; box-shadow:0 0 12px rgba(59,130,246,.5); }
+.sgami-rev-card.rara .sgami-rev-logo  { color:#93C5FD; }
+.sgami-rev-card.rara .sgami-rev-logo span { color:#2DD4BF; }
+.sgami-rev-card.epica .sgami-rev-frame-bg { background-color:#0d0b1a; }
+.sgami-rev-card.epica .sgami-rev-ring { background:linear-gradient(135deg,#A78BFA,#6D28D9,#C4B5FD,#7C3AED); box-shadow:0 0 32px rgba(124,58,237,.65); }
+.sgami-rev-card.epica .sgami-rev-char img { filter:drop-shadow(0 0 28px rgba(167,139,250,.65)) drop-shadow(0 8px 24px rgba(0,0,0,.8)); }
+.sgami-rev-card.epica .sgami-rev-name  { color:#fff; text-shadow:0 0 24px rgba(167,139,250,.9),0 0 48px rgba(124,58,237,.5); }
+.sgami-rev-card.epica .sgami-rev-theme { color:#A78BFA; }
+.sgami-rev-card.epica .sgami-rev-badge { background:rgba(109,40,217,.5); border:1px solid #7C3AED; color:#C4B5FD; box-shadow:0 0 16px rgba(124,58,237,.65); }
+.sgami-rev-card.epica .sgami-rev-logo  { color:#C4B5FD; }
+.sgami-rev-card.epica .sgami-rev-logo span { color:#2DD4BF; }
+.sgami-rev-card.lendaria .sgami-rev-frame-bg { background-color:#451a03; }
+.sgami-rev-card.lendaria .sgami-rev-ring { background:linear-gradient(135deg,#FCD34D,#B45309,#FDE68A,#92400E,#FCD34D); box-shadow:0 0 40px rgba(245,158,11,.7),0 0 80px rgba(245,158,11,.25); }
+.sgami-rev-card.lendaria .sgami-rev-char img { filter:drop-shadow(0 0 30px rgba(245,158,11,.6)) drop-shadow(0 0 60px rgba(245,158,11,.25)) drop-shadow(0 8px 24px rgba(0,0,0,.9)); }
+.sgami-rev-card.lendaria .sgami-rev-name { background:linear-gradient(135deg,#FDE68A,#F59E0B,#FDE68A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 12px rgba(245,158,11,.8)); }
+.sgami-rev-card.lendaria .sgami-rev-theme { color:#FCD34D; }
+.sgami-rev-card.lendaria .sgami-rev-badge { background:linear-gradient(135deg,rgba(245,158,11,.5),rgba(180,83,9,.5)); border:1px solid #F59E0B; color:#FDE68A; box-shadow:0 0 20px rgba(245,158,11,.7); }
+.sgami-rev-card.lendaria .sgami-rev-logo { background:linear-gradient(90deg,#FDE68A,#F59E0B,#FDE68A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 8px rgba(245,158,11,.9)); }
+.sgami-rev-card.lendaria .sgami-rev-logo span { background:none; -webkit-text-fill-color:#2DD4BF; filter:none; }
+.sgami-rev-card.lendaria .sgami-rev-frame::after { content:''; position:absolute; inset:0; border-radius:20px; background:linear-gradient(105deg,transparent 25%,rgba(255,220,100,.08) 40%,rgba(255,255,255,.12) 50%,rgba(255,220,100,.08) 60%,transparent 75%); background-size:300% 100%; animation:sgami-rev-shimmer 2.5s ease-in-out infinite; pointer-events:none; z-index:9; }
+.sgami-rev-card.lendepica .sgami-rev-frame-bg { background-color:#0d0b1a; }
+.sgami-rev-card.lendepica .sgami-rev-ring { background:conic-gradient(from 0deg,#7C3AED,#3B82F6,#06B6D4,#10B981,#F59E0B,#EF4444,#EC4899,#7C3AED); box-shadow:0 0 20px rgba(124,58,237,.5),0 0 40px rgba(245,158,11,.4); animation:sgami-rev-rainbow-spin 4s linear infinite; }
+.sgami-rev-card.lendepica .sgami-rev-name { background:linear-gradient(90deg,#A78BFA,#FCD34D,#F472B6,#A78BFA); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:sgami-rev-name-shine 3s linear infinite; }
+.sgami-rev-card.lendepica .sgami-rev-badge { background:linear-gradient(135deg,rgba(124,58,237,.6),rgba(245,158,11,.5)); border:1px solid rgba(255,255,255,.4); color:#fff; }
+.sgami-rev-card.lendepica .sgami-rev-logo { background:linear-gradient(90deg,#A78BFA,#FCD34D); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.sgami-rev-card.lendepica .sgami-rev-logo span { background:none; -webkit-text-fill-color:#2DD4BF; }
+.sgami-rev-card.revisional .sgami-rev-frame-bg { background-color:#0c1a2e; }
+.sgami-rev-card.revisional .sgami-rev-ring { background:linear-gradient(135deg,#38BDF8,#0284C7,#BAE6FD,#0EA5E9); box-shadow:0 0 28px rgba(14,165,233,.5); }
+.sgami-rev-card.revisional .sgami-rev-char img { filter:drop-shadow(0 0 22px rgba(56,189,248,.5)) drop-shadow(0 8px 24px rgba(0,0,0,.7)); }
+.sgami-rev-card.revisional .sgami-rev-name  { color:#fff; text-shadow:0 0 20px rgba(56,189,248,.7); }
+.sgami-rev-card.revisional .sgami-rev-theme { color:#38BDF8; }
+.sgami-rev-card.revisional .sgami-rev-badge { background:rgba(2,132,199,.45); border:1px solid #0EA5E9; color:#BAE6FD; box-shadow:0 0 14px rgba(14,165,233,.5); }
+.sgami-rev-card.revisional .sgami-rev-logo  { color:#BAE6FD; }
+.sgami-rev-card.revisional .sgami-rev-logo span { color:#2DD4BF; }
 #streak-banner { display:none; }
 #streak-banner.visible { display:flex; }
 
@@ -2501,38 +2547,76 @@ async function loadCartas() {
   if (!count) { empty.style.display = 'block'; return; }
 
   var DISC_LABEL = { port:'Português', mat:'Matemática', cien:'Ciências', geo:'Geografia', hist:'História' };
-
+  var TIER_BADGE = { comum:'⚪ Comum', rara:'🔵 Rara', epica:'🟣 Épica', lendepica:'✨ Lend-Épica', lendaria:'🌟 Lendária', revisional:'📚 Revisional' };
   var BASE = '_landing/';
+
   cards.forEach(function(card) {
     var theme    = THEME_CATALOG.find(function(t) { return t.slug === card.theme_slug; });
     var label    = theme ? theme.label    : card.theme_slug;
     var emoji    = theme ? theme.emoji    : '⭐';
-    var charName = theme ? (theme.charName || '') : '';
+    var charName = theme ? (theme.charName || 'Prepo')  : 'Prepo';
     var charImg  = theme ? (theme.charImg  || null) : null;
     var disc     = DISC_LABEL[card.discipline] || card.discipline;
     var rarity   = card.rarity || 'comum';
     var bgFile   = rarity === 'lendepica' ? 'lend-epica' : rarity;
-    var bgUrl    = BASE + 'cartas/carta-fundo-' + bgFile + '.png';
+    var cardBgUrl = BASE + 'cartas/carta-fundo-' + bgFile + '.png';
+    var badge    = TIER_BADGE[rarity] || rarity;
+    var themeLabel = label + ' · ' + disc;
 
-    // Personagem: imagem HD se disponível, senão emoji do tema
-    var charHtml = charImg
-      ? '<div class="cm-char"><img src="' + BASE + charImg + '" alt="' + charName + '"></div>'
-      : '<div class="cm-char"><span class="cm-char-emoji">' + emoji + '</span></div>';
+    // Personagem — idêntico ao showReveal()
+    var charInner = charImg
+      ? '<img src="' + BASE + charImg + '" alt="' + charName + '">'
+      : '<span class="sgami-rev-char-emoji">' + emoji + '</span>';
 
-    var el = document.createElement('div');
-    el.className = 'carta-mini carta-mini-' + rarity;
-    el.innerHTML =
-      '<div class="cm-bg" style="background-image:url(\'' + bgUrl + '\')"></div>' +
-      '<div class="cm-overlay"></div>' +
-      '<div class="cm-ring"></div>' +
-      charHtml +
-      '<div class="cm-info">' +
-        '<div class="cm-name">'  + (charName || label) + '</div>' +
-        '<div class="cm-disc">'  + label + ' · ' + disc  + '</div>' +
-        '<span class="cm-badge">' + cartaRarityLabel(rarity) + '</span>' +
+    // HTML da carta — cópia exata do showReveal(), sem animações
+    var cardHtml =
+      '<div class="sgami-rev-card ' + rarity + '">' +
+        '<div class="sgami-rev-ring"></div>' +
+        '<div class="sgami-rev-frame">' +
+          '<div class="sgami-rev-frame-bg" style="background-image:url(\'' + cardBgUrl + '\')"></div>' +
+          '<div class="sgami-rev-frame-overlay"></div>' +
+        '</div>' +
+        '<div class="sgami-rev-char">' + charInner + '</div>' +
+        '<div class="sgami-rev-badge">' + badge + '</div>' +
+        '<div class="sgami-rev-info">' +
+          '<div class="sgami-rev-name">' + charName + '</div>' +
+          '<div class="sgami-rev-theme">' + themeLabel + '</div>' +
+          '<div class="sgami-rev-logo">sabendo<span>.</span></div>' +
+        '</div>' +
       '</div>';
-    grid.appendChild(el);
+
+    // Wrapper que escala a carta (280×400) para caber na coluna da grade
+    var outer = document.createElement('div');
+    outer.className = 'carta-coll-outer';
+    var scaler = document.createElement('div');
+    scaler.className = 'carta-coll-scaler';
+    scaler.innerHTML = cardHtml;
+    outer.appendChild(scaler);
+    grid.appendChild(outer);
+
+    // Aplica escala assim que o elemento for adicionado ao DOM
+    var cardEl = scaler.querySelector('.sgami-rev-card');
+    if (cardEl) {
+      var scale = scaler.offsetWidth / 280;
+      cardEl.style.transform = 'scale(' + scale + ')';
+      cardEl.style.width  = '280px';
+      cardEl.style.height = '400px';
+    }
   });
+
+  // Re-escala em resize para grades responsivas
+  function rescaleCartas() {
+    grid.querySelectorAll('.carta-coll-scaler').forEach(function(sc) {
+      var cardEl = sc.querySelector('.sgami-rev-card');
+      if (cardEl) {
+        var s = sc.offsetWidth / 280;
+        cardEl.style.transform = 'scale(' + s + ')';
+      }
+    });
+  }
+  window.removeEventListener('resize', window._rescaleCartas);
+  window._rescaleCartas = rescaleCartas;
+  window.addEventListener('resize', rescaleCartas);
 }
 
 async function loadCartasCount() {
@@ -2576,6 +2660,7 @@ async function logActivity(discipline, themeSlug, activityType, score) {
 
 initAuth();
 </script>
+
 </div>
 </body>
 </html>
