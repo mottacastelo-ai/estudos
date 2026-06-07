@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧪 Teste de Animações — sabendo.app</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f0a1e;
+    font-family: 'Baloo 2', sans-serif;
+    color: #e0d8ff;
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+  }
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    color: #A78BFA;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #6b5ea8;
+    margin-bottom: 36px;
+  }
+
+  /* ── seção ── */
+  .section {
+    max-width: 680px;
+    margin: 0 auto 36px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(167,139,250,.15);
+    border-radius: 16px;
+    padding: 20px 22px;
+  }
+  .section h2 {
+    font-size: 13px;
+    font-family: 'Space Mono', monospace;
+    color: #A78BFA;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(167,139,250,.2);
+  }
+
+  /* ── grade de botões ── */
+  .btn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .btn {
+    background: rgba(167,139,250,.12);
+    border: 1.5px solid rgba(167,139,250,.3);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: #e0d8ff;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: background .15s, transform .1s, border-color .15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn:hover  { background: rgba(167,139,250,.22); border-color: #A78BFA; }
+  .btn:active { transform: scale(.95); }
+  .btn .icon  { font-size: 22px; }
+  .btn.comum     { border-color: rgba(156,163,175,.5); }
+  .btn.rara      { border-color: rgba(59,130,246,.5);  }
+  .btn.epica     { border-color: rgba(139,92,246,.5);  }
+  .btn.lendaria  { border-color: rgba(245,158,11,.5);  background: rgba(245,158,11,.08); }
+
+  /* ── slider de estágio ── */
+  .stage-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .stage-row label { font-size: 13px; color: #9ca3af; white-space: nowrap; }
+  input[type=range] {
+    flex: 1;
+    min-width: 120px;
+    accent-color: #A78BFA;
+  }
+  #stage-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #A78BFA;
+    width: 40px;
+    text-align: center;
+  }
+
+  /* ── log ── */
+  #log {
+    max-width: 680px;
+    margin: 0 auto;
+    font-size: 12px;
+    color: #4b5563;
+    font-family: 'Space Mono', monospace;
+    min-height: 24px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>🧪 Teste de Animações</h1>
+<p class="subtitle">Dispare qualquer animação/som sem precisar completar atividades.</p>
+
+<!-- ── SONS ISOLADOS ── -->
+<div class="section">
+  <h2>🔊 Sons isolados</h2>
+  <div class="btn-grid">
+    <button class="btn" onclick="sfx('scanReveal',1400)"><span class="icon">📡</span>Scan Reveal</button>
+    <button class="btn" onclick="sfx('stageProgress')"><span class="icon">⬆️</span>Progresso</button>
+    <button class="btn" onclick="sfx('characterComplete')"><span class="icon">🎉</span>Personagem revelado</button>
+    <button class="btn" onclick="sfx('cardRevealBuild')"><span class="icon">🌫️</span>Rumble abertura</button>
+    <button class="btn" onclick="sfx('cardEntry','comum')"><span class="icon">💨</span>Carta entra (comum)</button>
+    <button class="btn" onclick="sfx('cardEntry','lendaria')"><span class="icon">💥</span>Carta entra (lendária)</button>
+    <button class="btn" onclick="sfx('cardFlash')"><span class="icon">⚡</span>Flash</button>
+    <button class="btn" onclick="sfx('shockwave')"><span class="icon">💣</span>Shockwave</button>
+    <button class="btn" onclick="sfx('sparkle')"><span class="icon">✨</span>Sparkle</button>
+    <button class="btn" onclick="sfx('tierReveal','comum')"><span class="icon">⚪</span>Tier Comum</button>
+    <button class="btn" onclick="sfx('tierReveal','rara')"><span class="icon">🔵</span>Tier Rara</button>
+    <button class="btn" onclick="sfx('tierReveal','epica')"><span class="icon">🟣</span>Tier Épica</button>
+    <button class="btn" onclick="sfx('tierReveal','lendaria')"><span class="icon">🌟</span>Tier Lendária</button>
+  </div>
+</div>
+
+<!-- ── REVEAL DO PERSONAGEM ── -->
+<div class="section">
+  <h2>🎭 Reveal do Personagem</h2>
+  <div class="stage-row">
+    <label>Estágio:</label>
+    <input type="range" id="stage-slider" min="0" max="8" value="3" oninput="document.getElementById('stage-val').textContent=this.value+'/8'">
+    <span id="stage-val">3/8</span>
+  </div>
+  <div class="btn-grid">
+    <button class="btn" onclick="testCharModal(false)"><span class="icon">🤖</span>Com imagem (Prepo)</button>
+    <button class="btn" onclick="testCharModal(true)"><span class="icon">🏁</span>Revelação final</button>
+  </div>
+</div>
+
+<!-- ── REVEAL DA CARTA ── -->
+<div class="section">
+  <h2>✨ Reveal da Carta</h2>
+  <div class="btn-grid">
+    <button class="btn comum"    onclick="testReveal('comum')">   <span class="icon">⚪</span>Comum</button>
+    <button class="btn rara"     onclick="testReveal('rara')">    <span class="icon">🔵</span>Rara</button>
+    <button class="btn epica"    onclick="testReveal('epica')">   <span class="icon">🟣</span>Épica</button>
+    <button class="btn lendaria" onclick="testReveal('lendaria')"><span class="icon">🌟</span>Lendária</button>
+    <button class="btn" onclick="testReveal('revisional')">       <span class="icon">🔁</span>Revisional</button>
+  </div>
+</div>
+
+<div id="log">Clique em qualquer botão para começar.</div>
+
+<script src="shared/gamification.js"></script>
+<script>
+  var T = null; // referência ao _sgamiTest
+
+  // Aguarda o script carregar e pega referência
+  window.addEventListener('load', function() {
+    T = window._sgamiTest;
+    if (!T) { log('❌ gamification.js não carregou corretamente'); return; }
+
+    // Injeta estilos base com cor roxa (padrão)
+    T.injectStyles('#7C3AED','#A78BFA','#F3F0FF','124,58,237');
+    log('✅ Pronto — clique em qualquer botão!');
+  });
+
+  function log(msg) {
+    document.getElementById('log').textContent = msg;
+  }
+
+  /* ── Sons isolados ── */
+  function sfx(name) {
+    if (!T) return;
+    var args = Array.prototype.slice.call(arguments, 1);
+    try {
+      T.sfx[name].apply(null, args);
+      log('🔊 ' + name + (args.length ? ' (' + args.join(', ') + ')' : ''));
+    } catch(e) { log('❌ Erro: ' + e.message); }
+  }
+
+  /* ── Reveal do personagem ── */
+  function testCharModal(forceComplete) {
+    if (!T) return;
+    var stageIdx = forceComplete ? 8 : parseInt(document.getElementById('stage-slider').value);
+    var total = 8;
+    var stages = T.getStages(total);
+
+    var img = new Image();
+    img.src = '_landing/prepo-hd.png';
+
+    img.onload = function() { runModal(img); };
+    img.onerror = function() { runModal(null); }; // fallback sem imagem
+
+    function runModal(imgObj) {
+      T.injectStyles('#7C3AED','#A78BFA','#F3F0FF','124,58,237');
+      T.showCharModal({
+        stageIndex:     stageIdx,
+        prevStageIndex: Math.max(0, stageIdx - 1),
+        totalActivities: total,
+        stages: stages,
+        img: imgObj,
+        lastScore: 85,
+        isFirstAttempt: true,
+        isComplete: forceComplete || stageIdx >= total,
+        rarity: 'rara',
+        avgPct: 85,
+        config: {
+          characterName:  'Prepo',
+          characterEmoji: '🤖',
+          themeLabel:     'Preposições · Português',
+          primaryColor:   '#7C3AED',
+          lightColor:     '#A78BFA',
+          bgColor:        '#F3F0FF',
+          glowRgb:        '124,58,237',
+          assetBase:      './'
+        }
+      });
+      log('🎭 Modal do personagem — estágio ' + stageIdx + '/8');
+    }
+  }
+
+  /* ── Reveal da carta ── */
+  function testReveal(rarity) {
+    if (!T) return;
+    var rarityLabels = {
+      comum:'Comum ⚪', rara:'Rara 🔵', epica:'Épica 🟣',
+      lendaria:'Lendária 🌟', revisional:'Revisional 🔁'
+    };
+    T.injectRevealStyles();
+    T.showReveal(rarity, {
+      characterName:  'Prepo',
+      characterEmoji: '🤖',
+      characterImg:   'prepo-hd.png',
+      themeLabel:     'Preposições · Português',
+      primaryColor:   '#7C3AED',
+      lightColor:     '#A78BFA',
+      bgColor:        '#F3F0FF',
+      glowRgb:        '124,58,237',
+      assetBase:      './'
+    }, 87);
+    log('✨ Reveal da carta — ' + (rarityLabels[rarity] || rarity));
+  }
+</script>
+</body>
+</html>

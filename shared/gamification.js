@@ -1121,4 +1121,15 @@
   /* Export                                                                */
   /* ------------------------------------------------------------------ */
   window.SabendoGamification = { run: run };
+
+  /* Funções internas expostas apenas para a página de testes */
+  window._sgamiTest = {
+    sfx: SFX,
+    showReveal: showReveal,
+    showCharModal: showCharModal,
+    getStages: getStages,
+    renderPixelated: renderPixelated,
+    injectStyles: injectStyles,
+    injectRevealStyles: injectRevealStyles
+  };
 })();
