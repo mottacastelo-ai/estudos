@@ -20,6 +20,165 @@
   "use strict";
 
   /* ------------------------------------------------------------------ */
+  /* SFX — efeitos sonoros via Web Audio API (sem dependências externas)  */
+  /* ------------------------------------------------------------------ */
+  var SFX = (function () {
+    var _ctx = null;
+
+    function ctx() {
+      if (!_ctx) {
+        try { _ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+      }
+      if (_ctx && _ctx.state === "suspended") { try { _ctx.resume(); } catch (e) {} }
+      return _ctx;
+    }
+
+    // Oscilador simples: freq → freqEnd com envelope de volume
+    function osc(freq, type, startAt, dur, vol, freqEnd) {
+      var c = ctx(); if (!c) return;
+      var o = c.createOscillator();
+      var g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(freq, startAt);
+      if (freqEnd != null) o.frequency.linearRampToValueAtTime(freqEnd, startAt + dur);
+      g.gain.setValueAtTime(0.001, startAt);
+      g.gain.linearRampToValueAtTime(vol || 0.25, startAt + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.001, startAt + dur);
+      o.start(startAt); o.stop(startAt + dur + 0.06);
+    }
+
+    // Ruído branco filtrado (whooshes, impactos, sparkles)
+    function noise(startAt, dur, vol, centerFreq, q) {
+      var c = ctx(); if (!c) return;
+      var rate = c.sampleRate;
+      var bufSz = Math.ceil(rate * (dur + 0.06));
+      var buf = c.createBuffer(1, bufSz, rate);
+      var d = buf.getChannelData(0);
+      for (var i = 0; i < bufSz; i++) d[i] = Math.random() * 2 - 1;
+      var src = c.createBufferSource(); src.buffer = buf;
+      var flt = c.createBiquadFilter();
+      flt.type = "bandpass"; flt.frequency.value = centerFreq || 1000; flt.Q.value = q || 1;
+      var g = c.createGain();
+      src.connect(flt); flt.connect(g); g.connect(c.destination);
+      g.gain.setValueAtTime(vol || 0.12, startAt);
+      g.gain.exponentialRampToValueAtTime(0.001, startAt + dur);
+      src.start(startAt); src.stop(startAt + dur + 0.06);
+    }
+
+    return {
+      // Animação de reveal do personagem arrancando (scan-line)
+      scanReveal: function (durMs) {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        var dur = Math.max(0.6, (durMs || 1200) / 1000);
+        noise(t, dur * 0.75, 0.10, 800, 0.8);          // whoosh filtrado
+        osc(160, "sine", t, dur * 0.85, 0.16, 480);     // tom ascendente
+        osc(320, "sine", t + dur * 0.25, dur * 0.55, 0.07, 900); // brilho
+      },
+
+      // Progresso de estágio (não completou ainda)
+      stageProgress: function () {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        osc(523, "sine", t,      0.18, 0.20);  // C5
+        osc(659, "sine", t+0.13, 0.18, 0.16);  // E5
+      },
+
+      // Personagem 100% revelado
+      characterComplete: function () {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        osc(523,  "sine", t,      0.22, 0.22);  // C5
+        osc(659,  "sine", t+0.10, 0.20, 0.20);  // E5
+        osc(784,  "sine", t+0.20, 0.20, 0.20);  // G5
+        osc(1047, "sine", t+0.30, 0.30, 0.24);  // C6
+        noise(t+0.28, 0.32, 0.08, 3500, 0.6);   // sparkle
+      },
+
+      // Rumble de abertura da carta (overlay entra)
+      cardRevealBuild: function () {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        osc(55,  "sawtooth", t, 0.75, 0.07);
+        osc(80,  "sine",     t, 0.75, 0.10);
+        noise(t, 0.55, 0.06, 120, 0.5);
+      },
+
+      // Carta entra na tela (impacto + whoosh, escala com raridade)
+      cardEntry: function (rarity) {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        var lv = { comum:0, rara:1, epica:2, lendepica:2.5, lendaria:3 }[rarity] || 0;
+        // Impacto grave
+        osc(60 + lv*18, "sine", t, 0.15, 0.30 + lv*0.07);
+        noise(t, 0.18, 0.14 + lv*0.04, 200, 0.7);
+        // Whoosh de entrada
+        osc(900, "sine", t, 0.18, 0.06, 220 + lv*25);
+        if (lv >= 2) { osc(40, "sawtooth", t, 0.22, 0.18); noise(t, 0.22, 0.10, 80, 0.4); }
+        if (lv >= 3) { osc(30, "sine", t+0.04, 0.28, 0.28); noise(t+0.05, 0.30, 0.14, 45, 0.3); }
+      },
+
+      // Flash de luz ao revelar
+      cardFlash: function () {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        osc(2200, "sawtooth", t, 0.08, 0.12, 380);
+        noise(t, 0.10, 0.08, 4000, 0.5);
+      },
+
+      // Ondas de choque (épica / lendária)
+      shockwave: function () {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        osc(50, "sine", t, 0.35, 0.35);
+        osc(80, "sine", t, 0.25, 0.20);
+        noise(t, 0.30, 0.18, 100, 0.4);
+      },
+
+      // Burst de partículas
+      sparkle: function () {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        for (var i = 0; i < 7; i++) {
+          var delay = i * 0.038;
+          var freq  = 1100 + Math.random() * 1800;
+          osc(freq, "sine", t + delay, 0.16, 0.04 + Math.random() * 0.04);
+        }
+      },
+
+      // Fanfarra do tier (cresce com raridade)
+      tierReveal: function (rarity) {
+        var c = ctx(); if (!c) return;
+        var t = c.currentTime + 0.05;
+        if (rarity === "comum") {
+          osc(659, "sine", t,     0.25, 0.20);
+          osc(784, "sine", t+.12, 0.22, 0.18);
+        } else if (rarity === "rara") {
+          osc(523, "sine", t,     0.25, 0.20);
+          osc(659, "sine", t+.12, 0.22, 0.20);
+          osc(784, "sine", t+.24, 0.28, 0.22);
+        } else if (rarity === "epica" || rarity === "lendepica") {
+          osc(523,  "sine", t,     0.25, 0.20);
+          osc(659,  "sine", t+.12, 0.22, 0.20);
+          osc(784,  "sine", t+.24, 0.22, 0.20);
+          osc(1047, "sine", t+.36, 0.35, 0.24);
+          noise(t+.32, 0.22, 0.08, 2500, 0.5);
+        } else if (rarity === "lendaria") {
+          osc(523,  "sine", t,     0.28, 0.22);
+          osc(659,  "sine", t+.10, 0.25, 0.22);
+          osc(784,  "sine", t+.20, 0.25, 0.22);
+          osc(1047, "sine", t+.30, 0.28, 0.26);
+          osc(1319, "sine", t+.42, 0.40, 0.28);   // E6 — nota topo
+          osc(523*1.5, "sine", t+.30, 0.18, 0.10); // harmônico
+          osc(659*1.5, "sine", t+.42, 0.14, 0.09);
+          noise(t+.38, 0.40, 0.12, 3000, 0.5);
+        }
+      }
+    };
+  })();
+
+  /* ------------------------------------------------------------------ */
   /* CSS — modal de reveal do personagem                                   */
   /* ------------------------------------------------------------------ */
   function injectStyles(primaryColor, lightColor, bgColor, glowRgb) {
@@ -646,6 +805,9 @@
 
         // Pausa de 500ms para o usuário registrar o "antes", depois dispara a animação
         setTimeout(function() {
+          // Som de scan-reveal: whoosh + tom ascendente acompanhando a de-pixelação
+          SFX.scanReveal(ANIM_DUR);
+
           // Flash de luz
           var flash = document.createElement("div");
           flash.className = "sgami-unlock-flash";
@@ -678,7 +840,12 @@
             if (raw < 1) { raf = requestAnimationFrame(drawFrame); }
             else {
               raf = null;
-              if (isComplete) { wrap.classList.add("done"); }
+              if (isComplete) {
+                wrap.classList.add("done");
+                SFX.characterComplete(); // fanfarra de personagem revelado
+              } else {
+                SFX.stageProgress();    // ding de progresso de estágio
+              }
             }
           }
           drawFrame();
@@ -794,24 +961,24 @@
       });
 
       function at(fn, delay) { setTimeout(fn, delay); }
-      at(function(){glow.style.transition="opacity 1s";glow.style.opacity="1";}, 300);
-      at(function(){card.style.cssText="";void card.offsetWidth;card.classList.add("rev-enter");}, 820);
+      at(function(){glow.style.transition="opacity 1s";glow.style.opacity="1"; SFX.cardRevealBuild();}, 300);
+      at(function(){card.style.cssText="";void card.offsetWidth;card.classList.add("rev-enter"); SFX.cardEntry(rarity);}, 820);
       if (tierCfg.flash) {
-        at(function(){flash.style.background=tierCfg.flash;flash.className="";flash.offsetHeight;flash.classList.add("pop");}, 900);
+        at(function(){flash.style.background=tierCfg.flash;flash.className="";flash.offsetHeight;flash.classList.add("pop"); SFX.cardFlash();}, 900);
       }
       if (tierCfg.shockwave||tierCfg.double) {
-        at(function(){var r=card.getBoundingClientRect();_rs.push(_swNew(r.left+r.width/2,r.top+r.height/2,tierCfg.tierColor));_fxStart();}, 1050);
+        at(function(){var r=card.getBoundingClientRect();_rs.push(_swNew(r.left+r.width/2,r.top+r.height/2,tierCfg.tierColor));_fxStart(); SFX.shockwave();}, 1050);
       }
       if (tierCfg.rays) {
         at(function(){var r=card.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/2;for(var i=0;i<tierCfg.rayCount;i++)_rr.push(_rayNew(cx,cy,(i/tierCfg.rayCount)*Math.PI*2,"#FDE68A"));_fxStart();}, 1020);
       }
-      at(function(){var r=card.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/3;for(var i=0;i<tierCfg.particles.count;i++)_rp.push(_pNew(cx,cy,tierCfg.particles));_fxStart();}, 1100);
+      at(function(){var r=card.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/3;for(var i=0;i<tierCfg.particles.count;i++)_rp.push(_pNew(cx,cy,tierCfg.particles));_fxStart(); SFX.sparkle();}, 1100);
       if (tierCfg.double) {
-        at(function(){var r=card.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/2;var n=Math.floor(tierCfg.particles.count*.7);for(var i=0;i<n;i++)_rp.push(_pNew(cx,cy,tierCfg.particles));}, 1400);
+        at(function(){var r=card.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/2;var n=Math.floor(tierCfg.particles.count*.7);for(var i=0;i<n;i++)_rp.push(_pNew(cx,cy,tierCfg.particles)); SFX.sparkle();}, 1400);
       }
       at(function(){card.classList.add("rev-ring-pulse");setTimeout(function(){card.classList.remove("rev-ring-pulse");},600);}, 1350);
       at(function(){card.style.opacity="1";card.style.transform="scale(1) rotate(0deg)";card.classList.remove("rev-enter");void card.offsetWidth;card.style.transform="";card.classList.add("rev-floating");}, 1700);
-      at(function(){tierRev.classList.add("visible");}, 1800);
+      at(function(){tierRev.classList.add("visible"); SFX.tierReveal(rarity);}, 1800);
       at(function(){cont.classList.add("visible");canClose=true;}, 2700);
     });
   }
