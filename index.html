@@ -387,9 +387,17 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .cm-ring {
   position:absolute; inset:-2px; border-radius:20px; z-index:0;
 }
-.cm-emoji {
-  position:absolute; top:18%; left:50%; transform:translateX(-50%);
-  font-size:52px; line-height:1; z-index:2; filter:drop-shadow(0 4px 12px rgba(0,0,0,.6));
+.cm-char {
+  position:absolute; top:10%; left:50%; transform:translateX(-50%);
+  z-index:2; display:flex; align-items:center; justify-content:center;
+}
+.cm-char img {
+  width:100px; height:100px; object-fit:contain;
+  filter:drop-shadow(0 4px 16px rgba(0,0,0,.7));
+}
+.cm-char-emoji {
+  font-size:52px; line-height:1;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.6));
 }
 .cm-info {
   position:absolute; bottom:0; left:0; right:0; z-index:2;
@@ -2253,35 +2261,37 @@ function renderStreak() {
 // Para adicionar páginas: edite apenas este array.
 var THEME_CATALOG = [
   // ── Português
-  { disc:'port', slug:'preposicoes',    label:'Preposições',              emoji:'🔗', pages:null },
-  { disc:'port', slug:'teatral',        label:'Texto Teatral',            emoji:'🎭', pages:null },
-  { disc:'port', slug:'verbais',        label:'Tempos Verbais',           emoji:'⏱', pages:null },
-  { disc:'port', slug:'letral',         label:'Letra ℓ e U',              emoji:'🏄', pages:null },
-  { disc:'port', slug:'variacao',       label:'Variação Linguística',     emoji:'🗺️', pages:null },
-  { disc:'port', slug:'pontuacao',      label:'Pontuação',                emoji:'❗', pages:null },
-  { disc:'port', slug:'instrucional',   label:'Texto Instrucional',       emoji:'📋', pages:null },
-  { disc:'port', slug:'entonacao',      label:'Entonação',                emoji:'🎵', pages:null },
+  // charImg: caminho relativo a _landing/ (mesmo padrão do GAMI_CONFIG nas atividades)
+  // charName: nome do personagem que aparece na carta
+  { disc:'port', slug:'preposicoes',    label:'Preposições',              emoji:'🔗', pages:null, charName:'Prepo',          charImg:'prepo-hd.png' },
+  { disc:'port', slug:'teatral',        label:'Texto Teatral',            emoji:'🎭', pages:null, charName:'Prof. Teatrão',  charImg:null },
+  { disc:'port', slug:'verbais',        label:'Tempos Verbais',           emoji:'⏱', pages:null, charName:'Verbão',         charImg:null },
+  { disc:'port', slug:'letral',         label:'Letra ℓ e U',              emoji:'🏄', pages:null, charName:'Elinho',         charImg:null },
+  { disc:'port', slug:'variacao',       label:'Variação Linguística',     emoji:'🗺️', pages:null, charName:'Zé e Das Graças',charImg:null },
+  { disc:'port', slug:'pontuacao',      label:'Pontuação',                emoji:'❗', pages:null, charName:'? ! .',          charImg:null },
+  { disc:'port', slug:'instrucional',   label:'Texto Instrucional',       emoji:'📋', pages:null, charName:'Prepo',          charImg:'prepo-hd.png' },
+  { disc:'port', slug:'entonacao',      label:'Entonação',                emoji:'🎵', pages:null, charName:'Toni',           charImg:null },
   // ── Matemática
-  { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null },
-  { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null },
-  { disc:'mat',  slug:'poliedros-prismas-piramides',   label:'Poliedros, Prismas e Pirâmides', emoji:'🏛️', pages:null },
-  { disc:'mat',  slug:'corpos-redondos-planificacao',  label:'Corpos Redondos e Planificação', emoji:'🌀', pages:null },
-  { disc:'mat',  slug:'multiplos-divisores-criterios', label:'Múltiplos e Divisores',          emoji:'🔢', pages:null },
-  { disc:'mat',  slug:'primos-compostos-fatoracao',    label:'Primos e Fatoração',             emoji:'🔍', pages:null },
-  { disc:'mat',  slug:'mdc-mmc-problemas',             label:'mdc e mmc',                      emoji:'📐', pages:null },
+  { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'mat',  slug:'poliedros-prismas-piramides',   label:'Poliedros, Prismas e Pirâmides', emoji:'🏛️', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'mat',  slug:'corpos-redondos-planificacao',  label:'Corpos Redondos e Planificação', emoji:'🌀', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'mat',  slug:'multiplos-divisores-criterios', label:'Múltiplos e Divisores',          emoji:'🔢', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'mat',  slug:'primos-compostos-fatoracao',    label:'Primos e Fatoração',             emoji:'🔍', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'mat',  slug:'mdc-mmc-problemas',             label:'mdc e mmc',                      emoji:'📐', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
   // ── Ciências
-  { disc:'cien', slug:'lixo-que-produzimos',   label:'O Lixo que Produzimos',              emoji:'🗑️', pages:null },
-  { disc:'cien', slug:'caminho-do-lixo',        label:'O Caminho do Lixo',                  emoji:'🚛', pages:null },
-  { disc:'cien', slug:'ciclo-da-agua',          label:'O Ciclo da Água',                    emoji:'💧', pages:[62,67] },
-  { disc:'cien', slug:'agua-cidades-consumo',   label:'Água, Cidades e Consumo Consciente', emoji:'🏙️', pages:[68,83] },
+  { disc:'cien', slug:'lixo-que-produzimos',   label:'O Lixo que Produzimos',              emoji:'🗑️', pages:null,    charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'cien', slug:'caminho-do-lixo',        label:'O Caminho do Lixo',                  emoji:'🚛', pages:null,    charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'cien', slug:'ciclo-da-agua',          label:'O Ciclo da Água',                    emoji:'💧', pages:[62,67], charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'cien', slug:'agua-cidades-consumo',   label:'Água, Cidades e Consumo Consciente', emoji:'🏙️', pages:[68,83], charName:'Prepo', charImg:'prepo-hd.png' },
   // ── Geografia
-  { disc:'geo',  slug:'diversidade-cultural',    label:'Diversidade Cultural',    emoji:'🎪', pages:null },
-  { disc:'geo',  slug:'pais-de-contrastes',      label:'País de Contrastes',      emoji:'⚖️', pages:null },
-  { disc:'geo',  slug:'tecnologia-agropecuaria', label:'Tecnologia Agropecuária', emoji:'🌾', pages:null },
+  { disc:'geo',  slug:'diversidade-cultural',    label:'Diversidade Cultural',    emoji:'🎪', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'geo',  slug:'pais-de-contrastes',      label:'País de Contrastes',      emoji:'⚖️', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'geo',  slug:'tecnologia-agropecuaria', label:'Tecnologia Agropecuária', emoji:'🌾', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
   // ── História
-  { disc:'hist', slug:'calendarios-povos',        label:'Diversos Calendários', emoji:'🗓️', pages:null },
-  { disc:'hist', slug:'marcos-memoria',            label:'Marcos de Memória',    emoji:'🗿', pages:null },
-  { disc:'hist', slug:'memoria-negra-imigrantes', label:'Zumbi e Imigrantes',   emoji:'✊🏽', pages:null }
+  { disc:'hist', slug:'calendarios-povos',        label:'Diversos Calendários', emoji:'🗓️', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'hist', slug:'marcos-memoria',            label:'Marcos de Memória',    emoji:'🗿', pages:null, charName:'Prepo', charImg:'prepo-hd.png' },
+  { disc:'hist', slug:'memoria-negra-imigrantes', label:'Zumbi e Imigrantes',   emoji:'✊🏽', pages:null, charName:'Prepo', charImg:'prepo-hd.png' }
 ];
 
 var DISC_NAMES = { port:'Português', mat:'Matemática', cien:'Ciências', geo:'Geografia', hist:'História' };
@@ -2494,13 +2504,20 @@ async function loadCartas() {
 
   var BASE = '_landing/';
   cards.forEach(function(card) {
-    var theme   = THEME_CATALOG.find(function(t) { return t.slug === card.theme_slug; });
-    var label   = theme ? theme.label : card.theme_slug;
-    var emoji   = theme ? theme.emoji : '⭐';
-    var disc    = DISC_LABEL[card.discipline] || card.discipline;
-    var rarity  = card.rarity || 'comum';
-    var bgFile  = rarity === 'lendepica' ? 'lend-epica' : rarity;
-    var bgUrl   = BASE + 'cartas/carta-fundo-' + bgFile + '.png';
+    var theme    = THEME_CATALOG.find(function(t) { return t.slug === card.theme_slug; });
+    var label    = theme ? theme.label    : card.theme_slug;
+    var emoji    = theme ? theme.emoji    : '⭐';
+    var charName = theme ? (theme.charName || '') : '';
+    var charImg  = theme ? (theme.charImg  || null) : null;
+    var disc     = DISC_LABEL[card.discipline] || card.discipline;
+    var rarity   = card.rarity || 'comum';
+    var bgFile   = rarity === 'lendepica' ? 'lend-epica' : rarity;
+    var bgUrl    = BASE + 'cartas/carta-fundo-' + bgFile + '.png';
+
+    // Personagem: imagem HD se disponível, senão emoji do tema
+    var charHtml = charImg
+      ? '<div class="cm-char"><img src="' + BASE + charImg + '" alt="' + charName + '"></div>'
+      : '<div class="cm-char"><span class="cm-char-emoji">' + emoji + '</span></div>';
 
     var el = document.createElement('div');
     el.className = 'carta-mini carta-mini-' + rarity;
@@ -2508,10 +2525,10 @@ async function loadCartas() {
       '<div class="cm-bg" style="background-image:url(\'' + bgUrl + '\')"></div>' +
       '<div class="cm-overlay"></div>' +
       '<div class="cm-ring"></div>' +
-      '<div class="cm-emoji">' + emoji + '</div>' +
+      charHtml +
       '<div class="cm-info">' +
-        '<div class="cm-name">'  + label + '</div>' +
-        '<div class="cm-disc">'  + disc  + '</div>' +
+        '<div class="cm-name">'  + (charName || label) + '</div>' +
+        '<div class="cm-disc">'  + label + ' · ' + disc  + '</div>' +
         '<span class="cm-badge">' + cartaRarityLabel(rarity) + '</span>' +
       '</div>';
     grid.appendChild(el);
