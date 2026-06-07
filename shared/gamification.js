@@ -660,11 +660,12 @@
   /* ------------------------------------------------------------------ */
   async function calcRarity(supa, uid, themeSlug) {
     var res = await supa.from("activity_log").select("score,is_first_attempt,activity_type")
-      .eq("user_id", uid).eq("theme_slug", themeSlug).not("score", "is", null);
+      .eq("user_id", uid).eq("theme_slug", themeSlug).not("score", "is", null)
+      .neq("activity_type", "mapa-mental"); // mapa-mental é portão obrigatório, não entra no cálculo de raridade
     var rows = res.data || [];
     if (!rows.length) return { rarity: "comum", avg: 0 };
 
-    // Lendária: TODOS os registros são primeira tentativa com 100%
+    // Lendária: TODAS as atividades práticas são primeira tentativa com 100%
     var allPerfect = rows.every(function(r) { return r.is_first_attempt === true && r.score === 100; });
     if (allPerfect) return { rarity: "lendaria", avg: 100 };
 
