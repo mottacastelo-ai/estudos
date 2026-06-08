@@ -1,14 +1,16 @@
 {
   "type": "chars-and-portraits-batch",
-  "version": "1.1",
-  "description": "Recuperação dos 3 personagens não processados no batch anterior. ATENÇÃO: Professora Ciência usa referência alternativa (hq-lixo-que-produzimos.jpg) pois o HQ do Caminho do Lixo é dominado por infográficos e confunde a geração.",
+  "version": "1.2",
+  "description": "Batch final: Agro 4.0 e Prof. Geografina (dois estágios), mais Professora Ciência (estágio 2 apenas — folha já existe).",
   "project_root": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
   "chars_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
   "portraits_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars",
   "instructions": [
-    "Para cada personagem, execute os dois estágios em sequência:",
+    "Para cada personagem, verifique se sheet_stage_done é true:",
+    "  - Se true: pule o Estágio 1 e vá direto para o Estágio 2 usando chars_dir\\sheet_output como referência.",
+    "  - Se false ou ausente: execute os dois estágios em sequência.",
     "",
-    "ESTÁGIO 1 — Folha de personagens:",
+    "ESTÁGIO 1 — Folha de personagens (se sheet_stage_done não for true):",
     "  1. Leia o hq_reference para identificar visualmente o personagem",
     "  2. Use o sheet_prompt para gerar uma folha de personagens limpa (3 poses, fundo branco)",
     "  3. Salve em chars_dir\\[sheet_output]",
@@ -16,14 +18,25 @@
     "  NÃO gere infográficos, mapas, cartazes, diagramas ou qualquer elemento editorial.",
     "",
     "ESTÁGIO 2 — Portrait HD:",
-    "  1. Use a folha gerada no estágio 1 como referência",
+    "  1. Use chars_dir\\[sheet_output] como imagem de referência",
     "  2. Leia o portrait_prompt_file",
     "  3. Gere o portrait e remova o fundo (#00ff00)",
     "  4. Salve em [portrait_output]",
+    "  Se o personagem tiver portrait_output_2: salve o mesmo arquivo com ambos os nomes.",
     "",
-    "Ao concluir todos: mova para .claude/done/chars-and-portraits-recovery.json"
+    "Ao concluir todos: mova para .claude/done/chars-and-portraits-batch.json"
   ],
   "characters": [
+    {
+      "name": "Professora Ciência",
+      "theme": "Caminho do Lixo",
+      "discipline": "Ciências",
+      "sheet_stage_done": true,
+      "sheet_output": "Professora Ciencia.png",
+      "portrait_output": "_landing\\chars\\caminho-do-lixo-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\caminho-do-lixo-portrait-prompt.md",
+      "note": "Folha já existe em chars_dir\\Professora Ciencia.png — pular Estágio 1, usar diretamente como referência para o portrait."
+    },
     {
       "name": "Agro 4.0",
       "theme": "Tecnologia Agropecuária",

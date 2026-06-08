@@ -358,6 +358,7 @@
 | `Prepo musculoso.png` |
 | `Prepo.png` |
 | `Primo.png` |
+| `Professora Ciencia.png` |
 | `Toni.png` |
 | `Verbão.png` |
 | `Ze e Das Gracas.png` |
