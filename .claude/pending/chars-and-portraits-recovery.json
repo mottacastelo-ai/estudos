@@ -1,0 +1,63 @@
+{
+  "type": "chars-and-portraits-batch",
+  "version": "1.1",
+  "description": "Recuperação dos 3 personagens não processados no batch anterior. ATENÇÃO: Professora Ciência usa referência alternativa (hq-lixo-que-produzimos.jpg) pois o HQ do Caminho do Lixo é dominado por infográficos e confunde a geração.",
+  "project_root": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "chars_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "portraits_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars",
+  "instructions": [
+    "Para cada personagem, execute os dois estágios em sequência:",
+    "",
+    "ESTÁGIO 1 — Folha de personagens:",
+    "  1. Leia o hq_reference para identificar visualmente o personagem",
+    "  2. Use o sheet_prompt para gerar uma folha de personagens limpa (3 poses, fundo branco)",
+    "  3. Salve em chars_dir\\[sheet_output]",
+    "  ATENÇÃO: gere APENAS o personagem descrito, em poses isoladas no fundo branco.",
+    "  NÃO gere infográficos, mapas, cartazes, diagramas ou qualquer elemento editorial.",
+    "",
+    "ESTÁGIO 2 — Portrait HD:",
+    "  1. Use a folha gerada no estágio 1 como referência",
+    "  2. Leia o portrait_prompt_file",
+    "  3. Gere o portrait e remova o fundo (#00ff00)",
+    "  4. Salve em [portrait_output]",
+    "",
+    "Ao concluir todos: mova para .claude/done/chars-and-portraits-recovery.json"
+  ],
+  "characters": [
+    {
+      "name": "Professora Ciência",
+      "theme": "Caminho do Lixo",
+      "discipline": "Ciências",
+      "hq_reference": "ciencias\\lixo-que-produzimos\\hq-lixo-que-produzimos.jpg",
+      "hq_reference_note": "Referência alternativa — use este HQ para identificar a personagem (mulher adulta de jaleco branco). O HQ original (caminho-do-lixo) é muito infográfico e deve ser ignorado.",
+      "sheet_output": "Professora Ciencia.png",
+      "portrait_output": "_landing\\chars\\caminho-do-lixo-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\caminho-do-lixo-portrait-prompt.md",
+      "key_identity_in_hq": "Adult woman in white lab coat, curly gray/white hair, warm smile, carries clipboard — she is the HUMAN EDUCATOR character, NOT any graphic element",
+      "sheet_prompt": "IMPORTANT: Generate a CHARACTER REFERENCE SHEET — a clean illustration of a cartoon character ONLY. Do NOT generate an infographic, poster, map, or diagram of any kind. This must show a cartoon person in 3 poses on a white background.\n\nCharacter reference sheet titled 'FOLHA DE PERSONAGENS — PROFESSORA CIÊNCIA' for a Brazilian children's educational comic book. Pure white background. Show Professora Ciência — a friendly female scientist educator in her 40s-50s, white lab coat, curly short gray hair, warm encouraging smile — in exactly 3 cartoon poses side by side, each labeled:\n1) ENSINANDO: one hand raised explaining, other hand holding clipboard, enthusiastic smile\n2) OBSERVANDO: holding magnifying glass up, focused curious expression\n3) ORGULHOSA: arms crossed, proud warm smile, clipboard under arm\n\nStyle: bold outlines, flat cel-shading, vibrant colors, Brazilian children's educational comic book illustration. Characters only, no background scenery, no text boxes, no data panels."
+    },
+    {
+      "name": "Agro 4.0",
+      "theme": "Tecnologia Agropecuária",
+      "discipline": "Ciências",
+      "hq_reference": "ciencias\\tecnologia-agropecuaria\\hq-tecnologia-agropecuaria.png",
+      "sheet_output": "Agro 4.0.png",
+      "portrait_output": "_landing\\chars\\tecnologia-agropecuaria-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\tecnologia-agropecuaria-portrait-prompt.md",
+      "key_identity_in_hq": "Compact yellow/golden agricultural robot with wheels, sensor arms, and chest display — appears throughout the HQ as the tech mascot",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — TECNOLOGIA AGROPECUÁRIA' for a Brazilian children's educational comic. White background. Show Agro 4.0 — a compact friendly yellow/golden agricultural robot (#F59E0B) — in 3 poses side by side:\n1) TRABALHANDO: rolling forward on wheels/treads, one sensor arm extended, determined face on display\n2) EXPLICANDO: stopped, chest display showing crop data, one arm pointing upward, friendly expression\n3) COMEMORANDO: both arms raised in success, display showing green checkmark, joyful expression\nYellow/golden compact body, sturdy wheeled base, robotic arms, antenna. Labels below each pose. Bold outlines, flat cel-shading, Brazilian educational comic style."
+    },
+    {
+      "name": "Prof. Geografina",
+      "theme": "Diversidade Cultural + País de Contrastes",
+      "discipline": "História",
+      "hq_reference": "historia\\diversidade-cultural\\hq-diversidade-cultural.png",
+      "sheet_output": "Prof. Geografina.png",
+      "portrait_output_1": "_landing\\chars\\diversidade-cultural-hd.png",
+      "portrait_output_2": "_landing\\chars\\pais-de-contrastes-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\diversidade-cultural-portrait-prompt.md",
+      "key_identity_in_hq": "Woman ~45, dark skin, large BRIGHT YELLOW round glasses (her most distinctive feature), curly gray-streaked hair in loose bun with tiny Brazilian flags, colorful patchwork quilt vest, pointer with small globe on tip",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — PROF. GEOGRAFINA' for a Brazilian children's educational comic. White background. Show Prof. Geografina — a woman approximately 45 years old, dark brown skin, LARGE BRIGHT YELLOW round glasses (signature feature!), curly gray-streaked hair in a loose bun with tiny miniature Brazilian flags tucked in, colorful patchwork quilt vest (green/yellow/blue/red squares) over white shirt, carries a pointer stick with a small globe on the tip — in 3 poses side by side:\n1) ENSINANDO: holding globe-pointer up, enthusiastic smile, one eyebrow raised\n2) ORGULHOSA: arms crossed, proud warm smile, small Brazilian flag pin visible on vest\n3) PERGUNTANDO: leaning slightly forward, one finger raised, glasses slightly tilted, warm questioning look\nLabels below each pose. Bold outlines, flat cel-shading, vibrant colors, Brazilian educational comic style.\nNOTE: After generating portrait, save as BOTH diversidade-cultural-hd.png AND pais-de-contrastes-hd.png"
+    }
+  ]
+}
