@@ -28,13 +28,13 @@
       "name": "Professora Ciência",
       "theme": "Caminho do Lixo",
       "discipline": "Ciências",
-      "hq_reference": "ciencias\\lixo-que-produzimos\\hq-lixo-que-produzimos.jpg",
-      "hq_reference_note": "Referência alternativa — use este HQ para identificar a personagem (mulher adulta de jaleco branco). O HQ original (caminho-do-lixo) é muito infográfico e deve ser ignorado.",
+      "hq_reference": null,
+      "hq_reference_note": "SEM referência de imagem — gere a folha APENAS a partir da descrição em texto abaixo. NÃO abra nenhum HQ como referência para este personagem.",
       "sheet_output": "Professora Ciencia.png",
       "portrait_output": "_landing\\chars\\caminho-do-lixo-hd.png",
       "portrait_prompt_file": "_landing\\chars\\caminho-do-lixo-portrait-prompt.md",
-      "key_identity_in_hq": "Adult woman in white lab coat, curly gray/white hair, warm smile, carries clipboard — she is the HUMAN EDUCATOR character, NOT any graphic element",
-      "sheet_prompt": "IMPORTANT: Generate a CHARACTER REFERENCE SHEET — a clean illustration of a cartoon character ONLY. Do NOT generate an infographic, poster, map, or diagram of any kind. This must show a cartoon person in 3 poses on a white background.\n\nCharacter reference sheet titled 'FOLHA DE PERSONAGENS — PROFESSORA CIÊNCIA' for a Brazilian children's educational comic book. Pure white background. Show Professora Ciência — a friendly female scientist educator in her 40s-50s, white lab coat, curly short gray hair, warm encouraging smile — in exactly 3 cartoon poses side by side, each labeled:\n1) ENSINANDO: one hand raised explaining, other hand holding clipboard, enthusiastic smile\n2) OBSERVANDO: holding magnifying glass up, focused curious expression\n3) ORGULHOSA: arms crossed, proud warm smile, clipboard under arm\n\nStyle: bold outlines, flat cel-shading, vibrant colors, Brazilian children's educational comic book illustration. Characters only, no background scenery, no text boxes, no data panels."
+      "key_identity_in_hq": "N/A — use text description only",
+      "sheet_prompt": "Draw a cartoon character reference sheet. Three poses of the same woman, side by side, on a pure white background. No charts, no infographics, no diagrams, no animals, no objects — ONLY this cartoon woman in 3 poses.\n\nThe character: Professora Ciência. A woman in her 40s. White lab coat. Short curly gray hair. Warm smile. Carries a clipboard.\n\nPose 1 (labeled ENSINANDO): right hand raised with index finger up, left hand holding clipboard, enthusiastic smile.\nPose 2 (labeled OBSERVANDO): holding a magnifying glass up to eye level, curious focused expression.\nPose 3 (labeled ORGULHOSA): arms crossed over chest, proud warm smile, clipboard tucked under one arm.\n\nArt style: bold black outlines, flat cel-shading, bright colors, Brazilian children's educational comic book. White background only. Label each pose below the character."
     },
     {
       "name": "Agro 4.0",
