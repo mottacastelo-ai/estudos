@@ -354,6 +354,7 @@
 | `Prepo musculoso.png` |
 | `Prepo.png` |
 | `Primo.png` |
+| `Verbão.png` |
 | `memo e timbre.png` |
 
 ---
