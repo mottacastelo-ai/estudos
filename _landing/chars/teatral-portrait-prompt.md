@@ -4,46 +4,40 @@
 
 ---
 
-## INSTRUÇÕES PARA O CODEX
-
-1. Use a imagem de referência do quadrinho fornecida por Léo como base visual
-2. Gere o portrait HD conforme o prompt abaixo
-3. Salve o resultado em `_landing/chars/teatral-hd.png`
-
----
-
 ## PROMPT
 
 ```
-Full-body character portrait of "Professor Teatrão", a dramatic theater teacher character from a Brazilian 5th-grade educational comic book.
+Generate a NEW full-body character portrait of "Professor Teatrão",
+a character from a Brazilian 5th-grade educational comic book.
 
-REFERENCE: Use the provided comic panel as the visual base for his appearance.
+USE THE REFERENCE IMAGE only to maintain visual identity.
+DO NOT reproduce the comic panel scene. Create a fresh, clean, isolated pose.
 
-CHARACTER DETAILS:
-- Elderly man with wild, disheveled white/silver hair
-- Hugely expressive face: wide open mouth in theatrical delight, big round eyes exaggeratedly wide
-- Long dark purple/navy blue coat or theatrical cape, slightly open
-- His most distinctive feature: an oversized, vibrantly multicolored scarf (red, yellow, green, blue, orange stripes) dramatically draped around his neck and shoulders
-- Holding a rolled script or theater book in one hand, raised expressively
-- Slightly hunched forward in a flamboyant theatrical pose, as if mid-monologue
-- Energetic, over-the-top personality conveyed in every detail
+CHARACTER IDENTITY (from reference):
+- Elderly man, wild disheveled white/silver hair
+- Hugely expressive face: wide open mouth in theatrical delight, big round eyes
+- Long dark purple/navy blue theatrical coat or cape
+- His most iconic feature: an oversized multicolored scarf (red, yellow, green, blue stripes) — must be clearly visible and vibrant
+- Theatrical, over-the-top personality in every detail
+
+ISOLATION RULES — mandatory:
+- No background scenery
+- No speech bubbles
+- No text or labels
+- No other characters
+- No props or background objects
+
+BACKGROUND: solid chroma-key green #00ff00, completely uniform.
+IMPORTANT: do NOT use green #00ff00 on any part of the character.
+
+POSE: create a new expressive dramatic pose — arms open, mid-monologue, as if performing on stage. Full body visible from head to feet.
+Character centered, occupying approximately 85% of the frame height.
 
 STYLE:
 - Vibrant Brazilian children's educational comic book style
 - Bold outlines, clean cel-shading, bright saturated colors
 - Exaggerated, expressive, slightly cartoonish proportions
-- Same art style as the HQ comic pages the character appears in
-- Full body visible from head to feet, centered in frame
-- Transparent background (PNG)
-- Portrait orientation, character occupying ~85% of the frame height
-- High resolution: 1024×1024 px minimum
 
-OUTPUT: Save as teatral-hd.png in the _landing/chars/ folder.
+OUTPUT: PNG, canvas exactly 1024×1024 px.
+After generation: remove chroma-key background, save as teatral-hd.png
 ```
-
----
-
-## NOTAS
-- O cachecol multicolorido é o elemento mais icônico — deve estar bem visível e vibrante
-- Expressão facial deve ser exageradamente dramática, nunca séria
-- Estilo deve ser compatível com o das HQs do portal (traço brasileiro de HQ infantil)
