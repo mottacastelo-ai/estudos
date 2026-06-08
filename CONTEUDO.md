@@ -349,12 +349,15 @@
 | `Divi.png` |
 | `Elinho.png` |
 | `Esfer.png` |
+| `Faca.png` |
 | `Gotinha.png` |
 | `Max-Min.png` |
 | `Poli.png` |
+| `Pontuacao.png` |
 | `Prepo musculoso.png` |
 | `Prepo.png` |
 | `Primo.png` |
+| `Toni.png` |
 | `Verbão.png` |
 | `Ze e Das Gracas.png` |
 | `memo e timbre.png` |
