@@ -351,6 +351,7 @@
 | `Esfer.png` |
 | `Faca.png` |
 | `Gotinha.png` |
+| `Lixinho.png` |
 | `Max-Min.png` |
 | `Poli.png` |
 | `Pontuacao.png` |
