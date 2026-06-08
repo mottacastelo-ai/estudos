@@ -347,6 +347,7 @@
 | `Calê.png` |
 | `Ciclao.png` |
 | `Divi.png` |
+| `Elinho.png` |
 | `Esfer.png` |
 | `Gotinha.png` |
 | `Max-Min.png` |
@@ -355,6 +356,7 @@
 | `Prepo.png` |
 | `Primo.png` |
 | `Verbão.png` |
+| `Ze e Das Gracas.png` |
 | `memo e timbre.png` |
 
 ---
