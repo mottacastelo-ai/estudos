@@ -1,0 +1,145 @@
+{
+  "type": "chars-and-portraits-batch",
+  "version": "1.0",
+  "description": "Dois estágios por personagem: 1) gerar folha de personagens → Personagens\\5o ano\\; 2) gerar portrait HD → _landing\\chars\\. Personagens sem folha de referência — usar HQ como âncora para o estágio 1.",
+  "project_root": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "chars_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "portraits_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars",
+  "instructions": [
+    "Para cada personagem, execute os dois estágios em sequência:",
+    "",
+    "ESTÁGIO 1 — Folha de personagens:",
+    "  1. Leia o hq_reference para identificar visualmente o personagem",
+    "  2. Use o sheet_prompt para gerar uma folha de personagens limpa (3 poses, fundo branco)",
+    "  3. Salve em sheet_output (pasta Personagens\\5o ano\\)",
+    "  4. A folha deve seguir o padrão das existentes: título 'FOLHA DE PERSONAGENS — [TEMA]', 3 poses rotuladas, fundo branco puro",
+    "",
+    "ESTÁGIO 2 — Portrait HD:",
+    "  1. Use a folha gerada no estágio 1 como imagem de referência (não o HQ)",
+    "  2. Leia o portrait_prompt_file para obter o prompt exato",
+    "  3. Gere o portrait conforme o prompt",
+    "  4. Remova o fundo (chroma-key verde #00ff00 ou magenta #ff00ff conforme especificado no prompt)",
+    "  5. Salve em portrait_output",
+    "",
+    "Ao concluir TODOS os personagens com sucesso, mova este arquivo para .claude/done/chars-and-portraits-batch.json"
+  ],
+  "notes": {
+    "faca_background": "Façã é verde — use magenta #ff00ff como chroma-key para este personagem (especificado no prompt)",
+    "geografina_dual": "Prof. Geografina aparece em 2 temas — gere UMA vez e salve os dois arquivos de portrait (diversidade-cultural-hd.png E pais-de-contrastes-hd.png)",
+    "groups": "Verbão, Elinho, Toni, Lixinho, Professora Ciência, Agro 4.0 são personagens individuais. Zé+Das Graças e ?,!,. são grupos — mostrar juntos no portrait (como Max+Min no batch anterior)",
+    "sheet_style": "Folhas devem seguir o padrão das já existentes em Personagens\\5o ano\\ — fundo branco, poses lado a lado, legenda embaixo de cada pose, paleta de cores opcional no rodapé"
+  },
+  "characters": [
+    {
+      "name": "Verbão",
+      "theme": "Tempos Verbais",
+      "discipline": "Português",
+      "hq_reference": "portugues\\tempos-verbais\\hq-tempos-verbais.png",
+      "sheet_output": "Verbão.png",
+      "portrait_output": "_landing\\chars\\tempos-verbais-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\tempos-verbais-portrait-prompt.md",
+      "key_identity_in_hq": "Large rectangular blue/navy animated verb-block character with face and limbs, changes clothes by tense (past=old-fashioned, present=modern, future=futuristic)",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — TEMPOS VERBAIS' for a Brazilian children's educational comic. White background. Show Verbão — an animated living VERB character whose body is a tall chunky rectangular block in deep navy blue — in 3 poses side by side: 1) PASSADO: wearing old-fashioned historical clothes (cape, monocle or similar), stern expression; 2) PRESENTE: wearing casual modern clothes (t-shirt, sneakers), confident smile; 3) FUTURO: wearing futuristic metallic/neon clothes, excited expression. Each pose labeled below. Bold outlines, flat cel-shading, bright saturated colors, Brazilian children's educational comic book style."
+    },
+    {
+      "name": "Elinho",
+      "theme": "Letra L",
+      "discipline": "Português",
+      "hq_reference": "portugues\\letra-l\\hq-letra-l.png",
+      "sheet_output": "Elinho.png",
+      "portrait_output": "_landing\\chars\\letra-l-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\letra-l-portrait-prompt.md",
+      "key_identity_in_hq": "Animated cursive lowercase letter ℓ (special L) in blue, with eyes, arms and legs, sometimes wearing cowboy hat or surfboard",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — LETRA L' for a Brazilian children's educational comic. White background. Show Elinho — the animated cursive lowercase letter ℓ (the special cursive L shape) in bright blue — in 3 poses side by side: 1) COWBOY: wearing a cowboy hat, bandana around neck, thumbs in belt loops; 2) SURFISTA: holding a surfboard under arm, shaka hand gesture, relaxed smile; 3) NORMAL: upright, arms out, big friendly smile, no accessories. Each pose labeled below. The letter ℓ shape must be clearly recognizable in all poses. Bold outlines, flat cel-shading, Brazilian children's educational comic book style."
+    },
+    {
+      "name": "Zé e Das Graças",
+      "theme": "Variação Linguística",
+      "discipline": "Português",
+      "hq_reference": "portugues\\variacao-linguistica\\hq-variacao-linguistica.png",
+      "sheet_output": "Ze e Das Gracas.png",
+      "portrait_output": "_landing\\chars\\variacao-linguistica-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\variacao-linguistica-portrait-prompt.md",
+      "key_identity_in_hq": "Two colorful fantoche/puppet characters — Zé (urban/formal style) and Das Graças (regional/traditional style) — used to demonstrate Brazilian language variation",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — VARIAÇÃO LINGUÍSTICA' for a Brazilian children's educational comic. White background. Show ZÉ (left half) and DAS GRAÇAS (right half) as fantoche/puppet characters. ZÉ: urban style, neat clothes, city look, slightly formal. DAS GRAÇAS: regional Brazilian folk style, colorful traditional clothing, warm expressive face. Show each in 2 poses: FALANDO FORMAL and FALANDO INFORMAL. Both are colorful hand puppets. Labels below each pose. Bold outlines, flat cel-shading, vibrant colors, Brazilian educational comic style."
+    },
+    {
+      "name": "?, ! e .",
+      "theme": "Pontuação Expressiva",
+      "discipline": "Português",
+      "hq_reference": "portugues\\pontuacao\\hq-pontuacao-expressiva.png",
+      "sheet_output": "Pontuacao.png",
+      "portrait_output": "_landing\\chars\\pontuacao-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\pontuacao-portrait-prompt.md",
+      "key_identity_in_hq": "Three animated punctuation mark characters: ? (blue, curious, round), ! (red/orange, muscular, tall), . (gray, calm, small round) — each IS the punctuation symbol brought to life",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — PONTUAÇÃO EXPRESSIVA' for a Brazilian children's educational comic. White background. Show the trio side by side — INTERROGAÇÃO ?, EXCLAMAÇÃO !, PONTO FINAL . — each in 2 emotional poses. ? (blue, question-mark-shaped body): CURIOSO and CONFUSO. ! (red-orange, exclamation-mark-shaped body, muscular): ANIMADO and SURPRESO. . (gray, round compact body, calm): TRANQUILO and SATISFEITO. Each symbol-body must be clearly recognizable as the punctuation mark. Labels below each pose. Bold outlines, flat cel-shading, vibrant colors, Brazilian educational comic style."
+    },
+    {
+      "name": "Toni",
+      "theme": "Entonação",
+      "discipline": "Português",
+      "hq_reference": "portugues\\entonacao\\hq-entonacao.png",
+      "sheet_output": "Toni.png",
+      "portrait_output": "_landing\\chars\\entonacao-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\entonacao-portrait-prompt.md",
+      "key_identity_in_hq": "Animated sound wave character — blue/purple sinusoidal wave shape with face, arms and legs, represents vocal intonation",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — ENTONAÇÃO' for a Brazilian children's educational comic. White background. Show Toni — an animated sound wave whose body IS a sinusoidal/wavy line shape in vibrant blue-purple — in 3 poses side by side: 1) PERGUNTA (rising wave): body curves upward at the end, curious expression; 2) AFIRMAÇÃO (flat steady wave): body is level and calm, confident smile; 3) EXCLAMAÇÃO (sharp intense wave): body has tall sharp peaks, excited open-mouth expression. Each pose shows Toni's wave body with face, small arms and legs. Labels below. Bold outlines, flat cel-shading, Brazilian educational comic style."
+    },
+    {
+      "name": "Façã",
+      "theme": "Texto Instrucional",
+      "discipline": "Português",
+      "hq_reference": "portugues\\texto-instrucional\\hq-texto-instrucional.png",
+      "sheet_output": "Faca.png",
+      "portrait_output": "_landing\\chars\\texto-instrucional-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\texto-instrucional-portrait-prompt.md",
+      "key_identity_in_hq": "Large energetic dark green creature/monster who shouts 'FAÇA!' (Do it!) — embodies the imperative verb form in instructional texts",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — TEXTO INSTRUCIONAL' for a Brazilian children's educational comic. White background. Show Façã — a large friendly dark green creature who embodies the imperative verb (FAÇA! = DO IT!) — in 3 poses side by side: 1) FAÇA! — arms raised in a powerful 'let's go!' pose, huge open-mouth shout, very energetic; 2) EXPLICANDO — leaning forward with one finger raised, explaining something patiently; 3) ORGULHOSO — arms crossed, satisfied smile, proud stance. Dark forest green body (#15803D), chunky and strong but friendly. Labels below. Bold outlines, flat cel-shading, Brazilian educational comic style."
+    },
+    {
+      "name": "Lixinho",
+      "theme": "Lixo que Produzimos",
+      "discipline": "Ciências",
+      "hq_reference": "ciencias\\lixo-que-produzimos\\hq-lixo-que-produzimos.jpg",
+      "sheet_output": "Lixinho.png",
+      "portrait_output": "_landing\\chars\\lixo-que-produzimos-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\lixo-que-produzimos-portrait-prompt.md",
+      "key_identity_in_hq": "Animated cylindrical trash bin character — gray/silver trash can with lid-hat, eyes, arms and legs",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — LIXO QUE PRODUZIMOS' for a Brazilian children's educational comic. White background. Show Lixinho — an animated cylindrical household trash bin in gray/silver — in 3 poses side by side: 1) TRISTE — slouched, sad eyes, lid slightly tilted down, overflowing with implied sadness about pollution; 2) FELIZ — lid-hat tilted cheerfully, big smile, arms open in a welcoming gesture; 3) DETERMINADO — standing tall, one arm raised confidently, lid-hat upright. Has a face on the bin body, lid acts as a hat, short arms and legs. Recycling symbol subtly on body. Labels below. Bold outlines, flat cel-shading, Brazilian educational comic style."
+    },
+    {
+      "name": "Professora Ciência",
+      "theme": "Caminho do Lixo",
+      "discipline": "Ciências",
+      "hq_reference": "ciencias\\caminho-do-lixo\\hq-caminho-do-lixo.jpg",
+      "sheet_output": "Professora Ciencia.png",
+      "portrait_output": "_landing\\chars\\caminho-do-lixo-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\caminho-do-lixo-portrait-prompt.md",
+      "key_identity_in_hq": "Female scientist/educator in white lab coat, curly gray hair, warm encouraging smile, carries clipboard",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — CAMINHO DO LIXO' for a Brazilian children's educational comic. White background. Show Professora Ciência — a female scientist educator in her 40s–50s — in 3 poses side by side: 1) ENSINANDO — holding clipboard, one hand raised explaining, enthusiastic smile; 2) OBSERVANDO — studying something with a magnifying glass or pointing at data, focused expression; 3) ORGULHOSA — arms crossed, warm proud smile, clipboard under arm. White lab coat, curly gray/white hair, practical clothes underneath. Labels below. Bold outlines, flat cel-shading, Brazilian educational comic style."
+    },
+    {
+      "name": "Agro 4.0",
+      "theme": "Tecnologia Agropecuária",
+      "discipline": "Ciências",
+      "hq_reference": "ciencias\\tecnologia-agropecuaria\\hq-tecnologia-agropecuaria.png",
+      "sheet_output": "Agro 4.0.png",
+      "portrait_output": "_landing\\chars\\tecnologia-agropecuaria-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\tecnologia-agropecuaria-portrait-prompt.md",
+      "key_identity_in_hq": "Compact yellow/golden agricultural robot with wheels or tank treads, sensor arms, chest display, represents modern precision agriculture technology",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — TECNOLOGIA AGROPECUÁRIA' for a Brazilian children's educational comic. White background. Show Agro 4.0 — a compact yellow/golden agricultural robot — in 3 poses side by side: 1) TRABALHANDO — rolling forward with a sensor arm extended, determined expression on face display; 2) EXPLICANDO — stopped, chest display showing crop data, one arm pointing upward; 3) COMEMORANDO — both arms raised in success, display showing a green checkmark, joyful expression. Yellow/golden body (#F59E0B), wheeled/tracked, sturdy farm robot. Labels below. Bold outlines, flat cel-shading, Brazilian educational comic style."
+    },
+    {
+      "name": "Prof. Geografina",
+      "theme": "Diversidade Cultural + País de Contrastes",
+      "discipline": "História",
+      "hq_reference": "historia\\diversidade-cultural\\hq-diversidade-cultural.png",
+      "sheet_output": "Prof. Geografina.png",
+      "portrait_output_1": "_landing\\chars\\diversidade-cultural-hd.png",
+      "portrait_output_2": "_landing\\chars\\pais-de-contrastes-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\diversidade-cultural-portrait-prompt.md",
+      "key_identity_in_hq": "Woman ~45, dark skin, large YELLOW round glasses, curly gray-streaked hair in loose bun with tiny Brazilian flags, colorful patchwork vest, pointer with small globe on tip",
+      "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — PROF. GEOGRAFINA' for a Brazilian children's educational comic. White background. Show Prof. Geografina — woman ~45, dark skin, large BRIGHT YELLOW round glasses (her signature feature), curly gray-streaked hair in a loose bun with tiny miniature Brazilian flags tucked in, colorful patchwork quilt vest (green/yellow/blue/red squares) over white shirt, carries a pointer with a small globe on the tip — in 3 poses side by side: 1) ENSINANDO — holding globe-pointer up, enthusiastic smile, one eyebrow raised; 2) ORGULHOSA — arms crossed, proud warm smile, flag pin visible; 3) PERGUNTANDO — leaning slightly forward, one finger raised, glasses slightly tilted, warm questioning expression. Labels below. Bold outlines, flat cel-shading, Brazilian educational comic style. NOTE: save portrait as BOTH diversidade-cultural-hd.png AND pais-de-contrastes-hd.png."
+    }
+  ]
+}
