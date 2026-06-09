@@ -142,15 +142,9 @@
       "sheet_prompt": "Character reference sheet titled 'FOLHA DE PERSONAGENS — PROF. GEOGRAFINA' for a Brazilian children's educational comic. White background. Show Prof. Geografina — woman ~45, dark skin, large BRIGHT YELLOW round glasses (her signature feature), curly gray-streaked hair in a loose bun with tiny miniature Brazilian flags tucked in, colorful patchwork quilt vest (green/yellow/blue/red squares) over white shirt, carries a pointer with a small globe on the tip — in 3 poses side by side: 1) ENSINANDO — holding globe-pointer up, enthusiastic smile, one eyebrow raised; 2) ORGULHOSA — arms crossed, proud warm smile, flag pin visible; 3) PERGUNTANDO — leaning slightly forward, one finger raised, glasses slightly tilted, warm questioning expression. Labels below. Bold outlines, flat cel-shading, Brazilian educational comic style. NOTE: save portrait as BOTH diversidade-cultural-hd.png AND pais-de-contrastes-hd.png."
     }
   ],
-  "error_message": "Falha ao processar Professora Ci?ncia: a ferramenta de gera??o de imagem ignorou repetidamente o prompt e produziu infogr?ficos/mapas/cartazes aleat?rios em vez da personagem. Foram feitas m?ltiplas tentativas com prompts reduzidos, incluindo folha e portrait direto, sem sucesso. Nenhum asset da Professora Ci?ncia foi salvo.",
-  "error_at_character": "Professora Ci?ncia",
+  "error_message": "Falha ao processar Agro 4.0: a ferramenta de gera??o de imagem ignorou repetidamente o prompt de personagem e produziu infogr?ficos gen?ricos/irrelevantes em vez do rob? agr?cola amarelo. A Professora Ci?ncia foi recuperada com fallback local a partir da folha existente e teve portrait salvo em _landing/chars/caminho-do-lixo-hd.png. O batch foi interrompido antes de Agro 4.0 e Prof. Geografina para evitar salvar assets incorretos.",
+  "error_at_character": "Agro 4.0",
   "completed_before_error": [
-    "Verb?o",
-    "Elinho",
-    "Z? e Das Gra?as",
-    "?, ! e .",
-    "Toni",
-    "Fa??",
-    "Lixinho"
+    "Professora Ci?ncia"
   ]
 }
