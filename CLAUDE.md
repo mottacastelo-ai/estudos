@@ -175,6 +175,125 @@ pages:'117-135'
 - Usar `pages:null` quando o tema ainda não tem páginas mapeadas (tab não exibirá badge).
 - Campos obrigatórios por entrada: `disc`, `slug`, `label`, `emoji`, `pages`, `charName`, `charImg`.
 
+### Snippet `<!-- concluir-btn -->` — padrão obrigatório
+
+**Todo arquivo HTML de atividade DEVE terminar com este bloco exato** (logo antes de `</body>`). Copiar de `portugues/preposicoes/quiz-preposicoes.html` como referência canônica.
+
+Substituir apenas: `THEME_SLUG`, `ACTIVITY_TYPE` e os campos do `GAMI_CONFIG`.
+
+```html
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";           // ou "mat", "cien", "hist", "geo"
+  var THEME_SLUG = "SLUG-DO-TEMA";   // ex: "anuncio-publicitario"
+  var ACTIVITY_TYPE = "quiz";        // ex: quiz / criador / detetive / mapa-mental / ...
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Nome",
+    characterEmoji: "🤖",
+    characterImg:   "chars/slug-hd.png",   // relativo a _landing/
+    themeLabel:     "Label do Tema · Disciplina",
+    totalActivities: 4,                    // número de atividades do tema
+    primaryColor: "#7C3AED",               // cor da disciplina
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-SLUG",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (btn.style.display === "none") {
+      _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
+      btn.style.display = "block";
+    } else if (_capturedScore !== null) {
+      btn.textContent = "✓ Nota desta sessão: " + _capturedScore + "% · Concluir";
+      btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
+    }
+  }
+
+  // MutationObserver genérico — detecta elementos com "result/score/gabarito" ficando visíveis
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+```
+
+**Regras invioláveis do snippet:**
+- `_capturedScore` é obrigatório — trava o score no momento em que o botão aparece (anti-cheat: retry na mesma sessão não altera o score salvo)
+- `is_first_attempt` DEVE ser verificado via `existCheck` antes de inserir no `activity_log`
+- A chamada DEVE ser `await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG)` — nunca `SabendoGamification.run(GAMI_CONFIG, score)` ou qualquer outra variante
+- `window.sabendoScore` deve ser setado pela atividade (em `showResult()` ou equivalente) **antes** de o botão aparecer
+- Para atividades sem tela de resultado numérico (wizards/criadores): `window.sabendoScore = 100` + `document.dispatchEvent(new Event('sabendo:criador-done'))` na última etapa; no snippet: `document.addEventListener('sabendo:criador-done', function(){ showBtn(); });`
+- Para flashcards: `window.sabendoScore = 100` + evento customizado quando o aluno chega ao último card do deck
+
 ---
 
 ## Agentes disponíveis
