@@ -341,6 +341,7 @@
 
 | Arquivo |
 |---|
+| `Agro 4.0.png` |
 | `Bia com fundo.png` |
 | `Bia.png` |
 | `Calco.png` |
@@ -358,6 +359,7 @@
 | `Prepo musculoso.png` |
 | `Prepo.png` |
 | `Primo.png` |
+| `Prof. Geografina.png` |
 | `Professora Ciencia.png` |
 | `Toni.png` |
 | `Verbão.png` |
