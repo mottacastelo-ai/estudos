@@ -100,6 +100,10 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 | ?, !, . (pontuações animadas) | Pontuação | `chars/pontuacao-hd.png` |
 | Façã (criatura verde, imperativo) | Texto Instrucional | `chars/texto-instrucional-hd.png` |
 | Toni (onda sonora animada) | Entonação | `chars/entonacao-hd.png` |
+| Publinho (persona publicitária colorida e expressiva) | Anúncio Publicitário | `chars/anuncio-publicitario-hd.png` |
+| Raizinha (raiz dourada brilhante, com prefixo e sufixo) | Prefixo e Sufixo | `chars/prefixo-sufixo-hd.png` |
+| Xis (letra X animada, com múltiplas expressões) | Sons do X e CH | `chars/sons-x-ch-hd.png` |
+| Grafo (gráfico/dados animado, personagem narrativo) | Infográfico | `chars/infografico-hd.png` |
 | Calco (robô calculadora verde) | Multiplicação e Divisão | `chars/multiplicacao-divisao-hd.png` |
 | Divi (robô calculadora verde, ✓ no display) | Múltiplos e Divisores | `chars/multiplos-divisores-criterios-hd.png` |
 | Poli (cubo 3D animado) | Poliedros, Prismas e Pirâmides | `chars/poliedros-prismas-piramides-hd.png` |
@@ -123,14 +127,14 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 
 ```
 estudos/
-├── portugues/[slug]/     ← 8 temas
+├── portugues/[slug]/     ← 12 temas
 ├── matematica/[slug]/    ← 7 temas
 ├── ciencias/[slug]/      ← 4 temas
 ├── historia/[slug]/      ← 3 temas
 ├── geografia/[slug]/     ← 3 temas
 └── _landing/
     ├── prepo-hd.png      ← portrait do Prepo (raiz)
-    └── chars/            ← portraits HD de todos os outros personagens (23 arquivos)
+    └── chars/            ← portraits HD de todos os outros personagens (27 arquivos)
 ```
 
 ### Convenção de nomenclatura
