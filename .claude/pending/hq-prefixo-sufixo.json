@@ -1,0 +1,107 @@
+{
+  "slug": "prefixo-sufixo",
+  "disciplina": "portugues",
+  "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "prompt_path": "portugues/prefixo-sufixo/hq-prefixo-sufixo-prompt.md",
+  "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "output_dir": "portugues/prefixo-sufixo",
+  "personagem_novo": {
+    "nome": "Raizinha",
+    "chars_output": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Raizinha.png",
+    "descricao": "Animated tree-root creature, body shaped like a small upright tree trunk (warm brown #92400E) with a friendly round face. Branch-arms ending in leaf-shaped word-tags: PURPLE leaves (#7C3AED) for prefixes, LAVENDER leaves (#A78BFA) for sufixes. Name 'RAIZINHA' carved into trunk. Tiny visible roots at base. Wise, patient teacher personality."
+  },
+  "portrait_output": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars\\prefixo-sufixo-hd.png",
+  "portrait_prompt_file": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars\\prefixo-sufixo-portrait-prompt.md",
+  "expected_outputs": [
+    "hq-prefixo-sufixo-pg1.png",
+    "hq-prefixo-sufixo-pg2.png",
+    "hq-prefixo-sufixo-pg3.png",
+    "hq-prefixo-sufixo-pg4.png"
+  ],
+  "sequencia_geracao": [
+    {
+      "ordem": 1,
+      "tipo": "folha_personagens",
+      "descricao": "Folha de Personagens — Raizinha (3 poses) + Bia (1 pose)",
+      "output": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Raizinha.png",
+      "instrucoes": "Gere a folha de personagens conforme o prompt da secao 'FOLHA DE PERSONAGENS (gere primeiro!)' do arquivo prompt_path. Salvar como Raizinha.png em canonicas_path. Esta imagem sera usada como referencia em todas as paginas seguintes."
+    },
+    {
+      "ordem": 2,
+      "tipo": "pagina_hq",
+      "titulo": "A Floresta das Palavras",
+      "output": "hq-prefixo-sufixo-pg1.png",
+      "instrucoes": "Use o prompt da secao 'PAGINA 1' do arquivo prompt_path. Fazer upload das canonicas Bia.png, Prepo.png e Raizinha.png antes de gerar. Resolucao 1024x1536px."
+    },
+    {
+      "ordem": 3,
+      "tipo": "pagina_hq",
+      "titulo": "Prefixo — O Pedacinho da Frente",
+      "output": "hq-prefixo-sufixo-pg2.png",
+      "instrucoes": "Use o prompt da secao 'PAGINA 2' do arquivo prompt_path. Fazer upload das canonicas Bia.png, Prepo.png e Raizinha.png antes de gerar. Resolucao 1024x1536px."
+    },
+    {
+      "ordem": 4,
+      "tipo": "pagina_hq",
+      "titulo": "Sufixo — O Pedacinho do Fim",
+      "output": "hq-prefixo-sufixo-pg3.png",
+      "instrucoes": "Use o prompt da secao 'PAGINA 3' do arquivo prompt_path. Fazer upload das canonicas Bia.png, Prepo.png e Raizinha.png antes de gerar. Resolucao 1024x1536px."
+    },
+    {
+      "ordem": 5,
+      "tipo": "pagina_hq",
+      "titulo": "Super, Ultra, Mega!",
+      "output": "hq-prefixo-sufixo-pg4.png",
+      "instrucoes": "Use o prompt da secao 'PAGINA 4' do arquivo prompt_path. Fazer upload das canonicas Bia.png, Prepo.png e Raizinha.png antes de gerar. Resolucao 1024x1536px."
+    }
+  ],
+  "estilo_visual": {
+    "resolucao": "1024x1536",
+    "paleta": {
+      "primaria": "#7C3AED",
+      "clara": "#A78BFA",
+      "fundo": "#F3F0FF",
+      "tronco_raizinha": "#92400E",
+      "verde_folha": "#4ADE80",
+      "amarelo": "#FACC15"
+    },
+    "fonte_titulos": "Space Mono",
+    "estilo": "Educational comic book, bold black outlines, flat vibrant colors, clean cartoon style — no photorealism, no complex shading. Setting: magical Floresta das Palavras.",
+    "regras": [
+      "Todo PREFIXO em folha ROXA (#7C3AED) com texto em CAIXA ALTA branco",
+      "Todo SUFIXO em folha LAVANDA (#A78BFA) com texto em CAIXA ALTA branco",
+      "Prefixos: traco DEPOIS das letras (DES-, RE-, EN-, SUPER-, ULTRA-, MEGA-)",
+      "Sufixos: traco ANTES das letras (-ADO, -AMENTO, -INHA, -MENTE)",
+      "Tronco da Raizinha sempre marrom #92400E",
+      "Nome RAIZINHA sempre legivel na frente do tronco",
+      "Usar referencia visual de Raizinha.png em todas as paginas apos geracao da folha"
+    ]
+  },
+  "termos_obrigatorios_visiveis": [
+    "PALAVRA PRIMITIVA",
+    "PALAVRA DERIVADA",
+    "PREFIXO",
+    "SUFIXO",
+    "PREFIXACAO",
+    "SUFIXACAO",
+    "DERIVACAO",
+    "ANTONIMO",
+    "PREFIXOS DE INTENSIDADE",
+    "SUPER-",
+    "ULTRA-",
+    "MEGA-",
+    "DES-",
+    "RE-",
+    "EN-",
+    "-ADO",
+    "-AMENTO",
+    "-INHA",
+    "-MENTE"
+  ],
+  "referencia_livro": "paginas 122-125 (prefixos e sufixos) e p. 142 (prefixos de intensidade em anuncios)",
+  "validacao": {
+    "resolucao_minima": "1024x1536",
+    "arquivos_esperados": 4,
+    "chars_obrigatorio": true
+  }
+}

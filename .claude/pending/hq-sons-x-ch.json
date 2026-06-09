@@ -1,0 +1,83 @@
+{
+  "slug": "sons-x-ch",
+  "disciplina": "portugues",
+  "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "prompt_path": "portugues/sons-x-ch/hq-sons-x-ch-prompt.md",
+  "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "output_dir": "portugues/sons-x-ch",
+  "personagem_principal": "Xis",
+  "chars_output": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Xis.png",
+  "expected_outputs": [
+    "hq-sons-x-ch-pg1.png",
+    "hq-sons-x-ch-pg2.png",
+    "hq-sons-x-ch-pg3.png",
+    "hq-sons-x-ch-pg4.png"
+  ],
+  "ordem_geracao": [
+    {
+      "ordem": 1,
+      "tipo": "folha_personagens",
+      "descricao": "Folha de personagens com as 4 poses do Xis (um chapeu por som) + Bia + Prepo",
+      "destino": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Xis.png",
+      "nota": "Salvar ANTES de gerar as paginas — vira referencia visual obrigatoria para pg1-pg4"
+    },
+    {
+      "ordem": 2,
+      "tipo": "pagina",
+      "arquivo": "hq-sons-x-ch-pg1.png",
+      "titulo": "O Camaleao dos Sons (Apresentacao)",
+      "chapeu_xis": "sem chapeu na abertura, depois chapeu azul taxi no painel 6",
+      "cena": "Sala de aula clara"
+    },
+    {
+      "ordem": 3,
+      "tipo": "pagina",
+      "arquivo": "hq-sons-x-ch-pg2.png",
+      "titulo": "Os Sons /ks/ e /z/ (Chapeus Azul e Verde)",
+      "chapeu_xis": "azul taxi (paineis 1-2), troca para verde (paineis 3-6)",
+      "cena": "Rua de cidade ensolarada com taxi amarelo"
+    },
+    {
+      "ordem": 4,
+      "tipo": "pagina",
+      "arquivo": "hq-sons-x-ch-pg3.png",
+      "titulo": "O Som /sh/ = CH (Chapeu Roxo — Regras Importantes)",
+      "chapeu_xis": "roxo magico (todos os paineis)",
+      "cena": "Palco teatral na biblioteca da escola"
+    },
+    {
+      "ordem": 5,
+      "tipo": "pagina",
+      "arquivo": "hq-sons-x-ch-pg4.png",
+      "titulo": "O Som /ss/ e o Desafio Final",
+      "chapeu_xis": "laranja bibliotecario (paineis 1-2), classifica com chapeus variados (painel 4), sem chapeu (paineis 5-6)",
+      "cena": "Patio da escola ensolarado"
+    }
+  ],
+  "dimensoes": "1024x1536",
+  "paleta": {
+    "primaria": "#7C3AED",
+    "clara": "#A78BFA",
+    "fundo": "#F3F0FF",
+    "escura": "#4C1D95",
+    "chapeu_taxi": "#2563EB",
+    "chapeu_lixo": "#7C3AED",
+    "chapeu_exemplo": "#16A34A",
+    "chapeu_auxilio": "#EA580C",
+    "amarelo": "#FCD34D",
+    "azul_marinho": "#1E3A8A"
+  },
+  "instrucoes_especiais": [
+    "Gerar a folha de personagens (Xis.png) PRIMEIRO — ela e referencia obrigatoria para manter consistencia visual nas 4 paginas",
+    "Xis e a letra X maiuscula animada: corpo roxo #7C3AED, contorno preto grosso #4C1D95, 4 chapeus coloridos (um por som)",
+    "Bia: menina 11 anos, cabelo preto cacheado, uniforme polo azul-marinho #1E3A8A, saia azul-escura, tenis branco, mochila vermelha",
+    "Prepo: robo roxo #7C3AED pequeno, cabeca quadrada, olhos retangulares brancos, roda no lugar de pes",
+    "As letras X e CH dentro de palavras SEMPRE em CAIXA ALTA, NEGRITO e cor roxa #7C3AED — resto da palavra em preto normal",
+    "Troca de chapeu do Xis: mostrar 'puff' de fumacinha colorida (cor do novo chapeu) ao trocar",
+    "Paineis separados por bordas finas escuras #4C1D95",
+    "Titulo de cada pagina no topo em fonte cartoon bold, roxo escuro",
+    "Fundo sempre claro (nunca escuro)",
+    "Texto nos quadros de regras (pg3) deve estar LEGIVEL — refinar se ficar borrado",
+    "Usar vocabulario em portugues brasileiro — ortografia correta obrigatoria"
+  ]
+}

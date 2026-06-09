@@ -1,0 +1,70 @@
+{
+  "slug": "infografico",
+  "disciplina": "portugues",
+  "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "prompt_path": "portugues/infografico/hq-infografico-prompt.md",
+  "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "output_dir": "portugues/infografico",
+  "personagem_principal": "Grafo",
+  "chars_output": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Grafo.png",
+  "expected_outputs": [
+    "hq-infografico-pg1.png",
+    "hq-infografico-pg2.png",
+    "hq-infografico-pg3.png",
+    "hq-infografico-pg4.png"
+  ],
+  "ordem_geracao": [
+    {
+      "passo": 1,
+      "tipo": "folha_personagens",
+      "descricao": "Folha de personagens de Grafo (3 poses: APRESENTANDO, ANALISANDO, SURPRESO) + Bia e Prepo como referencia",
+      "salvar_em": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Grafo.png",
+      "canonicas_necessarias": ["Bia.png", "Prepo.png"],
+      "dimensoes": "1024x1536"
+    },
+    {
+      "passo": 2,
+      "tipo": "pagina_hq",
+      "arquivo": "hq-infografico-pg1.png",
+      "titulo": "Pagina 1 — A Reportagem Visual",
+      "canonicas_necessarias": ["Grafo.png", "Bia.png", "Prepo.png"],
+      "dimensoes": "1024x1536"
+    },
+    {
+      "passo": 3,
+      "tipo": "pagina_hq",
+      "arquivo": "hq-infografico-pg2.png",
+      "titulo": "Pagina 2 — Anatomia do Infografico",
+      "canonicas_necessarias": ["Grafo.png", "Bia.png", "Prepo.png"],
+      "dimensoes": "1024x1536"
+    },
+    {
+      "passo": 4,
+      "tipo": "pagina_hq",
+      "arquivo": "hq-infografico-pg3.png",
+      "titulo": "Pagina 3 — O Grafico de Pizza e a Fonte",
+      "canonicas_necessarias": ["Grafo.png", "Bia.png", "Prepo.png"],
+      "dimensoes": "1024x1536"
+    },
+    {
+      "passo": 5,
+      "tipo": "pagina_hq",
+      "arquivo": "hq-infografico-pg4.png",
+      "titulo": "Pagina 4 — Outro Infografico, Outras Descobertas",
+      "canonicas_necessarias": ["Grafo.png", "Bia.png", "Prepo.png"],
+      "dimensoes": "1024x1536"
+    }
+  ],
+  "notas_para_codex": [
+    "Antes de gerar cada pagina, reler a descricao visual completa de Grafo no prompt .md (5 barras-torso coloridas, gravata roxa de bolinhas, oculos pretos grossos, lupa)",
+    "Bia: cabelo cacheado preto, uniforme azul-marinho, mochila vermelha, caderno verde",
+    "Prepo: robo roxo #7C3AED, cabeca quadrada, roda em vez de pes",
+    "Numeros percentuais (73%, 80%, 92%) devem aparecer grandes, em destaque, fonte cartoon bold legivel",
+    "Graficos de barras e pizza devem ser visualmente reconheciveis com eixos, fatias proporcionais e cores contrastantes",
+    "Setas explicativas dentro dos infograficos: amarelas pontilhadas",
+    "Palavra FONTE e nome do instituto/jornal/ministerio precisam ser legiveis nos paineis relevantes",
+    "Todos os textos em portugues brasileiro, ortografia correta",
+    "Palavra INFOGRAFICO deve aparecer escrita corretamente em pelo menos 2 paineis",
+    "Paleta disciplina Portugues: primaria #7C3AED, clara #A78BFA, fundo #F3F0FF, escura #4C1D95"
+  ]
+}
