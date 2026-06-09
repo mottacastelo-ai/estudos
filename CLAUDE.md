@@ -49,11 +49,17 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 
 | Pasta | Papel |
 |---|---|
-| `.claude/pending/hq-[slug].json` | Pedido escrito pelo `gerador-hq-imagens`; Codex monitora e processa |
+| `.claude/pending/hq-[slug].json` | Pedido de HQ escrito pelo `gerador-hq-imagens`; Codex processa |
 | `.claude/done/hq-[slug].json` | Codex move aqui após sucesso; `gerador-hq-imagens` detecta e aciona `colador-hq` |
 | `.claude/error/hq-[slug].json` | Codex move aqui com `error_message` em caso de falha; orquestrador reporta a Léo |
+| `.claude/pending/portraits-batch.json` | Pedido de portrait escrito pela skill; Codex usa folha pronta para gerar `_landing/chars/[slug]-hd.png` |
+| `.claude/done/portraits-batch.json` | Codex move aqui após gerar todos os portraits do lote |
 
-> **Pré-requisito:** O Codex Desktop deve estar **aberto** com a automação "Gerar HQs pendentes" **ativa** antes de iniciar o pipeline. Sem isso, o JSON ficará em `pending/` sem ser processado e o `gerador-hq-imagens` vai expirar o timeout de 30 min.
+> **Pré-requisito:** O Codex Desktop deve estar **aberto** com **duas automações ativas** antes de iniciar o pipeline:
+> - **"Gerar HQs pendentes"** — processa `hq-[slug].json`
+> - **"Gerar Portraits pendentes"** — processa `portraits-batch.json`
+>
+> Sem isso, os JSONs ficarão em `pending/` sem ser processados.
 
 ---
 
@@ -82,28 +88,48 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 
 ### Personagens canônicos
 
-| Personagem | Tema/Disciplina |
-|---|---|
-| Prepo (robô roxo) | Preposições / mascote geral |
-| Bia (menina 11 anos, cabelo cacheado preto, uniforme azul) | Protagonista recorrente |
-| Prof. Teatrão (professor dramático, cachecol colorido) | Texto Teatral |
-| Verbão (letra animada, 3 roupas: passado/presente/futuro) | Tempos Verbais |
-| Elinho (letra ℓ animada, cowboy/surfista) | Letra ℓ |
-| Zé e Das Graças (fantoches) | Variação Linguística |
-| ?, !, . (pontuações animadas) | Pontuação |
-| Toni (onda sonora animada) | Entonação |
+| Personagem | Tema/Disciplina | Portrait |
+|---|---|---|
+| Prepo (robô roxo) | Preposições / mascote geral | `_landing/prepo-hd.png` |
+| Bia (menina 11 anos, cabelo cacheado preto, uniforme azul) | Protagonista recorrente | — |
+| Prof. Teatrão (professor dramático, cachecol colorido) | Texto Teatral | `chars/teatral-hd.png` |
+| Verbão (letra animada, 3 roupas: passado/presente/futuro) | Tempos Verbais | `chars/tempos-verbais-hd.png` |
+| Elinho (letra ℓ animada, cowboy/surfista) | Letra ℓ | `chars/letra-l-hd.png` |
+| Zé e Das Graças (fantoches) | Variação Linguística | `chars/variacao-linguistica-hd.png` |
+| ?, !, . (pontuações animadas) | Pontuação | `chars/pontuacao-hd.png` |
+| Façã (criatura verde, imperativo) | Texto Instrucional | `chars/texto-instrucional-hd.png` |
+| Toni (onda sonora animada) | Entonação | `chars/entonacao-hd.png` |
+| Calco (robô calculadora verde) | Multiplicação e Divisão | `chars/multiplicacao-divisao-hd.png` |
+| Divi (robô calculadora verde, ✓ no display) | Múltiplos e Divisores | `chars/multiplos-divisores-criterios-hd.png` |
+| Poli (cubo 3D animado) | Poliedros, Prismas e Pirâmides | `chars/poliedros-prismas-piramides-hd.png` |
+| Esfer (esfera com meridianos) | Corpos Redondos e Planificação | `chars/corpos-redondos-planificacao-hd.png` |
+| Primo (dígito "1" com lupa, detetive) | Primos e Fatoração | `chars/primos-compostos-fatoracao-hd.png` |
+| Max & Min (duo: robô-D grande + robô-M pequeno) | mdc e mmc | `chars/mdc-mmc-problemas-hd.png` |
+| Lixinho (lixeira cilíndrica animada) | O Lixo que Produzimos | `chars/lixo-que-produzimos-hd.png` |
+| Professora Ciência (cientista, jaleco branco, cabelo grisalho) | O Caminho do Lixo | `chars/caminho-do-lixo-hd.png` |
+| Ciclão (gota azul, boné CICLÃO) | O Ciclo da Água | `chars/ciclo-da-agua-hd.png` |
+| Gotinha (gota azul, capacete amarelo) | Água, Cidades e Consumo | `chars/agua-cidades-consumo-hd.png` |
+| Agro 4.0 (robô agrícola amarelo com rodas) | Tecnologia Agropecuária | `chars/tecnologia-agropecuaria-hd.png` |
+| Prof. Geografina (mulher ~45, óculos amarelos, colete patchwork) | Diversidade Cultural + País de Contrastes | `chars/diversidade-cultural-hd.png` + `chars/pais-de-contrastes-hd.png` |
+| Calê (moeda/medalha dourada) | Diversos Calendários | `chars/calendarios-povos-hd.png` |
+| Memo (estela de pedra) | Marcos de Memória | `chars/marcos-memoria-hd.png` |
+| Timbre (selo postal laranja) | Zumbi e Imigrantes | `chars/memoria-negra-imigrantes-hd.png` |
 
-Novos personagens devem ser **metáforas visuais do conceito central** do tema.
+> Caminhos de portrait são relativos a `_landing/`. Folhas de personagens em `Personagens\5o ano\`.
+> Novos personagens devem ser **metáforas visuais do conceito central** do tema.
 
 ### Estrutura de pastas
 
 ```
 estudos/
-├── portugues/[slug]/     ← 8 temas existentes
-├── matematica/[slug]/    ← 4 temas existentes
-├── ciencias/[slug]/      ← 3 temas existentes
-├── historia/[slug]/      ← 5 temas existentes
-└── geografia/[slug]/
+├── portugues/[slug]/     ← 8 temas
+├── matematica/[slug]/    ← 7 temas
+├── ciencias/[slug]/      ← 4 temas
+├── historia/[slug]/      ← 3 temas
+├── geografia/[slug]/     ← 3 temas
+└── _landing/
+    ├── prepo-hd.png      ← portrait do Prepo (raiz)
+    └── chars/            ← portraits HD de todos os outros personagens (23 arquivos)
 ```
 
 ### Convenção de nomenclatura

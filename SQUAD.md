@@ -64,9 +64,22 @@ estudos/
 
 ---
 
+## Pré-requisito — Codex Desktop
+
+Antes de iniciar qualquer pipeline, Léo deve:
+1. Abrir o **Codex Desktop**
+2. Despausar (ativar) as **duas automações**:
+   - **Gerar HQs pendentes** — processa `.claude/pending/hq-[slug].json`
+   - **Gerar Portraits pendentes** — processa `.claude/pending/portraits-batch.json`
+
+---
+
 ## Fluxo completo
 
 ```
+Léo ativa as 2 automações no Codex Desktop
+         │
+         ▼
 Léo fornece fotos + disciplina
          │
          ▼
@@ -85,14 +98,14 @@ Orquestrador apresenta proposta a Léo
          ▼                                 ▼
 [gerador-hq-prompt]              [gerador-atividades]
   → hq-[slug]-prompt.md            → quiz-[slug].html
-                                   → mapa-mental-[slug].html
+  → [slug]-portrait-prompt.md      → mapa-mental-[slug].html
                                    → [outros tipos].html
          └─────────────────────────────────┘
                         │
                         ▼
                [atualizador-index]
                  → index.html atualizado
-                   (sidebar + bloco + contador + pp. XX–YY)
+                   (sidebar + bloco + contador + THEME_CATALOG)
                         │
                         ▼
               [revisor-qualidade]
@@ -102,19 +115,21 @@ Orquestrador apresenta proposta a Léo
                         ▼
              [gerador-hq-imagens]
                • escreve .claude/pending/hq-[slug].json
-               • polling a cada 30s por até 30min
-               • Codex gera e salva pg1–pg4 + chars (1024×1536)
-               • detecta done/ → aciona colador-hq
+               • escreve .claude/pending/portraits-batch.json
+               • Codex (HQ): gera folha de personagem + pg1-pg4
+               • Codex (Portrait): usa folha → gera [slug]-hd.png
+               • polling → detecta done/ → aciona colador-hq
                • detecta error/ → reporta a Léo
                         │
-                        ▼
-                [colador-hq]
-                  • valida dimensões das 4 páginas
-                  • empilha verticalmente com Pillow
-                  → hq-[slug].png na pasta do tema
-                        │
-                        ▼
-           Orquestrador → relatório final a Léo
+                 ┌───────┴───────┐
+                 ▼               ▼
+          [colador-hq]     Codex salva
+            → hq-[slug]    [slug]-hd.png
+              .png          em _landing/chars/
+                 └───────┬───────┘
+                         │
+                         ▼
+            Orquestrador → relatório final a Léo
 ```
 
 ---
@@ -127,7 +142,9 @@ Orquestrador apresenta proposta a Léo
 | `[tipo]-[slug].html` | `estudos/[disciplina]/[slug]/` |
 | `hq-[slug]-pg1..4.png` | `estudos/[disciplina]/[slug]/` |
 | `hq-[slug].png` (colagem final) | `estudos/[disciplina]/[slug]/` |
-| `[NomePersonagem].png` (chars) | `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\` |
+| `[NomePersonagem].png` (folha de personagem) | `Personagens\5o ano\` |
+| `[slug]-portrait-prompt.md` | `estudos/_landing/chars/` |
+| `[slug]-hd.png` (portrait gamificação) | `estudos/_landing/chars/` |
 
 ---
 
@@ -161,18 +178,35 @@ Orquestrador apresenta proposta a Léo
 
 ## Personagens canônicos
 
-| Personagem | Descrição | Tema |
-|---|---|---|
-| Prepo | Robô roxo — mascote geral | Preposições |
-| Bia | Menina 11 anos, cabelo cacheado preto, uniforme azul | Protagonista recorrente |
-| Prof. Teatrão | Professor dramático, cachecol colorido | Texto Teatral |
-| Verbão | Letra animada, 3 roupas: passado/presente/futuro | Tempos Verbais |
-| Elinho | Letra ℓ animada, versões cowboy e surfista | Letra ℓ |
-| Zé e Das Graças | Fantoches | Variação Linguística |
-| ?, !, . | Pontuações animadas | Pontuação |
-| Toni | Onda sonora animada | Entonação |
+| Personagem | Descrição | Tema | Portrait |
+|---|---|---|---|
+| Prepo | Robô roxo — mascote geral | Preposições | `prepo-hd.png` |
+| Bia | Menina 11 anos, cabelo cacheado preto, uniforme azul | Protagonista recorrente | — |
+| Prof. Teatrão | Professor dramático, cachecol colorido | Texto Teatral | `chars/teatral-hd.png` |
+| Verbão | Letra animada, 3 roupas: passado/presente/futuro | Tempos Verbais | `chars/tempos-verbais-hd.png` |
+| Elinho | Letra ℓ animada, versões cowboy e surfista | Letra ℓ | `chars/letra-l-hd.png` |
+| Zé e Das Graças | Fantoches | Variação Linguística | `chars/variacao-linguistica-hd.png` |
+| ?, !, . | Pontuações animadas | Pontuação | `chars/pontuacao-hd.png` |
+| Façã | Criatura verde, imperativo "FAÇA!" | Texto Instrucional | `chars/texto-instrucional-hd.png` |
+| Toni | Onda sonora animada | Entonação | `chars/entonacao-hd.png` |
+| Calco | Robô calculadora verde, display com smile | Multiplicação e Divisão | `chars/multiplicacao-divisao-hd.png` |
+| Divi | Robô calculadora verde, display com ✓ | Múltiplos e Divisores | `chars/multiplos-divisores-criterios-hd.png` |
+| Poli | Cubo 3D animado, F+V=A+2 | Poliedros, Prismas e Pirâmides | `chars/poliedros-prismas-piramides-hd.png` |
+| Esfer | Esfera azul-esverdeada com meridianos | Corpos Redondos e Planificação | `chars/corpos-redondos-planificacao-hd.png` |
+| Primo | Dígito "1" verde-escuro, coroa dourada, lupa | Primos e Fatoração | `chars/primos-compostos-fatoracao-hd.png` |
+| Max & Min | Duo: robô-D grande + robô-M pequeno | mdc e mmc | `chars/mdc-mmc-problemas-hd.png` |
+| Lixinho | Lixeira cilíndrica animada, tampa-chapéu | O Lixo que Produzimos | `chars/lixo-que-produzimos-hd.png` |
+| Professora Ciência | Cientista, jaleco branco, cabelo grisalho | O Caminho do Lixo | `chars/caminho-do-lixo-hd.png` |
+| Ciclão | Gota azul, boné escuro com badge CICLÃO | O Ciclo da Água | `chars/ciclo-da-agua-hd.png` |
+| Gotinha | Gota azul, capacete amarelo (distinto do Ciclão) | Água, Cidades e Consumo | `chars/agua-cidades-consumo-hd.png` |
+| Agro 4.0 | Robô agrícola amarelo/dourado com rodas | Tecnologia Agropecuária | `chars/tecnologia-agropecuaria-hd.png` |
+| Prof. Geografina | Mulher ~45, pele morena, óculos amarelos redondos, colete patchwork | Diversidade Cultural + País de Contrastes | `chars/diversidade-cultural-hd.png` + `chars/pais-de-contrastes-hd.png` |
+| Calê | Moeda/medalha dourada com coroa de louros | Diversos Calendários | `chars/calendarios-povos-hd.png` |
+| Memo | Estela de pedra cinza-bege | Marcos de Memória | `chars/marcos-memoria-hd.png` |
+| Timbre | Selo postal laranja com bordas picotadas | Zumbi e Imigrantes | `chars/memoria-negra-imigrantes-hd.png` |
 
-Novos personagens devem ser **metáforas visuais do conceito central** do tema.
+> Caminhos de portrait são relativos a `_landing/`. Folhas de personagem em `Personagens\5o ano\`.
+> Novos personagens devem ser **metáforas visuais do conceito central** do tema.
 
 ---
 
