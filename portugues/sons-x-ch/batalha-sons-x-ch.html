@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batalha X vs CH</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF; --port-dark: #4C1D95;
+  --text: #1A1A2E; --muted: #6B7280; --border: #DDD6FE; --card: #fff;
+  --cx: #7C3AED; --ch: #EA580C;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 640px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 40px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+/* HINT BAR */
+.hint-bar { background: #ede9fe; padding: 10px 20px; border-bottom: 2px solid var(--border); font-size: 12px; font-weight: 600; color: var(--port-dark); line-height: 1.5; }
+.hint-bar strong { color: var(--port-dark); }
+
+/* PROGRESS + SCORE */
+.meta-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 20px; border-bottom: 2px solid var(--border); flex-wrap: wrap; gap: 6px; }
+.meta-bar .round-label { font-size: 13px; font-weight: 800; color: var(--muted); }
+.meta-bar .score-label { font-size: 14px; font-weight: 900; color: var(--port); }
+.meta-bar .combo-label { font-size: 12px; font-weight: 800; color: #EA580C; min-width: 60px; }
+.prog-track { width: 100%; height: 7px; background: var(--border); border-radius: 999px; margin: 0 20px 12px; overflow: hidden; }
+.prog-fill { height: 7px; background: linear-gradient(90deg, var(--port), var(--port-light)); border-radius: 999px; transition: width .3s; }
+
+/* ARENA */
+.arena { padding: 24px 20px; text-align: center; }
+.word-display { font-family: "Space Mono", monospace; font-size: 36px; font-weight: 700; letter-spacing: 2px; color: var(--port-dark); margin-bottom: 8px; min-height: 50px; line-height: 1.2; }
+.blank-char { color: var(--port); font-size: 40px; }
+.context-hint { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 28px; min-height: 22px; }
+
+/* BATTLE BUTTONS */
+.battle-btns { display: flex; gap: 16px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+.battle-btn { flex: 1; min-width: 120px; max-width: 200px; padding: 18px 12px; border: 3px solid; border-radius: 20px; font-family: "Baloo 2", cursive; font-size: 22px; font-weight: 900; cursor: pointer; transition: transform .1s, box-shadow .15s; user-select: none; }
+.battle-btn.btn-x { background: #ede9fe; border-color: var(--cx); color: var(--cx); }
+.battle-btn.btn-ch { background: #ffedd5; border-color: var(--ch); color: var(--ch); }
+.battle-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,.15); }
+.battle-btn:disabled { cursor: default; }
+.battle-btn.flash-correct { animation: flashGreen .5s; }
+.battle-btn.flash-wrong { animation: flashRed .5s; }
+@keyframes flashGreen { 0%,100%{background:inherit} 40%{background:#d1fae5;border-color:#059669;transform:scale(1.08)} }
+@keyframes flashRed { 0%,100%{background:inherit} 40%{background:#fee2e2;border-color:#dc2626;transform:scale(.95)} }
+
+/* IMPACT TEXT */
+.impact { font-family: "Space Mono", monospace; font-size: 22px; font-weight: 900; min-height: 36px; text-align: center; margin-bottom: 4px; transition: opacity .2s; }
+.impact.correct { color: #059669; }
+.impact.wrong { color: #dc2626; }
+
+/* FEEDBACK */
+.feedback-box { min-height: 56px; background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 10px 14px; font-size: 13px; font-weight: 600; line-height: 1.5; text-align: left; margin-bottom: 0; color: var(--text); }
+.feedback-box.correct { background: #d1fae5; border-color: #059669; }
+.feedback-box.wrong { background: #fee2e2; border-color: #dc2626; }
+
+/* FINAL */
+.final-screen { display: none; text-align: center; padding: 32px 24px; }
+.final-emoji { font-size: 64px; margin-bottom: 12px; }
+.final-title { font-family: "Space Mono", monospace; font-size: 18px; color: var(--port-dark); margin-bottom: 10px; }
+.final-score { font-size: 38px; font-weight: 900; color: var(--port); margin-bottom: 6px; }
+.final-combo { font-size: 15px; font-weight: 800; color: var(--ch); margin-bottom: 10px; }
+.final-msg { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 24px; line-height: 1.6; max-width: 380px; margin-left: auto; margin-right: auto; }
+.replay-btn { background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.replay-btn:hover { opacity: .85; }
+
+@media (max-width: 420px) {
+  .word-display { font-size: 28px; }
+  .battle-btn { font-size: 18px; padding: 14px 8px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">⚔️</div>
+      <div>
+        <h1>Batalha X vs CH</h1>
+        <p>Complete a palavra escolhendo X ou CH — 20 rodadas</p>
+      </div>
+      <div class="hbadge">💬 Discutir</div>
+    </div>
+
+    <div class="hint-bar">
+      <strong>Regras:</strong> depois de <strong>ditongo</strong> (ei, ai, ou...) = X &nbsp;|&nbsp;
+      depois de <strong>EN-</strong> = X (salvo derivadas de CH) &nbsp;|&nbsp;
+      <strong>derivada de palavra com CH</strong> = CH
+    </div>
+
+    <div id="game-area">
+      <div class="meta-bar">
+        <span class="round-label" id="round-label">Rodada 1 de 20</span>
+        <span class="combo-label" id="combo-label"></span>
+        <span class="score-label" id="score-label">0 pts</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:5%"></div></div>
+
+      <div class="arena">
+        <div class="word-display" id="word-display"></div>
+        <div class="context-hint" id="context-hint"></div>
+        <div class="battle-btns">
+          <button class="battle-btn btn-x" id="btn-x" onclick="answer('X')">X</button>
+          <button class="battle-btn btn-ch" id="btn-ch" onclick="answer('CH')">CH</button>
+        </div>
+        <div class="impact" id="impact"></div>
+        <div class="feedback-box" id="feedback-box">Escolha X ou CH para completar a palavra!</div>
+      </div>
+    </div>
+
+    <div class="final-screen" id="final-screen">
+      <div class="final-emoji" id="final-emoji"></div>
+      <div class="final-title">Batalha Encerrada!</div>
+      <div class="final-score" id="final-score"></div>
+      <div class="final-combo" id="final-combo"></div>
+      <div class="final-msg" id="final-msg"></div>
+      <button class="replay-btn" onclick="init()">Jogar novamente</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var ROUNDS = [
+  { before:'pei', blank:'_', after:'e',       answer:'X',  full:'peixe',       hint:'Ditongo "ei" antes da lacuna → regra do ditongo',        feedback:'PEIXE usa X! O ditongo "ei" antes do X indica que ele tem o mesmo som do dígrafo CH.' },
+  { before:'en',  blank:'_', after:'ame',      answer:'X',  full:'enxame',      hint:'A palavra começa com EN- → regra do EN-',                feedback:'ENXAME usa X! Quando a palavra começa com EN- seguido de X, usa-se X (não CH).' },
+  { before:'en',  blank:'_', after:'er',       answer:'CH', full:'encher',      hint:'Deriva de "cheio" → guarda o CH de origem',              feedback:'ENCHER usa CH! Deriva de "cheio" (que tem CH). Derivadas de palavras com CH mantêm o CH.' },
+  { before:'fai', blank:'_', after:'a',        answer:'X',  full:'faixa',       hint:'Ditongo "ai" antes da lacuna → regra do ditongo',        feedback:'FAIXA usa X! O ditongo "ai" antes do X é uma das situações em que X tem som de CH.' },
+  { before:'borra',blank:'_',after:'a',        answer:'CH', full:'borracha',    hint:'Sem ditongo nem EN- antes da lacuna',                    feedback:'BORRACHA usa CH! Não há ditongo nem EN- antes. É uma palavra com dígrafo CH.' },
+  { before:'bi',  blank:'_', after:'o',        answer:'CH', full:'bicho',       hint:'Sem ditongo nem EN- antes da lacuna',                    feedback:'BICHO usa CH! Dígrafo CH sem regra especial de X antes.' },
+  { before:'ro',  blank:'_', after:'a',        answer:'CH', full:'rocha',       hint:'Sem ditongo nem EN- antes da lacuna',                    feedback:'ROCHA usa CH! Sem ditongo nem EN- antes. Dígrafo CH.' },
+  { before:'ca',  blank:'_', after:'imbo',     answer:'CH', full:'cachimbo',    hint:'Sem ditongo nem EN- antes da lacuna',                    feedback:'CACHIMBO usa CH! Dígrafo CH no meio da palavra, sem regra de X.' },
+  { before:'en',  blank:'_', after:'urrada',   answer:'CH', full:'enchurrada',  hint:'Deriva de "chuva" → guarda o CH de origem',              feedback:'ENCHURRADA usa CH! Deriva de "chuva" (que tem CH). A regra EN- + X não se aplica quando a origem tem CH.' },
+  { before:'en',  blank:'_', after:'oval',     answer:'X',  full:'enxoval',     hint:'A palavra começa com EN- → regra do EN-',                feedback:'ENXOVAL usa X! Palavra com EN- seguido de X — regra do EN-.' },
+  { before:'dei', blank:'_', after:'ou',       answer:'X',  full:'deixou',      hint:'Ditongo "ei" antes da lacuna → regra do ditongo',        feedback:'DEIXOU usa X! O ditongo "ei" antes do X aplica a regra: X com som de CH.' },
+  { before:'',    blank:'_', after:'amado',    answer:'CH', full:'chamado',     hint:'A palavra começa com CH',                                feedback:'CHAMADO usa CH! Dígrafo CH no início da palavra.' },
+  { before:'en',  blank:'_', after:'ente',     answer:'CH', full:'enchente',    hint:'Deriva de "encher" (que vem de "cheio")',                 feedback:'ENCHENTE usa CH! Deriva de "encher" / "cheio" — a origem tem CH, então usa-se CH mesmo com EN-.' },
+  { before:'ei',  blank:'_', after:'o',        answer:'X',  full:'eixo',        hint:'Ditongo "ei" antes da lacuna → regra do ditongo',        feedback:'EIXO usa X! O ditongo "ei" indica X com som de CH.' },
+  { before:'en',  blank:'_', after:'ergar',    answer:'X',  full:'enxergar',    hint:'A palavra começa com EN- → regra do EN-',                feedback:'ENXERGAR usa X! Regra do EN- — EN- seguido de X.' },
+  { before:'me',  blank:'_', after:'er',       answer:'X',  full:'mexer',       hint:'O X em "mexer" tem som de CH (ditongo "e" breve)',        feedback:'MEXER usa X! Nesta palavra, o X tem o mesmo som do dígrafo CH.' },
+  { before:'',    blank:'_', after:'ave',      answer:'CH', full:'chave',       hint:'A palavra começa com CH',                                feedback:'CHAVE usa CH! Dígrafo CH no início da palavra.' },
+  { before:'apai',blank:'_', after:'onado',    answer:'X',  full:'apaixonado',  hint:'Ditongo "ai" antes da lacuna → regra do ditongo',        feedback:'APAIXONADO usa X! O ditongo "ai" antes do X aplica a regra do ditongo.' },
+  { before:'en',  blank:'_', after:'aqueca',   answer:'X',  full:'enxaqueca',   hint:'A palavra começa com EN- → regra do EN-',                feedback:'ENXAQUECA usa X! Regra do EN- — está no exemplo do livro!' },
+  { before:'cai', blank:'_', after:'ote',      answer:'X',  full:'caixote',     hint:'Ditongo "ai" antes da lacuna → regra do ditongo',        feedback:'CAIXOTE usa X! O ditongo "ai" antes do X — mesma família de "caixa".' },
+];
+
+var order, current, score, combo, maxCombo, answered;
+
+function init() {
+  order = ROUNDS.slice().sort(function(){ return Math.random()-.5; });
+  current = 0; score = 0; combo = 0; maxCombo = 0; answered = false;
+  document.getElementById('final-screen').style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+  render();
+}
+
+function render() {
+  var r = order[current];
+  document.getElementById('round-label').textContent = 'Rodada ' + (current+1) + ' de ' + order.length;
+  document.getElementById('prog-fill').style.width = ((current+1)/order.length*100) + '%';
+  document.getElementById('score-label').textContent = score + ' pts';
+  document.getElementById('combo-label').textContent = combo >= 2 ? '🔥 Combo x' + combo : '';
+
+  // Word display
+  var display = '';
+  if (r.before) display += r.before;
+  display += '<span class="blank-char">_</span>';
+  if (r.after) display += r.after;
+  document.getElementById('word-display').innerHTML = display;
+  document.getElementById('context-hint').textContent = r.hint;
+
+  document.getElementById('feedback-box').className = 'feedback-box';
+  document.getElementById('feedback-box').textContent = 'Escolha X ou CH para completar a palavra!';
+  document.getElementById('impact').className = 'impact';
+  document.getElementById('impact').textContent = '';
+
+  document.getElementById('btn-x').disabled = false;
+  document.getElementById('btn-ch').disabled = false;
+  document.getElementById('btn-x').className = 'battle-btn btn-x';
+  document.getElementById('btn-ch').className = 'battle-btn btn-ch';
+  answered = false;
+}
+
+function answer(choice) {
+  if (answered) return;
+  answered = true;
+  var r = order[current];
+  var correct = choice === r.answer;
+
+  document.getElementById('btn-x').disabled = true;
+  document.getElementById('btn-ch').disabled = true;
+
+  var chosenBtn = document.getElementById('btn-' + choice.toLowerCase());
+  var fb = document.getElementById('feedback-box');
+  var imp = document.getElementById('impact');
+
+  if (correct) {
+    combo++; if (combo > maxCombo) maxCombo = combo;
+    var pts = combo >= 3 ? 15 : combo === 2 ? 12 : 10;
+    score += pts;
+    chosenBtn.classList.add('flash-correct');
+    imp.textContent = combo >= 3 ? '🔥 COMBO! +' + pts : '✓ Correto! +' + pts;
+    imp.className = 'impact correct';
+    fb.className = 'feedback-box correct';
+  } else {
+    combo = 0;
+    chosenBtn.classList.add('flash-wrong');
+    imp.textContent = '✗ Errado! A resposta é ' + r.answer;
+    imp.className = 'impact wrong';
+    fb.className = 'feedback-box wrong';
+    // highlight correct
+    document.getElementById('btn-' + r.answer.toLowerCase()).style.background = '#d1fae5';
+    document.getElementById('btn-' + r.answer.toLowerCase()).style.borderColor = '#059669';
+  }
+
+  fb.textContent = r.feedback;
+  document.getElementById('combo-label').textContent = combo >= 2 ? '🔥 Combo x' + combo : '';
+  document.getElementById('score-label').textContent = score + ' pts';
+
+  setTimeout(function() {
+    current++;
+    if (current >= order.length) { showFinal(); return; }
+    render();
+  }, 2200);
+}
+
+function showFinal() {
+  document.getElementById('game-area').style.display = 'none';
+  var fs = document.getElementById('final-screen');
+  fs.style.display = 'block';
+  var pct = Math.round(score / (order.length * 10) * 100);
+  var rank, emoji;
+  if (score >= 260) { rank = 'Mestre das Letras'; emoji = '🏆'; }
+  else if (score >= 200) { rank = 'Guerreiro do X'; emoji = '⚔️'; }
+  else if (score >= 140) { rank = 'Aprendiz Corajoso'; emoji = '🎩'; }
+  else { rank = 'Continua Treinando!'; emoji = '📚'; }
+  document.getElementById('final-emoji').textContent = emoji;
+  document.getElementById('final-score').textContent = score + ' pontos — ' + rank;
+  document.getElementById('final-combo').textContent = 'Maior combo: ' + maxCombo + 'x';
+  var msg;
+  if (score >= 260) msg = 'Incrível! Você domina as três regras: ditongo→X, EN-→X e derivadas de CH→CH.';
+  else if (score >= 200) msg = 'Muito bem! Lembre-se: EN- + X é X, mas quando a origem da palavra tem CH (como enchente ← encher ← cheio), mantém-se CH.';
+  else msg = 'Pratique mais! As regras-chave são: ditongo antes (ei, ai, ou) → X com som de CH; EN- antes → X; deriva de palavra com CH → CH.';
+  document.getElementById('final-msg').textContent = msg;
+}
+
+init();
+</script>
+</body>
+</html>

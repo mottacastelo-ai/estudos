@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Prefixo e Sufixo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.12); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #faf9ff; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--port-light); color: var(--port); }
+.toolbar button.active { background: var(--port-bg); border-color: var(--port); color: var(--port); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--port); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FEF3C7; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: calc(100svh - 340px); background: var(--port-bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 90px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid var(--port); outline-offset: 2px; }
+.n-root   { background: linear-gradient(135deg, #4C1D95, #7C3AED); color: white; border: 2px solid #3b0764; font-size: 13px; font-weight: 800; min-width: 150px; padding: 11px 20px; z-index: 11; }
+.n-level1 { background: #EDE9FE; border: 2px solid #C4B5FD; color: #4C1D95; }
+.n-level2 { background: white; border: 2px solid #DDD6FE; color: #374151; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #C4B5FD; background: var(--port-bg); display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--port-dark); margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: var(--port-bg); display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #DDD6FE; }
+.score-fill  { height: 8px; border-radius: 999px; background: var(--port); transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: var(--port-dark); white-space: nowrap; }
+
+@media (max-width: 600px) {
+  #stage { height: calc(100svh - 340px) !important; min-height: 380px; }
+  .node { font-size: 13px !important; padding: 10px 14px !important; min-width: 90px !important; }
+  .n-root { min-width: 130px !important; font-size: 12px !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🗺️</div>
+      <div><h1>Mapa Mental</h1><p>Prefixo e Sufixo — pp. 122–125, 142</p></div>
+      <div class="hbadge">🏆 Sintese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar os baloes e organizar o mapa.
+      Use <strong>+ Conectar</strong> para criar setas entre eles.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com a estrutura correta.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect">+ Conectar</button>
+      <button id="btn-move" class="active">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexoes</span>
+      <span id="hint-bar">Clique e arraste qualquer balao</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balao para conectar ✔</div>
+      <div id="stage">
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#7C3AED" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">ESTRUTURA DO MAPA — GABARITO</div>
+      <svg id="gabarito-svg" viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4C1D95"/>
+            <stop offset="100%" stop-color="#7C3AED"/>
+          </linearGradient>
+          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#7C3AED" opacity="0.6"/>
+          </marker>
+        </defs>
+        <!-- Root → L1 arrows -->
+        <line x1="350" y1="36" x2="118" y2="90" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="36" x2="350" y2="90" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="36" x2="582" y2="90" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <!-- prefixo → examples -->
+        <line x1="118" y1="116" x2="60"  y2="168" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="118" y1="116" x2="176" y2="168" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- sufixo → examples -->
+        <line x1="350" y1="116" x2="290" y2="168" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="350" y1="116" x2="410" y2="168" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- processos → examples -->
+        <line x1="582" y1="116" x2="528" y2="168" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="582" y1="116" x2="636" y2="168" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- Root node -->
+        <rect x="242" y="8" width="216" height="32" rx="16" fill="url(#rg)" stroke="#3b0764" stroke-width="2"/>
+        <text x="350" y="29" text-anchor="middle" font-size="11" font-weight="800" fill="white">🌳 PALAVRAS DERIVADAS</text>
+        <!-- L1: Prefixo -->
+        <rect x="28" y="90" width="180" height="28" rx="14" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1.5"/>
+        <text x="118" y="109" text-anchor="middle" font-size="10" font-weight="700" fill="#4C1D95">🔷 Prefixo (inicio)</text>
+        <!-- L1: Sufixo -->
+        <rect x="256" y="90" width="188" height="28" rx="14" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1.5"/>
+        <text x="350" y="109" text-anchor="middle" font-size="10" font-weight="700" fill="#4C1D95">🔶 Sufixo (final)</text>
+        <!-- L1: Processos -->
+        <rect x="492" y="90" width="180" height="28" rx="14" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1.5"/>
+        <text x="582" y="109" text-anchor="middle" font-size="10" font-weight="700" fill="#4C1D95">⚙️ Processos</text>
+        <!-- L2 prefixo -->
+        <rect x="6"   y="168" width="108" height="24" rx="12" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="60"  y="184" text-anchor="middle" font-size="8.5" fill="#374151">re-, en-, des-</text>
+        <rect x="122" y="168" width="108" height="24" rx="12" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="176" y="184" text-anchor="middle" font-size="8.5" fill="#374151">super-, hidro-</text>
+        <!-- L2 sufixo -->
+        <rect x="234" y="168" width="112" height="24" rx="12" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="290" y="184" text-anchor="middle" font-size="8.5" fill="#374151">-ado, -inha</text>
+        <rect x="354" y="168" width="112" height="24" rx="12" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="410" y="184" text-anchor="middle" font-size="8.5" fill="#374151">-amento, -ente</text>
+        <!-- L2 processos -->
+        <rect x="476" y="168" width="104" height="24" rx="12" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="528" y="184" text-anchor="middle" font-size="8.5" fill="#374151">prefixacao</text>
+        <rect x="590" y="168" width="104" height="24" rx="12" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="636" y="184" text-anchor="middle" font-size="8.5" fill="#374151">sufixacao</text>
+        <!-- Legenda -->
+        <rect x="160" y="220" width="380" height="28" rx="10" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1"/>
+        <text x="350" y="238" text-anchor="middle" font-size="8.5" fill="#4C1D95" font-weight="700">Palavra primitiva = base • Palavra derivada = primitiva + prefixo e/ou sufixo</text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 9 conexoes</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var NODES = [
+  {id:'root',     label:'🌳 PALAVRAS DERIVADAS',    cls:'n-root'},
+  {id:'prefixo',  label:'🔷 Prefixo (inicio)',       cls:'n-level1'},
+  {id:'sufixo',   label:'🔶 Sufixo (final)',          cls:'n-level1'},
+  {id:'processos',label:'⚙️ Processos de formacao',  cls:'n-level1'},
+  {id:'ex-pref1', label:'re-, en-, des-',             cls:'n-level2'},
+  {id:'ex-pref2', label:'super-, hidro-',             cls:'n-level2'},
+  {id:'ex-suf1',  label:'-ado, -inha',                cls:'n-level2'},
+  {id:'ex-suf2',  label:'-amento, -ente',             cls:'n-level2'},
+  {id:'prefi-acao',label:'prefixacao',                cls:'n-level2'},
+  {id:'sufi-acao', label:'sufixacao',                 cls:'n-level2'},
+];
+
+var GABARITO = [
+  ['root','prefixo'],
+  ['root','sufixo'],
+  ['root','processos'],
+  ['prefixo','ex-pref1'],
+  ['prefixo','ex-pref2'],
+  ['sufixo','ex-suf1'],
+  ['sufixo','ex-suf2'],
+  ['processos','prefi-acao'],
+  ['processos','sufi-acao'],
+];
+
+var SHUFFLE = ['ex-suf2','prefixo','prefi-acao','root','ex-pref1','processos','ex-suf1','sufi-acao','sufixo','ex-pref2'];
+
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'move', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
+
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 480 ? 2 : 5;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 16, padY = 32;
+  var colW = (W - padX*2) / COLS;
+  var rowH = Math.max(80, (stage.clientHeight - padY*2) / ROWS);
+  var minH = padY*2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i%COLS + 0.5) * colW,
+      y: padY + (Math.floor(i/COLS) + 0.5) * rowH
+    };
+  });
+}
+
+function renderNodes() {
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-'+n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls; el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
+    }
+    placeNode(n.id);
+  });
+}
+
+function placeNode(id) {
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw+4, Math.min(W-hw-4, p.x));
+  var cy = Math.max(hh+4, Math.min(H-hh-4, p.y));
+  el.style.left = (cx-hw)+'px'; el.style.top = (cy-hh)+'px';
+}
+
+function center(id) {
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
+}
+
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode==='erase';
+  arrows.forEach(function(a, i) {
+    var f=center(a.from), t=center(a.to), dx=t.x-f.x, dy=t.y-f.y;
+    var len=Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl=document.getElementById('nd-'+a.to);
+    var rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
+    var ex=t.x-(dx/len)*rad, ey=t.y-(dy/len)*rad;
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
+    line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
+    line.setAttribute('stroke', isErase?'#DC2626':'#7C3AED');
+    line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents='stroke'; line.style.cursor='pointer';
+      (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
+  });
+}
+
+function updateCount() { var n=arrows.length; document.getElementById('conn-count').textContent=n+(n===1?' conexao':' conexoes'); }
+
+function setMode(m) {
+  mode=m;
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  document.getElementById('pending-msg').style.display='none';
+  ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {connect:'Clique em dois baloes para criar uma seta',move:'Clique e arraste qualquer balao',erase:'Clique em uma seta para apaga-la'}[m];
+}
+
+function onNodeClick(e, id) {
+  if (mode!=='connect') return;
+  if (!arrowFrom) { arrowFrom=id; document.getElementById('nd-'+id).classList.add('selected'); document.getElementById('pending-msg').style.display='block'; }
+  else {
+    document.getElementById('nd-'+arrowFrom).classList.remove('selected');
+    document.getElementById('nd-'+id).classList.remove('selected');
+    if (arrowFrom!==id) {
+      var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom=null; document.getElementById('pending-msg').style.display='none';
+  }
+  e.stopPropagation();
+}
+
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+document.addEventListener('mousemove',function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup',function(){ dragging=null; });
+document.addEventListener('touchmove',function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
+document.addEventListener('touchend',function(){ dragging=null; });
+
+document.getElementById('btn-connect').addEventListener('click',function(){ setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click',function(){ setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click',function(){ setMode(mode==='erase'?'move':'erase'); });
+document.getElementById('btn-reset').addEventListener('click',function(){ arrows=[]; calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); updateCount(); updateGabarito(); });
+document.getElementById('btn-gabarito').addEventListener('click',function(){
+  gabVisible=!gabVisible;
+  document.getElementById('gabarito-panel').style.display=gabVisible?'block':'none';
+  document.getElementById('btn-gabarito').textContent=gabVisible?'Ocultar gabarito':'Ver gabarito';
+  if(gabVisible) updateGabarito();
+});
+
+function updateGabarito() {
+  if (!gabVisible) return;
+  var hits=0;
+  GABARITO.forEach(function(pair){ if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++; });
+  var total=GABARITO.length, pct=Math.round((hits/total)*100);
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-label').textContent=hits+' de '+total+' conexoes ('+pct+'%)';
+}
+
+window.addEventListener('resize',function(){ calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load',function(){ calcPositions(); renderNodes(); setMode('move'); });
+</script>
+</body>
+</html>
