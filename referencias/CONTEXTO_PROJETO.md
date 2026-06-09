@@ -124,8 +124,8 @@ Sistema completo documentado em `referencias/GAMIFICACAO.md`. Resumo:
 - **Reforço adaptativo:** atividades com score < 80% na 1ª tentativa entram em fila com `due_date + 5 dias`
 - **Carta Revisional:** gerada ao resolver todos os reforços pendentes de um tema
 - **Painel de coleção:** tela no portal exibindo todas as cartas obtidas por tema
-- **Validação:** sistema completo testado e validado em Preposições (8 HTMLs com snippet "concluir-btn")
-- **Próximo passo:** aplicar snippet nos demais 24 temas (padrão já definido, pronto para replicar)
+- **Validação:** sistema completo testado e validado em Preposições
+- **Cobertura:** snippet "concluir-btn" implantado em todos os 25 temas (74 arquivos HTML — exceto mapa-mental e tabuada)
 
 ---
 

@@ -264,6 +264,6 @@ Tela no portal que exibe todas as cartas obtidas pelo aluno, organizadas por tem
 | ✅ | Bloco "Para reforçar" no portal |
 | ✅ | Tela de coleção de cartas no portal |
 | ✅ | Gamificação validada em produção (piloto: Preposições — snippet em todos os 8 HTMLs) |
-| ⏳ | Snippet "concluir-btn" nos demais 24 temas (pronto para implantação) |
+| ✅ | Snippet "concluir-btn" implantado em todos os 25 temas (74 arquivos HTML, exceto mapa-mental e tabuada) |
 | ⏳ | Condição de disparo para Lend-Épica |
 | ⏳ | Reforço V2 — atividade diferente sobre o mesmo conceito |
