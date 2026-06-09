@@ -126,7 +126,7 @@
 ---
 
 ### Anuncio Publicitario
-**HQ:** ❌ `hq-anuncio-publicitario.png` (ausente) | Prompt: ✅
+**HQ:** ❌ `hq-anuncio-publicitario.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -138,7 +138,7 @@
 ---
 
 ### Prefixo Sufixo
-**HQ:** ❌ `hq-prefixo-sufixo.png` (ausente) | Prompt: ✅
+**HQ:** ❌ `hq-prefixo-sufixo.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -151,7 +151,7 @@
 
 ### Sons X Ch
 **Personagem:** XIS
-**HQ:** ❌ `hq-sons-x-ch.png` (ausente) | Prompt: ✅
+**HQ:** ❌ `hq-sons-x-ch.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -164,7 +164,7 @@
 
 ### Infografico
 **Personagem:** GRAFO
-**HQ:** ❌ `hq-infografico.png` (ausente) | Prompt: ✅
+**HQ:** ❌ `hq-infografico.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -402,6 +402,7 @@
 | `Esfer.png` |
 | `Faca.png` |
 | `Gotinha.png` |
+| `Grafo.png` |
 | `Lixinho.png` |
 | `Max-Min.png` |
 | `Poli.png` |
@@ -411,8 +412,11 @@
 | `Primo.png` |
 | `Prof. Geografina.png` |
 | `Professora Ciencia.png` |
+| `Publinho.png` |
+| `Raizinha.png` |
 | `Toni.png` |
 | `Verbão.png` |
+| `Xis.png` |
 | `Ze e Das Gracas.png` |
 | `memo e timbre.png` |
 

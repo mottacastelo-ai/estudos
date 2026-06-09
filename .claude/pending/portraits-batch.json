@@ -1,0 +1,33 @@
+{
+  "type": "portraits-batch",
+  "version": "1.0",
+  "project_root": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "chars_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "portraits_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars",
+  "characters": [
+    {
+      "name": "Publinho",
+      "char_sheet": "Publinho.png",
+      "portrait_output": "_landing\\chars\\anuncio-publicitario-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\anuncio-publicitario-portrait-prompt.md"
+    },
+    {
+      "name": "Raizinha",
+      "char_sheet": "Raizinha.png",
+      "portrait_output": "_landing\\chars\\prefixo-sufixo-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\prefixo-sufixo-portrait-prompt.md"
+    },
+    {
+      "name": "Xis",
+      "char_sheet": "Xis.png",
+      "portrait_output": "_landing\\chars\\sons-x-ch-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\sons-x-ch-portrait-prompt.md"
+    },
+    {
+      "name": "Grafo",
+      "char_sheet": "Grafo.png",
+      "portrait_output": "_landing\\chars\\infografico-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\infografico-portrait-prompt.md"
+    }
+  ]
+}
