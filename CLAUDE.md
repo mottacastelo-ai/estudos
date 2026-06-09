@@ -8,7 +8,7 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 
 - **Pasta local:** `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos`
 - **GitHub:** github.com/mottacastelo-ai/estudos — deploy via GitHub Pages
-- **Commit/push:** manual obrigatório (feito por Léo)
+- **Commit/push:** **automático** via hook — NÃO pedir a Léo para fazer manualmente
 - **Aluno:** André, 5º ano | **Responsável:** Léo Motta
 
 ---

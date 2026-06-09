@@ -1,123 +1,33 @@
 {
-  "type": "portrait-batch",
+  "type": "portraits-batch",
   "version": "1.0",
-  "description": "Gerar portraits HD dos personagens do portal educacional sabendo.app — 10 personagens com folha de referência já disponível",
-  "base_refs_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
-  "base_output_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars",
-  "instructions": [
-    "Para cada personagem abaixo:",
-    "1. Leia o arquivo de referência em reference_image",
-    "2. Leia o prompt_file para obter o texto do prompt",
-    "3. Use a imagem de referência APENAS para manter a identidade visual — não copie a cena",
-    "4. Gere o portrait com fundo chroma-key verde #00ff00 exatamente como especificado no prompt",
-    "5. Remova o fundo verde e salve como PNG transparente no output_path",
-    "6. Ao concluir todos, mova este arquivo para .claude/done/portraits-batch.json"
-  ],
+  "project_root": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "chars_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "portraits_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars",
   "characters": [
     {
-      "name": "Calco",
-      "theme": "Multiplicação e Divisão",
-      "discipline": "Matemática",
-      "reference_image": "Calco.png",
-      "prompt_file": "_landing\\chars\\multiplicacao-divisao-portrait-prompt.md",
-      "output_path": "_landing\\chars\\multiplicacao-divisao-hd.png",
-      "key_identity": "Green calculator robot, FELIZ pose, thumbs up, glowing smile on display screen"
+      "name": "Publinho",
+      "char_sheet": "Publinho.png",
+      "portrait_output": "_landing\\chars\\anuncio-publicitario-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\anuncio-publicitario-portrait-prompt.md"
     },
     {
-      "name": "Divi",
-      "theme": "Múltiplos, Divisores e Critérios",
-      "discipline": "Matemática",
-      "reference_image": "Divi.png",
-      "prompt_file": "_landing\\chars\\multiplos-divisores-criterios-portrait-prompt.md",
-      "output_path": "_landing\\chars\\multiplos-divisores-criterios-hd.png",
-      "key_identity": "Green calculator robot, ORGULHOSO pose, large green checkmark on display screen"
+      "name": "Raizinha",
+      "char_sheet": "Raizinha.png",
+      "portrait_output": "_landing\\chars\\prefixo-sufixo-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\prefixo-sufixo-portrait-prompt.md"
     },
     {
-      "name": "Poli",
-      "theme": "Poliedros, Prismas e Pirâmides",
-      "discipline": "Matemática",
-      "reference_image": "Poli.png",
-      "prompt_file": "_landing\\chars\\poliedros-prismas-piramides-portrait-prompt.md",
-      "output_path": "_landing\\chars\\poliedros-prismas-piramides-hd.png",
-      "key_identity": "Green 3D cube character with F+V=A+2 on face, yellow corner dots, ANIMADO pose"
+      "name": "Xis",
+      "char_sheet": "Xis.png",
+      "portrait_output": "_landing\\chars\\sons-x-ch-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\sons-x-ch-portrait-prompt.md"
     },
     {
-      "name": "Esfer",
-      "theme": "Corpos Redondos e Planificação",
-      "discipline": "Matemática",
-      "reference_image": "Esfer.png",
-      "prompt_file": "_landing\\chars\\corpos-redondos-planificacao-portrait-prompt.md",
-      "output_path": "_landing\\chars\\corpos-redondos-planificacao-hd.png",
-      "key_identity": "Teal/verde-água sphere with meridian lines and 360° tag, thin elastic limbs, FELIZ/ROLANDO"
-    },
-    {
-      "name": "Primo",
-      "theme": "Primos, Compostos e Fatoração",
-      "discipline": "Matemática",
-      "reference_image": "Primo.png",
-      "prompt_file": "_landing\\chars\\primos-compostos-fatoracao-portrait-prompt.md",
-      "output_path": "_landing\\chars\\primos-compostos-fatoracao-hd.png",
-      "key_identity": "Dark green numeral 1 character with gold crown and magnifying glass, detective coat, INVESTIGANDO"
-    },
-    {
-      "name": "Max e Min",
-      "theme": "MDC, MMC e Problemas",
-      "discipline": "Matemática",
-      "reference_image": "Max-Min.png",
-      "prompt_file": "_landing\\chars\\mdc-mmc-problemas-portrait-prompt.md",
-      "output_path": "_landing\\chars\\mdc-mmc-problemas-hd.png",
-      "key_identity": "DUO: Max (tall green robot, D on chest, crown) + Min (small green robot, M on chest), side by side"
-    },
-    {
-      "name": "Ciclão",
-      "theme": "Ciclo da Água",
-      "discipline": "Ciências",
-      "reference_image": "Ciclao.png",
-      "prompt_file": "_landing\\chars\\ciclo-da-agua-portrait-prompt.md",
-      "output_path": "_landing\\chars\\ciclo-da-agua-hd.png",
-      "key_identity": "Blue water drop with dark navy blue cap/helmet, CICLÃO badge on helmet, FELIZ E ANIMADO running"
-    },
-    {
-      "name": "Gotinha",
-      "theme": "Água, Cidades e Consumo",
-      "discipline": "Ciências",
-      "reference_image": "Gotinha.png",
-      "prompt_file": "_landing\\chars\\agua-cidades-consumo-portrait-prompt.md",
-      "output_path": "_landing\\chars\\agua-cidades-consumo-hd.png",
-      "key_identity": "Blue water drop with YELLOW hard hat (key distinction from Ciclão), FELIZ arms raised"
-    },
-    {
-      "name": "Calê",
-      "theme": "Calendários dos Povos",
-      "discipline": "História",
-      "reference_image": "Calê.png",
-      "prompt_file": "_landing\\chars\\calendarios-povos-portrait-prompt.md",
-      "output_path": "_landing\\chars\\calendarios-povos-hd.png",
-      "key_identity": "Round golden coin/medal with laurel wreath border, warm amber color, friendly wave pose"
-    },
-    {
-      "name": "Memo",
-      "theme": "Marcos e Memória",
-      "discipline": "História",
-      "reference_image": "memo e timbre.png",
-      "prompt_file": "_landing\\chars\\marcos-memoria-portrait-prompt.md",
-      "output_path": "_landing\\chars\\marcos-memoria-hd.png",
-      "key_identity": "Stone tablet/stele character, gray-beige carved stone texture, Guardião da Memória — use ONLY the left stone character from the reference sheet, NOT the stamp character"
-    },
-    {
-      "name": "Timbre",
-      "theme": "Memória Negra e Imigrantes",
-      "discipline": "História",
-      "reference_image": "memo e timbre.png",
-      "prompt_file": "_landing\\chars\\memoria-negra-imigrantes-portrait-prompt.md",
-      "output_path": "_landing\\chars\\memoria-negra-imigrantes-hd.png",
-      "key_identity": "Square postage stamp character, orange-brown color, perforated edges, temple image on front, Guardião das Heranças — use ONLY the right stamp character from the reference sheet, NOT the stone character"
+      "name": "Grafo",
+      "char_sheet": "Grafo.png",
+      "portrait_output": "_landing\\chars\\infografico-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\infografico-portrait-prompt.md"
     }
-  ],
-  "notes": {
-    "calco_vs_divi": "Calco and Divi are visually similar (both green calculator robots). Distinguish them by display content: Calco = glowing green smile, Divi = green checkmark ✓",
-    "memo_vs_timbre": "Memo and Timbre share the same reference file (memo e timbre.png). Process them separately — Memo is the stone tablet on the LEFT, Timbre is the postage stamp on the RIGHT",
-    "background_removal": "All portraits must have transparent background. Generate on #00ff00 chroma-key green, then remove green. The characters own green bodies are darker emerald shades — do not remove them",
-    "canvas_size": "All outputs must be 1024x1024 px PNG with transparency"
-  }
+  ]
 }
