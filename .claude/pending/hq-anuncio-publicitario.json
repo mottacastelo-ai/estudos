@@ -1,0 +1,16 @@
+{
+  "slug": "anuncio-publicitario",
+  "disciplina": "portugues",
+  "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "prompt_path": "portugues/anuncio-publicitario/hq-anuncio-publicitario-prompt.md",
+  "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "output_dir": "portugues/anuncio-publicitario",
+  "personagem_novo": "Publinho",
+  "chars_output": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Publinho.png",
+  "expected_outputs": [
+    "hq-anuncio-publicitario-pg1.png",
+    "hq-anuncio-publicitario-pg2.png",
+    "hq-anuncio-publicitario-pg3.png",
+    "hq-anuncio-publicitario-pg4.png"
+  ]
+}

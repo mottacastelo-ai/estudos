@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monta o Infografico — Elementos do Infografico</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --bg: #F3F0FF; --card: #fff; --text: #1A1A2E; --muted: #6B7280;
+  --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 960px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.score-bar { display: flex; align-items: center; gap: 12px; padding: 10px 24px; border-bottom: 2px solid var(--border); background: #faf9ff; flex-wrap: wrap; }
+.score-num { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--port); }
+.score-lbl { font-size: 13px; font-weight: 700; color: var(--muted); }
+.prog-track { flex: 1; min-width: 120px; height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: var(--port); transition: width .4s; width: 0%; }
+
+/* Fichas */
+.fichas-area { padding: 20px 24px 12px; }
+.fichas-area h2 { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+.fichas-grid { display: flex; flex-wrap: wrap; gap: 10px; min-height: 60px; }
+.ficha {
+  background: white; border: 2px solid var(--border); border-radius: 14px;
+  padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--text);
+  cursor: grab; user-select: none; display: flex; align-items: center; gap: 8px;
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+  touch-action: none;
+  max-width: 240px;
+}
+.ficha:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(124,58,237,.15); border-color: var(--port-light); }
+.ficha.dragging-active { opacity: .45; transform: scale(.98); }
+.ficha .ficha-icon { font-size: 18px; flex-shrink: 0; }
+.ficha.correct { border-color: #10B981; background: #ECFDF5; color: #065F46; cursor: default; }
+.ficha.wrong { border-color: #EF4444; background: #FEF2F2; animation: shake .35s ease; }
+
+@keyframes shake {
+  0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}
+}
+
+/* Categorias */
+.cats-area { padding: 12px 24px 20px; }
+.cats-area h2 { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+.cats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.cat-drop {
+  border: 2.5px dashed var(--border); border-radius: 16px; padding: 12px 10px;
+  min-height: 80px; background: var(--port-bg); transition: border-color .2s, background .2s;
+}
+.cat-drop.over { border-color: var(--port); background: #EDE9FE; }
+.cat-drop.has-correct { border-style: solid; border-color: #10B981; background: #ECFDF5; }
+.cat-label { font-size: 11px; font-weight: 800; color: var(--port-dark); margin-bottom: 8px; text-align: center; }
+.cat-items { display: flex; flex-direction: column; gap: 6px; min-height: 36px; }
+
+/* Final */
+.final-msg { display: none; padding: 24px; text-align: center; border-top: 2px solid var(--border); }
+.final-msg .trophy { font-size: 48px; display: block; margin-bottom: 12px; animation: pop .5s ease; }
+@keyframes pop { 0%{transform:scale(.5)}70%{transform:scale(1.2)}100%{transform:scale(1)} }
+.final-msg h3 { font-family: "Space Mono", monospace; font-size: 16px; color: var(--port-dark); margin-bottom: 8px; }
+.final-msg p { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 16px; }
+.btn-restart { background: var(--port); color: white; border: none; border-radius: 999px; padding: 10px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: opacity .15s; }
+.btn-restart:hover { opacity: .85; }
+
+@media (max-width: 600px) {
+  .fichas-grid { gap: 8px; }
+  .ficha { font-size: 11px; padding: 8px 10px; }
+  .cats-grid { grid-template-columns: repeat(2, 1fr); }
+  .cat-drop { min-height: 60px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">📊</div>
+      <div><h1>Monta o Infografico</h1><p>Elementos do infografico</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como jogar:</strong> Arraste cada ficha para a categoria correta de elemento do infografico.
+      Acertos ficam verdes. Erros voltam para a area de fichas. Bom jogo!
+    </div>
+    <div class="score-bar">
+      <span class="score-num" id="score-num">0</span>
+      <span class="score-lbl">acertos de 8</span>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+
+    <div class="fichas-area">
+      <h2>Fichas — arraste para a categoria certa</h2>
+      <div class="fichas-grid" id="fichas-grid"></div>
+    </div>
+
+    <div class="cats-area">
+      <h2>Categorias</h2>
+      <div class="cats-grid" id="cats-grid"></div>
+    </div>
+
+    <div class="final-msg" id="final-msg">
+      <span class="trophy">🏆</span>
+      <h3>Parabens!</h3>
+      <p>Voce conhece todos os elementos de um infografico!</p>
+      <button class="btn-restart" onclick="init()">Jogar de novo</button>
+    </div>
+  </div>
+</div>
+<script>
+var ITEMS = [
+  { id:'i1', icon:'📝', label:'O que influencia as criancas na hora de comprar', cat:'texto' },
+  { id:'i2', icon:'7️⃣',  label:'O numero 73%', cat:'numero' },
+  { id:'i3', icon:'📊', label:'Barras coloridas de alturas diferentes', cat:'barras' },
+  { id:'i4', icon:'🥧', label:'Circulo dividido em fatias (80%/20%)', cat:'pizza' },
+  { id:'i5', icon:'🧒', label:'Uma crianca saltando ilustrada', cat:'imagem' },
+  { id:'i6', icon:'➡️', label:'Seta apontando de um dado para outro', cat:'seta' },
+  { id:'i7', icon:'📋', label:'Fonte: Pesquisa Interscience/Instituto Alana', cat:'fonte' },
+  { id:'i8', icon:'🎮', label:'Icones de brinquedo, camiseta e pizza', cat:'imagem' },
+];
+
+var CATS = [
+  { id:'texto',  label:'Texto Escrito' },
+  { id:'numero', label:'Informacao Numerica' },
+  { id:'barras', label:'Grafico de Barras' },
+  { id:'pizza',  label:'Grafico de Pizza' },
+  { id:'imagem', label:'Imagem / Icone' },
+  { id:'seta',   label:'Seta Indicativa' },
+  { id:'fonte',  label:'Fonte' },
+];
+
+var score = 0;
+var placed = {};
+var dragId = null;
+
+function init() {
+  score = 0; placed = {}; dragId = null;
+  document.getElementById('score-num').textContent = '0';
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('final-msg').style.display = 'none';
+  renderFichas();
+  renderCats();
+}
+
+function renderFichas() {
+  var grid = document.getElementById('fichas-grid');
+  grid.innerHTML = '';
+  ITEMS.forEach(function(item) {
+    if (placed[item.id]) return;
+    var el = document.createElement('div');
+    el.className = 'ficha';
+    el.id = 'ficha-'+item.id;
+    el.draggable = true;
+    el.innerHTML = '<span class="ficha-icon">'+item.icon+'</span><span>'+item.label+'</span>';
+    el.addEventListener('dragstart', function(e) { dragId = item.id; el.classList.add('dragging-active'); e.dataTransfer.effectAllowed='move'; });
+    el.addEventListener('dragend', function() { el.classList.remove('dragging-active'); });
+    // Touch
+    el.addEventListener('touchstart', onTouchStart, {passive:false});
+    grid.appendChild(el);
+  });
+}
+
+function renderCats() {
+  var grid = document.getElementById('cats-grid');
+  grid.innerHTML = '';
+  CATS.forEach(function(cat) {
+    var el = document.createElement('div');
+    el.className = 'cat-drop';
+    el.id = 'cat-'+cat.id;
+    el.innerHTML = '<div class="cat-label">'+cat.label+'</div><div class="cat-items" id="items-'+cat.id+'"></div>';
+    el.addEventListener('dragover', function(e) { e.preventDefault(); el.classList.add('over'); });
+    el.addEventListener('dragleave', function() { el.classList.remove('over'); });
+    el.addEventListener('drop', function(e) { e.preventDefault(); el.classList.remove('over'); onDrop(cat.id); });
+    grid.appendChild(el);
+  });
+}
+
+function onDrop(catId) {
+  if (!dragId) return;
+  var item = ITEMS.find(function(i){ return i.id === dragId; });
+  if (!item) return;
+  var fichaEl = document.getElementById('ficha-'+dragId);
+  if (item.cat === catId) {
+    placed[dragId] = true;
+    score++;
+    document.getElementById('score-num').textContent = score;
+    document.getElementById('prog-fill').style.width = Math.round(score/8*100)+'%';
+    var el = document.createElement('div');
+    el.className = 'ficha correct';
+    el.innerHTML = '<span class="ficha-icon">'+item.icon+'</span><span>'+item.label+' ✓</span>';
+    document.getElementById('items-'+catId).appendChild(el);
+    if (fichaEl) fichaEl.remove();
+    document.getElementById('cat-'+catId).classList.add('has-correct');
+    if (score === 8) { setTimeout(function(){ document.getElementById('final-msg').style.display='block'; }, 400); }
+  } else {
+    if (fichaEl) { fichaEl.classList.add('wrong'); setTimeout(function(){ fichaEl.classList.remove('wrong'); },400); }
+  }
+  dragId = null;
+}
+
+// Touch drag-and-drop
+var touchItem = null, ghostEl = null;
+function onTouchStart(e) {
+  var el = e.currentTarget;
+  var id = el.id.replace('ficha-','');
+  touchItem = id;
+  e.preventDefault();
+  ghostEl = el.cloneNode(true);
+  ghostEl.style.position = 'fixed';
+  ghostEl.style.opacity = '.8';
+  ghostEl.style.pointerEvents = 'none';
+  ghostEl.style.zIndex = '9999';
+  ghostEl.style.transform = 'scale(1.05)';
+  ghostEl.style.width = el.offsetWidth + 'px';
+  document.body.appendChild(ghostEl);
+  movGhost(e.touches[0]);
+  el.classList.add('dragging-active');
+  document.addEventListener('touchmove', onTouchMove, {passive:false});
+  document.addEventListener('touchend', onTouchEnd);
+}
+function movGhost(t) {
+  ghostEl.style.left = (t.clientX - ghostEl.offsetWidth/2) + 'px';
+  ghostEl.style.top  = (t.clientY - 20) + 'px';
+}
+function onTouchMove(e) { e.preventDefault(); movGhost(e.touches[0]); }
+function onTouchEnd(e) {
+  document.removeEventListener('touchmove', onTouchMove);
+  document.removeEventListener('touchend', onTouchEnd);
+  if (ghostEl) { ghostEl.remove(); ghostEl = null; }
+  var el = document.getElementById('ficha-'+touchItem);
+  if (el) el.classList.remove('dragging-active');
+  var t = e.changedTouches[0];
+  var dropEl = document.elementFromPoint(t.clientX, t.clientY);
+  var catEl = dropEl ? dropEl.closest('.cat-drop') : null;
+  if (catEl) {
+    var catId = catEl.id.replace('cat-','');
+    dragId = touchItem;
+    onDrop(catId);
+  }
+  touchItem = null;
+}
+
+init();
+</script>
+</body>
+</html>

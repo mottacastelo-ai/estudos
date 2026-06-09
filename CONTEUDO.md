@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 8 | 43 |
+| 📝 Português | 12 | 59 |
 | 🔢 Matemática | 7 | 26 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 3 | 9 |
-| **Total** | **25** | **107** |
+| **Total** | **29** | **123** |
 
 ---
 
@@ -122,6 +122,56 @@
 | Detector de Entonação | ✅ `detector-entonacao.html` |
 | Rubrica ao Vivo | ✅ `rubrica-entonacao.html` |
 | Ensaiador de Falas | ✅ `ensaiador-entonacao.html` |
+
+---
+
+### Anuncio Publicitario
+**HQ:** ❌ `hq-anuncio-publicitario.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-anuncio-publicitario.html` |
+| Oficina de Anúncio | ✅ `criador-slogan-anuncio-publicitario.html` |
+| Detetive dos Elementos | ✅ `detetive-elementos-anuncio-publicitario.html` |
+| Mapa Mental | ✅ `mapa-mental-anuncio-publicitario.html` |
+
+---
+
+### Prefixo Sufixo
+**HQ:** ❌ `hq-prefixo-sufixo.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-prefixo-sufixo.html` |
+| Fábrica de Palavras | ✅ `construtor-prefixo-sufixo.html` |
+| Flashcards de Derivação | ✅ `flashcards-prefixo-sufixo.html` |
+| Mapa Mental | ✅ `mapa-mental-prefixo-sufixo.html` |
+
+---
+
+### Sons X Ch
+**Personagem:** XIS
+**HQ:** ❌ `hq-sons-x-ch.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-sons-x-ch.html` |
+| Classificador dos Sons | ✅ `classificador-sons-x-ch.html` |
+| Batalha X vs CH | ✅ `batalha-sons-x-ch.html` |
+| Mapa Mental | ✅ `mapa-mental-sons-x-ch.html` |
+
+---
+
+### Infografico
+**Personagem:** GRAFO
+**HQ:** ❌ `hq-infografico.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-infografico.html` |
+| Monta o Infográfico | ✅ `ordenacao-infografico.html` |
+| Crie seu Infográfico! | ✅ `criador-infografico.html` |
+| Mapa Mental | ✅ `mapa-mental-infografico.html` |
 
 ---
 

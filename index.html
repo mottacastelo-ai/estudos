@@ -565,7 +565,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
     <span class="d-icon">📝</span>
     <span class="d-name">Português</span>
-    <span class="d-count">43</span>
+    <span class="d-count">59</span>
   </button>
   <div class="theme-sub" id="sub-port">
     <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
@@ -576,6 +576,10 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('port','pontuacao')">? ! . Pontuação</button>
     <button class="theme-link" onclick="showTheme('port','instrucional')">📋 Texto Instrucional</button>
     <button class="theme-link" onclick="showTheme('port','entonacao')">🎵 Entonação</button>
+    <button class="theme-link" onclick="showTheme('port','anuncio-publicitario')">📢 Anúncio Publicitário</button>
+    <button class="theme-link" onclick="showTheme('port','prefixo-sufixo')">🌿 Prefixo e Sufixo</button>
+    <button class="theme-link" onclick="showTheme('port','sons-x-ch')">✖️ Sons do X e CH</button>
+    <button class="theme-link" onclick="showTheme('port','infografico')">📊 Infográfico</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
@@ -647,8 +651,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Missões e desafios para dominar cada matéria. Escolha e bora! 🚀</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>25</span>temas</div>
-        <div class="hstat"><span>109</span>atividades</div>
+        <div class="hstat"><span>29</span>temas</div>
+        <div class="hstat"><span>125</span>atividades</div>
       </div>
       <div class="home-stats" id="streak-banner">
         <div class="hstat">🔥 <span id="streak-count">0</span>dias seguidos</div>
@@ -682,9 +686,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Português</div>
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#FDF2F8;color:#9D174D">8 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">43 atividades</span>
-            <span class="chip" style="background:#FEF3C7;color:#92400E">8 HQs</span>
+            <span class="chip" style="background:#FDF2F8;color:#9D174D">12 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">59 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">12 HQs</span>
           </div>
         </button>
         <button class="disc-home-card mat" onclick="showDisc('mat')">
@@ -755,6 +759,10 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn" onclick="showTheme('port','pontuacao')">? ! . Pontuação</button>
         <button class="theme-tab-btn" onclick="showTheme('port','instrucional')">📋 Texto Instrucional</button>
         <button class="theme-tab-btn" onclick="showTheme('port','entonacao')">🎵 Entonação</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','anuncio-publicitario')">📢 Anúncio Publicitário</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','prefixo-sufixo')">🌿 Prefixo e Sufixo</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','sons-x-ch')">✖️ Sons do X e CH</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','infografico')">📊 Infográfico</button>
       </div>
 
       <!-- TEMA: TEXTO TEATRAL -->
@@ -1219,6 +1227,182 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🎭 Detector de Entonação</span><span class="sched-act port">📜 Rubrica ao Vivo</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🎛️ Ensaiador de Falas</span><span class="sched-act port">🎙️ Praticar em voz alta!</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: ANÚNCIO PUBLICITÁRIO -->
+      <div class="theme-content" id="theme-port-anuncio-publicitario">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/anuncio-publicitario/hq-anuncio-publicitario.png" alt="HQ Anúncio Publicitário"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Publinho na Cidade dos Anúncios — 4 páginas · Personagens: Bia, Prepo e Publinho (o megafone dourado) · pp. 117–135</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/anuncio-publicitario/quiz-anuncio-publicitario.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre anúncio publicitário, slogan, público-alvo e elementos persuasivos.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/anuncio-publicitario/criador-slogan-anuncio-publicitario.html" target="sabendo-atividade">
+            <div class="act-icon">✍️</div><div class="act-title">Oficina de Anúncio</div>
+            <div class="act-desc">Crie um anúncio para algo não comercializável: escolha o que anunciar, defina o público-alvo e escreva seu slogan.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="portugues/anuncio-publicitario/detetive-elementos-anuncio-publicitario.html" target="sabendo-atividade">
+            <div class="act-icon">🔍</div><div class="act-title">Detetive dos Elementos</div>
+            <div class="act-desc">8 rodadas: leia a descrição e identifique se é slogan, público-alvo, cor, personagem ou imagem do anúncio.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/anuncio-publicitario/mapa-mental-anuncio-publicitario.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte: slogan, público-alvo, imagem, cores, personagens, produto, persuasão e linguagem.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🔍 Detetive dos Elementos</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✍️ Oficina de Anúncio</span><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: PREFIXO E SUFIXO -->
+      <div class="theme-content" id="theme-port-prefixo-sufixo">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/prefixo-sufixo/hq-prefixo-sufixo.png" alt="HQ Prefixo e Sufixo"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>A Floresta das Palavras — 4 páginas · Personagens: Bia, Prepo e Raizinha (a raiz de árvore) · pp. 122–142</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/prefixo-sufixo/quiz-prefixo-sufixo.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre prefixo, sufixo, palavra primitiva e palavra derivada com exemplos do livro.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/prefixo-sufixo/construtor-prefixo-sufixo.html" target="sabendo-atividade">
+            <div class="act-icon">🏭</div><div class="act-title">Fábrica de Palavras</div>
+            <div class="act-desc">Arraste prefixos, raízes e sufixos para montar palavras derivadas. Forme: reutilizar, encaracolado, superdesconto e mais!</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Construir</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/prefixo-sufixo/flashcards-prefixo-sufixo.html" target="sabendo-atividade">
+            <div class="act-icon">🃏</div><div class="act-title">Flashcards de Derivação</div>
+            <div class="act-desc">Vire os cartões: frente = palavra primitiva, verso = palavras derivadas. Treine sombra→sombrinha, feliz→infeliz e mais.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Revisar</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="portugues/prefixo-sufixo/mapa-mental-prefixo-sufixo.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Monte o mapa conectando: prefixo, sufixo, palavra primitiva, palavra derivada, re-, -ado, encaixar e sombra.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🃏 Flashcards</span><span class="sched-act port">🏭 Fábrica de Palavras</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: SONS DO X E CH -->
+      <div class="theme-content" id="theme-port-sons-x-ch">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/sons-x-ch/hq-sons-x-ch.png" alt="HQ Sons do X e CH"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>O X de Muitas Faces — 4 páginas · Personagens: Bia, Prepo e Xis (a letra X com 4 chapéus) · pp. 126–143</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/sons-x-ch/quiz-sons-x-ch.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre os 4 sons do X, o dígrafo CH e as regras de uso (depois de ditongo e de en-).</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/sons-x-ch/classificador-sons-x-ch.html" target="sabendo-atividade">
+            <div class="act-icon">🗂️</div><div class="act-title">Classificador dos Sons</div>
+            <div class="act-desc">Arraste 20 palavras para as 4 colunas: som de táxi, som de lixo/ch, som de exemplo e som de auxílio.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/sons-x-ch/batalha-sons-x-ch.html" target="sabendo-atividade">
+            <div class="act-icon">⚔️</div><div class="act-title">Batalha X vs CH</div>
+            <div class="act-desc">20 rodadas: veja a palavra incompleta e escolha X ou CH. Acertos em sequência geram combo!</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Decidir</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="portugues/sons-x-ch/mapa-mental-sons-x-ch.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Conecte: caixa, enxame, táxi, lixo, exemplo, auxílio, chave e "sons diferentes" aos ramos corretos.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🗂️ Classificador dos Sons</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">⚔️ Batalha X vs CH</span><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: INFOGRÁFICO -->
+      <div class="theme-content" id="theme-port-infografico">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/infografico/hq-infografico.png" alt="HQ Infográfico"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>O Repórter de Dados — 4 páginas · Personagens: Bia, Prepo e Grafo (o gráfico de barras animado) · pp. 129–133</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/infografico/quiz-infografico.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre infográfico, gráfico de barras, gráfico de pizza, fonte e consumo infantil.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/infografico/ordenacao-infografico.html" target="sabendo-atividade">
+            <div class="act-icon">🧩</div><div class="act-title">Monta o Infográfico</div>
+            <div class="act-desc">8 fichas para arrastar: texto escrito, gráfico de barras, gráfico de pizza, imagem, seta indicativa, informação numérica e fonte.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Organizar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/infografico/criador-infografico.html" target="sabendo-atividade">
+            <div class="act-icon">📈</div><div class="act-title">Crie seu Infográfico!</div>
+            <div class="act-desc">Escolha o tema (consumo infantil), o tipo de gráfico (barras ou pizza), o título e a cor — e veja seu infográfico ganhar vida!</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="portugues/infografico/mapa-mental-infografico.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Monte o mapa do infográfico conectando elementos, tipos de gráfico, fonte e finalidade.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🧩 Monta o Infográfico</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">📈 Crie seu Infográfico!</span><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
         </div>
       </div>
 
@@ -2317,6 +2501,10 @@ var THEME_CATALOG = [
   { disc:'port', slug:'pontuacao',      label:'Pontuação',                emoji:'❗', pages:null, charName:'? ! .',           charImg:'chars/pontuacao-hd.png' },
   { disc:'port', slug:'instrucional',   label:'Texto Instrucional',       emoji:'📋', pages:null, charName:'Façã',            charImg:'chars/texto-instrucional-hd.png' },
   { disc:'port', slug:'entonacao',      label:'Entonação',                emoji:'🎵', pages:null, charName:'Toni',            charImg:'chars/entonacao-hd.png' },
+  { disc:'port', slug:'anuncio-publicitario', label:'Anúncio Publicitário', emoji:'📢', pages:'117-135', charName:'Publinho', charImg:'chars/anuncio-publicitario-hd.png' },
+  { disc:'port', slug:'prefixo-sufixo',       label:'Prefixo e Sufixo',     emoji:'🌿', pages:'122-142', charName:'Raizinha', charImg:'chars/prefixo-sufixo-hd.png' },
+  { disc:'port', slug:'sons-x-ch',            label:'Sons do X e CH',       emoji:'✖️', pages:'126-143', charName:'Xis',      charImg:'chars/sons-x-ch-hd.png' },
+  { disc:'port', slug:'infografico',          label:'Infográfico',           emoji:'📊', pages:'129-133', charName:'Grafo',    charImg:'chars/infografico-hd.png' },
   // ── Matemática
   { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null, charName:'Prepo',    charImg:'prepo-hd.png' },
   { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null, charName:'Calco',    charImg:'chars/multiplicacao-divisao-hd.png' },

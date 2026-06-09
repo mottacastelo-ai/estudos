@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Sons do X e CH</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --bg: #F3F0FF; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #DDD6FE;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #faf9ff; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--port-light); color: var(--port); }
+.toolbar button.active { background: var(--port-bg); border-color: var(--port); color: var(--port); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--port); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #FFFBEB; border: 2px solid #F59E0B; color: #92400E; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: calc(100svh - 340px); background: var(--port-bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid #7C3AED; outline-offset: 2px; }
+.n-root   { background: linear-gradient(135deg,#7C3AED,#A78BFA); color: white; border: 2px solid #4C1D95; font-size: 13px; font-weight: 800; min-width: 145px; padding: 11px 20px; z-index: 11; }
+.n-level1 { background: #EDE9FE; border: 2px solid #C4B5FD; color: #4C1D95; }
+.n-level2 { background: white; border: 2px solid #DDD6FE; color: #374151; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #C4B5FD; background: #F3F0FF; display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: #4C1D95; margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: #F3F0FF; display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #DDD6FE; }
+.score-fill  { height: 8px; border-radius: 999px; background: #7C3AED; transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: #4C1D95; white-space: nowrap; }
+.char-guide { position: absolute; top: 10px; right: 14px; font-size: 28px; line-height: 1; z-index: 20; pointer-events: none; filter: drop-shadow(0 2px 6px rgba(124,58,237,.3)); }
+
+@media (max-width: 600px) {
+  #stage { height: calc(100svh - 340px) !important; min-height: 380px; }
+  .node { font-size: 11px !important; padding: 8px 12px !important; min-width: 80px !important; }
+  .n-root { min-width: 120px !important; font-size: 12px !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🗺️</div>
+      <div><h1>Mapa Mental</h1><p>Sons do X e CH — com Xis</p></div>
+      <div class="hbadge">🏆 Síntese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar os balões e organizar o mapa.
+      Use <strong>+ Conectar</strong> para criar setas entre eles.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com a estrutura correta.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect">+ Conectar</button>
+      <button id="btn-move" class="active">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexões</span>
+      <span id="hint-bar">Clique e arraste qualquer balão</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balão para conectar ✔</div>
+      <div id="stage">
+        <div class="char-guide" title="Xis — guia dos sons do X">✕🎩</div>
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#7C3AED" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">ESTRUTURA DO MAPA — GABARITO</div>
+      <svg id="gabarito-svg" viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7C3AED"/>
+            <stop offset="100%" stop-color="#A78BFA"/>
+          </linearGradient>
+          <marker id="ga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#7C3AED" opacity="0.6"/>
+          </marker>
+        </defs>
+        <!-- Root to L1 -->
+        <line x1="350" y1="34" x2="112" y2="88" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="305" y2="88" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="500" y2="88" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <line x1="350" y1="34" x2="630" y2="88" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga)"/>
+        <!-- L1 to L2 -->
+        <line x1="112" y1="116" x2="112" y2="166" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="305" y1="116" x2="260" y2="166" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="305" y1="116" x2="348" y2="166" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="500" y1="116" x2="455" y2="166" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <line x1="500" y1="116" x2="545" y2="166" stroke="#C4B5FD" stroke-width="1.2" opacity="0.7" marker-end="url(#ga)"/>
+        <!-- Root node -->
+        <rect x="240" y="6" width="220" height="32" rx="16" fill="url(#rg)" stroke="#4C1D95" stroke-width="2"/>
+        <text x="350" y="27" text-anchor="middle" font-size="11" font-weight="800" fill="white">✕ SONS DO X E CH</text>
+        <!-- L1: X tem 4 sons diferentes -->
+        <rect x="22" y="88" width="180" height="28" rx="14" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1.5"/>
+        <text x="112" y="107" text-anchor="middle" font-size="9.5" font-weight="700" fill="#4C1D95">X tem 4 sons diferentes</text>
+        <!-- L1: X com som de CH — Regras -->
+        <rect x="210" y="88" width="190" height="28" rx="14" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1.5"/>
+        <text x="305" y="107" text-anchor="middle" font-size="9.5" font-weight="700" fill="#4C1D95">X som de CH — Regras</text>
+        <!-- L1: Dígrafo CH -->
+        <rect x="414" y="88" width="172" height="28" rx="14" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1.5"/>
+        <text x="500" y="107" text-anchor="middle" font-size="9.5" font-weight="700" fill="#4C1D95">Dígrafo CH</text>
+        <!-- L1: Conclusão -->
+        <rect x="560" y="88" width="140" height="28" rx="14" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1.5"/>
+        <text x="630" y="107" text-anchor="middle" font-size="9.5" font-weight="700" fill="#4C1D95">X representa sons diferentes</text>
+        <!-- L2 under x4sons -->
+        <rect x="22" y="166" width="180" height="28" rx="14" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="112" y="185" text-anchor="middle" font-size="8.5" fill="#374151">táxi /ks/ · lixo /sh/ · exemplo /z/ · auxílio /ss/</text>
+        <!-- L2 under xregras -->
+        <rect x="182" y="166" width="156" height="28" rx="14" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="260" y="185" text-anchor="middle" font-size="8.5" fill="#374151">Depois de ditongo: caixa, peixe, faixa</text>
+        <rect x="280" y="166" width="136" height="28" rx="14" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="348" y="185" text-anchor="middle" font-size="8.5" fill="#374151">Depois de en-: enxame, enxaguar</text>
+        <!-- L2 under ch -->
+        <rect x="392" y="166" width="126" height="28" rx="14" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="455" y="185" text-anchor="middle" font-size="8.5" fill="#374151">chave, chuva, charco</text>
+        <rect x="490" y="166" width="110" height="28" rx="14" fill="white" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="545" y="185" text-anchor="middle" font-size="8.5" fill="#374151">charco → encharcar</text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 9 conexões</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// Exatamente 10 nós — limite máximo respeitado
+var NODES = [
+  {id:'root',      label:'✕ Sons do X e CH',                               cls:'n-root'},
+  {id:'x4sons',    label:'X tem 4 sons diferentes',                        cls:'n-level1'},
+  {id:'xregras',   label:'X som de CH — Regras',                           cls:'n-level1'},
+  {id:'ch',        label:'Dígrafo CH',                                     cls:'n-level1'},
+  {id:'ex4sons',   label:'táxi /ks/ · lixo /sh/ · exemplo /z/ · auxílio /ss/', cls:'n-level2'},
+  {id:'regra1',    label:'Depois de ditongo: caixa, peixe, faixa',         cls:'n-level2'},
+  {id:'regra2',    label:'Depois de en-: enxame, enxaguar',                cls:'n-level2'},
+  {id:'exemploch', label:'chave, chuva, charco',                           cls:'n-level2'},
+  {id:'derivada',  label:'charco → encharcar (primitiva com CH)',          cls:'n-level2'},
+  {id:'conclusao', label:'X representa sons diferentes',                   cls:'n-level2'},
+];
+
+// 9 conexões do gabarito (um por nó não-root)
+var GABARITO = [
+  ['x4sons',  'root'],
+  ['xregras', 'root'],
+  ['ch',      'root'],
+  ['ex4sons', 'x4sons'],
+  ['regra1',  'xregras'],
+  ['regra2',  'xregras'],
+  ['exemploch','ch'],
+  ['derivada', 'ch'],
+  ['conclusao','root'],
+];
+
+// Apenas os 6 nós soltos (arrastáveis) no SHUFFLE
+var SHUFFLE = ['ex4sons','regra1','regra2','exemploch','derivada','conclusao'];
+
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'move', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
+
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 480 ? 2 : 3;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 16, padY = 32;
+  var colW = (W - padX*2) / COLS;
+  var rowH = Math.max(80, (stage.clientHeight - padY*2) / ROWS);
+  var minH = padY*2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  // Nós fixos (estrutura base) — posicionados manualmente
+  var cX = W / 2;
+  var H = stage.clientHeight;
+  positions['root']    = {x: cX,         y: H * 0.15};
+  positions['x4sons']  = {x: cX * 0.25,  y: H * 0.40};
+  positions['xregras'] = {x: cX * 0.85,  y: H * 0.40};
+  positions['ch']      = {x: cX * 1.55,  y: H * 0.40};
+  // Nós soltos — grade embaixo
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i%COLS + 0.5) * colW,
+      y: H * 0.65 + (Math.floor(i/COLS)) * rowH
+    };
+  });
+}
+
+function renderNodes() {
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-'+n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-'+n.id; el.className = 'node '+n.cls; el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive:false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
+    }
+    placeNode(n.id);
+  });
+}
+
+function placeNode(id) {
+  var el = document.getElementById('nd-'+id), p = positions[id];
+  if (!el || !p) return;
+  var hw = el.offsetWidth/2, hh = el.offsetHeight/2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw+4, Math.min(W-hw-4, p.x));
+  var cy = Math.max(hh+4, Math.min(H-hh-4, p.y));
+  el.style.left = (cx-hw)+'px'; el.style.top = (cy-hh)+'px';
+}
+
+function center(id) {
+  var el = document.getElementById('nd-'+id);
+  return { x: parseFloat(el.style.left)+el.offsetWidth/2, y: parseFloat(el.style.top)+el.offsetHeight/2 };
+}
+
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode==='erase';
+  arrows.forEach(function(a, i) {
+    var f=center(a.from), t=center(a.to), dx=t.x-f.x, dy=t.y-f.y;
+    var len=Math.sqrt(dx*dx+dy*dy)||1;
+    var toEl=document.getElementById('nd-'+a.to);
+    var rad=Math.min(toEl.offsetWidth,toEl.offsetHeight)/2+3;
+    var ex=t.x-(dx/len)*rad, ey=t.y-(dy/len)*rad;
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',f.x); line.setAttribute('y1',f.y);
+    line.setAttribute('x2',ex);  line.setAttribute('y2',ey);
+    line.setAttribute('stroke', isErase?'#DC2626':'#7C3AED');
+    line.setAttribute('stroke-width','2'); line.setAttribute('opacity','0.7');
+    line.setAttribute('marker-end', isErase?'url(#mRed)':'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents='stroke'; line.style.cursor='pointer';
+      (function(idx){ line.addEventListener('click',function(){ arrows.splice(idx,1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
+  });
+}
+
+function updateCount() {
+  var n=arrows.length;
+  document.getElementById('conn-count').textContent=n+(n===1?' conexão':' conexões');
+}
+
+function setMode(m) {
+  mode=m;
+  if (arrowFrom) { document.getElementById('nd-'+arrowFrom).classList.remove('selected'); arrowFrom=null; }
+  document.getElementById('pending-msg').style.display='none';
+  ['connect','move','erase'].forEach(function(k){ document.getElementById('btn-'+k).classList.toggle('active',k===m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {
+    connect:'Clique em dois balões para criar uma seta',
+    move:'Clique e arraste qualquer balão',
+    erase:'Clique em uma seta para apagá-la'
+  }[m];
+}
+
+function onNodeClick(e, id) {
+  if (mode!=='connect') return;
+  if (!arrowFrom) {
+    arrowFrom=id;
+    document.getElementById('nd-'+id).classList.add('selected');
+    document.getElementById('pending-msg').style.display='block';
+  } else {
+    document.getElementById('nd-'+arrowFrom).classList.remove('selected');
+    document.getElementById('nd-'+id).classList.remove('selected');
+    if (arrowFrom!==id) {
+      var dup=arrows.some(function(a){ return (a.from===arrowFrom&&a.to===id)||(a.from===id&&a.to===arrowFrom); });
+      if (!dup) { arrows.push({from:arrowFrom,to:id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom=null; document.getElementById('pending-msg').style.display='none';
+  }
+  e.stopPropagation();
+}
+
+function onDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:e.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:e.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+function onTouchDown(e, id) {
+  if (mode!=='move') return; e.preventDefault();
+  var t=e.touches[0], r=stage.getBoundingClientRect(), el=document.getElementById('nd-'+id); dragging=id;
+  dragOff={x:t.clientX-r.left-parseFloat(el.style.left)-el.offsetWidth/2, y:t.clientY-r.top-parseFloat(el.style.top)-el.offsetHeight/2};
+}
+document.addEventListener('mousemove',function(e){ if(!dragging) return; var r=stage.getBoundingClientRect(); positions[dragging]={x:e.clientX-r.left-dragOff.x,y:e.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup',function(){ dragging=null; });
+document.addEventListener('touchmove',function(e){ if(!dragging) return; var t=e.touches[0],r=stage.getBoundingClientRect(); positions[dragging]={x:t.clientX-r.left-dragOff.x,y:t.clientY-r.top-dragOff.y}; placeNode(dragging); drawArrows(); },{passive:true});
+document.addEventListener('touchend',function(){ dragging=null; });
+
+document.getElementById('btn-connect').addEventListener('click',function(){ setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click',function(){ setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click',function(){ setMode(mode==='erase'?'move':'erase'); });
+document.getElementById('btn-reset').addEventListener('click',function(){
+  arrows=[];
+  calcPositions();
+  NODES.forEach(function(n){ placeNode(n.id); });
+  drawArrows(); updateCount(); updateGabarito();
+});
+document.getElementById('btn-gabarito').addEventListener('click',function(){
+  gabVisible=!gabVisible;
+  document.getElementById('gabarito-panel').style.display=gabVisible?'block':'none';
+  document.getElementById('btn-gabarito').textContent=gabVisible?'Ocultar gabarito':'Ver gabarito';
+  if(gabVisible) updateGabarito();
+});
+
+function updateGabarito() {
+  if (!gabVisible) return;
+  var hits=0;
+  GABARITO.forEach(function(pair){
+    if(arrows.some(function(a){ return (a.from===pair[0]&&a.to===pair[1])||(a.from===pair[1]&&a.to===pair[0]); })) hits++;
+  });
+  var total=GABARITO.length, pct=Math.round((hits/total)*100);
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-label').textContent=hits+' de '+total+' conexões ('+pct+'%)';
+}
+
+window.addEventListener('resize',function(){ calcPositions(); NODES.forEach(function(n){ placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load',function(){ calcPositions(); renderNodes(); setMode('move'); });
+</script>
+</body>
+</html>
