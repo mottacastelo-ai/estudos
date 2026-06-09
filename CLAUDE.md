@@ -72,6 +72,11 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 5. **Orquestrador não escreve HTML, prompts ou código** — delega sempre.
 6. **HQ via Codex** — `gerador-hq-imagens` escreve o JSON de pedido em `.claude/pending/`; Codex gera e salva as imagens; `colador-hq` empilha pg1–pg4 em `hq-[slug].png`. Nenhuma ação manual de Léo nessa etapa.
 7. **Documentação imediata** — toda mudança validada (novo recurso, nova regra, nova convenção) deve ser registrada nos docs do repositório na mesma sessão em que foi aprovada. Nenhuma melhoria fica apenas na memória do Claude.
+8. **Opções de quiz não podem entregar a resposta** — antes de finalizar qualquer questão, verificar se as opções permitem responder sem saber o conteúdo. Casos proibidos:
+   - Opções com valores numéricos quando a pergunta pede "maior/menor/mais/menos" → o aluno resolve por matemática, não por conhecimento. Mover os números para a explicação (feedback pós-resposta).
+   - Opções com nível de detalhe assimétrico onde só a correta é específica (ex: 3 opções vagas + 1 opção detalhada = a detalhada é obviamente correta).
+   - Opções com terminologia que ecoa a própria pergunta de forma única (ex: pergunta usa palavra X, só uma opção também usa X).
+   - Distratores implausíveis que qualquer aluno descarta sem estudar o tema.
 
 ---
 
