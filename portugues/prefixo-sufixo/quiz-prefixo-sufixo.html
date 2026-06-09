@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Prefixo e Sufixo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+  --radius: 18px; --green: #059669; --red: #DC2626;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 700px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.12); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.progress-wrap { padding: 14px 24px 10px; border-bottom: 2px solid var(--border); }
+.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: var(--port); transition: width .4s; }
+.score-display { font-size: 12px; font-weight: 800; color: var(--port); margin-top: 4px; }
+.question-area { padding: 24px 24px 16px; }
+.question-num { font-size: 11px; font-weight: 800; color: var(--port-light); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px; }
+.question-text { font-size: 17px; font-weight: 700; line-height: 1.5; color: var(--text); }
+.question-text .hl { color: var(--port); font-weight: 900; }
+.options { padding: 0 24px 16px; display: flex; flex-direction: column; gap: 10px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: 14px; border: 2px solid var(--border); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text); transition: all .15s; background: var(--card); }
+.opt:hover:not(.locked) { border-color: var(--port-light); background: var(--port-bg); }
+.opt.correct { border-color: var(--green); background: #F0FDF4; color: var(--green); }
+.opt.wrong { border-color: var(--red); background: #FEF2F2; color: var(--red); }
+.opt.locked { cursor: default; }
+.opt-letter { width: 28px; height: 28px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.opt.correct .opt-letter { background: var(--green); color: white; }
+.opt.wrong .opt-letter { background: var(--red); color: white; }
+.feedback { margin: 0 24px 16px; padding: 12px 16px; border-radius: 14px; display: flex; gap: 10px; align-items: flex-start; font-size: 13px; font-weight: 600; line-height: 1.5; display: none; }
+.feedback.correct { background: #F0FDF4; border: 2px solid var(--green); color: #065F46; }
+.feedback.wrong { background: #FEF2F2; border: 2px solid var(--red); color: #991B1B; }
+.feedback-icon { font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+.btn-next { display: block; margin: 4px 24px 24px; padding: 13px; border-radius: 14px; background: var(--port); color: white; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; border: none; cursor: pointer; text-align: center; transition: opacity .15s; display: none; }
+.btn-next:hover { opacity: .85; }
+.result-area { padding: 32px 24px; text-align: center; display: none; }
+.result-emoji { font-size: 56px; line-height: 1; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 22px; font-weight: 700; color: var(--port); }
+.result-score { font-size: 42px; font-weight: 900; color: var(--port-dark); margin: 8px 0; }
+.result-msg { font-size: 15px; color: var(--muted); font-weight: 600; }
+.btn-restart { margin-top: 20px; padding: 13px 32px; border-radius: 14px; background: var(--port); color: white; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; border: none; cursor: pointer; }
+.btn-restart:hover { opacity: .85; }
+@keyframes popIn { 0% { transform: scale(.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.pop { animation: popIn .25s ease-out; }
+@media (max-width: 600px) {
+  .question-text { font-size: 15px; }
+  .options { padding: 0 14px 16px; }
+  .question-area { padding: 18px 14px 12px; }
+  .opt { font-size: 13px; }
+  .btn-next { margin: 4px 14px 18px; }
+  .feedback { margin: 0 14px 12px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🌳</div>
+      <div><h1>Quiz Interativo</h1><p>Prefixo e Sufixo — pp. 122–125, 142</p></div>
+      <div class="hbadge">10 questoes</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label" id="prog-label">Questao 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="score-display" id="score-display">Pontos: 0</div>
+    </div>
+    <div id="quiz-area">
+      <div class="question-area">
+        <div class="question-num" id="q-num">QUESTAO 1</div>
+        <div class="question-text" id="q-text"></div>
+      </div>
+      <div class="options" id="options-area"></div>
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div class="feedback-text" id="fb-text"></div>
+      </div>
+      <button class="btn-next" id="btn-next">Proxima questao →</button>
+    </div>
+    <div class="result-area" id="result-area">
+      <div class="result-emoji" id="res-emoji"></div>
+      <div class="result-title">Resultado Final</div>
+      <div class="result-score" id="res-score"></div>
+      <div class="result-msg" id="res-msg"></div>
+      <button class="btn-restart" onclick="restart()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QUESTIONS = [
+  {
+    text: 'O que e um <span class="hl">prefixo</span>?',
+    opts: [
+      'Uma parte acrescentada ao inicio da palavra',
+      'Uma parte acrescentada ao final da palavra',
+      'A palavra que serve de base para outras palavras',
+      'Um tipo de substantivo composto'
+    ],
+    correct: 0,
+    feedback: 'O <strong>prefixo</strong> e acrescentado ao INICIO da palavra primitiva para formar uma palavra derivada. Ex: <strong>re</strong>utilizar, <strong>en</strong>caracolado.'
+  },
+  {
+    text: 'O que e um <span class="hl">sufixo</span>?',
+    opts: [
+      'Uma parte acrescentada ao inicio da palavra',
+      'Uma parte acrescentada ao final da palavra',
+      'A palavra que serve de base para outras',
+      'O mesmo que palavra primitiva'
+    ],
+    correct: 1,
+    feedback: 'O <strong>sufixo</strong> e acrescentado ao FINAL da palavra primitiva. Ex: control<strong>ado</strong>, enchim<strong>ento</strong>, enchen<strong>te</strong>.'
+  },
+  {
+    text: 'Na palavra "<span class="hl">hidro</span>grafica", a parte "hidro" e:',
+    opts: [
+      'Um sufixo que indica profissao',
+      'Uma palavra primitiva independente',
+      'Um prefixo que significa "agua"',
+      'Uma terminacao verbal'
+    ],
+    correct: 2,
+    feedback: '"<strong>Hidro</strong>" e um prefixo de origem grega que significa "agua". <strong>Hidro</strong>grafica = escrever sobre aguas.'
+  },
+  {
+    text: 'Na palavra "control<span class="hl">ado</span>", a parte "-ado" e:',
+    opts: [
+      'Um prefixo',
+      'Uma palavra primitiva',
+      'Um sufixo',
+      'Uma preposicao'
+    ],
+    correct: 2,
+    feedback: '"-<strong>ado</strong>" e um <strong>sufixo</strong> — aparece no FINAL das palavras. Ex: control<strong>ado</strong>, alinha<strong>do</strong>, disciplin<strong>ado</strong>, cachea<strong>do</strong>.'
+  },
+  {
+    text: 'O que e uma <span class="hl">palavra primitiva</span>?',
+    opts: [
+      'Uma palavra muito antiga da lingua portuguesa',
+      'A palavra que serve de base para formar outras palavras',
+      'Uma palavra formada por prefixo + sufixo',
+      'O mesmo que palavra derivada'
+    ],
+    correct: 1,
+    feedback: 'A <strong>palavra primitiva</strong> e a base: a partir dela, acrescentamos prefixos e sufixos para formar <strong>palavras derivadas</strong>. Ex: "sombra" gera "sombrinha".'
+  },
+  {
+    text: 'Qual palavra abaixo e derivada de "<span class="hl">sombra</span>"?',
+    opts: [
+      'soleira',
+      'sombrinha',
+      'sombrio (palavra sem afixo)',
+      'solucar'
+    ],
+    correct: 1,
+    feedback: '"<strong>Sombrinha</strong>" e uma <strong>palavra derivada</strong> de "sombra" — formada com o sufixo <strong>-inha</strong>. A palavra primitiva "sombra" serviu de base.'
+  },
+  {
+    text: 'Qual prefixo acrescenta o sentido de <span class="hl">repeticao</span> a uma palavra?',
+    opts: [
+      'des-',
+      'en-',
+      're-',
+      'super-'
+    ],
+    correct: 2,
+    feedback: 'O prefixo <strong>re-</strong> indica repeticao ou volta ao estado anterior. Ex: <strong>re</strong>utilizar, <strong>re</strong>ciclar, <strong>re</strong>fazer, <strong>re</strong>abrir.'
+  },
+  {
+    text: '"Encaracolado" foi formada a partir de qual <span class="hl">palavra primitiva</span>?',
+    opts: [
+      'cara',
+      'enrolar',
+      'caracol',
+      'colar'
+    ],
+    correct: 2,
+    feedback: 'A <strong>palavra primitiva</strong> e "<strong>caracol</strong>". Com o prefixo <strong>en-</strong> e o sufixo <strong>-ado</strong>, forma-se "en<strong>caracol</strong>ado" = que tem forma de caracol.'
+  },
+  {
+    text: 'Em "<span class="hl">superdesconto</span>" e "<span class="hl">superliquidacao</span>", o prefixo "super-" acrescenta qual sentido?',
+    opts: [
+      'Negacao ou contrario',
+      'Repeticao da acao',
+      'Intensidade / exagero',
+      'Transformacao em outro estado'
+    ],
+    correct: 2,
+    feedback: 'O prefixo <strong>super-</strong> acrescenta o sentido de <strong>intensidade e exagero</strong>: <strong>super</strong>desconto = desconto muito grande; <strong>ultra</strong>mega<strong>super</strong>liquidacao = exagero total!'
+  },
+  {
+    text: 'Qual e o antonimo de "<span class="hl">encaixar</span>" formado com prefixo?',
+    opts: [
+      'recaixar',
+      'desencaixar',
+      'encaixamento',
+      'caixinha'
+    ],
+    correct: 1,
+    feedback: '"<strong>Des</strong>encaixar" e o antonimo de "encaixar", formado com o prefixo <strong>des-</strong>, que indica contrario ou desfazimento da acao. A <strong>palavra primitiva</strong> e "caixa".'
+  }
+];
+
+var current = 0, score = 0, answered = false;
+var letters = ['A','B','C','D'];
+
+function showQuestion(i) {
+  answered = false;
+  var q = QUESTIONS[i];
+  document.getElementById('q-num').textContent = 'QUESTAO ' + (i+1);
+  document.getElementById('q-text').innerHTML = q.text;
+  document.getElementById('prog-label').textContent = 'Questao ' + (i+1) + ' de 10';
+  document.getElementById('prog-fill').style.width = (i/10*100) + '%';
+  var area = document.getElementById('options-area');
+  area.innerHTML = '';
+  q.opts.forEach(function(opt, j) {
+    var btn = document.createElement('button');
+    btn.className = 'opt pop';
+    btn.innerHTML = '<span class="opt-letter">' + letters[j] + '</span>' + opt;
+    btn.addEventListener('click', function() { selectOpt(j); });
+    area.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function selectOpt(j) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[current];
+  var opts = document.querySelectorAll('.opt');
+  opts.forEach(function(btn) { btn.classList.add('locked'); });
+  if (j === q.correct) {
+    opts[j].classList.add('correct');
+    score++;
+    showFeedback(true, q.feedback);
+  } else {
+    opts[j].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    showFeedback(false, q.feedback);
+  }
+  document.getElementById('score-display').textContent = 'Pontos: ' + score;
+  document.getElementById('btn-next').style.display = 'block';
+  if (current === QUESTIONS.length - 1) {
+    document.getElementById('btn-next').textContent = 'Ver resultado';
+  }
+}
+
+function showFeedback(ok, text) {
+  var el = document.getElementById('feedback');
+  el.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+  document.getElementById('fb-icon').textContent = ok ? '✓' : '✗';
+  document.getElementById('fb-text').innerHTML = text;
+  el.style.display = 'flex';
+}
+
+document.getElementById('btn-next').addEventListener('click', function() {
+  current++;
+  if (current >= QUESTIONS.length) {
+    showResult();
+  } else {
+    showQuestion(current);
+  }
+});
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  var res = document.getElementById('result-area');
+  res.style.display = 'block';
+  var pct = Math.round(score / QUESTIONS.length * 100);
+  document.getElementById('res-score').textContent = score + ' / ' + QUESTIONS.length;
+  var emojis = ['😅','😊','😄','🌟','🏆'];
+  var tier = Math.floor(pct / 25);
+  document.getElementById('res-emoji').textContent = emojis[Math.min(tier, 4)];
+  var msgs = [
+    'Continue estudando — revise prefixo e sufixo!',
+    'Bom esforco! Revise os conceitos e tente de novo.',
+    'Muito bem! Voce esta aprendendo!',
+    'Excelente! Dominou quase tudo!',
+    'Perfeito! Voce e um especialista em prefixo e sufixo!'
+  ];
+  document.getElementById('res-msg').textContent = msgs[Math.min(tier, 4)];
+  document.getElementById('prog-fill').style.width = '100%';
+}
+
+function restart() {
+  current = 0; score = 0;
+  document.getElementById('result-area').style.display = 'none';
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('score-display').textContent = 'Pontos: 0';
+  showQuestion(0);
+}
+
+showQuestion(0);
+</script>
+</body>
+</html>

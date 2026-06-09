@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fabrica de Palavras — Prefixo e Sufixo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+  --green: #059669; --red: #DC2626;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 780px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.12); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.progress-wrap { padding: 12px 24px 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 12px; }
+.prog-track { flex: 1; height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: var(--port); transition: width .4s; }
+.score-badge { font-size: 12px; font-weight: 800; color: var(--port); white-space: nowrap; }
+
+/* Alvo */
+.target-area { padding: 16px 24px; border-bottom: 2px solid var(--border); }
+.target-label { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px; }
+.target-word { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; color: var(--port-dark); letter-spacing: .04em; }
+.target-word span { color: var(--port); }
+
+/* Montagem */
+.assembly-area { padding: 16px 24px; border-bottom: 2px solid var(--border); }
+.assembly-label { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px; }
+.slots { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.slot { min-width: 90px; min-height: 44px; border: 2px dashed var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--muted); background: var(--port-bg); position: relative; transition: border-color .15s, background .15s; padding: 4px 8px; text-align: center; }
+.slot.has-piece { border-style: solid; border-color: var(--port-light); background: white; color: var(--port-dark); cursor: pointer; }
+.slot.has-piece:hover { border-color: var(--red); }
+.slot.optional { border-color: #e5e7eb; background: #f9fafb; }
+.slot.optional .slot-hint { color: #d1d5db; font-size: 11px; }
+.slot-type { font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); position: absolute; top: -8px; left: 8px; background: var(--card); padding: 0 4px; }
+.plus-sign { font-size: 20px; color: var(--border); font-weight: 700; flex-shrink: 0; }
+.assembly-feedback { margin-top: 12px; padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 700; display: none; }
+.assembly-feedback.correct { background: #F0FDF4; border: 2px solid var(--green); color: #065F46; }
+.assembly-feedback.wrong { background: #FEF2F2; border: 2px solid var(--red); color: #991B1B; }
+.btn-check { margin-top: 10px; padding: 10px 24px; border-radius: 12px; background: var(--port); color: white; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; border: none; cursor: pointer; }
+.btn-check:hover { opacity: .85; }
+.btn-next-word { margin-top: 8px; margin-left: 8px; padding: 10px 24px; border-radius: 12px; background: var(--green); color: white; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; border: none; cursor: pointer; display: none; }
+
+/* Bancos de peças */
+.banks { padding: 16px 24px 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.bank { background: var(--port-bg); border: 2px solid var(--border); border-radius: 16px; padding: 12px; }
+.bank-title { font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.bank-title .dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-pref { background: var(--port); }
+.dot-raiz { background: #374151; }
+.dot-suf { background: var(--port-light); }
+.pieces { display: flex; flex-wrap: wrap; gap: 6px; }
+.piece { padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: grab; user-select: none; border: 2px solid transparent; transition: all .15s; }
+.piece:active { cursor: grabbing; }
+.piece.pref { background: var(--port); color: white; border-color: var(--port-dark); }
+.piece.raiz { background: #374151; color: white; border-color: #1f2937; }
+.piece.suf  { background: var(--port-light); color: var(--port-dark); border-color: var(--port); }
+.piece.used { opacity: .3; cursor: not-allowed; }
+.piece:not(.used):hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+
+/* Resultado */
+.result-area { padding: 32px 24px; text-align: center; display: none; }
+.result-emoji { font-size: 52px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; color: var(--port); }
+.result-score { font-size: 40px; font-weight: 900; color: var(--port-dark); margin: 8px 0; }
+.result-stars { font-size: 28px; letter-spacing: 4px; }
+.btn-restart { margin-top: 16px; padding: 13px 32px; border-radius: 14px; background: var(--port); color: white; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; border: none; cursor: pointer; }
+
+@keyframes celebrate { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+.celebrate { animation: celebrate .4s ease-in-out; }
+
+@media (max-width: 600px) {
+  .banks { grid-template-columns: 1fr; }
+  .slots { gap: 6px; }
+  .slot { min-width: 75px; font-size: 12px; }
+  .target-word { font-size: 16px; }
+  .card-header { padding: 16px; }
+  .assembly-area, .target-area, .instrucao { padding: 12px 16px; }
+  .banks { padding: 12px 16px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🏭</div>
+      <div><h1>Fabrica de Palavras</h1><p>Prefixo e Sufixo — pp. 122–125, 142</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como jogar:</strong> Clique nas pecas dos bancos abaixo para colocar nos slots. Clique em uma peca no slot para remove-la. Monte a <strong>palavra derivada</strong> indicada e clique em <strong>Verificar</strong>!
+    </div>
+    <div class="progress-wrap">
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <span class="score-badge" id="score-badge">0 / 6 acertos</span>
+    </div>
+    <div id="game-area">
+      <div class="target-area">
+        <div class="target-label">Monte esta palavra derivada:</div>
+        <div class="target-word" id="target-word"></div>
+      </div>
+      <div class="assembly-area">
+        <div class="assembly-label">Sua montagem:</div>
+        <div class="slots" id="slots-area"></div>
+        <div class="assembly-feedback" id="asm-feedback"></div>
+        <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn-check" id="btn-check" onclick="checkWord()">Verificar ✓</button>
+          <button class="btn-next-word" id="btn-next-word" onclick="nextWord()">Proxima palavra →</button>
+        </div>
+      </div>
+      <div class="banks">
+        <div class="bank">
+          <div class="bank-title"><span class="dot dot-pref"></span>PREFIXOS</div>
+          <div class="pieces" id="bank-pref"></div>
+        </div>
+        <div class="bank">
+          <div class="bank-title"><span class="dot dot-raiz"></span>RAIZES</div>
+          <div class="pieces" id="bank-raiz"></div>
+        </div>
+        <div class="bank">
+          <div class="bank-title"><span class="dot dot-suf"></span>SUFIXOS</div>
+          <div class="pieces" id="bank-suf"></div>
+        </div>
+      </div>
+    </div>
+    <div class="result-area" id="result-area">
+      <div class="result-emoji" id="res-emoji"></div>
+      <div class="result-title">Fabrica encerrada!</div>
+      <div class="result-score" id="res-score"></div>
+      <div class="result-stars" id="res-stars"></div>
+      <button class="btn-restart" onclick="restart()">Produzir novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var TARGETS = [
+  {
+    display: '<span>re</span>utilizar',
+    pref: 're-', raiz: 'utilizar', suf: null,
+    hint: 'Prefixo <strong>re-</strong> (repeticao) + raiz "utilizar". Nenhum sufixo necessario.'
+  },
+  {
+    display: '<span>en</span>caracol<span>ado</span>',
+    pref: 'en-', raiz: 'caracol', suf: '-ado',
+    hint: 'Prefixo <strong>en-</strong> + raiz "caracol" + sufixo <strong>-ado</strong>. Resultado: formato de caracol!'
+  },
+  {
+    display: '<span>des</span>encaixar',
+    pref: 'des-', raiz: 'encaixar', suf: null,
+    hint: 'Prefixo <strong>des-</strong> (contrario) + raiz "encaixar". Antonimo de encaixar!'
+  },
+  {
+    display: '<span>super</span>desconto',
+    pref: 'super-', raiz: 'desconto', suf: null,
+    hint: 'Prefixo <strong>super-</strong> (intensidade) + raiz "desconto". Desconto enorme!'
+  },
+  {
+    display: '<span>hidro</span>grafica',
+    pref: 'hidro-', raiz: 'grafica', suf: null,
+    hint: 'Prefixo <strong>hidro-</strong> (agua) + raiz "grafica" (escrever). Escrever sobre aguas!'
+  },
+  {
+    display: 'enchi<span>mento</span>',
+    pref: null, raiz: 'enchi', suf: '-mento',
+    hint: 'Raiz "enchi" (de encher) + sufixo <strong>-mento</strong>. A palavra primitiva e "encher".'
+  }
+];
+
+var PREFIXES = ['re-','en-','des-','super-','hidro-'];
+var RAIZES   = ['utilizar','caracol','encaixar','desconto','grafica','enchi'];
+var SUFIXES  = ['-ado','-mento','-inho','-acao'];
+
+var current = 0, score = 0;
+var slots = { pref: null, raiz: null, suf: null };
+
+function renderBanks() {
+  renderBank('bank-pref', PREFIXES, 'pref');
+  renderBank('bank-raiz', RAIZES, 'raiz');
+  renderBank('bank-suf', SUFIXES, 'suf');
+}
+
+function renderBank(id, items, type) {
+  var el = document.getElementById(id);
+  el.innerHTML = '';
+  items.forEach(function(item) {
+    var btn = document.createElement('button');
+    btn.className = 'piece ' + type;
+    btn.textContent = item;
+    btn.dataset.val = item;
+    btn.dataset.type = type;
+    btn.addEventListener('click', function() { placePiece(item, type, btn); });
+    el.appendChild(btn);
+  });
+}
+
+function placePiece(val, type, btn) {
+  if (btn.classList.contains('used')) return;
+  // Remove peca anterior do mesmo slot se existir
+  if (slots[type]) {
+    // liberar peca anterior
+    var prevBtn = findPieceBtn(slots[type], type);
+    if (prevBtn) prevBtn.classList.remove('used');
+  }
+  slots[type] = val;
+  btn.classList.add('used');
+  updateSlots();
+}
+
+function findPieceBtn(val, type) {
+  var bank = { pref:'bank-pref', raiz:'bank-raiz', suf:'bank-suf' }[type];
+  var btns = document.querySelectorAll('#'+bank+' .piece');
+  for (var i=0; i<btns.length; i++) {
+    if (btns[i].dataset.val === val) return btns[i];
+  }
+  return null;
+}
+
+function updateSlots() {
+  var area = document.getElementById('slots-area');
+  area.innerHTML = '';
+  var defs = [
+    { key:'pref', label:'PREFIXO', hint:'opcional', cls:'pref' },
+    { key:'raiz', label:'RAIZ', hint:'clique para adicionar', cls:'raiz' },
+    { key:'suf',  label:'SUFIXO', hint:'opcional', cls:'suf' }
+  ];
+  defs.forEach(function(d, i) {
+    if (i > 0) {
+      var plus = document.createElement('span');
+      plus.className = 'plus-sign';
+      plus.textContent = '+';
+      area.appendChild(plus);
+    }
+    var slot = document.createElement('div');
+    slot.className = 'slot' + (slots[d.key] ? ' has-piece' : ' optional');
+    var typeEl = document.createElement('span');
+    typeEl.className = 'slot-type';
+    typeEl.textContent = d.label;
+    slot.appendChild(typeEl);
+    if (slots[d.key]) {
+      var txt = document.createTextNode(slots[d.key]);
+      slot.appendChild(txt);
+      slot.title = 'Clique para remover';
+      (function(key, val, tp) {
+        slot.addEventListener('click', function() {
+          slots[key] = null;
+          var btn = findPieceBtn(val, tp);
+          if (btn) btn.classList.remove('used');
+          updateSlots();
+          document.getElementById('asm-feedback').style.display = 'none';
+        });
+      })(d.key, slots[d.key], d.key);
+    } else {
+      var hint = document.createElement('span');
+      hint.className = 'slot-hint';
+      hint.textContent = d.hint;
+      slot.appendChild(hint);
+    }
+    area.appendChild(slot);
+  });
+}
+
+function checkWord() {
+  var t = TARGETS[current];
+  var ok = (slots.pref === t.pref) && (slots.raiz === t.raiz) && (slots.suf === t.suf);
+  var fb = document.getElementById('asm-feedback');
+  fb.style.display = 'block';
+  if (ok) {
+    fb.className = 'assembly-feedback correct';
+    fb.innerHTML = '✓ Correto! ' + t.hint;
+    score++;
+    document.getElementById('score-badge').textContent = score + ' / 6 acertos';
+    document.getElementById('prog-fill').style.width = (score/6*100)+'%';
+    document.getElementById('btn-check').style.display = 'none';
+    document.getElementById('btn-next-word').style.display = 'inline-block';
+    document.getElementById('target-word').classList.add('celebrate');
+    setTimeout(function(){ document.getElementById('target-word').classList.remove('celebrate'); }, 400);
+  } else {
+    fb.className = 'assembly-feedback wrong';
+    fb.innerHTML = '✗ Tente de novo! Dica: ' + t.hint;
+  }
+}
+
+function nextWord() {
+  current++;
+  slots = { pref: null, raiz: null, suf: null };
+  document.getElementById('btn-check').style.display = 'inline-block';
+  document.getElementById('btn-next-word').style.display = 'none';
+  document.getElementById('asm-feedback').style.display = 'none';
+  if (current >= TARGETS.length) {
+    showResult();
+  } else {
+    renderBanks();
+    updateSlots();
+    document.getElementById('target-word').innerHTML = TARGETS[current].display;
+  }
+}
+
+function showResult() {
+  document.getElementById('game-area').style.display = 'none';
+  var res = document.getElementById('result-area');
+  res.style.display = 'block';
+  document.getElementById('res-score').textContent = score + ' de 6 palavras';
+  var stars = score >= 5 ? '⭐⭐⭐' : score >= 3 ? '⭐⭐' : '⭐';
+  document.getElementById('res-stars').textContent = stars;
+  var emojis = ['🌱','🌿','🌳'];
+  var tier = score >= 5 ? 2 : score >= 3 ? 1 : 0;
+  document.getElementById('res-emoji').textContent = emojis[tier];
+}
+
+function restart() {
+  current = 0; score = 0;
+  slots = { pref: null, raiz: null, suf: null };
+  document.getElementById('result-area').style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+  document.getElementById('score-badge').textContent = '0 / 6 acertos';
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('btn-check').style.display = 'inline-block';
+  document.getElementById('btn-next-word').style.display = 'none';
+  document.getElementById('asm-feedback').style.display = 'none';
+  renderBanks();
+  updateSlots();
+  document.getElementById('target-word').innerHTML = TARGETS[0].display;
+}
+
+// Init
+renderBanks();
+updateSlots();
+document.getElementById('target-word').innerHTML = TARGETS[0].display;
+</script>
+</body>
+</html>

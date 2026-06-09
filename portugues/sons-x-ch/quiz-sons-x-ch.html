@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Sons do X e do Dígrafo CH</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED;
+  --port-light: #A78BFA;
+  --port-bg: #F3F0FF;
+  --port-dark: #4C1D95;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #DDD6FE;
+  --card: #fff;
+  --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 700px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+
+/* HEADER */
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 40px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+/* PROGRESS */
+.progress-bar-wrap { padding: 14px 24px 10px; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { background: var(--border); border-radius: 999px; height: 8px; overflow: hidden; }
+.prog-fill { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--port), var(--port-light)); transition: width .4s; }
+
+/* SCORE */
+.score-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 24px; border-bottom: 2px solid var(--border); }
+.score-bar span { font-size: 13px; font-weight: 800; color: var(--port); }
+
+/* QUIZ BODY */
+.quiz-body { padding: 24px; }
+.question-num { font-size: 11px; font-weight: 800; color: var(--port-light); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.question-text { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 18px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn { background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 12px 18px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; text-align: left; transition: all .15s; width: 100%; }
+.opt-btn:hover:not(:disabled) { border-color: var(--port-light); background: #ede9fe; }
+.opt-btn.correct { background: #d1fae5; border-color: #059669; color: #065F46; }
+.opt-btn.wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; animation: shake .4s; }
+.opt-btn:disabled { cursor: default; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+/* FEEDBACK */
+.feedback { display: none; margin-top: 16px; border-radius: 14px; padding: 12px 16px; gap: 10px; align-items: flex-start; }
+.feedback.correct { background: #d1fae5; border: 2px solid #059669; display: flex; }
+.feedback.wrong { background: #fee2e2; border: 2px solid #dc2626; display: flex; }
+.feedback-icon { font-size: 20px; line-height: 1; flex-shrink: 0; }
+.feedback-text { font-size: 13px; font-weight: 600; line-height: 1.5; color: var(--text); }
+
+/* NEXT BUTTON */
+.next-btn { margin-top: 20px; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; display: none; transition: opacity .15s; }
+.next-btn:hover { opacity: .85; }
+
+/* FINAL SCREEN */
+.final-screen { display: none; text-align: center; padding: 32px 24px; }
+.final-emoji { font-size: 64px; margin-bottom: 12px; }
+.final-title { font-family: "Space Mono", monospace; font-size: 20px; color: var(--port-dark); margin-bottom: 8px; }
+.final-score { font-size: 36px; font-weight: 900; color: var(--port); margin-bottom: 8px; }
+.final-msg { font-size: 15px; color: var(--muted); font-weight: 600; margin-bottom: 24px; line-height: 1.6; }
+.replay-btn { background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.replay-btn:hover { opacity: .85; }
+
+@media (max-width: 480px) {
+  .quiz-body { padding: 16px; }
+  .question-text { font-size: 15px; }
+  .opt-btn { font-size: 13px; padding: 10px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🎩</div>
+      <div>
+        <h1>Quiz Interativo</h1>
+        <p>Sons do X e do Dígrafo CH — Português 5º ano</p>
+      </div>
+      <div class="hbadge">📖 Retrieval</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+    </div>
+    <div class="score-bar">
+      <span id="score-display">Pontuação: 0</span>
+      <span id="xis-bar">Xis diz: escolha o chapéu certo!</span>
+    </div>
+
+    <div class="quiz-body" id="quiz-body">
+      <div class="question-num" id="q-num">QUESTÃO 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">
+        <div class="feedback-icon" id="fb-icon"></div>
+        <div class="feedback-text" id="fb-text"></div>
+      </div>
+      <button class="next-btn" id="next-btn">Próxima questão →</button>
+    </div>
+
+    <div class="final-screen" id="final-screen">
+      <div class="final-emoji" id="final-emoji"></div>
+      <div class="final-title">Resultado Final</div>
+      <div class="final-score" id="final-score"></div>
+      <div class="final-msg" id="final-msg"></div>
+      <button class="replay-btn" onclick="init()">Jogar novamente</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var QUESTIONS = [
+  {
+    q: "A letra X representa sempre o mesmo som nas palavras do português?",
+    opts: [
+      "Sim, o X sempre tem o som de /ks/ como em táxi",
+      "Não, a letra X representa sons diferentes",
+      "Sim, o X sempre tem o mesmo som do dígrafo CH",
+      "Sim, o X sempre tem o som de /z/ como em exemplo"
+    ],
+    correct: 1,
+    feedback: "Correto! O livro afirma: 'A letra X representa sons diferentes'. Ela pode ter os sons de /ks/, /sh/ (igual ao dígrafo CH), /z/ e /ss/."
+  },
+  {
+    q: "Em qual das palavras abaixo o X tem o MESMO SOM do dígrafo CH?",
+    opts: ["exato", "táxi", "peixe", "máximo"],
+    correct: 2,
+    feedback: "Certo! Em 'peixe', o X tem o som de /sh/, exatamente o mesmo som do dígrafo CH. O ditongo 'ei' antes do X explica essa pronúncia."
+  },
+  {
+    q: "Qual é a regra para usar X com som de CH depois de um ditongo?",
+    opts: [
+      "Depois de ditongo, como em 'caixa' e 'peixe', o X tem som de CH",
+      "Depois de ditongo, o X sempre tem som de /ks/ como em táxi",
+      "Depois de ditongo, o X tem som de /z/ como em exemplo",
+      "Não existe regra para ditongo — é sempre aleatório"
+    ],
+    correct: 0,
+    feedback: "Perfeito! A regra é: depois de ditongo, o X tem o mesmo som do dígrafo CH. Exemplos do livro: eixo (ei), caixa (ai), peixe (ei), faixa (ai), deixou (ei)."
+  },
+  {
+    q: "Em 'enxame', por que se usa X e não CH?",
+    opts: [
+      "Porque 'enxame' deriva de uma palavra com CH",
+      "Porque a palavra 'enxame' começa com EN- seguido de X",
+      "Porque o X em 'enxame' tem som de /ks/",
+      "Porque é uma exceção à regra geral"
+    ],
+    correct: 1,
+    feedback: "Exato! Uma das regras do livro: depois de EN-, usa-se X. Outros exemplos: enxaguar, enxaqueca, enxugar, enxoval."
+  },
+  {
+    q: "Em qual das palavras abaixo o X tem o som de /ks/ (como em táxi)?",
+    opts: ["peixe", "exato", "axila", "máximo"],
+    correct: 2,
+    feedback: "Correto! Em 'axila', o X tem o som de /ks/, como em táxi. Esse é um dos 4 sons que a letra X pode representar."
+  },
+  {
+    q: "Em qual das palavras o X tem o som de /z/ (como em exemplo)?",
+    opts: ["máximo", "caixa", "axila", "exato"],
+    correct: 3,
+    feedback: "Certo! Em 'exato', assim como em 'exemplo', o X tem o som de /z/. Outros exemplos: exercício, êxito."
+  },
+  {
+    q: "Por que 'enchente' se escreve com CH e não com X?",
+    opts: [
+      "Porque vem depois de ditongo",
+      "Porque começa com EN-",
+      "Porque deriva de 'encher', que tem CH",
+      "Porque CH é mais comum que X nessa posição"
+    ],
+    correct: 2,
+    feedback: "Muito bem! A regra do livro: quando a palavra derivada usa CH, mantém-se o CH. 'Enchente' deriva de 'encher' (que tem CH), então usa-se CH, não X."
+  },
+  {
+    q: "Qual ditongo aparece ANTES do X na palavra 'peixe'?",
+    opts: ["ai", "ou", "ei", "oi"],
+    correct: 2,
+    feedback: "Correto! O ditongo 'ei' aparece antes do X em 'peixe'. Por isso o X tem som de CH. O mesmo vale para: eixo (ei), deixou (ei)."
+  },
+  {
+    q: "Em qual grupo a palavra 'faixa' se encaixa segundo as regras do livro?",
+    opts: [
+      "X com som de /ks/, como em táxi",
+      "X com som de CH, depois do ditongo AI",
+      "X com som de /z/, como em exemplo",
+      "X com som de /ss/, como em auxílio"
+    ],
+    correct: 1,
+    feedback: "Perfeito! 'Faixa' tem o ditongo AI antes do X, então o X tem o mesmo som do dígrafo CH. Regra: depois de ditongo, X = CH."
+  },
+  {
+    q: "Em qual das palavras o X tem o som de /ss/ (como em auxílio)?",
+    opts: ["exercício", "caixa", "máximo", "enxame"],
+    correct: 2,
+    feedback: "Correto! Em 'máximo', o X tem o som de /ss/. Outros exemplos com esse som: próximo, auxílio. São 4 sons possíveis para o X: /ks/, /sh/ (CH), /z/ e /ss/."
+  }
+];
+
+var current = 0, score = 0, answered = false;
+
+function init() {
+  current = 0; score = 0; answered = false;
+  document.getElementById('final-screen').style.display = 'none';
+  document.getElementById('quiz-body').style.display = 'block';
+  render();
+}
+
+function render() {
+  var q = QUESTIONS[current];
+  document.getElementById('q-num').textContent = 'QUESTÃO ' + (current + 1);
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('prog-label').textContent = 'Questão ' + (current + 1) + ' de ' + QUESTIONS.length;
+  document.getElementById('prog-fill').style.width = ((current + 1) / QUESTIONS.length * 100) + '%';
+  document.getElementById('score-display').textContent = 'Pontuação: ' + score;
+
+  var msgs = ['escolha o chapéu certo!', 'qual som tem esse X?', 'você consegue!', 'pense nas regras!'];
+  document.getElementById('xis-bar').textContent = 'Xis diz: ' + msgs[current % msgs.length];
+
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach(function(o, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = o;
+    btn.addEventListener('click', function() { answer(i); });
+    opts.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[current];
+  var btns = document.getElementById('options').querySelectorAll('.opt-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  var correct = idx === q.correct;
+  btns[idx].classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) btns[q.correct].classList.add('correct');
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+  document.getElementById('fb-icon').textContent = correct ? '✓' : '✗';
+  document.getElementById('fb-text').textContent = q.feedback;
+
+  if (correct) score++;
+  document.getElementById('score-display').textContent = 'Pontuação: ' + score;
+  document.getElementById('next-btn').style.display = 'block';
+  document.getElementById('next-btn').textContent = current < QUESTIONS.length - 1 ? 'Próxima questão →' : 'Ver resultado';
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  current++;
+  if (current >= QUESTIONS.length) { showFinal(); return; }
+  render();
+});
+
+function showFinal() {
+  document.getElementById('quiz-body').style.display = 'none';
+  var fs = document.getElementById('final-screen');
+  fs.style.display = 'block';
+  var pct = Math.round(score / QUESTIONS.length * 100);
+  document.getElementById('final-score').textContent = score + ' / ' + QUESTIONS.length + ' (' + pct + '%)';
+  var emoji, msg;
+  if (pct >= 90) { emoji = '🎩'; msg = 'Incrível! Você domina os 4 sons do X e as regras do dígrafo CH. Xis ficaria orgulhoso!'; }
+  else if (pct >= 70) { emoji = '⭐'; msg = 'Muito bem! Você já entende as regras principais. Revise os casos de ditongo e as derivadas com CH.'; }
+  else if (pct >= 50) { emoji = '📚'; msg = 'Bom esforço! Relembre: depois de ditongo e depois de EN- usa-se X; derivadas de CH mantêm CH.'; }
+  else { emoji = '💪'; msg = 'Continue praticando! Lembre: a letra X representa 4 sons diferentes — /ks/, /sh/ (CH), /z/ e /ss/.'; }
+  document.getElementById('final-emoji').textContent = emoji;
+  document.getElementById('final-msg').textContent = msg;
+}
+
+init();
+</script>
+</body>
+</html>

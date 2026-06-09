@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oficina de Anúncio — Anúncio Publicitário</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+/* Progress wizard */
+.wizard-progress { padding: 16px 24px 0; }
+.steps-row { display: flex; gap: 6px; align-items: center; }
+.step-dot { flex: 1; height: 6px; border-radius: 999px; background: var(--border); transition: background .3s; }
+.step-dot.done { background: var(--port); }
+.step-dot.active { background: var(--port-light); }
+.step-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-top: 6px; }
+
+/* Step content */
+.step { display: none; padding: 20px 24px; }
+.step.active { display: block; }
+.step-title { font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700; color: var(--port); margin-bottom: 4px; letter-spacing: .04em; }
+.step-subtitle { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 16px; line-height: 1.4; }
+.publinho-tip { display: flex; align-items: flex-start; gap: 10px; background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.5; }
+.publinho-tip .tip-icon { font-size: 22px; flex-shrink: 0; }
+
+/* Choice buttons */
+.choice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.choice-btn { background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 14px 12px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; color: var(--text); cursor: pointer; text-align: center; transition: all .15s; line-height: 1.3; }
+.choice-btn:hover { border-color: var(--port-light); background: #ede9fe; }
+.choice-btn.selected { background: #ede9fe; border-color: var(--port); color: var(--port); box-shadow: 0 0 0 3px rgba(124,58,237,.15); }
+
+/* Textarea */
+.slogan-input { width: 100%; border: 2px solid var(--border); border-radius: 14px; padding: 14px 16px; font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 600; color: var(--text); resize: none; outline: none; background: var(--port-bg); transition: border-color .15s; }
+.slogan-input:focus { border-color: var(--port); }
+.char-count { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 4px; text-align: right; }
+
+/* Checkboxes */
+.check-list { display: flex; flex-direction: column; gap: 10px; }
+.check-item { display: flex; align-items: center; gap: 12px; background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 12px 16px; cursor: pointer; transition: all .15s; }
+.check-item:hover { border-color: var(--port-light); }
+.check-item.checked { background: #ede9fe; border-color: var(--port); }
+.check-item input { width: 18px; height: 18px; accent-color: var(--port); cursor: pointer; flex-shrink: 0; }
+.check-item span { font-size: 14px; font-weight: 700; color: var(--text); }
+
+/* Preview card */
+.preview-card { background: linear-gradient(135deg, #ede9fe, #faf5ff); border: 3px solid var(--port); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 16px; }
+.preview-title { font-family: "Space Mono", monospace; font-size: 11px; color: var(--port-light); font-weight: 700; letter-spacing: .1em; margin-bottom: 12px; }
+.preview-anuncio { font-size: 28px; font-weight: 900; color: var(--port-dark); line-height: 1.2; margin-bottom: 8px; }
+.preview-slogan { font-size: 18px; font-weight: 800; color: var(--port); font-style: italic; margin-bottom: 12px; }
+.preview-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 10px; }
+.preview-tag { background: rgba(124,58,237,.12); border: 1px solid var(--port-light); color: var(--port); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.preview-publico { font-size: 12px; color: var(--muted); font-weight: 600; }
+.success-msg { background: #D1FAE5; border: 2px solid #059669; border-radius: 14px; padding: 14px 16px; font-size: 13px; font-weight: 600; color: #065F46; line-height: 1.6; }
+.success-msg strong { color: #047857; }
+
+/* Navigation */
+.nav-row { display: flex; gap: 10px; margin-top: 20px; }
+.btn-back-step { background: var(--card); border: 2px solid var(--border); border-radius: 14px; padding: 11px 20px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .15s; }
+.btn-back-step:hover { border-color: var(--port-light); color: var(--port); }
+.btn-next-step { flex: 1; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 13px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s; }
+.btn-next-step:hover { background: var(--port-dark); }
+.btn-next-step:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+.btn-restart { background: var(--port-bg); border: 2px solid var(--port); border-radius: 14px; padding: 11px 24px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; color: var(--port); cursor: pointer; transition: all .15s; }
+.btn-restart:hover { background: var(--port); color: #fff; }
+
+@media (max-width: 480px) {
+  .choice-grid { grid-template-columns: 1fr 1fr; }
+  .card-header h1 { font-size: 14px; }
+  .preview-anuncio { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">📣</div>
+      <div><h1>Oficina de Anúncio</h1><p>Anúncio Publicitário · pp. 134–135</p></div>
+      <div class="hbadge">🏆 Ensinar (90%)</div>
+    </div>
+
+    <div class="wizard-progress">
+      <div class="steps-row">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+        <div class="step-dot" id="dot-4"></div>
+        <div class="step-dot" id="dot-5"></div>
+      </div>
+      <div class="step-label" id="step-label">Etapa 1 de 5 — Escolha o que anunciar</div>
+    </div>
+
+    <!-- Etapa 1 -->
+    <div class="step active" id="step-1">
+      <div class="step-title">ETAPA 1</div>
+      <div class="step-subtitle">O que você quer anunciar?</div>
+      <div class="publinho-tip">
+        <span class="tip-icon">📣</span>
+        <span><strong>Publinho diz:</strong> Lembra que no livro, a turma criou anúncios de coisas que não podem ser compradas — como amizade e leitura? Escolha a sua!</span>
+      </div>
+      <div class="choice-grid" id="options-1">
+        <button class="choice-btn" data-val="Amizade">🤝 Amizade</button>
+        <button class="choice-btn" data-val="Leitura">📚 Leitura</button>
+        <button class="choice-btn" data-val="Brincar ao ar livre">🌳 Brincar ao ar livre</button>
+        <button class="choice-btn" data-val="Cuidar do planeta">♻️ Cuidar do planeta</button>
+        <button class="choice-btn" data-val="Abraços">🤗 Abraços</button>
+        <button class="choice-btn" data-val="Outro...">✏️ Outro...</button>
+      </div>
+      <div id="outro-input-wrap" style="display:none; margin-top:12px;">
+        <input type="text" id="outro-input" class="slogan-input" placeholder="Digite o que você quer anunciar..." style="height:48px;" maxlength="40">
+      </div>
+      <div class="nav-row">
+        <button class="btn-next-step" id="btn-next-1" disabled onclick="goStep(2)">Próxima etapa →</button>
+      </div>
+    </div>
+
+    <!-- Etapa 2 -->
+    <div class="step" id="step-2">
+      <div class="step-title">ETAPA 2</div>
+      <div class="step-subtitle">Quem é o seu público-alvo?</div>
+      <div class="publinho-tip">
+        <span class="tip-icon">📣</span>
+        <span><strong>Publinho diz:</strong> O <strong>público-alvo</strong> é a quem o anúncio se destina. Olhe para o anúncio Trá Lá Lá — ele usou crianças como personagens para falar com outras crianças!</span>
+      </div>
+      <div class="choice-grid" id="options-2">
+        <button class="choice-btn" data-val="Crianças">👧 Crianças</button>
+        <button class="choice-btn" data-val="Adultos">🧑 Adultos</button>
+        <button class="choice-btn" data-val="Família inteira">👨‍👩‍👧 Família inteira</button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back-step" onclick="goStep(1)">← Voltar</button>
+        <button class="btn-next-step" id="btn-next-2" disabled onclick="goStep(3)">Próxima etapa →</button>
+      </div>
+    </div>
+
+    <!-- Etapa 3 -->
+    <div class="step" id="step-3">
+      <div class="step-title">ETAPA 3</div>
+      <div class="step-subtitle">Escreva o seu slogan!</div>
+      <div class="publinho-tip">
+        <span class="tip-icon">📣</span>
+        <span><strong>Dica do Publinho:</strong> O <strong>slogan</strong> deve ser curto e marcante! O do Trá Lá Lá é "A gente cuida brincando" — simples, mas impossível de esquecer!</span>
+      </div>
+      <textarea class="slogan-input" id="slogan-input" rows="3" maxlength="80" placeholder="Ex: A amizade transforma o mundo..." oninput="onSloganInput()"></textarea>
+      <div class="char-count" id="char-count">0 / 80 caracteres</div>
+      <div class="nav-row">
+        <button class="btn-back-step" onclick="goStep(2)">← Voltar</button>
+        <button class="btn-next-step" id="btn-next-3" disabled onclick="goStep(4)">Próxima etapa →</button>
+      </div>
+    </div>
+
+    <!-- Etapa 4 -->
+    <div class="step" id="step-4">
+      <div class="step-title">ETAPA 4</div>
+      <div class="step-subtitle">Quais elementos terá o seu anúncio?</div>
+      <div class="publinho-tip">
+        <span class="tip-icon">📣</span>
+        <span><strong>Publinho diz:</strong> Um anúncio publicitário usa imagens, cores, personagens e slogan para chamar a atenção do público-alvo. Escolha os elementos do seu!</span>
+      </div>
+      <div class="check-list" id="check-list">
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" value="Cores vibrantes"><span>🎨 Cores vibrantes</span>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" value="Personagens animadas"><span>🎭 Personagens animadas</span>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" value="Imagem do produto/ideia"><span>🖼️ Imagem do produto/ideia</span>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" value="Música"><span>🎵 Música</span>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" value="Letras grandes"><span>🔤 Letras grandes</span>
+        </label>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back-step" onclick="goStep(3)">← Voltar</button>
+        <button class="btn-next-step" id="btn-next-4" onclick="goStep(5)">Ver meu anúncio! →</button>
+      </div>
+    </div>
+
+    <!-- Etapa 5 — Preview -->
+    <div class="step" id="step-5">
+      <div class="step-title">ETAPA 5</div>
+      <div class="step-subtitle">Seu anúncio ficou assim:</div>
+      <div class="preview-card">
+        <div class="preview-title">ANUNCIO PUBLICITARIO</div>
+        <div class="preview-anuncio" id="prev-produto"></div>
+        <div class="preview-slogan" id="prev-slogan"></div>
+        <div class="preview-tags" id="prev-elementos"></div>
+        <div class="preview-publico" id="prev-publico"></div>
+      </div>
+      <div class="success-msg">
+        🏆 <strong>Seu anúncio ficou incrível!</strong> Um bom anúncio tem <strong>slogan</strong> marcante, cores que chamam atenção e personagens que falam com o <strong>público-alvo</strong>. Assim como o Trá Lá Lá usou "A gente cuida brincando" para falar com crianças, você criou o seu!
+      </div>
+      <div class="nav-row" style="flex-wrap:wrap;">
+        <button class="btn-back-step" onclick="goStep(4)">← Editar</button>
+        <button class="btn-restart" onclick="restart()">↺ Criar outro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var state = { produto: '', publico: '', slogan: '', elementos: [] };
+
+// Etapa 1 — escolha produto
+document.getElementById('options-1').addEventListener('click', function(e) {
+  var btn = e.target.closest('.choice-btn');
+  if (!btn) return;
+  document.querySelectorAll('#options-1 .choice-btn').forEach(function(b) { b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  var val = btn.dataset.val;
+  if (val === 'Outro...') {
+    document.getElementById('outro-input-wrap').style.display = 'block';
+    state.produto = document.getElementById('outro-input').value.trim() || '';
+  } else {
+    document.getElementById('outro-input-wrap').style.display = 'none';
+    state.produto = val;
+  }
+  checkNext1();
+});
+document.getElementById('outro-input').addEventListener('input', function() {
+  state.produto = this.value.trim();
+  checkNext1();
+});
+function checkNext1() {
+  document.getElementById('btn-next-1').disabled = !state.produto;
+}
+
+// Etapa 2 — público-alvo
+document.getElementById('options-2').addEventListener('click', function(e) {
+  var btn = e.target.closest('.choice-btn');
+  if (!btn) return;
+  document.querySelectorAll('#options-2 .choice-btn').forEach(function(b) { b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  state.publico = btn.dataset.val;
+  document.getElementById('btn-next-2').disabled = false;
+});
+
+// Etapa 3 — slogan
+function onSloganInput() {
+  var val = document.getElementById('slogan-input').value;
+  state.slogan = val.trim();
+  document.getElementById('char-count').textContent = val.length + ' / 80 caracteres';
+  document.getElementById('btn-next-3').disabled = !state.slogan;
+}
+
+// Etapa 4 — checkboxes
+function toggleCheck(label) {
+  setTimeout(function() {
+    label.classList.toggle('checked', label.querySelector('input').checked);
+    state.elementos = Array.from(document.querySelectorAll('#check-list input:checked')).map(function(i) { return i.value; });
+  }, 0);
+}
+
+function goStep(n) {
+  for (var i = 1; i <= 5; i++) {
+    document.getElementById('step-' + i).classList.toggle('active', i === n);
+    var dot = document.getElementById('dot-' + i);
+    dot.classList.toggle('done', i < n);
+    dot.classList.toggle('active', i === n);
+  }
+  var labels = ['', 'Escolha o que anunciar', 'Defina o público-alvo', 'Escreva o slogan', 'Escolha os elementos', 'Veja seu anúncio!'];
+  document.getElementById('step-label').textContent = 'Etapa ' + n + ' de 5 — ' + labels[n];
+  if (n === 5) buildPreview();
+}
+
+function buildPreview() {
+  document.getElementById('prev-produto').textContent = state.produto.toUpperCase();
+  document.getElementById('prev-slogan').textContent = '"' + state.slogan + '"';
+  document.getElementById('prev-publico').textContent = 'Público-alvo: ' + state.publico;
+  var tags = document.getElementById('prev-elementos');
+  tags.innerHTML = '';
+  if (state.elementos.length === 0) {
+    var t = document.createElement('span'); t.className = 'preview-tag'; t.textContent = 'Sem elementos extras'; tags.appendChild(t);
+  } else {
+    state.elementos.forEach(function(el) {
+      var t = document.createElement('span'); t.className = 'preview-tag'; t.textContent = el; tags.appendChild(t);
+    });
+  }
+}
+
+function restart() {
+  state = { produto: '', publico: '', slogan: '' , elementos: [] };
+  document.querySelectorAll('.choice-btn').forEach(function(b) { b.classList.remove('selected'); });
+  document.querySelectorAll('.check-item').forEach(function(l) { l.classList.remove('checked'); l.querySelector('input').checked = false; });
+  document.getElementById('slogan-input').value = '';
+  document.getElementById('char-count').textContent = '0 / 80 caracteres';
+  document.getElementById('outro-input').value = '';
+  document.getElementById('outro-input-wrap').style.display = 'none';
+  document.getElementById('btn-next-1').disabled = true;
+  document.getElementById('btn-next-2').disabled = true;
+  document.getElementById('btn-next-3').disabled = true;
+  goStep(1);
+}
+</script>
+</body>
+</html>

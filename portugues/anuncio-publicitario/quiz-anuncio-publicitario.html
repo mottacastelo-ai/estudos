@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Anúncio Publicitário</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.progress-section { padding: 16px 24px 0; }
+.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; background: var(--port-bg); border-radius: 999px; overflow: hidden; }
+.prog-fill { height: 8px; background: linear-gradient(90deg, var(--port), var(--port-light)); border-radius: 999px; transition: width .4s ease; width: 0%; }
+.score-bar { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.score-pts { color: var(--port); font-weight: 800; font-size: 14px; }
+.question-section { padding: 20px 24px; }
+.q-number { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--port-light); letter-spacing: .08em; margin-bottom: 8px; }
+.q-text { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 18px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option-btn { background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 12px 16px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; text-align: left; transition: all .15s; line-height: 1.4; }
+.option-btn:hover:not(:disabled) { border-color: var(--port-light); background: #ede9fe; }
+.option-btn.correct { background: #D1FAE5; border-color: #059669; color: #065F46; }
+.option-btn.wrong { background: #FEE2E2; border-color: #DC2626; color: #991B1B; }
+.option-btn:disabled { cursor: not-allowed; }
+.feedback { margin-top: 16px; padding: 12px 16px; border-radius: 14px; display: none; align-items: flex-start; gap: 10px; }
+.feedback.correct { background: #D1FAE5; border: 2px solid #059669; display: flex; }
+.feedback.wrong { background: #FEE2E2; border: 2px solid #DC2626; display: flex; }
+.feedback-icon { font-size: 20px; flex-shrink: 0; line-height: 1; margin-top: 1px; }
+.feedback-text { font-size: 13px; font-weight: 600; line-height: 1.5; color: var(--text); }
+.next-btn { display: none; margin-top: 16px; width: 100%; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 13px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s; }
+.next-btn:hover { background: var(--port-dark); }
+.next-btn.show { display: block; }
+.result-section { padding: 24px; text-align: center; display: none; }
+.result-section.show { display: block; }
+.result-emoji { font-size: 56px; line-height: 1; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; color: var(--port); margin-bottom: 8px; }
+.result-score { font-size: 32px; font-weight: 900; color: var(--port); margin-bottom: 8px; }
+.result-msg { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 24px; line-height: 1.6; }
+.restart-btn { background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 13px 32px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s; }
+.restart-btn:hover { background: var(--port-dark); }
+@keyframes popIn { from { transform: scale(.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.feedback.correct, .feedback.wrong { animation: popIn .2s ease; }
+.star-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; font-size: 28px; }
+@media (max-width: 480px) {
+  .q-text { font-size: 14px; }
+  .option-btn { font-size: 13px; padding: 10px 14px; }
+  .card-header h1 { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">📣</div>
+      <div><h1>Quiz — Anúncio Publicitário</h1><p>Português · 5º ano · pp. 117–121, 134–135</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="score-bar">Pontos: <span class="score-pts" id="score-pts">0</span></div>
+    </div>
+
+    <div class="question-section" id="question-section">
+      <div class="q-number" id="q-number">QUESTÃO 01</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div class="feedback-text" id="fb-text"></div>
+      </div>
+      <button class="next-btn" id="next-btn">Próxima questão →</button>
+    </div>
+
+    <div class="result-section" id="result-section">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="star-row" id="star-row"></div>
+      <div class="result-title">Resultado Final</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="restart-btn" onclick="restart()">Tentar novamente ↺</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var QUESTIONS = [
+  {
+    q: "O que é um anúncio publicitário?",
+    opts: [
+      "Um gênero textual usado para convencer pessoas a adquirir um produto ou promover uma ideia",
+      "Um texto literário que conta a história de uma empresa famosa",
+      "Uma lista de regras que explica como usar um produto corretamente",
+      "Uma reportagem jornalística sobre o lançamento de um produto"
+    ],
+    correct: 0,
+    fb: "O anúncio publicitário é um gênero textual cujo objetivo é persuadir — ou seja, convencer — as pessoas a adquirir um produto ou apoiar uma ideia."
+  },
+  {
+    q: "O que é um slogan?",
+    opts: [
+      "O nome oficial da empresa que fabrica o produto",
+      "Uma frase ou expressão de efeito marcante usada no anúncio",
+      "Uma lista dos ingredientes ou componentes do produto",
+      "O preço em destaque no anúncio"
+    ],
+    correct: 1,
+    fb: "O slogan é uma frase ou expressão curta e marcante que representa o anúncio, fácil de memorizar e com grande impacto no público-alvo."
+  },
+  {
+    q: "Em quais lugares costumamos encontrar anúncios publicitários?",
+    opts: [
+      "Somente em livrarias e bibliotecas escolares",
+      "Apenas em enciclopédias e dicionários",
+      "Em painéis, televisão, revistas e internet",
+      "Somente em textos de livros didáticos"
+    ],
+    correct: 2,
+    fb: "Os anúncios publicitários aparecem em muitos lugares: painéis nas ruas, televisão, revistas e internet, para alcançar o maior número de pessoas possível."
+  },
+  {
+    q: "Qual é o slogan do anúncio Trá Lá Lá estudado no livro?",
+    opts: [
+      "Trá Lá Lá — o melhor cuidado do Brasil",
+      "Cabelos bonitos todo dia com Trá Lá Lá",
+      "A gente cuida brincando",
+      "Fórmula especial para crianças felizes"
+    ],
+    correct: 2,
+    fb: "O slogan do anúncio Trá Lá Lá é exatamente: \"A gente cuida brincando\" — curto, marcante e conectado ao universo infantil."
+  },
+  {
+    q: "O que é público-alvo?",
+    opts: [
+      "O número de pessoas que já compraram o produto",
+      "As pessoas a quem o anúncio se destina",
+      "O grupo de artistas que aparece no comercial",
+      "A empresa responsável pela criação do anúncio"
+    ],
+    correct: 1,
+    fb: "O público-alvo é o grupo de pessoas para quem o anúncio foi criado — é quem o anúncio quer alcançar e convencer."
+  },
+  {
+    q: "Qual elemento do anúncio Trá Lá Lá revela que o produto se direciona a crianças?",
+    opts: [
+      "A embalagem de plástico resistente usada no produto",
+      "As personagens infantis e o universo da música",
+      "O preço acessível indicado no rodapé do anúncio",
+      "A cor branca predominante no fundo da embalagem"
+    ],
+    correct: 1,
+    fb: "As personagens infantis ligadas ao universo da música identificam claramente o público-alvo: crianças. Isso é um recurso clássico dos anúncios publicitários."
+  },
+  {
+    q: "As personagens das embalagens Trá Lá Lá têm o mesmo perfil?",
+    opts: [
+      "Sim, todas são meninas com cabelos longos e lisos",
+      "Sim, todas praticam o mesmo esporte coletivo",
+      "Não, têm perfis diversos, mas a maioria pratica atividade musical",
+      "Não, cada embalagem mostra um animal diferente"
+    ],
+    correct: 2,
+    fb: "As personagens das embalagens Trá Lá Lá têm perfis diversos — refletindo a diversidade do público-alvo —, mas a maioria está ligada a alguma atividade musical."
+  },
+  {
+    q: "Qual dos trechos do anúncio Trá Lá Lá informa a ação do produto e sua finalidade?",
+    opts: [
+      "\"A gente cuida brincando\"",
+      "\"Trá Lá Lá — o sabor da música\"",
+      "\"CUIDADO ESPECIAL PARA OS CABELOS DAS CRIANÇAS COM O CREME PARA PENTEAR TRÁ LÁ LÁ\"",
+      "\"Disponível em todas as farmácias e supermercados\""
+    ],
+    correct: 2,
+    fb: "O trecho \"CUIDADO ESPECIAL PARA OS CABELOS DAS CRIANÇAS COM O CREME PARA PENTEAR TRÁ LÁ LÁ\" informa diretamente o produto (creme para pentear) e o que ele faz (cuidado especial para cabelos de crianças)."
+  },
+  {
+    q: "Por que os anúncios usam cores vibrantes e personagens atraentes?",
+    opts: [
+      "Para deixar o anúncio mais caro e sofisticado",
+      "Porque é obrigatório por lei para todos os produtos infantis",
+      "Para convencer o público-alvo e chamar sua atenção",
+      "Para economizar tinta e papel na produção"
+    ],
+    correct: 2,
+    fb: "Cores vibrantes e personagens atraentes são recursos de persuasão usados para chamar a atenção do público-alvo e convencê-lo a se interessar pelo produto."
+  },
+  {
+    q: "O que une os elementos cores, personagens e slogan em um anúncio?",
+    opts: [
+      "São exigências legais da agência reguladora de publicidade",
+      "Todos têm o objetivo de persuadir o público-alvo",
+      "São escolhas aleatórias feitas pelo designer gráfico",
+      "Todos são copiados de outros anúncios famosos"
+    ],
+    correct: 1,
+    fb: "Cores, personagens e slogan trabalham juntos com o mesmo objetivo: persuadir o público-alvo, ou seja, convencê-lo a querer o produto ou ideia anunciada."
+  }
+];
+
+var current = 0, score = 0, answered = false;
+
+function shuffle(arr) {
+  var a = arr.slice(); for (var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a;
+}
+
+function render() {
+  var q = QUESTIONS[current];
+  document.getElementById('prog-label').textContent = 'Questão ' + (current+1) + ' de ' + QUESTIONS.length;
+  document.getElementById('prog-fill').style.width = ((current / QUESTIONS.length) * 100) + '%';
+  document.getElementById('q-number').textContent = 'QUESTÃO ' + String(current+1).padStart(2,'0');
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').classList.remove('show');
+  answered = false;
+
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  var indices = shuffle([0,1,2,3]);
+  indices.forEach(function(i) {
+    var btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = q.opts[i];
+    btn.dataset.idx = i;
+    btn.addEventListener('click', function() { answer(i, btn); });
+    opts.appendChild(btn);
+  });
+}
+
+function answer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[current];
+  var all = document.querySelectorAll('.option-btn');
+  all.forEach(function(b) {
+    b.disabled = true;
+    if (parseInt(b.dataset.idx) === q.correct) b.classList.add('correct');
+  });
+  var fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score += 10;
+    document.getElementById('score-pts').textContent = score;
+    btn.classList.add('correct');
+    fb.className = 'feedback correct';
+    document.getElementById('fb-icon').textContent = '✓';
+    document.getElementById('fb-text').textContent = q.fb;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback wrong';
+    document.getElementById('fb-icon').textContent = '✗';
+    document.getElementById('fb-text').textContent = q.fb;
+  }
+  document.getElementById('next-btn').classList.add('show');
+  document.getElementById('next-btn').textContent = current < QUESTIONS.length - 1 ? 'Próxima questão →' : 'Ver resultado →';
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  current++;
+  if (current >= QUESTIONS.length) showResult();
+  else render();
+});
+
+function showResult() {
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('question-section').style.display = 'none';
+  var rs = document.getElementById('result-section');
+  rs.classList.add('show');
+  var pct = score / (QUESTIONS.length * 10);
+  var stars = pct >= .9 ? 3 : pct >= .7 ? 2 : 1;
+  document.getElementById('star-row').textContent = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+  document.getElementById('result-score').textContent = score + ' / ' + (QUESTIONS.length * 10) + ' pts';
+  var msgs = [
+    ['🎯', 'Publinho ficou muito orgulhoso! Você domina o anúncio publicitário!'],
+    ['👏', 'Muito bem! Você entendeu os principais conceitos do anúncio publicitário!'],
+    ['💪', 'Bom começo! Revise slogan, público-alvo e os elementos do anúncio.']
+  ];
+  var m = stars === 3 ? msgs[0] : stars === 2 ? msgs[1] : msgs[2];
+  document.getElementById('result-emoji').textContent = m[0];
+  document.getElementById('result-msg').textContent = m[1];
+}
+
+function restart() {
+  current = 0; score = 0;
+  document.getElementById('score-pts').textContent = '0';
+  document.getElementById('result-section').classList.remove('show');
+  document.getElementById('question-section').style.display = 'block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
