@@ -157,6 +157,24 @@ font-family: "Baloo 2", cursive;       /* corpo */
 font-family: "Space Mono", monospace;  /* títulos/headers */
 ```
 
+### THEME_CATALOG — regras obrigatórias
+
+O objeto `THEME_CATALOG` em `index.html` (linha ~2490) registra cada tema para o sistema de gamificação e para os badges de paginação das tabs.
+
+**`pages` DEVE ser um array `[inicio, fim]`, NUNCA uma string.**
+
+```js
+// ✅ CORRETO
+pages:[117,135]
+
+// ❌ ERRADO — quebra o display (string[0]='1', string[1]='1' → "pp. 1–1")
+pages:'117-135'
+```
+
+- Os valores de `pages` devem ser os **mesmos números** que aparecem no `hq-caption` abaixo da HQ daquele tema no `index.html`.
+- Usar `pages:null` quando o tema ainda não tem páginas mapeadas (tab não exibirá badge).
+- Campos obrigatórios por entrada: `disc`, `slug`, `label`, `emoji`, `pages`, `charName`, `charImg`.
+
 ---
 
 ## Agentes disponíveis
