@@ -19,6 +19,24 @@ Portal web educacional (SPA) para o aprendizado do André (5º ano). Fundamentad
 
 **Deploy:** automático via hook Stop em `.claude/settings.json` → `.claude/deploy.ps1` → commit + push nos 3 repos se houver alterações.
 
+### Fluxo de autenticação cross-domain
+
+```
+Usuário acessa sabendo.app (landing page)
+         ↓
+Login com email/senha → Supabase Auth
+         ↓
+Landing detecta profiles.portal do usuário
+  • portal = "estudos"      → redireciona para andre.sabendo.app
+  • portal = "estudos-2ano" → redireciona para lis.sabendo.app
+         ↓
+Tokens passados no hash da URL → portal processa via detectSessionInUrl: true
+         ↓
+Portal autentica localmente e exibe conteúdo personalizado
+```
+
+> Cada aluno tem seu próprio login e vê apenas seu progresso (streaks, cartas, reforços).
+
 ---
 
 ## Infraestrutura Técnica
@@ -105,8 +123,52 @@ Sistema completo documentado em `referencias/GAMIFICACAO.md`. Resumo:
 - **Cartas colecionáveis:** 6 raridades (Comum → Rara → Épica → Lend-Épica → Lendária → Revisional)
 - **Reforço adaptativo:** atividades com score < 80% na 1ª tentativa entram em fila com `due_date + 5 dias`
 - **Carta Revisional:** gerada ao resolver todos os reforços pendentes de um tema
-- **Piloto ativo:** Preposições (snippet "concluir-btn" em todos os 8 HTMLs)
-- **Pendente:** aplicar snippet nos demais 24 temas
+- **Painel de coleção:** tela no portal exibindo todas as cartas obtidas por tema
+- **Validação:** sistema completo testado e validado em Preposições (8 HTMLs com snippet "concluir-btn")
+- **Próximo passo:** aplicar snippet nos demais 24 temas (padrão já definido, pronto para replicar)
+
+---
+
+## Sistema de Busca
+
+Campo de busca na home do portal (`index.html`), implementado e em produção.
+
+**Comportamento:**
+- Busca por **nome de tema** — ex.: "Preposições", "Ciclo da Água"
+- Busca por **número de página do livro** — ex.: "62" localiza o tema cuja HQ cobre as pp. 62–XX
+
+**Como funciona a busca por pp.:**
+O campo varre os atributos `data-pp` (ou equivalente) dos cards de tema no index. Os valores vêm da `hq-caption` de cada tema.
+
+**Regra obrigatória (afeta geração de novos temas):**
+> Toda `hq-caption` no `index.html` **DEVE conter** `pp. XX–YY` referenciando as páginas do livro didático cobertas pelo tema. Sem isso, o tema não aparece na busca por página.
+
+Exemplo correto:
+```html
+<div class="hq-caption">
+  <span>📖</span>
+  <span>Prepo e as Preposições — 4 páginas · Personagens: Prepo, Bia · pp. 48–55</span>
+</div>
+```
+
+**Cobertura atual:** nem todos os temas existentes têm pp. na caption. Temas futuros gerados pela skill **obrigatoriamente** incluirão pp. XX–YY.
+
+---
+
+## Paginação
+
+O portal suporta paginação de resultados. Implementada e em produção para os temas que têm a marcação necessária. Temas futuros gerados pela skill devem incluir os atributos de paginação conforme o padrão do index.
+
+---
+
+## Visão Futura — Multi-usuário
+
+**Não implementado ainda.** Visão de longo prazo:
+
+- Qualquer responsável poderá cadastrar um aluno → portal personalizado em `[nome].sabendo.app`
+- Cada aluno tem login próprio, conquistas próprias (cartas, streaks, reforços)
+- `profiles.portal` controla para qual repo o aluno é redirecionado
+- Estrutura técnica (Supabase + auth cross-domain) já suporta N usuários — é uma questão de provisionamento
 
 ---
 

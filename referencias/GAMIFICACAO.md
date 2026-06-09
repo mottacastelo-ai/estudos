@@ -242,6 +242,15 @@ Ordenado por `first_score ASC`. Itens futuros (`due_date > hoje`) não aparecem.
 
 ---
 
+## Painel de Coleção de Cartas
+
+Tela no portal que exibe todas as cartas obtidas pelo aluno, organizadas por tema. Implementada e em produção.
+
+- Cada carta mostra o personagem, nome do tema, raridade e data de obtenção
+- Acessível a partir do portal principal
+
+---
+
 ## Roadmap
 
 | Status | Item |
@@ -253,7 +262,8 @@ Ordenado por `first_score ASC`. Itens futuros (`due_date > hoje`) não aparecem.
 | ✅ | THEME_CATALOG com charImg para todos os 25 temas |
 | ✅ | 23 portraits HD em `_landing/chars/` |
 | ✅ | Bloco "Para reforçar" no portal |
-| ⏳ | Snippet "concluir-btn" em todos os temas (piloto: Preposições) |
-| ⏳ | Tela de coleção de cartas no portal |
+| ✅ | Tela de coleção de cartas no portal |
+| ✅ | Gamificação validada em produção (piloto: Preposições — snippet em todos os 8 HTMLs) |
+| ⏳ | Snippet "concluir-btn" nos demais 24 temas (pronto para implantação) |
 | ⏳ | Condição de disparo para Lend-Épica |
 | ⏳ | Reforço V2 — atividade diferente sobre o mesmo conceito |
