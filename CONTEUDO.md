@@ -126,7 +126,7 @@
 ---
 
 ### Anuncio Publicitario
-**HQ:** ❌ `hq-anuncio-publicitario.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
+**HQ:** ✅ `hq-anuncio-publicitario.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -138,7 +138,7 @@
 ---
 
 ### Prefixo Sufixo
-**HQ:** ❌ `hq-prefixo-sufixo.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
+**HQ:** ✅ `hq-prefixo-sufixo.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -151,7 +151,7 @@
 
 ### Sons X Ch
 **Personagem:** XIS
-**HQ:** ❌ `hq-sons-x-ch.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
+**HQ:** ✅ `hq-sons-x-ch.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -164,7 +164,7 @@
 
 ### Infografico
 **Personagem:** GRAFO
-**HQ:** ❌ `hq-infografico.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
+**HQ:** ✅ `hq-infografico.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
