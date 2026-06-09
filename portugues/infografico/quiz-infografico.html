@@ -262,7 +262,7 @@ var questions = [
 ];
 
 var current = 0, score = 0, answered = [];
-var history = [];
+var quizLog = [];
 
 function render() {
   var q = questions[current];
@@ -295,7 +295,7 @@ function answer(idx) {
 
   var correct = idx === q.correct;
   if (correct) score++;
-  history.push({q: current, ok: correct});
+  quizLog.push({q: current, ok: correct});
 
   btns[idx].classList.add(correct ? 'correct' : 'wrong');
   btns[q.correct].classList.add('correct');
@@ -347,7 +347,7 @@ function showResult() {
 
   var list = document.getElementById('detail-list');
   list.innerHTML = '';
-  history.forEach(function(h) {
+  quizLog.forEach(function(h) {
     var div = document.createElement('div');
     div.className = 'detail-item';
     var dot = document.createElement('div');
@@ -360,7 +360,7 @@ function showResult() {
 }
 
 function restart() {
-  current = 0; score = 0; history = [];
+  current = 0; score = 0; quizLog = [];
   document.getElementById('quiz-wrap').style.display = 'block';
   document.getElementById('prog-wrap').style.display = 'block';
   document.getElementById('result-screen').className = 'result-screen';
