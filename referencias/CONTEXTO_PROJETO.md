@@ -1,151 +1,147 @@
-# Contexto do Projeto Educacional — Portal Interativo de Aprendizagem
-
-**Última atualização:** 2026-05-22 (baseado no estado atual do repositório GitHub)
+# Contexto do Projeto Educacional — Portal sabendo.app
+**Última atualização:** 2026-06-08
 
 ---
 
 ## Visão Geral
 
-Portal web educacional construído como aplicação de página única (SPA) para o aprendizado do André (5º ano). Fundamentado em metodologia de aprendizagem ativa (Roediger & Karpicke, 2006; Mayer, 2009) e estruturado na Pirâmide de Aprendizagem de Glasser: cada tema começa com uma HQ, avança por atividades de retrieval practice e culmina em tarefas de criação.
-
-- **Repositório:** [github.com/mottacastelo-ai/estudos](https://github.com/mottacastelo-ai/estudos)
-- **Pasta local:** `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos`
-- **Potencial futuro:** Adaptação comercial para público mais amplo
+Portal web educacional (SPA) para o aprendizado do André (5º ano). Fundamentado em metodologia de aprendizagem ativa e estruturado na Pirâmide de Aprendizagem de Glasser: cada tema começa com uma HQ, avança por atividades de retrieval practice e culmina em tarefas de criação. Inclui sistema de gamificação completo com cartas colecionáveis e reforço adaptativo.
 
 ---
 
 ## Ecossistema sabendo.app
 
-| Portal | URL | Repositório |
-|---|---|---|
-| Landing page | https://sabendo.app | sabendo-landing |
-| Portal André (5º ano) | https://andre.sabendo.app | estudos |
-| Portal Lis (2º ano) | https://lis.sabendo.app | estudos-2ano-lis |
+| Portal | URL | Repositório | Pasta local |
+|---|---|---|---|
+| Landing page | https://sabendo.app | `sabendo-landing` | `estudos\_landing\` (repo aninhado) |
+| Portal André (5º ano) | https://andre.sabendo.app | `estudos` | `Projeto Estudos\estudos\` |
+| Portal Lis (2º ano) | https://lis.sabendo.app | `estudos-2ano` | `Projeto Estudos\estudos-2ano\` |
+
+**Deploy:** automático via hook Stop em `.claude/settings.json` → `.claude/deploy.ps1` → commit + push nos 3 repos se houver alterações.
 
 ---
 
 ## Infraestrutura Técnica
 
-### Hospedagem & Deploy
-- **Repositório & Hospedagem:** GitHub Pages
-- **Workflow de deploy:**
-  1. Editar arquivos localmente
-  2. Commit + push via GitHub Desktop (**manual**, ~30 segundos)
-  3. GitHub Pages publica automaticamente após o push
-- **⚠️ Nota:** o processo **não é inteiramente automático** — commit e push são passos manuais obrigatórios
+### Hospedagem
+- GitHub Pages (3 repos separados)
+- Commit + push via GitHub Desktop — **manual**, ~30 segundos
 
-> O `README.md` no repositório ainda menciona Netlify, mas o deploy é feito exclusivamente via **GitHub Pages**.
+### Supabase
+- **Projeto:** `mmtrzxmitklpibfilbio.supabase.co`
+- **Chave anon:** `sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_`
+- **Tabelas em uso:** `profiles`, `activity_log`, `streaks`, `cards`, `reinforcement_queue`
+- **Autenticação cross-domain:** login na landing → detecta `profiles.portal` → redireciona com tokens no hash → portal processa via `detectSessionInUrl: true`
 
-### Estrutura de Arquivos
-
-Os arquivos estão organizados em **subdiretórios por disciplina** (mudança em relação ao estado inicial, quando tudo ficava na raiz):
-
-```
-estudos/
-├── index.html                  ← SPA principal
-├── README.md                   ← documentação (desatualizada em relação ao estado real)
-├── canonicas_ref.html          ← referência visual de personagens canônicos
-├── versao canonica Bia.png
-├── versao canonica Bia com fundo.png
-├── versao canonica prepo.png
-├── portugues/
-│   ├── preposicoes/
-│   ├── texto-teatral/
-│   ├── tempos-verbais/
-│   ├── letra-l/
-│   ├── variacao-linguistica/
-│   ├── pontuacao/
-│   ├── entonacao/
-│   └── texto-instrucional/
-├── matematica/
-│   ├── tabuada/
-│   ├── multiplicacao-divisao/
-│   ├── corpos-redondos-planificacao/
-│   └── poliedros-prismas-piramides/
-├── ciencias/
-│   ├── caminho-do-lixo/
-│   ├── lixo-que-produzimos/
-│   └── tecnologia-agropecuaria/
-├── historia/
-│   ├── pais-de-contrastes/
-│   ├── diversidade-cultural/
-│   ├── marcos-memoria/
-│   ├── memoria-negra-imigrantes/
-│   └── calendarios-povos/
-└── referencias/
-    └── (arquivos de referência do projeto: temas-existentes.md, etc.)
-```
-
-Dentro de cada subdiretório de tema ficam: HQ (`.png`), atividades (`.html`) e prompt HQ (`.md`).
+### Usuários
+- `andre@sabendo.app` — portal: estudos, year: 5
+- `lis@sabendo.app` — portal: estudos-2ano, year: 2
 
 ---
 
 ## Estado Atual — Disciplinas e Temas
 
+**Total: 5 disciplinas · 25 temas · 107 atividades**
+
 ### 📝 Português — 8 temas
 
-| Tema | Slug | Personagem(ns) principal(is) |
-|---|---|---|
-| Preposições | `preposicoes` | Prepo (robô roxo) |
-| Texto Teatral | `texto-teatral` | Prof. Teatrão |
-| Tempos Verbais | `tempos-verbais` | Verbão |
-| Letra ℓ e U | `letra-l` | Elinho |
-| Variação Linguística | `variacao-linguistica` | Zé e Das Graças |
-| Pontuação Expressiva | `pontuacao` | ?, !, . (personagens pontuação) |
-| Entonação | `entonacao` | Toni (onda sonora animada) |
-| Texto Instrucional | `texto-instrucional` | — |
+| Tema | Slug | Personagem | Portrait |
+|---|---|---|---|
+| Preposições | `preposicoes` | Prepo | `prepo-hd.png` |
+| Texto Teatral | `teatral` | Prof. Teatrão | `chars/teatral-hd.png` |
+| Tempos Verbais | `verbais` | Verbão | `chars/tempos-verbais-hd.png` |
+| Letra ℓ e U | `letral` | Elinho | `chars/letra-l-hd.png` |
+| Variação Linguística | `variacao` | Zé e Das Graças | `chars/variacao-linguistica-hd.png` |
+| Pontuação | `pontuacao` | ? ! . | `chars/pontuacao-hd.png` |
+| Texto Instrucional | `instrucional` | Façã | `chars/texto-instrucional-hd.png` |
+| Entonação | `entonacao` | Toni | `chars/entonacao-hd.png` |
 
-### 🔢 Matemática — 4 temas
+### 🔢 Matemática — 7 temas
 
-| Tema | Slug |
-|---|---|
-| Tabuada | `tabuada` |
-| Multiplicação e Divisão | `multiplicacao-divisao` |
-| Corpos Redondos e Planificação | `corpos-redondos-planificacao` |
-| Poliedros: Prismas e Pirâmides | `poliedros-prismas-piramides` |
+| Tema | Slug | Personagem | Portrait |
+|---|---|---|---|
+| Tabuada | `tabuada` | Prepo | `prepo-hd.png` |
+| Multiplicação e Divisão | `multiplicacao-divisao` | Calco | `chars/multiplicacao-divisao-hd.png` |
+| Poliedros, Prismas e Pirâmides | `poliedros-prismas-piramides` | Poli | `chars/poliedros-prismas-piramides-hd.png` |
+| Corpos Redondos e Planificação | `corpos-redondos-planificacao` | Esfer | `chars/corpos-redondos-planificacao-hd.png` |
+| Múltiplos e Divisores | `multiplos-divisores-criterios` | Divi | `chars/multiplos-divisores-criterios-hd.png` |
+| Primos e Fatoração | `primos-compostos-fatoracao` | Primo | `chars/primos-compostos-fatoracao-hd.png` |
+| mdc e mmc | `mdc-mmc-problemas` | Max & Min | `chars/mdc-mmc-problemas-hd.png` |
 
-### 🔬 Ciências — 3 temas
+### 🔬 Ciências — 4 temas
 
-| Tema | Slug |
-|---|---|
-| Caminho do Lixo | `caminho-do-lixo` |
-| O Lixo que Produzimos | `lixo-que-produzimos` |
-| Tecnologia Agropecuária | `tecnologia-agropecuaria` |
+| Tema | Slug | Personagem | Portrait |
+|---|---|---|---|
+| O Lixo que Produzimos | `lixo-que-produzimos` | Lixinho | `chars/lixo-que-produzimos-hd.png` |
+| O Caminho do Lixo | `caminho-do-lixo` | Professora Ciência | `chars/caminho-do-lixo-hd.png` |
+| O Ciclo da Água | `ciclo-da-agua` | Ciclão | `chars/ciclo-da-agua-hd.png` |
+| Água, Cidades e Consumo | `agua-cidades-consumo` | Gotinha | `chars/agua-cidades-consumo-hd.png` |
 
-### 📜 História — 5 temas
+### 🌍 Geografia — 3 temas
 
-| Tema | Slug |
-|---|---|
-| País de Contrastes | `pais-de-contrastes` |
-| Diversidade Cultural | `diversidade-cultural` |
-| Marcos e Memória | `marcos-memoria` |
-| Memória Negra e Imigrantes | `memoria-negra-imigrantes` |
-| Calendários dos Povos | `calendarios-povos` |
+| Tema | Slug | Personagem | Portrait |
+|---|---|---|---|
+| Diversidade Cultural | `diversidade-cultural` | Prof. Geografina | `chars/diversidade-cultural-hd.png` |
+| País de Contrastes | `pais-de-contrastes` | Prof. Geografina | `chars/pais-de-contrastes-hd.png` |
+| Tecnologia Agropecuária | `tecnologia-agropecuaria` | Agro 4.0 | `chars/tecnologia-agropecuaria-hd.png` |
 
-**Total atual: 4 disciplinas · 20 temas**
+### 📜 História — 3 temas
+
+| Tema | Slug | Personagem | Portrait |
+|---|---|---|---|
+| Diversos Calendários | `calendarios-povos` | Calê | `chars/calendarios-povos-hd.png` |
+| Marcos de Memória | `marcos-memoria` | Memo | `chars/marcos-memoria-hd.png` |
+| Zumbi e Imigrantes | `memoria-negra-imigrantes` | Timbre | `chars/memoria-negra-imigrantes-hd.png` |
+
+> Caminhos de portrait são relativos a `_landing/`.
 
 ---
 
-## Personagens Recorrentes das HQs
+## Gamificação
 
-| Personagem | Descrição |
-|---|---|
-| **Prepo** | Robô roxo — mascote do portal; aparece em múltiplos temas |
-| **Bia** | Menina de 11 anos, cabelo cacheado preto, uniforme azul; protagonista frequente |
-| **Prof. Teatrão** | Professor dramático com cachecol colorido (Texto Teatral) |
-| **Verbão** | Letra animada com 3 versões de roupa: passado/presente/futuro (Tempos Verbais) |
-| **Elinho** | Letra ℓ animada, versões cowboy e surfista (Letra ℓ e U) |
-| **Zé e Das Graças** | Fantoches para variação linguística (Variação Linguística) |
-| **?, !, .** | Pontuações animadas: ? azul/curioso, ! vermelho-laranja/musculoso, . cinza/calmo |
-| **Toni** | Onda sonora animada (Entonação) |
+Sistema completo documentado em `referencias/GAMIFICACAO.md`. Resumo:
 
-Cada novo tema pode introduzir um personagem adicional que seja metáfora visual do conteúdo.
+- **Reveal progressivo:** canvas pixelado (9 estágios) por tema, desbloqueado atividade a atividade
+- **Cartas colecionáveis:** 6 raridades (Comum → Rara → Épica → Lend-Épica → Lendária → Revisional)
+- **Reforço adaptativo:** atividades com score < 80% na 1ª tentativa entram em fila com `due_date + 5 dias`
+- **Carta Revisional:** gerada ao resolver todos os reforços pendentes de um tema
+- **Piloto ativo:** Preposições (snippet "concluir-btn" em todos os 8 HTMLs)
+- **Pendente:** aplicar snippet nos demais 24 temas
+
+---
+
+## Estrutura de Arquivos
+
+```
+estudos/
+├── index.html                    ← SPA principal
+├── CLAUDE.md                     ← Orquestrador
+├── SQUAD.md                      ← Arquitetura do squad multi-agente
+├── CONTEUDO.md                   ← Inventário de temas e atividades
+├── shared/
+│   └── gamification.js           ← Sistema de gamificação (IIFE)
+├── _landing/                     ← Repo aninhado (sabendo.app)
+│   ├── prepo-hd.png
+│   ├── chars/                    ← 23 portraits HD dos personagens
+│   └── cartas/                   ← Fundos das cartas por tier
+├── portugues/[slug]/
+├── matematica/[slug]/
+├── ciencias/[slug]/
+├── historia/[slug]/
+├── geografia/[slug]/
+└── referencias/
+    ├── GAMIFICACAO.md            ← Sistema de gamificação completo
+    ├── CONTEXTO_PROJETO.md       ← Este arquivo
+    ├── CONTEUDO.md               ← (legado — use CONTEUDO.md na raiz)
+    ├── atividades-por-disciplina.md
+    └── SKILL-portal-educacional-5ano.md
+```
 
 ---
 
 ## Paleta de Cores por Disciplina
 
-| Disciplina | Código CSS | Cor primária | Cor clara | Bg |
+| Disciplina | disc | Primária | Clara | Bg |
 |---|---|---|---|---|
 | Português | `port` | `#7C3AED` | `#A78BFA` | `#F3F0FF` |
 | Matemática | `mat` | `#059669` | `#34D399` | `#ECFDF5` |
@@ -155,78 +151,38 @@ Cada novo tema pode introduzir um personagem adicional que seja metáfora visual
 
 ---
 
-## Fundamentação Pedagógica
-
-| Pilar | Referência | Aplicação |
-|---|---|---|
-| Retrieval practice | Roediger & Karpicke (2006) | Atividades de recuperação progressiva em cada tema |
-| Aprendizagem multimídia | Mayer (2009) | Integração de HQs, texto e atividades interativas |
-| Pirâmide de Glasser | — | Progressão HQ → retrieval → aplicação → criação |
-| Spaced repetition | — | Sistema Leitner nos flashcards da tabuada |
-| Gamificação | Plass, Homer & Kinzer (2015) | Pontuação, medalhas e feedback imediato |
-
-**Sequência obrigatória por tema:** prompt HQ → geração das imagens (Léo no ChatGPT) → colagem → atividades HTML → atualização do `index.html`
-
----
-
 ## Convenção de Nomenclatura
 
 ```
-Arquivos de atividade:  [tipo]-[slug-do-tema].html
-Arquivo HQ:             hq-[slug-do-tema].png
-Prompt HQ:              hq-[slug-do-tema]-prompt.md
+Atividade HTML:       [tipo]-[slug].html
+HQ imagem:            hq-[slug].png
+Prompt HQ:            hq-[slug]-prompt.md
+Portrait personagem:  _landing/chars/[slug]-hd.png
+Folha personagem:     Personagens\5o ano\[Nome].png
 
-Tipos reconhecidos: quiz / complete-lacuna / caca-erro / ordenacao / criador /
-classificador / transformador / flashcards / treino / batalha / domino /
-missao / frases / mapa-mental
+Tipos de atividade: quiz / complete-lacuna / caca-erro / ordenacao / criador /
+  classificador / transformador / flashcards / treino / batalha / domino /
+  missao / frases / mapa-mental / detetive-nomes
 ```
+
+---
+
+## Fundamentação Pedagógica
+
+| Pilar | Aplicação |
+|---|---|
+| Retrieval practice | Atividades de recuperação progressiva em cada tema |
+| Aprendizagem multimídia | Integração de HQs, texto e atividades interativas |
+| Pirâmide de Glasser | Progressão HQ → retrieval → aplicação → criação |
+| Spaced repetition | Reforço adaptativo com `due_date + 5 dias` |
+| Gamificação | Cartas colecionáveis, reveal progressivo, raridade por desempenho |
 
 ---
 
 ## Princípios Reitores
 
-1. **Termos técnicos do livro são obrigatórios** — usar o nome exato do livro (ex.: "pretérito perfeito", não só "passado"). O André precisa reconhecer o termo na prova.
-2. **Proibido introduzir conteúdo fora do escopo das fotos** — nenhum conceito que não esteja nas fotos enviadas pode aparecer nas atividades.
-3. **Variedade de tipos de atividade** — nenhum tipo deve se repetir entre temas da mesma disciplina.
-4. **Qualidade sobre quantidade** — preferir temas bem construídos a muitos temas superficiais.
-5. **Narrativa contínua** — personagens recorrentes facilitam imersão e transferência de aprendizagem.
-
----
-
-## Workflow de Entrega (Cowork)
-
-- **Cowork** edita `index.html` diretamente e salva todos os arquivos na pasta da disciplina correspondente (`portugues/`, `matematica/`, etc.) — **sem subpastas adicionais dentro do tema, sem ZIPs**
-- O arquivo `hq-[slug].png` **não é colocado pelo Cowork** — Léo o copia manualmente para a pasta do tema após baixar da colagem
-- Fallback Claude.ai: ZIP com `index.html` completo já atualizado + todos os arquivos de atividade
-
----
-
-## Decisões de Design (sessão 2026-06-02)
-
-- **Home hero:** gradiente neutro dark slate — não vinculado a uma disciplina específica
-- **act-cards:** todas as 5 disciplinas têm `border-top: 4px solid var(--[disc]-color)` para identidade visual consistente
-- **disc-home-cards:** fundo colorido leve com gradiente + borda lateral da cor da disciplina
-- **Linguagem motivacional:** "Por onde vai hoje?", "Missões e desafios", saudação pessoal ao André
-- **Ícones disc-home-cards:** 52px
-- **Transições de tela:** fade 150ms
-- **Favicon:** emoji 🎓 como SVG inline
-
----
-
-## Arquitetura Futura Planejada
-
-| Componente | Detalhes |
-|---|---|
-| Autenticação | Supabase Auth |
-| Banco de dados | Supabase (PostgreSQL) |
-| Tabelas previstas | `profiles`, `activity_log`, `streaks` |
-| Estado atual | localStorage como base — sem login |
-| Migração | Supabase entra quando o login for implementado |
-
----
-
-## Contato & Manutenção
-
-- **Responsável:** Léo Motta
-- **Repositório:** github.com/mottacastelo-ai/estudos
-- **Pasta local:** `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos`
+1. **Termos técnicos do livro são obrigatórios** — nome exato do livro, nunca apenas sinônimos coloquiais
+2. **Proibido introduzir conteúdo fora do escopo** — só o que está nas fotos enviadas
+3. **Variedade de tipos de atividade** — nenhum tipo se repete entre temas da mesma disciplina
+4. **Documentação imediata** — toda mudança validada é documentada na mesma sessão
+5. **Narrativa contínua** — personagens recorrentes facilitam imersão e transferência

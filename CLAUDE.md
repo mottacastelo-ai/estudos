@@ -71,6 +71,7 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 4. **Variedade de atividades** — sem repetição de tipos na mesma disciplina.
 5. **Orquestrador não escreve HTML, prompts ou código** — delega sempre.
 6. **HQ via Codex** — `gerador-hq-imagens` escreve o JSON de pedido em `.claude/pending/`; Codex gera e salva as imagens; `colador-hq` empilha pg1–pg4 em `hq-[slug].png`. Nenhuma ação manual de Léo nessa etapa.
+7. **Documentação imediata** — toda mudança validada (novo recurso, nova regra, nova convenção) deve ser registrada nos docs do repositório na mesma sessão em que foi aprovada. Nenhuma melhoria fica apenas na memória do Claude.
 
 ---
 
