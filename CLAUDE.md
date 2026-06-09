@@ -150,6 +150,21 @@ Tipos disponíveis:
   domino / missao / frases / mapa-mental / detetive-nomes
 ```
 
+### Variáveis JavaScript — nomes proibidos em escopo global
+
+Atividades HTML rodam no escopo `window`. Os nomes abaixo já existem como propriedades nativas do browser e **NÃO podem ser usados como `var` em nível global** — a atribuição falha silenciosamente e a variável continua sendo o objeto nativo, quebrando o código sem erro visível no console:
+
+| Nome proibido | Objeto nativo conflitante | Sintoma |
+|---|---|---|
+| `history` | `window.history` (History API) | `.push()` não existe → "history.push is not a function" |
+| `name` | `window.name` (string) | variável vira string, operações de array/objeto falham |
+| `location` | `window.location` (Location API) | sobrescrever redireciona a página |
+| `event` | `window.event` (Event) | comportamento imprevisível em handlers |
+| `status` | `window.status` | valor sempre string |
+| `top` | `window.top` | referência ao frame pai |
+
+**Use sempre nomes descritivos e específicos:** `quizLog`, `quizHistory`, `scoreHistory` em vez de `history`; `pageName` em vez de `name`; etc.
+
 ### Fontes do design system
 
 ```css
