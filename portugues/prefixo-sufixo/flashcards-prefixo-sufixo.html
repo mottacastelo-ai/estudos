@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — Prefixo e Sufixo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.12); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+/* Tabs */
+.tabs { display: flex; border-bottom: 2px solid var(--border); }
+.tab { flex: 1; padding: 11px 8px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; color: var(--muted); border-bottom: 3px solid transparent; transition: all .15s; background: none; border-top: none; border-left: none; border-right: none; font-family: "Baloo 2", cursive; }
+.tab.active { color: var(--port); border-bottom-color: var(--port); background: var(--port-bg); }
+.tab:hover:not(.active) { color: var(--port-light); }
+
+/* Progresso */
+.progress-area { padding: 12px 24px 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.prog-track { flex: 1; height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: var(--port); transition: width .4s; }
+.seen-count { font-size: 12px; font-weight: 800; color: var(--port); white-space: nowrap; }
+
+/* Card flip */
+.card-area { padding: 24px 24px 16px; display: flex; flex-direction: column; align-items: center; }
+.flip-card { width: 100%; max-width: 520px; height: 200px; perspective: 1000px; cursor: pointer; }
+.flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .45s cubic-bezier(.4,0,.2,1); border-radius: 20px; }
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 24px; text-align: center; gap: 8px; }
+.flip-front { background: linear-gradient(135deg, #4C1D95, #7C3AED); border: 2px solid var(--port-dark); }
+.flip-back { background: white; border: 2px solid var(--border); transform: rotateY(180deg); }
+.card-type-badge { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+.front-badge { background: rgba(255,255,255,.2); color: rgba(255,255,255,.9); }
+.back-badge { background: var(--port-bg); color: var(--port); }
+.card-main { font-size: 22px; font-weight: 800; }
+.front-main { color: white; font-family: "Space Mono", monospace; }
+.back-main { color: var(--port-dark); font-size: 14px; font-weight: 700; line-height: 1.6; }
+.back-main .row { display: flex; align-items: baseline; gap: 6px; font-size: 13px; margin-bottom: 2px; }
+.back-main .lbl { font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); min-width: 60px; text-align: right; }
+.back-main .val { font-weight: 700; color: var(--port-dark); }
+.back-main .val strong { color: var(--port); }
+.back-main .derivadas { font-size: 13px; font-weight: 700; color: var(--port-dark); line-height: 1.8; }
+.flip-hint { font-size: 11px; font-weight: 600; }
+.front-hint { color: rgba(255,255,255,.6); }
+.back-hint { color: var(--muted); }
+
+/* Botoes nav */
+.nav-area { padding: 12px 24px 20px; display: flex; align-items: center; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn-nav { padding: 10px 20px; border-radius: 12px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; border: 2px solid var(--border); background: var(--card); color: var(--port); cursor: pointer; transition: all .15s; }
+.btn-nav:hover:not(:disabled) { border-color: var(--port); background: var(--port-bg); }
+.btn-nav:disabled { opacity: .35; cursor: default; }
+.btn-flip { padding: 10px 24px; border-radius: 12px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; border: none; background: var(--port); color: white; cursor: pointer; }
+.btn-flip:hover { opacity: .85; }
+.btn-shuffle { padding: 8px 16px; border-radius: 12px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 700; border: 2px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; }
+.btn-shuffle:hover { border-color: var(--port-light); color: var(--port); }
+
+/* Legenda */
+.legend { margin: 0 24px 20px; padding: 12px 16px; border-radius: 14px; background: var(--port-bg); border: 2px solid var(--border); font-size: 12px; font-weight: 600; color: var(--muted); display: flex; flex-wrap: wrap; gap: 12px; }
+.leg-item { display: flex; align-items: center; gap: 6px; }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+.leg-a { background: var(--port); }
+.leg-b { background: #374151; }
+
+@media (max-width: 600px) {
+  .flip-card { height: 220px; }
+  .card-main { font-size: 18px; }
+  .nav-area { padding: 10px 14px 16px; gap: 8px; }
+  .card-area { padding: 16px 14px 12px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🃏</div>
+      <div><h1>Flashcards de Derivacao</h1><p>Prefixo e Sufixo — pp. 122–125, 142</p></div>
+      <div class="hbadge">💬 Discutir</div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" id="tab-a" onclick="switchDeck('A')">Baralho A — Primitiva → Derivadas</button>
+      <button class="tab" id="tab-b" onclick="switchDeck('B')">Baralho B — Derivada → Analise</button>
+    </div>
+    <div class="progress-area">
+      <span class="prog-label" id="prog-label">Card 1 de 9</span>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <span class="seen-count" id="seen-count">0 vistos</span>
+    </div>
+    <div class="card-area">
+      <div class="flip-card" id="flip-card" onclick="flipCard()">
+        <div class="flip-inner" id="flip-inner">
+          <div class="flip-front">
+            <span class="card-type-badge front-badge" id="front-badge"></span>
+            <div class="card-main front-main" id="front-main"></div>
+            <span class="flip-hint front-hint">Clique para ver o verso</span>
+          </div>
+          <div class="flip-back">
+            <span class="card-type-badge back-badge" id="back-badge"></span>
+            <div class="back-main" id="back-main"></div>
+            <span class="flip-hint back-hint">Clique para voltar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-area">
+      <button class="btn-nav" id="btn-prev" onclick="goCard(-1)" disabled>← Anterior</button>
+      <button class="btn-flip" onclick="flipCard()">Virar card</button>
+      <button class="btn-nav" id="btn-next" onclick="goCard(1)">Proximo →</button>
+    </div>
+    <div class="legend">
+      <div class="leg-item"><span class="leg-dot leg-a"></span> Baralho A: frente = palavra primitiva, verso = derivadas</div>
+      <div class="leg-item"><span class="leg-dot leg-b"></span> Baralho B: frente = palavra derivada, verso = analise (prefixo / sufixo / primitiva)</div>
+    </div>
+    <div style="padding:0 24px 20px; text-align:center;">
+      <button class="btn-shuffle" onclick="shuffleDeck()">↺ Embaralhar deck</button>
+    </div>
+  </div>
+</div>
+<script>
+var DECKS = {
+  A: [
+    {
+      front: 'sombra',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">sombrinha • sombrear • assombrado</div><div class="row"><span class="lbl">sufixo -inha:</span><span class="val"><strong>sombr</strong>inha (diminutivo)</span></div>'
+    },
+    {
+      front: 'feliz',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">infeliz • felicidade • infelizmente</div><div class="row"><span class="lbl">prefixo in-:</span><span class="val"><strong>in</strong>feliz (contrario)</span></div>'
+    },
+    {
+      front: 'caixa',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">encaixar • encaixotado • desencaixar</div><div class="row"><span class="lbl">pref. en-:</span><span class="val"><strong>en</strong>caixar</span></div><div class="row"><span class="lbl">pref. des-:</span><span class="val"><strong>des</strong>encaixar (contrario)</span></div>'
+    },
+    {
+      front: 'capa',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">encapar • encapado • desencapar</div><div class="row"><span class="lbl">pref. des-:</span><span class="val"><strong>des</strong>encapar = contrario de encapar</span></div>'
+    },
+    {
+      front: 'capuz',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">encapuzar • encapuzado</div><div class="row"><span class="lbl">prefixo en-:</span><span class="val"><strong>en</strong>capuz + <strong>-ado</strong></span></div>'
+    },
+    {
+      front: 'cacho',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">cachear • cacheado</div><div class="row"><span class="lbl">sufixo -ado:</span><span class="val">cache<strong>ado</strong> = que tem cachos</span></div>'
+    },
+    {
+      front: 'utilizar',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">reutilizar • reutilizacao</div><div class="row"><span class="lbl">prefixo re-:</span><span class="val"><strong>re</strong>utilizar = utilizar de novo</span></div>'
+    },
+    {
+      front: 'ciclar',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">reciclar • reciclagem</div><div class="row"><span class="lbl">prefixo re-:</span><span class="val"><strong>re</strong>ciclar = ciclar novamente</span></div>'
+    },
+    {
+      front: 'fazer',
+      frontBadge: 'PALAVRA PRIMITIVA',
+      backBadge: 'PALAVRAS DERIVADAS',
+      back: '<div class="derivadas">refazer • desfazer • reabrir</div><div class="row"><span class="lbl">prefixo re-:</span><span class="val"><strong>re</strong>fazer = fazer de novo</span></div>'
+    }
+  ],
+  B: [
+    {
+      front: 'encaracolado',
+      frontBadge: 'PALAVRA DERIVADA',
+      backBadge: 'ANALISE',
+      back: '<div class="row"><span class="lbl">Prefixo:</span><span class="val"><strong>en-</strong></span></div><div class="row"><span class="lbl">Sufixo:</span><span class="val"><strong>-ado</strong></span></div><div class="row"><span class="lbl">Primitiva:</span><span class="val"><strong>caracol</strong></span></div><div class="row" style="margin-top:6px"><span class="lbl">Sentido:</span><span class="val">que tem forma de caracol</span></div>'
+    },
+    {
+      front: 'superdesconto',
+      frontBadge: 'PALAVRA DERIVADA',
+      backBadge: 'ANALISE',
+      back: '<div class="row"><span class="lbl">Prefixo:</span><span class="val"><strong>super-</strong> (intensidade)</span></div><div class="row"><span class="lbl">Sufixo:</span><span class="val">nenhum</span></div><div class="row"><span class="lbl">Primitiva:</span><span class="val"><strong>desconto</strong></span></div><div class="row" style="margin-top:6px"><span class="lbl">Sentido:</span><span class="val">desconto muito grande</span></div>'
+    },
+    {
+      front: 'hidrografica',
+      frontBadge: 'PALAVRA DERIVADA',
+      backBadge: 'ANALISE',
+      back: '<div class="row"><span class="lbl">Prefixo:</span><span class="val"><strong>hidro-</strong> (agua)</span></div><div class="row"><span class="lbl">Sufixo:</span><span class="val">nenhum padrao simples</span></div><div class="row"><span class="lbl">Primitiva:</span><span class="val"><strong>grafica</strong> (escrever)</span></div><div class="row" style="margin-top:6px"><span class="lbl">Sentido:</span><span class="val">que escreve / descreve aguas</span></div>'
+    },
+    {
+      front: 'reutilizar',
+      frontBadge: 'PALAVRA DERIVADA',
+      backBadge: 'ANALISE',
+      back: '<div class="row"><span class="lbl">Prefixo:</span><span class="val"><strong>re-</strong> (repeticao)</span></div><div class="row"><span class="lbl">Sufixo:</span><span class="val">nenhum adicional</span></div><div class="row"><span class="lbl">Primitiva:</span><span class="val"><strong>utilizar</strong></span></div><div class="row" style="margin-top:6px"><span class="lbl">Sentido:</span><span class="val">utilizar de novo / mais de uma vez</span></div>'
+    },
+    {
+      front: 'infelizmente',
+      frontBadge: 'PALAVRA DERIVADA',
+      backBadge: 'ANALISE',
+      back: '<div class="row"><span class="lbl">Prefixo:</span><span class="val"><strong>in-</strong> (negacao)</span></div><div class="row"><span class="lbl">Sufixo:</span><span class="val"><strong>-mente</strong></span></div><div class="row"><span class="lbl">Primitiva:</span><span class="val"><strong>feliz</strong></span></div><div class="row" style="margin-top:6px"><span class="lbl">Sentido:</span><span class="val">de modo infeliz / sem felicidade</span></div>'
+    }
+  ]
+};
+
+var activeDeck = 'A';
+var cards = [];
+var idx = 0;
+var seen = new Set();
+var flipped = false;
+
+function switchDeck(d) {
+  activeDeck = d;
+  idx = 0; seen = new Set(); flipped = false;
+  cards = DECKS[d].slice();
+  document.getElementById('tab-a').classList.toggle('active', d==='A');
+  document.getElementById('tab-b').classList.toggle('active', d==='B');
+  render();
+}
+
+function render() {
+  var c = cards[idx];
+  seen.add(idx);
+  flipped = false;
+  document.getElementById('flip-card').classList.remove('flipped');
+  document.getElementById('front-badge').textContent = c.frontBadge;
+  document.getElementById('front-main').textContent = c.front;
+  document.getElementById('back-badge').textContent = c.backBadge;
+  document.getElementById('back-main').innerHTML = c.back;
+  var total = cards.length;
+  document.getElementById('prog-label').textContent = 'Card ' + (idx+1) + ' de ' + total;
+  document.getElementById('prog-fill').style.width = ((idx+1)/total*100) + '%';
+  document.getElementById('seen-count').textContent = seen.size + ' vistos';
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').disabled = idx === total - 1;
+}
+
+function flipCard() {
+  flipped = !flipped;
+  document.getElementById('flip-card').classList.toggle('flipped', flipped);
+}
+
+function goCard(dir) {
+  var newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= cards.length) return;
+  idx = newIdx;
+  render();
+}
+
+function shuffleDeck() {
+  var arr = DECKS[activeDeck].slice();
+  for (var i = arr.length-1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i+1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  cards = arr;
+  idx = 0; seen = new Set(); flipped = false;
+  render();
+}
+
+switchDeck('A');
+</script>
+</body>
+</html>

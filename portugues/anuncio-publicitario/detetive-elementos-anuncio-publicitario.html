@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detetive dos Elementos — Anúncio Publicitário</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+.progress-section { padding: 16px 24px 0; }
+.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; background: var(--port-bg); border-radius: 999px; overflow: hidden; }
+.prog-fill { height: 8px; background: linear-gradient(90deg, var(--port), var(--port-light)); border-radius: 999px; transition: width .4s ease; width: 0%; }
+.score-bar { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.score-pts { color: var(--port); font-weight: 800; font-size: 14px; }
+
+.game-section { padding: 20px 24px; }
+.round-label { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--port-light); letter-spacing: .08em; margin-bottom: 8px; }
+
+.clue-card { background: linear-gradient(135deg, #ede9fe, #faf5ff); border: 2px solid var(--port-light); border-radius: 18px; padding: 20px; margin-bottom: 20px; }
+.clue-label { font-size: 11px; font-weight: 700; color: var(--port); letter-spacing: .08em; margin-bottom: 8px; font-family: "Space Mono", monospace; }
+.clue-text { font-size: 16px; font-weight: 700; color: var(--port-dark); line-height: 1.5; }
+
+.options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.opt-btn { background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 12px 10px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; color: var(--text); cursor: pointer; text-align: center; transition: all .15s; }
+.opt-btn:hover:not(:disabled) { border-color: var(--port-light); background: #ede9fe; }
+.opt-btn.correct { background: #D1FAE5; border-color: #059669; color: #065F46; }
+.opt-btn.wrong { background: #FEE2E2; border-color: #DC2626; color: #991B1B; }
+.opt-btn:disabled { cursor: not-allowed; }
+
+.feedback { margin-top: 0; padding: 12px 16px; border-radius: 14px; display: none; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
+.feedback.correct { background: #D1FAE5; border: 2px solid #059669; display: flex; }
+.feedback.wrong { background: #FEE2E2; border: 2px solid #DC2626; display: flex; }
+.feedback-icon { font-size: 20px; flex-shrink: 0; line-height: 1; margin-top: 1px; }
+.feedback-text { font-size: 13px; font-weight: 600; line-height: 1.5; color: var(--text); }
+
+.next-btn { display: none; margin-top: 14px; width: 100%; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 13px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s; }
+.next-btn:hover { background: var(--port-dark); }
+.next-btn.show { display: block; }
+
+/* Result */
+.result-section { padding: 24px; text-align: center; display: none; }
+.result-section.show { display: block; }
+.result-emoji { font-size: 56px; line-height: 1; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--port); margin-bottom: 8px; }
+.result-score { font-size: 32px; font-weight: 900; color: var(--port); margin-bottom: 8px; }
+.result-msg { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 24px; line-height: 1.6; }
+.star-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; font-size: 28px; }
+.restart-btn { background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 13px 32px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.restart-btn:hover { background: var(--port-dark); }
+
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+.shake { animation: shake .35s ease; }
+@keyframes popIn { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+.feedback.correct, .feedback.wrong { animation: popIn .2s ease; }
+
+@media (max-width: 480px) {
+  .options-grid { grid-template-columns: 1fr 1fr; }
+  .clue-text { font-size: 14px; }
+  .card-header h1 { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🔍</div>
+      <div><h1>Detetive dos Elementos</h1><p>Anúncio Publicitário · pp. 117–121</p></div>
+      <div class="hbadge">⚡ Praticar (80%)</div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label" id="prog-label">Rodada 1 de 8</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="score-bar">Pontos: <span class="score-pts" id="score-pts">0</span></div>
+    </div>
+
+    <div class="game-section" id="game-section">
+      <div class="round-label" id="round-label">RODADA 01</div>
+      <div class="clue-card">
+        <div class="clue-label">IDENTIFIQUE O ELEMENTO</div>
+        <div class="clue-text" id="clue-text"></div>
+      </div>
+      <div class="options-grid" id="options-grid"></div>
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div class="feedback-text" id="fb-text"></div>
+      </div>
+      <button class="next-btn" id="next-btn">Próxima rodada →</button>
+    </div>
+
+    <div class="result-section" id="result-section">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="star-row" id="star-row"></div>
+      <div class="result-title">Caso encerrado!</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="restart-btn" onclick="restart()">↺ Novo caso</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var ROUNDS = [
+  {
+    clue: '"A gente cuida brincando" — texto que aparece em destaque no anúncio Trá Lá Lá',
+    correct: 'slogan',
+    fb: 'Correto! "A gente cuida brincando" é o slogan do anúncio Trá Lá Lá — uma frase curta, marcante, fácil de memorizar.'
+  },
+  {
+    clue: 'O anúncio usa crianças como personagens para se conectar com quem vai usar o produto',
+    correct: 'público-alvo',
+    fb: 'Exato! A escolha de personagens infantis identifica o público-alvo: crianças são a quem o anúncio se destina.'
+  },
+  {
+    clue: 'O fundo colorido e vibrante do anúncio, com azul, roxo, rosa e amarelo',
+    correct: 'cor',
+    fb: 'Correto! As cores vibrantes são um elemento do anúncio publicitário — servem para chamar a atenção do público-alvo.'
+  },
+  {
+    clue: 'A figura de uma menina tocando bateria na embalagem do produto',
+    correct: 'personagem',
+    fb: 'Certo! A menina tocando bateria é uma personagem do anúncio — as personagens ajudam a criar conexão com o público-alvo.'
+  },
+  {
+    clue: 'As seis embalagens coloridas mostradas lado a lado no anúncio',
+    correct: 'imagem',
+    fb: 'Perfeito! A exposição das embalagens é a imagem do produto no anúncio — mostra visualmente o que está sendo anunciado.'
+  },
+  {
+    clue: '"Nova fórmula, nova fragrância" — texto que informa uma característica nova do produto',
+    correct: 'produto/ideia',
+    fb: 'Correto! Esse texto descreve o produto/ideia sendo anunciado — informa sobre suas características e benefícios.'
+  },
+  {
+    clue: 'A paleta de cores azul, roxo, rosa e amarelo usada em todo o material do anúncio',
+    correct: 'cor',
+    fb: 'Isso mesmo! A paleta de cores é um elemento visual do anúncio que cria identidade e atrai o público-alvo.'
+  },
+  {
+    clue: '"CUIDADO ESPECIAL PARA OS CABELOS DAS CRIANÇAS COM O CREME PARA PENTEAR TRÁ LÁ LÁ"',
+    correct: 'slogan',
+    fb: 'Esse texto cumpre a função do slogan — informa o produto e seu benefício de forma clara e marcante no anúncio.'
+  }
+];
+
+var OPTIONS = ['slogan', 'público-alvo', 'cor', 'personagem', 'imagem', 'produto/ideia'];
+var EMOJIS = { 'slogan': '💬', 'público-alvo': '👥', 'cor': '🎨', 'personagem': '🧒', 'imagem': '🖼️', 'produto/ideia': '📦' };
+
+var current = 0, score = 0, answered = false;
+
+function shuffle(arr) {
+  var a = arr.slice(); for (var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a;
+}
+
+function render() {
+  var r = ROUNDS[current];
+  document.getElementById('prog-label').textContent = 'Rodada ' + (current+1) + ' de ' + ROUNDS.length;
+  document.getElementById('prog-fill').style.width = ((current / ROUNDS.length) * 100) + '%';
+  document.getElementById('round-label').textContent = 'RODADA ' + String(current+1).padStart(2,'0');
+  document.getElementById('clue-text').textContent = r.clue;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').classList.remove('show');
+  answered = false;
+
+  var grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  var opts = shuffle(OPTIONS);
+  opts.forEach(function(opt) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = (EMOJIS[opt] || '') + ' ' + opt;
+    btn.dataset.val = opt;
+    btn.addEventListener('click', function() { answer(opt, btn); });
+    grid.appendChild(btn);
+  });
+}
+
+function answer(val, btn) {
+  if (answered) return;
+  answered = true;
+  var r = ROUNDS[current];
+  document.querySelectorAll('.opt-btn').forEach(function(b) {
+    b.disabled = true;
+    if (b.dataset.val === r.correct) b.classList.add('correct');
+  });
+  var fb = document.getElementById('feedback');
+  if (val === r.correct) {
+    score += 10;
+    document.getElementById('score-pts').textContent = score;
+    btn.classList.add('correct');
+    fb.className = 'feedback correct';
+    document.getElementById('fb-icon').textContent = '✓';
+  } else {
+    btn.classList.add('wrong');
+    btn.classList.add('shake');
+    fb.className = 'feedback wrong';
+    document.getElementById('fb-icon').textContent = '✗';
+  }
+  document.getElementById('fb-text').textContent = r.fb;
+  document.getElementById('next-btn').classList.add('show');
+  document.getElementById('next-btn').textContent = current < ROUNDS.length - 1 ? 'Próxima rodada →' : 'Ver resultado →';
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  current++;
+  if (current >= ROUNDS.length) showResult();
+  else render();
+});
+
+function showResult() {
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('game-section').style.display = 'none';
+  var rs = document.getElementById('result-section');
+  rs.classList.add('show');
+  var pct = score / (ROUNDS.length * 10);
+  var stars = pct >= .9 ? 3 : pct >= .6 ? 2 : 1;
+  document.getElementById('star-row').textContent = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+  document.getElementById('result-score').textContent = score + ' / ' + (ROUNDS.length * 10) + ' pts';
+  var data = [
+    ['🔍', 'Detetive especialista! Você identificou todos os elementos do anúncio publicitário!'],
+    ['👏', 'Ótimo trabalho! Você identificou bem os elementos do anúncio publicitário.'],
+    ['💪', 'Continue praticando! Fique atento ao slogan, público-alvo e elementos visuais.']
+  ];
+  var m = stars === 3 ? data[0] : stars === 2 ? data[1] : data[2];
+  document.getElementById('result-emoji').textContent = m[0];
+  document.getElementById('result-msg').textContent = m[1];
+}
+
+function restart() {
+  current = 0; score = 0;
+  document.getElementById('score-pts').textContent = '0';
+  document.getElementById('result-section').classList.remove('show');
+  document.getElementById('game-section').style.display = 'block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

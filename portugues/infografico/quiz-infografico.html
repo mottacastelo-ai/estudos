@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Infográfico</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+.header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); color: white; padding: 24px 24px 20px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.75); text-decoration: none; margin-bottom: 14px; transition: color .15s; }
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 20px; margin-bottom: 4px; line-height: 1.2; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+
+.main { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; }
+
+/* Progress */
+.prog-wrap { margin-bottom: 22px; }
+.prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.prog-label { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; color: var(--muted); }
+.score-badge { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; color: var(--port); background: var(--port-bg); border: 2px solid var(--border); padding: 3px 12px; border-radius: 999px; }
+.prog-track { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; }
+.prog-fill { height: 8px; background: linear-gradient(90deg, var(--port-dark), var(--port), var(--port-light)); border-radius: 999px; transition: width .4s ease; }
+
+/* Card da questao */
+.q-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: 0 4px 20px rgba(124,58,237,.08); margin-bottom: 16px; }
+.q-num { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--port); letter-spacing: .08em; margin-bottom: 10px; }
+.q-text { font-size: 17px; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
+
+/* Opcoes */
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn {
+  width: 100%; min-height: 52px; text-align: left; padding: 12px 18px;
+  border: 2px solid var(--border); border-radius: 14px;
+  background: var(--card); color: var(--text); font-family: "Baloo 2", cursive;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: border-color .15s, background .15s, transform .1s;
+  display: flex; align-items: center; gap: 10px;
+}
+.opt-btn:hover:not(:disabled) { border-color: var(--port-light); background: var(--port-bg); transform: translateX(3px); }
+.opt-btn.correct { border-color: #34D399; background: #D1FAE5; color: #065F46; }
+.opt-btn.wrong { border-color: #FCA5A5; background: #FEE2E2; color: #991B1B; }
+.opt-btn:disabled { cursor: default; transform: none; }
+.opt-letter { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--port-bg);
+  border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--port); }
+.opt-btn.correct .opt-letter { background: #D1FAE5; border-color: #34D399; color: #065F46; }
+.opt-btn.wrong .opt-letter   { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; }
+
+/* Feedback */
+.feedback { border-radius: 12px; padding: 14px 18px; margin-top: 14px; display: none; align-items: flex-start; gap: 12px; }
+.feedback.visible { display: flex; }
+.feedback.correct { background: #D1FAE5; border: 2px solid #34D399; }
+.feedback.wrong   { background: #FEE2E2; border: 2px solid #FCA5A5; }
+.feedback-icon { font-size: 22px; flex-shrink: 0; }
+.feedback-text { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.5; }
+
+/* Botao proximo */
+.btn-next { display: none; width: 100%; margin-top: 16px; padding: 14px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, var(--port-dark), var(--port)); color: white;
+  font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800; cursor: pointer;
+  transition: opacity .15s, transform .1s; }
+.btn-next:hover { opacity: .9; transform: translateY(-1px); }
+.btn-next.visible { display: block; }
+
+/* Tela final */
+.result-screen { display: none; text-align: center; }
+.result-screen.visible { display: block; }
+.result-icon { font-size: 64px; margin-bottom: 12px; }
+.result-score { font-family: "Space Mono", monospace; font-size: 48px; font-weight: 700; color: var(--port); }
+.result-sub { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+.result-msg { font-size: 18px; font-weight: 800; margin: 16px 0 24px; line-height: 1.4; }
+.result-bar-wrap { background: var(--border); border-radius: 999px; height: 12px; margin: 0 auto 24px; max-width: 300px; overflow: hidden; }
+.result-bar-fill { height: 12px; border-radius: 999px; background: linear-gradient(90deg, var(--port-dark), var(--port-light)); transition: width 1s ease; }
+.btn-retry { padding: 14px 32px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--port-dark), var(--port));
+  color: white; font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800; cursor: pointer; transition: opacity .15s; }
+.btn-retry:hover { opacity: .9; }
+.result-detail { text-align: left; margin: 24px 0; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 16px 20px; }
+.result-detail h3 { font-family: "Space Mono", monospace; font-size: 12px; color: var(--muted); margin-bottom: 12px; letter-spacing: .06em; }
+.detail-item { font-size: 13px; font-weight: 600; padding: 4px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.detail-item:last-child { border-bottom: none; }
+.detail-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.detail-dot.ok { background: #34D399; }
+.detail-dot.ko { background: #FCA5A5; }
+
+@media (max-width: 480px) {
+  .main { padding: 18px 14px 48px; }
+  .header h1 { font-size: 17px; }
+  .q-text { font-size: 15px; }
+  .opt-btn { font-size: 14px; padding: 10px 14px; }
+  .result-score { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="../../index.html" class="back-btn">← Voltar ao Portal</a>
+  <h1>Quiz — Infográfico</h1>
+  <p>10 questões sobre leitura de dados e infográfico</p>
+</div>
+<div class="main">
+
+  <!-- Progress -->
+  <div class="prog-wrap" id="prog-wrap">
+    <div class="prog-top">
+      <span class="prog-label" id="prog-label">Questão 1 de 10</span>
+      <span class="score-badge" id="score-badge">Acertos: 0/10</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+  </div>
+
+  <!-- Questão atual -->
+  <div id="quiz-wrap">
+    <div class="q-card">
+      <div class="q-num" id="q-num">QUESTÃO 01</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div class="feedback-text" id="fb-text"></div>
+      </div>
+    </div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima questão →</button>
+  </div>
+
+  <!-- Tela final -->
+  <div class="result-screen" id="result-screen">
+    <div class="result-icon" id="result-icon"></div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-sub">de 10 questões corretas</div>
+    <div class="result-bar-wrap"><div class="result-bar-fill" id="result-bar" style="width:0%"></div></div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="result-detail">
+      <h3>RESUMO POR QUESTÃO</h3>
+      <div id="detail-list"></div>
+    </div>
+    <button class="btn-retry" onclick="restart()">Tentar novamente ↺</button>
+  </div>
+
+</div>
+<script>
+var questions = [
+  {
+    text: "O que é um infográfico?",
+    options: [
+      "Um tipo de gráfico que mostra apenas números",
+      "Um gênero textual que combina texto, imagens e dados visuais para apresentar informações",
+      "Uma notícia de jornal com muitas fotos",
+      "Um texto sem palavras, feito só de desenhos"
+    ],
+    correct: 1,
+    explanation: "O infográfico é um gênero textual que combina texto escrito, imagens e dados visuais para apresentar informações de forma clara e atraente."
+  },
+  {
+    text: "Qual destes elementos NÃO aparece no infográfico \"Consumo Infantil\"?",
+    options: [
+      "Gráfico de barras",
+      "Texto escrito",
+      "Linhas pontilhadas",
+      "Informações numéricas"
+    ],
+    correct: 2,
+    explanation: "Os elementos do infográfico são: texto escrito, imagens, informações numéricas, gráficos, setas e linhas indicativas. Linhas pontilhadas não fazem parte dos elementos apresentados."
+  },
+  {
+    text: "Qual elemento do infográfico mostra os dados sobre O QUE influencia crianças a comprar?",
+    options: [
+      "O gráfico de pizza",
+      "As setas indicativas",
+      "O gráfico de barras",
+      "As imagens de crianças"
+    ],
+    correct: 2,
+    explanation: "O gráfico de barras é o elemento que compara os dados — cada barra representa uma categoria (como propaganda na TV, personagem famoso etc.) e seu tamanho mostra o percentual de influência."
+  },
+  {
+    text: "Qual é o maior influenciador de compra para crianças, segundo o infográfico?",
+    options: [
+      "Marca conhecida (44%)",
+      "Personagem famoso (50%)",
+      "Embalagens (48%)",
+      "Propaganda na TV (73%)"
+    ],
+    correct: 3,
+    explanation: "Segundo o gráfico de barras do infográfico, a Propaganda na TV é o maior influenciador, com 73% — bem acima dos outros fatores listados."
+  },
+  {
+    text: "Segundo o gráfico de pizza, qual percentual de crianças influencia a decisão de compra dos pais?",
+    options: [
+      "38%",
+      "42%",
+      "50%",
+      "80%"
+    ],
+    correct: 3,
+    explanation: "O gráfico de pizza mostra que 80% das crianças influenciam a decisão de compra dos pais — sendo 38% com influência forte e 42% com influência parcial."
+  },
+  {
+    text: "Em qual tipo de produto as crianças têm MAIS influência, segundo o infográfico?",
+    options: [
+      "Roupas (57%)",
+      "Alimentos (92%)",
+      "Brinquedos (86%)",
+      "Eletrônicos (70%)"
+    ],
+    correct: 1,
+    explanation: "Segundo o infográfico, as crianças têm mais influência na compra de alimentos (92%), seguidos de brinquedos (86%) e roupas (57%)."
+  },
+  {
+    text: "De acordo com o Texto 2, qual consequência o consumo excessivo de alimentos industrializados traz às crianças?",
+    options: [
+      "Diminuição do tempo de TV",
+      "Aumento do sobrepeso infantil",
+      "Maior influência na propaganda",
+      "Redução do consumo de brinquedos"
+    ],
+    correct: 1,
+    explanation: "O Texto 2 informa que o IBGE registrou que o sobrepeso entre crianças dobrou nos últimos 34 anos, ligado ao consumo excessivo de alimentos industrializados — que são justamente o produto com maior influência infantil (92%)."
+  },
+  {
+    text: "Por que as informações do infográfico são confiáveis?",
+    options: [
+      "Porque foram publicadas em um site famoso",
+      "Porque têm muitas cores e imagens",
+      "Porque vêm de fontes identificadas como Instituto Alana e pesquisa jornalística",
+      "Porque o texto está escrito corretamente"
+    ],
+    correct: 2,
+    explanation: "A fonte é o elemento do infográfico que indica a origem das informações e determina sua confiabilidade. No infográfico, as informações vêm da Pesquisa Interscience/Instituto Alana, publicadas no Jornal O Tempo."
+  },
+  {
+    text: "Qual foi a fonte do Texto 2 do infográfico?",
+    options: [
+      "IBGE e Ministério da Educação",
+      "Jornal O Tempo e Pesquisa Interscience",
+      "Ministério do Meio Ambiente e Instituto Alana",
+      "ONU e Ministério da Saúde"
+    ],
+    correct: 2,
+    explanation: "O Texto 2 teve como fonte o Ministério do Meio Ambiente e o Instituto Alana, responsáveis pelos dados sobre tempo de TV e consumo de alimentos pelas crianças brasileiras."
+  },
+  {
+    text: "O que o 'SIM' dentro do balão de fala do infográfico representa?",
+    options: [
+      "O pai concordando com o vendedor",
+      "A criança dizendo sim para influenciar a compra dos pais",
+      "O produto sendo aprovado pelo fabricante",
+      "O infográfico confirmando que os dados são verdadeiros"
+    ],
+    correct: 1,
+    explanation: "O balão de fala com 'SIM' representa a criança influenciando a decisão de compra dos pais — é uma imagem que ilustra os dados do gráfico de pizza (80% de influência)."
+  }
+];
+
+var current = 0, score = 0, answered = [];
+var history = [];
+
+function render() {
+  var q = questions[current];
+  document.getElementById('q-num').textContent = 'QUESTÃO ' + String(current+1).padStart(2,'0');
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('prog-label').textContent = 'Questão ' + (current+1) + ' de ' + questions.length;
+  document.getElementById('score-badge').textContent = 'Acertos: ' + score + '/' + questions.length;
+  document.getElementById('prog-fill').style.width = ((current+1)/questions.length*100) + '%';
+
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  var letters = ['A','B','C','D'];
+  q.options.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + opt;
+    btn.addEventListener('click', function() { answer(i); });
+    opts.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  document.getElementById('btn-next').className = 'btn-next';
+}
+
+function answer(idx) {
+  var q = questions[current];
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+
+  var correct = idx === q.correct;
+  if (correct) score++;
+  history.push({q: current, ok: correct});
+
+  btns[idx].classList.add(correct ? 'correct' : 'wrong');
+  btns[q.correct].classList.add('correct');
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (correct ? 'correct' : 'wrong') + ' visible';
+  document.getElementById('fb-icon').textContent = correct ? '✓' : '✗';
+  document.getElementById('fb-text').textContent = q.explanation;
+
+  document.getElementById('score-badge').textContent = 'Acertos: ' + score + '/' + questions.length;
+  document.getElementById('btn-next').className = 'btn-next visible';
+  document.getElementById('btn-next').textContent = current < questions.length - 1 ? 'Próxima questão →' : 'Ver resultado →';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    render();
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz-wrap').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'none';
+  var rs = document.getElementById('result-screen');
+  rs.className = 'result-screen visible';
+
+  var pct = score / questions.length;
+  var icons = ['😢','📚','👍','⭐','🏆'];
+  var msgs = [
+    '📚 Continue estudando! Tente novamente.',
+    '📚 Continue estudando! Você vai chegar lá.',
+    '👍 Bom trabalho! Revise as questões que errou.',
+    '⭐ Muito bem! Você está ótimo no tema infográfico!',
+    '🏆 Perfeito! Você dominou o tema infográfico!'
+  ];
+  var level = pct === 1 ? 4 : pct >= 0.8 ? 3 : pct >= 0.6 ? 2 : pct >= 0.4 ? 1 : 0;
+
+  document.getElementById('result-icon').textContent = icons[level];
+  document.getElementById('result-score').textContent = score + '/10';
+  document.getElementById('result-msg').textContent = msgs[level];
+
+  setTimeout(function() {
+    document.getElementById('result-bar').style.width = (score/10*100) + '%';
+  }, 100);
+
+  var list = document.getElementById('detail-list');
+  list.innerHTML = '';
+  history.forEach(function(h) {
+    var div = document.createElement('div');
+    div.className = 'detail-item';
+    var dot = document.createElement('div');
+    dot.className = 'detail-dot ' + (h.ok ? 'ok' : 'ko');
+    var text = document.createElement('span');
+    text.textContent = 'Q' + (h.q+1) + ': ' + questions[h.q].text.substring(0, 55) + (questions[h.q].text.length > 55 ? '...' : '');
+    div.appendChild(dot); div.appendChild(text);
+    list.appendChild(div);
+  });
+}
+
+function restart() {
+  current = 0; score = 0; history = [];
+  document.getElementById('quiz-wrap').style.display = 'block';
+  document.getElementById('prog-wrap').style.display = 'block';
+  document.getElementById('result-screen').className = 'result-screen';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

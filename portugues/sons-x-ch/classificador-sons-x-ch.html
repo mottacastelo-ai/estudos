@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador — Sons do X</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF; --port-dark: #4C1D95;
+  --text: #1A1A2E; --muted: #6B7280; --border: #DDD6FE; --card: #fff;
+  --c1: #1D4ED8; --c1l: #DBEAFE; --c1b: #1e40af;
+  --c2: #7C3AED; --c2l: #EDE9FE; --c2b: #4C1D95;
+  --c3: #059669; --c3l: #D1FAE5; --c3b: #065F46;
+  --c4: #EA580C; --c4l: #FFEDD5; --c4b: #9A3412;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; }
+.wrap { max-width: 1000px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 40px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+/* REGRAS COLLAPSIBLE */
+.rules-wrap { border-bottom: 2px solid var(--border); }
+.rules-toggle { width: 100%; background: #ede9fe; border: none; padding: 10px 20px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800; color: var(--port-dark); cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; }
+.rules-toggle:hover { background: #ddd6fe; }
+.rules-body { display: none; padding: 12px 20px 14px; background: #faf9ff; border-top: 1px solid var(--border); }
+.rules-body.open { display: block; }
+.rule-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; font-weight: 600; line-height: 1.4; }
+.rule-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.rule-dot.c1 { background: var(--c1); }
+.rule-dot.c2 { background: var(--c2); }
+.rule-dot.c3 { background: var(--c3); }
+.rule-dot.c4 { background: var(--c4); }
+
+/* SCORE BAR */
+.score-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 20px; border-bottom: 2px solid var(--border); flex-wrap: wrap; gap: 6px; }
+.score-bar span { font-size: 13px; font-weight: 800; color: var(--port); }
+.verify-btn { background: var(--port); color: #fff; border: none; border-radius: 12px; padding: 7px 18px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800; cursor: pointer; }
+.verify-btn:hover { opacity: .85; }
+.reset-btn { background: transparent; color: var(--muted); border: 2px solid var(--border); border-radius: 12px; padding: 5px 14px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; cursor: pointer; }
+.reset-btn:hover { border-color: var(--port-light); color: var(--port); }
+
+/* WORD BANK */
+.bank-section { padding: 14px 20px 10px; border-bottom: 2px solid var(--border); }
+.bank-title { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px; }
+.word-bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
+.word-chip { display: inline-flex; align-items: center; padding: 7px 16px; border-radius: 999px; font-size: 14px; font-weight: 700; cursor: grab; user-select: none; border: 2px solid var(--border); background: var(--card); color: var(--text); transition: transform .1s, box-shadow .1s; touch-action: none; }
+.word-chip:hover { transform: scale(1.05); box-shadow: 0 3px 12px rgba(124,58,237,.2); }
+.word-chip.dragging { opacity: .5; transform: scale(1.08); }
+.word-chip.placed { display: none; }
+
+/* COLUMNS */
+.columns-wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 14px 16px 18px; }
+@media (max-width: 700px) { .columns-wrap { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 420px) { .columns-wrap { grid-template-columns: 1fr 1fr; gap: 6px; padding: 10px 10px 14px; } }
+
+.col-box { border-radius: 16px; border: 2px dashed; min-height: 140px; padding: 10px; display: flex; flex-direction: column; transition: background .15s; }
+.col-box.c1 { border-color: var(--c1); background: #f0f5ff; }
+.col-box.c2 { border-color: var(--c2); background: #f5f3ff; }
+.col-box.c3 { border-color: var(--c3); background: #f0fdf4; }
+.col-box.c4 { border-color: var(--c4); background: #fff7ed; }
+.col-box.drag-over { opacity: .85; transform: scale(1.01); }
+.col-header { font-size: 11px; font-weight: 800; text-align: center; padding: 4px 6px 8px; line-height: 1.4; }
+.col-header.c1 { color: var(--c1b); }
+.col-header.c2 { color: var(--c2b); }
+.col-header.c3 { color: var(--c3b); }
+.col-header.c4 { color: var(--c4b); }
+.col-example { text-align: center; font-size: 10px; font-weight: 700; padding: 2px 8px 6px; border-radius: 999px; margin: 0 auto 8px; }
+.col-example.c1 { background: var(--c1l); color: var(--c1b); }
+.col-example.c2 { background: var(--c2l); color: var(--c2b); }
+.col-example.c3 { background: var(--c3l); color: var(--c3b); }
+.col-example.c4 { background: var(--c4l); color: var(--c4b); }
+.col-items { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.placed-chip { padding: 5px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; text-align: center; cursor: grab; user-select: none; touch-action: none; }
+.placed-chip.c1 { background: var(--c1l); color: var(--c1b); border: 1.5px solid var(--c1); }
+.placed-chip.c2 { background: var(--c2l); color: var(--c2b); border: 1.5px solid var(--c2); }
+.placed-chip.c3 { background: var(--c3l); color: var(--c3b); border: 1.5px solid var(--c3); }
+.placed-chip.c4 { background: var(--c4l); color: var(--c4b); border: 1.5px solid var(--c4); }
+.placed-chip.correct { border-color: #059669 !important; background: #d1fae5 !important; color: #065F46 !important; }
+.placed-chip.wrong { border-color: #dc2626 !important; background: #fee2e2 !important; color: #7f1d1d !important; animation: shake .4s; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+/* RESULT PANEL */
+.result-panel { display: none; margin: 0 16px 16px; padding: 14px 18px; border-radius: 16px; border: 2px solid var(--border); background: var(--port-bg); }
+.result-title { font-family: "Space Mono", monospace; font-size: 12px; color: var(--port-dark); font-weight: 800; margin-bottom: 8px; }
+.result-score { font-size: 22px; font-weight: 900; color: var(--port); margin-bottom: 6px; }
+.result-msg { font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.5; }
+
+/* TOUCH GHOST */
+#touch-ghost { position: fixed; pointer-events: none; z-index: 9999; font-size: 14px; font-weight: 700; padding: 7px 16px; border-radius: 999px; background: #ede9fe; border: 2px solid var(--port); color: var(--port-dark); display: none; transform: translate(-50%, -50%); }
+</style>
+</head>
+<body>
+<div id="touch-ghost"></div>
+<div class="wrap">
+  <a class="back-link" href="../../index.html">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🎩</div>
+      <div>
+        <h1>Classificador dos Sons do X</h1>
+        <p>Arraste cada palavra para a coluna com seu som correto</p>
+      </div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+
+    <div class="rules-wrap">
+      <button class="rules-toggle" id="rules-toggle" onclick="toggleRules()">
+        📌 Regras do X — clique para ver
+      </button>
+      <div class="rules-body" id="rules-body">
+        <div class="rule-row"><div class="rule-dot c1"></div><strong>Som /ks/ (azul):</strong> como em táxi, axila, hexágono</div>
+        <div class="rule-row"><div class="rule-dot c2"></div><strong>Som /sh/ igual ao dígrafo CH (roxo):</strong> depois de ditongo (ei, ai, ou) → caixa, peixe, faixa; depois de EN- → enxame, enxaguar, enxugar; e outras como relaxar</div>
+        <div class="rule-row"><div class="rule-dot c3"></div><strong>Som /z/ (verde):</strong> como em exemplo, exato, exercício, êxito, exame</div>
+        <div class="rule-row"><div class="rule-dot c4"></div><strong>Som /ss/ (laranja):</strong> como em auxílio, máximo, próximo</div>
+        <div class="rule-row" style="margin-top:6px; font-size:12px; color:var(--muted);">Atenção: quando a palavra deriva de uma forma com CH (ex: encharcar ← charco), usa-se CH, não X.</div>
+      </div>
+    </div>
+
+    <div class="score-bar">
+      <span id="placed-count">0 de 20 colocadas</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="reset-btn" onclick="resetAll()">↺ Reiniciar</button>
+        <button class="verify-btn" id="verify-btn" onclick="verify()">Verificar tudo</button>
+      </div>
+    </div>
+
+    <div class="bank-section">
+      <div class="bank-title">Palavras para classificar — arraste para a coluna correta</div>
+      <div class="word-bank" id="word-bank"></div>
+    </div>
+
+    <div class="columns-wrap">
+      <div class="col-box c1" id="col-1" data-col="1">
+        <div class="col-header c1">Som de /ks/<br>como em <strong>táxi</strong></div>
+        <div class="col-example c1">táxi · axila</div>
+        <div class="col-items" id="items-1"></div>
+      </div>
+      <div class="col-box c2" id="col-2" data-col="2">
+        <div class="col-header c2">Som de /sh/<br>igual ao <strong>dígrafo CH</strong><br>como em <strong>lixo</strong></div>
+        <div class="col-example c2">caixa · peixe</div>
+        <div class="col-items" id="items-2"></div>
+      </div>
+      <div class="col-box c3" id="col-3" data-col="3">
+        <div class="col-header c3">Som de /z/<br>como em <strong>exemplo</strong></div>
+        <div class="col-example c3">exemplo · exato</div>
+        <div class="col-items" id="items-3"></div>
+      </div>
+      <div class="col-box c4" id="col-4" data-col="4">
+        <div class="col-header c4">Som de /ss/<br>como em <strong>auxílio</strong></div>
+        <div class="col-example c4">máximo · auxílio</div>
+        <div class="col-items" id="items-4"></div>
+      </div>
+    </div>
+
+    <div class="result-panel" id="result-panel">
+      <div class="result-title">RESULTADO</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-msg" id="result-msg"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var WORDS = [
+  {w:'axila',      col:1},
+  {w:'caixa',      col:2},
+  {w:'exercício',  col:3},
+  {w:'máximo',     col:4},
+  {w:'peixe',      col:2},
+  {w:'exato',      col:3},
+  {w:'próximo',    col:4},
+  {w:'enxame',     col:2},
+  {w:'taxista',    col:1},
+  {w:'enxaguar',   col:2},
+  {w:'hexágono',   col:1},
+  {w:'exame',      col:3},
+  {w:'faixa',      col:2},
+  {w:'sexto',      col:1},
+  {w:'deixou',     col:2},
+  {w:'tóxico',     col:1},
+  {w:'êxito',      col:3},
+  {w:'relaxar',    col:2},
+  {w:'fixo',       col:1},
+  {w:'enxugar',    col:2},
+];
+
+// Shuffle words
+var shuffled = WORDS.slice().sort(function(){ return Math.random()-.5; });
+
+// State: word -> current col (0 = bank)
+var state = {};
+shuffled.forEach(function(w){ state[w.w] = 0; });
+
+var draggingWord = null;
+var verified = false;
+
+function toggleRules() {
+  var body = document.getElementById('rules-body');
+  var toggle = document.getElementById('rules-toggle');
+  body.classList.toggle('open');
+  toggle.textContent = body.classList.contains('open') ? '📌 Regras do X — clique para ocultar' : '📌 Regras do X — clique para ver';
+}
+
+function getColClass(col) { return 'c' + col; }
+
+function render() {
+  // Render bank
+  var bank = document.getElementById('word-bank');
+  bank.innerHTML = '';
+  shuffled.forEach(function(item) {
+    if (state[item.w] !== 0) return;
+    var chip = document.createElement('div');
+    chip.className = 'word-chip';
+    chip.textContent = item.w;
+    chip.dataset.word = item.w;
+    addDragListeners(chip);
+    bank.appendChild(chip);
+  });
+
+  // Render columns
+  for (var c = 1; c <= 4; c++) {
+    var container = document.getElementById('items-' + c);
+    container.innerHTML = '';
+    shuffled.forEach(function(item) {
+      if (state[item.w] !== c) return;
+      var chip = document.createElement('div');
+      chip.className = 'placed-chip ' + getColClass(c);
+      chip.textContent = item.w;
+      chip.dataset.word = item.w;
+      if (verified) {
+        chip.classList.add(item.col === c ? 'correct' : 'wrong');
+      }
+      addDragListeners(chip);
+      container.appendChild(chip);
+    });
+  }
+
+  // Update count
+  var placed = shuffled.filter(function(w){ return state[w.w] !== 0; }).length;
+  document.getElementById('placed-count').textContent = placed + ' de ' + shuffled.length + ' colocadas';
+}
+
+function addDragListeners(el) {
+  // Mouse
+  el.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    draggingWord = el.dataset.word;
+    el.classList.add('dragging');
+    document.addEventListener('mouseup', onMouseUp);
+  });
+  // Touch
+  el.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    draggingWord = el.dataset.word;
+    var ghost = document.getElementById('touch-ghost');
+    ghost.textContent = draggingWord;
+    ghost.style.display = 'block';
+    moveTouchGhost(e.touches[0]);
+  }, { passive: false });
+  el.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    moveTouchGhost(e.touches[0]);
+  }, { passive: false });
+  el.addEventListener('touchend', function(e) {
+    var t = e.changedTouches[0];
+    document.getElementById('touch-ghost').style.display = 'none';
+    var target = document.elementFromPoint(t.clientX, t.clientY);
+    var col = findColFromElement(target);
+    if (col !== null) {
+      state[draggingWord] = col;
+    } else {
+      // dropped on bank or outside
+      state[draggingWord] = 0;
+    }
+    draggingWord = null;
+    verified = false;
+    document.getElementById('result-panel').style.display = 'none';
+    render();
+  }, { passive: false });
+}
+
+function moveTouchGhost(touch) {
+  var g = document.getElementById('touch-ghost');
+  g.style.left = touch.clientX + 'px';
+  g.style.top = touch.clientY + 'px';
+}
+
+function findColFromElement(el) {
+  if (!el) return null;
+  // Walk up
+  var node = el;
+  while (node) {
+    if (node.dataset && node.dataset.col) return parseInt(node.dataset.col);
+    node = node.parentElement;
+  }
+  return null;
+}
+
+function onMouseUp(e) {
+  document.removeEventListener('mouseup', onMouseUp);
+  if (!draggingWord) return;
+  var target = document.elementFromPoint(e.clientX, e.clientY);
+  var col = findColFromElement(target);
+  if (col !== null) {
+    state[draggingWord] = col;
+  } else if (target && target.closest && target.closest('#word-bank')) {
+    state[draggingWord] = 0;
+  } else {
+    state[draggingWord] = 0;
+  }
+  draggingWord = null;
+  verified = false;
+  document.getElementById('result-panel').style.display = 'none';
+  render();
+}
+
+// Drag-over visual on columns
+for (var c = 1; c <= 4; c++) {
+  (function(col) {
+    var box = document.getElementById('col-' + col);
+    box.addEventListener('dragover', function(e) { e.preventDefault(); box.classList.add('drag-over'); });
+    box.addEventListener('dragleave', function() { box.classList.remove('drag-over'); });
+    box.addEventListener('drop', function(e) { e.preventDefault(); box.classList.remove('drag-over'); if (draggingWord) { state[draggingWord] = col; draggingWord = null; verified = false; render(); } });
+  })(c);
+}
+
+function verify() {
+  verified = true;
+  var correct = 0;
+  shuffled.forEach(function(item) {
+    if (state[item.w] === item.col) correct++;
+  });
+  var placed = shuffled.filter(function(w){ return state[w.w] !== 0; }).length;
+  var panel = document.getElementById('result-panel');
+  var pct = Math.round(correct / shuffled.length * 100);
+  document.getElementById('result-score').textContent = correct + ' de ' + shuffled.length + ' corretas (' + pct + '%)';
+  var msg;
+  if (pct === 100) msg = 'Perfeito! Você classificou todos os 4 sons do X corretamente. Xis tiraria o chapéu para você!';
+  else if (pct >= 80) msg = 'Muito bem! Revise as palavras em vermelho e observe: ditongo antes do X = som de CH; EN- antes do X = som de CH.';
+  else if (pct >= 60) msg = 'Bom esforço! Preste atenção especialmente nas palavras depois de ditongo (ei, ai) e depois de EN-.';
+  else msg = 'Continue praticando! Lembre: X tem 4 sons diferentes — /ks/ (táxi), /sh/ como CH (lixo), /z/ (exemplo) e /ss/ (auxílio).';
+  document.getElementById('result-msg').textContent = msg;
+  panel.style.display = 'block';
+  render();
+}
+
+function resetAll() {
+  shuffled.forEach(function(w){ state[w.w] = 0; });
+  verified = false;
+  document.getElementById('result-panel').style.display = 'none';
+  shuffled = WORDS.slice().sort(function(){ return Math.random()-.5; });
+  shuffled.forEach(function(w){ state[w.w] = 0; });
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
