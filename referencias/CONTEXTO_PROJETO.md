@@ -52,8 +52,13 @@ Portal autentica localmente e exibe conteúdo personalizado
 - **Autenticação cross-domain:** login na landing → detecta `profiles.portal` → redireciona com tokens no hash → portal processa via `detectSessionInUrl: true`
 
 ### Usuários
-- `andre@sabendo.app` — portal: estudos, year: 5
-- `lis@sabendo.app` — portal: estudos-2ano, year: 2
+
+| Email | Senha | Portal | Ano |
+|---|---|---|---|
+| `andre@sabendo.app` | *(senha definida por Léo)* | estudos | 5 |
+| `lis@sabendo.app` | *(senha definida por Léo)* | estudos-2ano | 2 |
+| `teste-andre@sabendo.app` | `teste1234` | estudos | 5 |
+| `teste-lis@sabendo.app` | `teste1234` | estudos-2ano | 2 |
 
 ---
 
