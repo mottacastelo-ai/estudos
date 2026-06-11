@@ -268,11 +268,11 @@ Tela no portal que exibe todas as cartas obtidas pelo aluno, organizadas por tem
 | ✅ | Reveal cinematográfico da carta (5 tiers de raridade + revisional) |
 | ✅ | Cálculo de raridade por melhor score por tipo |
 | ✅ | Reforço adaptativo V1 (tabela + populate + resolve + Carta Revisional) |
-| ✅ | THEME_CATALOG com charImg para todos os 25 temas |
+| ✅ | THEME_CATALOG com charImg para todos os 29 temas |
 | ✅ | 23 portraits HD em `_landing/chars/` |
 | ✅ | Bloco "Para reforçar" no portal |
 | ✅ | Tela de coleção de cartas no portal |
-| ✅ | Gamificação validada em produção (piloto: Preposições — snippet em todos os 8 HTMLs) |
-| ✅ | Snippet "concluir-btn" implantado em todos os temas (inclusive mapa-mental; exceto tabuada) |
+| ✅ | Gamificação validada em produção (piloto: Preposições) |
+| ✅ | Snippet "concluir-btn" implantado em todos os 29 temas (inclusive mapa-mental; exceto tabuada) |
 | ⏳ | Condição de disparo para Lend-Épica |
 | ⏳ | Reforço V2 — atividade diferente sobre o mesmo conceito |

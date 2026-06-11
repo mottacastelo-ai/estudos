@@ -64,9 +64,9 @@ Portal autentica localmente e exibe conteúdo personalizado
 
 ## Estado Atual — Disciplinas e Temas
 
-**Total: 5 disciplinas · 25 temas · 107 atividades**
+**Total: 5 disciplinas · 29 temas · 123 atividades**
 
-### 📝 Português — 8 temas
+### 📝 Português — 12 temas
 
 | Tema | Slug | Personagem | Portrait |
 |---|---|---|---|
@@ -78,6 +78,10 @@ Portal autentica localmente e exibe conteúdo personalizado
 | Pontuação | `pontuacao` | ? ! . | `chars/pontuacao-hd.png` |
 | Texto Instrucional | `instrucional` | Façã | `chars/texto-instrucional-hd.png` |
 | Entonação | `entonacao` | Toni | `chars/entonacao-hd.png` |
+| Anúncio Publicitário | `anuncio-publicitario` | Publinho | `chars/anuncio-publicitario-hd.png` |
+| Prefixo e Sufixo | `prefixo-sufixo` | Raizinha | `chars/prefixo-sufixo-hd.png` |
+| Sons do X e CH | `sons-x-ch` | Xis | `chars/sons-x-ch-hd.png` |
+| Infográfico | `infografico` | Grafo | `chars/infografico-hd.png` |
 
 ### 🔢 Matemática — 7 temas
 
@@ -130,7 +134,7 @@ Sistema completo documentado em `referencias/GAMIFICACAO.md`. Resumo:
 - **Carta Revisional:** gerada ao resolver todos os reforços pendentes de um tema
 - **Painel de coleção:** tela no portal exibindo todas as cartas obtidas por tema
 - **Validação:** sistema completo testado e validado em Preposições
-- **Cobertura:** snippet "concluir-btn" implantado em todos os 25 temas (74 arquivos HTML — exceto mapa-mental e tabuada)
+- **Cobertura:** snippet "concluir-btn" implantado em todos os 29 temas (inclusive mapa-mental — exceto tabuada)
 
 ---
 
