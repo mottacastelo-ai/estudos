@@ -197,9 +197,11 @@ pages:'117-135'
 
 ### Snippet `<!-- concluir-btn -->` — padrão obrigatório
 
-**Todo arquivo HTML de atividade DEVE terminar com este bloco exato** (logo antes de `</body>`). Copiar de `portugues/preposicoes/quiz-preposicoes.html` como referência canônica.
+**Todo arquivo HTML de atividade DEVE terminar com este bloco exato** (logo antes de `</body>`), **inclusive `mapa-mental`** — exceto `tabuada`. Copiar de `portugues/preposicoes/quiz-preposicoes.html` como referência canônica.
 
 Substituir apenas: `THEME_SLUG`, `ACTIVITY_TYPE` e os campos do `GAMI_CONFIG`.
+
+> **mapa-mental:** o `gamification.js` já exclui internamente esse tipo do cálculo de raridade e da fila de reforço. Omitir o snippet impede o reveal do personagem ao final do tema. Além disso, `window.sabendoScore = pct` deve ser setado dentro de `updateGabarito()` **antes** de o `gabarito-panel` ficar visível (ver `GAMIFICACAO.md` para o padrão correto do handler).
 
 ```html
 <!-- concluir-btn -->

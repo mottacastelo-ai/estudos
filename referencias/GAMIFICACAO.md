@@ -142,7 +142,16 @@ Tiers criados para uso futuro (condições não definidas): `super`, `secreta`, 
 
 ## Snippet `<!-- concluir-btn -->` nas atividades
 
-Padrão aplicado em todos os HTMLs de atividade (exceto `mapa-mental` e `tabuada`):
+Padrão aplicado em **todos** os HTMLs de atividade, **inclusive `mapa-mental`** (exceto `tabuada`).
+
+> **mapa-mental é portão obrigatório:** conta para o reveal do personagem mas não entra no cálculo de raridade nem na fila de reforço — o `gamification.js` exclui internamente via `.neq("activity_type","mapa-mental")`. Excluir o snippet impede o reveal ao final do tema.
+
+**Particularidade do mapa-mental:** `window.sabendoScore = pct` deve ser setado **antes** de `gabarito-panel` ficar visível. Padrão correto no handler:
+```javascript
+gabVisible = !gabVisible;
+if (gabVisible) updateGabarito(); // score PRIMEIRO
+document.getElementById('gabarito-panel').style.display = gabVisible ? 'block' : 'none'; // Observer DEPOIS
+```
 
 ```javascript
 var _capturedScore = null;
@@ -264,6 +273,6 @@ Tela no portal que exibe todas as cartas obtidas pelo aluno, organizadas por tem
 | ✅ | Bloco "Para reforçar" no portal |
 | ✅ | Tela de coleção de cartas no portal |
 | ✅ | Gamificação validada em produção (piloto: Preposições — snippet em todos os 8 HTMLs) |
-| ✅ | Snippet "concluir-btn" implantado em todos os 25 temas (74 arquivos HTML, exceto mapa-mental e tabuada) |
+| ✅ | Snippet "concluir-btn" implantado em todos os temas (inclusive mapa-mental; exceto tabuada) |
 | ⏳ | Condição de disparo para Lend-Épica |
 | ⏳ | Reforço V2 — atividade diferente sobre o mesmo conceito |
