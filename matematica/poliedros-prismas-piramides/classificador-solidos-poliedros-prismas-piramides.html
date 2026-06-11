@@ -472,6 +472,7 @@ function verify() {
   }
 
   const rs = document.getElementById('result-screen');
+  window.sabendoScore = Math.round(score / 6 * 100);
   rs.classList.add('show');
   document.getElementById('res-score').textContent = score;
 

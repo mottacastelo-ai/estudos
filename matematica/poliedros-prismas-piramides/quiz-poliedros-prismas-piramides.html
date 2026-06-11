@@ -399,6 +399,7 @@ function nextQ(qNum) {
 function showResult() {
   document.getElementById('q10').classList.remove('active');
   const rs = document.getElementById('result-screen');
+  window.sabendoScore = score * 10;
   rs.classList.add('show');
   document.getElementById('res-score').textContent = score;
   document.getElementById('prog-fill').style.width = '100%';

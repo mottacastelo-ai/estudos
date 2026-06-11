@@ -1104,8 +1104,8 @@
       config: config
     });
 
-    // Reveal cinematográfico: primeira conclusão OU raridade melhorou
-    if (isComplete && (!prevRarity || rarityImproved)) {
+    // Reveal cinematográfico: primeira conclusão (atividade atual é first attempt) OU raridade melhorou
+    if (isComplete && ((!prevRarity && progress.isFirstAttempt) || rarityImproved)) {
       await showReveal(rarity, config, avgPct);
     }
 
