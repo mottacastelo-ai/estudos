@@ -478,6 +478,30 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 #streak-banner { display:none; }
 #streak-banner.visible { display:flex; }
 
+/* ── PWA Install Banner ──────────────────────────────── */
+#pwa-install-banner {
+  display: none;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #1A1035 0%, #2D1B69 100%);
+  border: 1.5px solid rgba(167,139,250,.35);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(124,58,237,.15);
+}
+#pwa-install-banner.visible { display: flex; }
+.pwa-install-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  animation: pwa-bounce 2.4s ease-in-out infinite;
+}
+@keyframes pwa-bounce {
+  0%,100% { transform: translateY(0); }
+  30%      { transform: translateY(-6px); }
+  60%      { transform: translateY(2px); }
+}
+
 /* ── Push Opt-in Banner ──────────────────────────────── */
 #push-optin-banner {
   display: none;
@@ -548,8 +572,10 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 }
 .push-optin-btn-no:hover { color: rgba(255,255,255,.7); }
 @media (max-width: 640px) {
-  #push-optin-banner { flex-wrap: wrap; }
-  .push-optin-actions { width: 100%; justify-content: flex-end; }
+  #pwa-install-banner  { flex-wrap: wrap; }
+  #push-optin-banner   { flex-wrap: wrap; }
+  .pwa-install-actions,
+  .push-optin-actions  { width: 100%; justify-content: flex-end; }
 }
 
 /* ── Reforço Adaptativo ──────────────────────────────── */
@@ -749,6 +775,19 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         </div>
         <div class="reinf-list" id="reinforcement-list"></div>
       </div>
+      <!-- PWA install -->
+      <div id="pwa-install-banner">
+        <div class="pwa-install-icon">📲</div>
+        <div class="push-optin-text">
+          <div class="push-optin-title">Instale o Sabendo como app</div>
+          <div class="push-optin-sub">Acesse direto da tela inicial, sem abrir o navegador</div>
+        </div>
+        <div class="pwa-install-actions push-optin-actions">
+          <button class="push-optin-btn-yes" onclick="pwaInstallAccept()">Instalar</button>
+          <button class="push-optin-btn-no" onclick="pwaInstallDismiss()">Agora não</button>
+        </div>
+      </div>
+
       <!-- Push opt-in -->
       <div id="push-optin-banner">
         <div class="push-optin-icon">🔔</div>
@@ -2551,6 +2590,7 @@ async function initAuth() {
     await loadStreak();
     await loadReinforcement();
     loadCartasCount();
+    initPwaInstall();
     initPushOptin();
     if (sbUser.email && sbUser.email.startsWith('teste-')) {
       document.getElementById('reset-test-btn').style.display = 'block';
@@ -2624,6 +2664,46 @@ async function pushOptinAccept() {
 function pushOptinDismiss() {
   document.getElementById('push-optin-banner').classList.remove('visible');
   localStorage.setItem('pushDismissed', '1');
+}
+
+// ── PWA Install Banner ────────────────────────────────
+var _pwaInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  _pwaInstallPrompt = e;
+  // Se o usuário já estiver logado quando o evento chegar, mostra o banner
+  if (sbUser) _showPwaInstallBanner();
+});
+
+function initPwaInstall() {
+  // Não mostra se já está instalado (modo standalone)
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  if (localStorage.getItem('pwaInstallDismissed')) return;
+  // Se o evento já foi capturado antes do login, mostra agora
+  if (_pwaInstallPrompt) _showPwaInstallBanner();
+}
+
+function _showPwaInstallBanner() {
+  document.getElementById('pwa-install-banner').classList.add('visible');
+}
+
+async function pwaInstallAccept() {
+  if (!_pwaInstallPrompt) return;
+  var banner = document.getElementById('pwa-install-banner');
+  banner.querySelector('.push-optin-btn-yes').textContent = 'Instalando...';
+  _pwaInstallPrompt.prompt();
+  var choice = await _pwaInstallPrompt.userChoice;
+  _pwaInstallPrompt = null;
+  banner.classList.remove('visible');
+  if (choice.outcome === 'dismissed') {
+    localStorage.setItem('pwaInstallDismissed', '1');
+  }
+}
+
+function pwaInstallDismiss() {
+  document.getElementById('pwa-install-banner').classList.remove('visible');
+  localStorage.setItem('pwaInstallDismissed', '1');
 }
 
 async function ensurePushSubscribed() {
