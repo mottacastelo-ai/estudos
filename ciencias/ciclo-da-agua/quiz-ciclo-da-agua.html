@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -89,7 +89,12 @@ body { font-family: "Baloo 2", cursive; background: var(--cien-bg); color: var(-
 var QS = [
   {
     q: "O que acontece com a água quando o Sol a aquece em oceanos, rios e lagos?",
-    opts: ["A água congela e forma geleiras", "Ocorre a evaporação — a água passa para o estado de vapor", "A água se transforma diretamente em chuva", "As plantas absorvem toda a água"],
+    opts: [
+      "A água congela e forma cristais de gelo que ficam suspensos no ar",
+      "Ocorre a evaporação — a água passa do estado líquido para o estado de vapor",
+      "A água se transforma diretamente em chuva e cai de volta para o solo",
+      "As plantas absorvem toda a água e a devolvem para o solo depois"
+    ],
     ans: 1,
     fb: "Correto! A evaporação é o processo pelo qual o Sol aquece a água e ela passa do estado líquido para o estado gasoso (vapor d'água), iniciando o ciclo da água."
   },
@@ -101,7 +106,12 @@ var QS = [
   },
   {
     q: "O termo 'precipitação' no ciclo da água se refere a qual fenômeno?",
-    opts: ["Água infiltrando no solo", "Chuva, neve ou granizo caindo das nuvens", "Vapor d'água formando nuvens", "Água evaporando dos oceanos"],
+    opts: [
+      "A água da chuva penetrando e sendo absorvida pelo solo",
+      "Chuva, neve ou granizo caindo das nuvens para o solo",
+      "O vapor d'água que sobe e forma nuvens ao encontrar ar frio",
+      "A água dos oceanos e rios que se transforma em vapor pelo calor"
+    ],
     ans: 1,
     fb: "Correto! Precipitação é o nome dado à chuva, neve ou granizo que cai das nuvens quando as gotículas ficam pesadas demais para se manter suspensas."
   },
@@ -112,26 +122,46 @@ var QS = [
     fb: "Isso mesmo! A infiltração é a penetração da água no solo. Essa água pode chegar a reservatórios subterrâneos chamados aquíferos ou surgir em nascentes."
   },
   {
-    q: "Qual porcentagem da água doce do planeta está armazenada nas geleiras?",
-    opts: ["22,4%", "0,36%", "77,2%", "50%"],
+    q: "Onde está armazenada a maior parte da água doce do planeta?",
+    opts: [
+      "Nos rios, lagos e pântanos",
+      "Nos aquíferos subterrâneos",
+      "Nas geleiras e calotas polares",
+      "Nos oceanos e mares"
+    ],
     ans: 2,
-    fb: "Correto! Segundo o livro, 77,2% da água doce do planeta está nas geleiras. Apenas 22,4% está nos aquíferos e menos de 1% em rios, lagos e pântanos."
+    fb: "Correto! Cerca de 77,2% da água doce do planeta está nas geleiras e calotas polares. Nos aquíferos subterrâneos está 22,4%, e rios, lagos e pântanos abrigam menos de 1% da água doce."
   },
   {
-    q: "A cada 40 copos de água do planeta, quantos são de água doce?",
-    opts: ["20 copos", "10 copos", "5 copos", "1 copo"],
-    ans: 3,
-    fb: "Perfeito! Apenas 1 em cada 40 copos é água doce. Isso mostra como a água doce é um recurso escasso e precioso em nosso planeta."
+    q: "A água doce disponível em rios e lagos representa qual parte da água do planeta?",
+    opts: [
+      "A maior parte — o ciclo da água garante rios e lagos abundantes",
+      "Cerca de metade — oceanos e rios dividem a água do planeta igualmente",
+      "Uma parcela muito pequena — quase toda a água é salgada ou está em geleiras",
+      "Aproximadamente um quarto — há muitos rios e lagos distribuídos pelo mundo"
+    ],
+    ans: 2,
+    fb: "Correto! A água doce acessível em rios e lagos é uma parcela mínima de toda a água do planeta. Para ter ideia: de cada 40 copos de água do planeta, apenas 1 seria de água doce — por isso é tão importante conservar este recurso."
   },
   {
     q: "Como as plantas participam do ciclo da água?",
-    opts: ["Apenas absorvem água do solo, sem devolvê-la", "Por meio da transpiração das plantas, liberando vapor d'água para a atmosfera", "As plantas não participam do ciclo da água", "As plantas fazem precipitação"],
+    opts: [
+      "Apenas absorvem água do solo pelo sistema de raízes, sem devolver nada",
+      "Por meio da transpiração, liberando vapor d'água para a atmosfera pelas folhas",
+      "Não participam do ciclo — as plantas só usam a água para crescer internamente",
+      "Causam precipitação ao liberar grandes quantidades de vapor pelas raízes"
+    ],
     ans: 1,
     fb: "Correto! A transpiração das plantas é o processo pelo qual as plantas liberam vapor d'água pelas folhas, contribuindo para a umidade da atmosfera e o ciclo da água."
   },
   {
     q: "O que é o escoamento superficial no ciclo da água?",
-    opts: ["Água que evapora das plantas", "Água que penetra fundo no solo formando aquíferos", "Água que corre pela superfície do solo formando rios e lagos", "Vapor d'água que condensa nas nuvens"],
+    opts: [
+      "A água que sobe pelas plantas e evapora pelas folhas para o ar",
+      "A água que penetra fundo no solo, chegando aos aquíferos subterrâneos",
+      "A água que corre pela superfície do solo, alimentando rios e lagos",
+      "O vapor d'água que sobe na atmosfera e condensa formando nuvens"
+    ],
     ans: 2,
     fb: "Certo! O escoamento superficial é o movimento da água pela superfície do solo, alimentando rios, lagos e outros corpos d'água."
   },
@@ -154,21 +184,30 @@ var QS = [
   }
 ];
 
-var cur = 0, score = 0, answered = false;
+var cur = 0, score = 0, answered = false, currentOrder = [];
+
+function shuffleArr(arr) {
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
 
 function load(i) {
   var q = QS[i];
+  currentOrder = shuffleArr([0, 1, 2, 3]);
   document.getElementById('q-num').textContent = 'QUESTÃO ' + (i+1);
   document.getElementById('q-cur').textContent = i+1;
   document.getElementById('q-text').textContent = q.q;
   document.getElementById('prog-fill').style.width = ((i+1)/QS.length*100) + '%';
   var opts = document.getElementById('options');
   opts.innerHTML = '';
-  q.opts.forEach(function(o, j) {
+  currentOrder.forEach(function(origIdx, visualIdx) {
     var btn = document.createElement('button');
     btn.className = 'opt-btn';
-    btn.textContent = o;
-    btn.onclick = function() { answer(j); };
+    btn.textContent = q.opts[origIdx];
+    btn.onclick = (function(oi) { return function() { answer(oi); }; })(origIdx);
     opts.appendChild(btn);
   });
   var fb = document.getElementById('feedback');
@@ -178,18 +217,18 @@ function load(i) {
   answered = false;
 }
 
-function answer(j) {
+function answer(origIdx) {
   if (answered) return;
   answered = true;
   var q = QS[cur];
   var btns = document.querySelectorAll('.opt-btn');
-  btns.forEach(function(b, k) {
+  btns.forEach(function(b, visualIdx) {
     b.disabled = true;
-    if (k === q.ans) b.classList.add('correct');
-    if (k === j && j !== q.ans) b.classList.add('wrong');
+    if (currentOrder[visualIdx] === q.ans) b.classList.add('correct');
+    if (currentOrder[visualIdx] === origIdx && origIdx !== q.ans) b.classList.add('wrong');
   });
   var fb = document.getElementById('feedback');
-  var correct = j === q.ans;
+  var correct = origIdx === q.ans;
   if (correct) { score++; document.getElementById('score-badge').textContent = score + ' ponto' + (score > 1 ? 's' : ''); }
   fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
   document.getElementById('fb-icon').textContent = correct ? '✓' : '✗';
@@ -211,6 +250,7 @@ function showResult() {
   var r = document.getElementById('result-panel');
   r.style.display = 'block';
   var pct = Math.round(score / QS.length * 100);
+  window.sabendoScore = pct;
   var icons = ['😅','😐','😊','🌟','💧'];
   var msgs = ['Continue estudando o ciclo da água!','Você está no caminho certo!','Bom trabalho, cientista!','Muito bem! Você domina o ciclo!','Incrível! Você é expert no ciclo da água!'];
   var tier = pct < 40 ? 0 : pct < 60 ? 1 : pct < 80 ? 2 : pct < 100 ? 3 : 4;
@@ -266,24 +306,44 @@ load(0);
   var _capturedScore = null;
   function showBtn() {
     if (btn.style.display === "none") {
-      _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
+      _capturedScore = (typeof window._sabendoScoreInternal === "number") ? Math.round(window._sabendoScoreInternal) : null;
       btn.style.display = "block";
-    } else if (_capturedScore !== null) {
-      btn.textContent = "\u2713 Nota desta sess\u00e3o: " + _capturedScore + "% \u00b7 Concluir";
-      btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
     }
   }
 
+  // Detecta window.sabendoScore sendo setado por qualquer atividade
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
+  }
+
+  // Fallback: evento customizado para criadores/wizards (sem score numerico)
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  // Fallback MutationObserver para atividades legadas que nao setam sabendoScore
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       var el = m.target;
-      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
-        var sig = (el.id || "") + " " + (el.className || "");
-        if (/result|score|gabarito/i.test(sig)) showBtn();
-      }
       if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
         var sig2 = (el.id || "") + " " + (el.className || "");
-        if (/result|score|gabarito/i.test(sig2)) showBtn();
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
       }
     });
   });

@@ -1,5 +1,5 @@
 # Contexto do Projeto Educacional — Portal sabendo.app
-**Última atualização:** 2026-06-08
+**Última atualização:** 2026-06-13
 
 ---
 
@@ -247,6 +247,23 @@ Tipos de atividade: quiz / complete-lacuna / caca-erro / ordenacao / criador /
 | Pirâmide de Glasser | Progressão HQ → retrieval → aplicação → criação |
 | Spaced repetition | Reforço adaptativo com `due_date + 5 dias` |
 | Gamificação | Cartas colecionáveis, reveal progressivo, raridade por desempenho |
+
+---
+
+## Automações locais
+
+### sabendo-context-sync
+
+Script Python que roda em segundo plano no Windows e monitora este arquivo (`CONTEXTO_PROJETO.md`) e `GAMIFICACAO.md`. Ao detectar qualquer alteração, faz upsert automático dos dois como Google Docs na pasta `sabendo-context` do Google Drive — nunca duplica, sempre sobrescreve pelo nome.
+
+| Item | Valor |
+|---|---|
+| Script | `C:\Automacoes\sabendo-context-sync\sync_to_gdrive.py` |
+| Instalação | `C:\Automacoes\sabendo-context-sync\install.bat` (rodar como Administrador) |
+| Inicialização | Windows Task Scheduler → tarefa `SabendoContextSync` → ao login, delay 2 min |
+| Credenciais | `C:\Automacoes\.credentials\credentials.json` (OAuth2 Google Drive API) |
+| Log | `C:\Automacoes\sabendo-context-sync\sync.log` |
+| Pasta no Drive | `sabendo-context` |
 
 ---
 

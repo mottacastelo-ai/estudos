@@ -21,7 +21,8 @@ estudos/
     │   ├── gerador-hq-prompt.md           ← Cria hq-[slug]-prompt.md
     │   ├── gerador-atividades.md          ← Cria HTMLs das atividades
     │   ├── atualizador-index.md           ← Registra tema no index.html
-    │   ├── revisor-qualidade.md           ← Audita conformidade pedagógica
+    │   ├── revisor-qualidade.md           ← Audita conformidade pedagógica + vazamento de resposta (3c)
+    │   ├── qa-simulador.md               ← Valida runtime com Playwright mobile (7 checks)
     │   ├── gerador-hq-imagens.md          ← Escreve pedido em pending/; polling em done/
     │   └── colador-hq.md                  ← Empilha pg1–pg4 em hq-[slug].png
     ├── skills/
@@ -48,7 +49,8 @@ estudos/
 | `gerador-atividades` | Sonnet 4.6 | Cria HTMLs das atividades interativas (quiz, mapa mental, etc.) | `skill-gerar-atividades-html` |
 | `gerador-hq-imagens` | Sonnet 4.6 | Escreve JSON de pedido em `.claude/pending/`; polling até Codex confirmar em `.claude/done/` | `skill-hq-imagens` |
 | `gerador-hq-prompt` | **Opus 4.7** | Cria `hq-[slug]-prompt.md` com narrativa de 4 páginas + folha de personagens | `skill-gerar-hq-prompt` |
-| `revisor-qualidade` | Haiku 4.5 | Audita terminologia, escopo, gamificação e mapa mental — retorna score JSON | — |
+| `revisor-qualidade` | Haiku 4.5 | Audita terminologia, escopo, gamificação, mapa mental e vazamento de resposta (seção 3c) — retorna score JSON | — |
+| `qa-simulador` | Sonnet 4.6 | Valida runtime com Playwright mobile (375px) — 7 checks: console, assets, interação, sabendoScore, concluir-btn, gamificação, anti-conclusão-prematura | — |
 
 ---
 
@@ -108,11 +110,17 @@ Orquestrador apresenta proposta a Léo
                    (sidebar + bloco + contador + THEME_CATALOG)
                         │
                         ▼
-              [revisor-qualidade]
-                 → score JSON
-                 → lista de problemas por severidade
-                        │
-                        ▼
+         ┌────────┴──────────────────┐
+         │                          │
+[revisor-qualidade]         [qa-simulador]        ← paralelo
+   → score JSON                → JSON 7 checks
+   → problemas/severidade      → screenshots em falha
+         │                          │
+         └───────────┬──────────────┘
+                     ▼
+        [Orquestrador consolida — bloqueia se qualquer um reprovar]
+                     │
+                     ▼
              [gerador-hq-imagens]
                • escreve .claude/pending/hq-[slug].json
                • escreve .claude/pending/portraits-batch.json

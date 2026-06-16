@@ -153,7 +153,7 @@
       <strong>Como usar:</strong>
       Clique em "Imprimir dominó", recorte cada peça pela borda. Embaralhe e distribua entre os jogadores. Conecte a preposição de uma peça com a frase que ela completa — e vice-versa. Quem colocar todas as peças primeiro, vence!
     </div>
-    <button class="btn-print" onclick="window.print()">🖨️ Imprimir dominó</button>
+    <button class="btn-print" onclick="window.sabendoScore = 100; window.print();">🖨️ Imprimir dominó</button>
   </div>
 
   <div class="print-header">
@@ -442,37 +442,50 @@
 
   var _capturedScore = null;
   function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
     if (btn.style.display === "none") {
-      _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
+      _capturedScore = Math.round(window._sabendoScoreInternal);
       btn.style.display = "block";
-    } else if (_capturedScore !== null) {
-      // Nota desta sessao ja travada; retry em nova sessao pode melhorar a carta
-      btn.textContent = "✓ Nota desta sessão: " + _capturedScore + "% · Concluir";
-      btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
     }
   }
 
+  // Detecta window.sabendoScore sendo setado por qualquer atividade
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
+  }
+
+  // Fallback: evento customizado para criadores/wizards (sem score numerico)
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  // Fallback MutationObserver para atividades legadas que nao setam sabendoScore
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       var el = m.target;
-      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
-        var sig = (el.id || "") + " " + (el.className || "");
-        if (/result|score|gabarito/i.test(sig)) showBtn();
-      }
       if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
         var sig2 = (el.id || "") + " " + (el.className || "");
-        if (/result|score|gabarito/i.test(sig2)) showBtn();
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
       }
     });
   });
   observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
-
-  // Domino: apos clicar imprimir
-  var printBtn = document.querySelector(".btn-print");
-  if (printBtn) printBtn.addEventListener("click", function() {
-    window.sabendoScore = 100;
-    setTimeout(showBtn, 800);
-  });
 
   btn.addEventListener("click", async function() {
     btn.textContent = "Registrando...";

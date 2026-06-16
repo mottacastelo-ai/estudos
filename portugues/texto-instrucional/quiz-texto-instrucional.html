@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -225,6 +225,7 @@ function showResult(){
   var rs=document.getElementById('result');
   rs.className='result show';
   var pct=Math.round((hits/questions.length)*100);
+  window.sabendoScore = pct;
   document.getElementById('r-score').textContent=score+' pts';
   document.getElementById('r-sub').textContent='Você acertou '+hits+' de '+questions.length+' ('+pct+'%)';
   var e,t;
@@ -280,25 +281,46 @@ loadQ();
 
   var _capturedScore = null;
   function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
     if (btn.style.display === "none") {
-      _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
+      _capturedScore = Math.round(window._sabendoScoreInternal);
       btn.style.display = "block";
-    } else if (_capturedScore !== null) {
-      btn.textContent = "\u2713 Nota desta sess\u00e3o: " + _capturedScore + "% \u00b7 Concluir";
-      btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
     }
   }
 
+  // Detecta window.sabendoScore sendo setado por qualquer atividade
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
+  }
+
+  // Fallback: evento customizado para criadores/wizards (sem score numerico)
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  // Fallback MutationObserver para atividades legadas que nao setam sabendoScore
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       var el = m.target;
-      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
-        var sig = (el.id || "") + " " + (el.className || "");
-        if (/result|score|gabarito/i.test(sig)) showBtn();
-      }
       if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
         var sig2 = (el.id || "") + " " + (el.className || "");
-        if (/result|score|gabarito/i.test(sig2)) showBtn();
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
       }
     });
   });

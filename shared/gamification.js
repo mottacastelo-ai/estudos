@@ -1121,7 +1121,7 @@
   /* ------------------------------------------------------------------ */
   /* Export                                                                */
   /* ------------------------------------------------------------------ */
-  window.SabendoGamification = { run: run };
+  window.SabendoGamification = { run: run, showReveal: showReveal };
 
   /* Funções internas expostas apenas para a página de testes */
   window._sgamiTest = {

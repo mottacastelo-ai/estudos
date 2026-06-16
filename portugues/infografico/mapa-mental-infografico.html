@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -413,34 +413,58 @@ window.addEventListener('load', function() {
     activityType:    ACTIVITY_TYPE,
   };
 
-  var btn = document.createElement('button');
-  btn.id = 'concluir-btn';
-  btn.textContent = '🏆 Concluir atividade';
-  btn.style.cssText = 'display:none;position:fixed;bottom:28px;right:28px;z-index:9999;'
-    + 'background:#7C3AED;color:#fff;border:none;border-radius:14px;'
-    + 'padding:14px 26px;font-size:1rem;font-weight:700;cursor:pointer;'
-    + 'box-shadow:0 4px 18px rgba(124,58,237,.45);transition:opacity .3s;';
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
   document.body.appendChild(btn);
 
   var _capturedScore = null;
   function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
     if (btn.style.display === "none") {
-      _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
+      _capturedScore = Math.round(window._sabendoScoreInternal);
       btn.style.display = "block";
-    } else if (_capturedScore !== null) {
-      btn.textContent = "✓ Nota desta sessão: " + _capturedScore + "% · Concluir";
-      btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
     }
   }
 
-  // MutationObserver watching for #gabarito-panel becoming visible
-  var target = document.getElementById('gabarito-panel');
-  if (target) {
-    new MutationObserver(function() {
-      var s = target.style.display;
-      if (s && s !== 'none') showBtn();
-    }).observe(target, { attributes: true, attributeFilter: ['style', 'class'] });
+  // Detecta window.sabendoScore sendo setado por qualquer atividade
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
   }
+
+  // Fallback: evento customizado para criadores/wizards (sem score numerico)
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  // Fallback MutationObserver para atividades legadas que nao setam sabendoScore
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
 
   btn.addEventListener("click", async function() {
     btn.textContent = "Registrando...";

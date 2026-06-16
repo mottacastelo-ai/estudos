@@ -30,7 +30,14 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
          ↓ (ambos concluídos)
 [atualizador-index] → index.html atualizado
          ↓
-[revisor-qualidade] → relatório de conformidade
+   ┌─────┴──────────────────────────┐
+   │                                │
+[revisor-qualidade]         [qa-simulador]         ← paralelo
+(pedagógico + 3c)           (runtime Playwright)
+   │                                │
+   └──────────┬─────────────────────┘
+              ↓
+   [Orquestrador consolida — bloqueia publicação se qualquer um reprovar]
          ↓
 [gerador-hq-imagens] → escreve .claude/pending/hq-[slug].json → aguarda Codex processar
                      → chars.png (em Personagens\5o ano\) + pg1–pg4 (na pasta do tema)
@@ -199,9 +206,9 @@ pages:'117-135'
 
 **Todo arquivo HTML de atividade DEVE terminar com este bloco exato** (logo antes de `</body>`), **inclusive `mapa-mental`** — exceto `tabuada`. Copiar de `portugues/preposicoes/quiz-preposicoes.html` como referência canônica.
 
-Substituir apenas: `THEME_SLUG`, `ACTIVITY_TYPE` e os campos do `GAMI_CONFIG`.
+Substituir apenas: `DISCIPLINE`, `THEME_SLUG`, `ACTIVITY_TYPE`, `btn.style.cssText` (cor da disciplina) e os campos do `GAMI_CONFIG`.
 
-> **mapa-mental:** o `gamification.js` já exclui internamente esse tipo do cálculo de raridade e da fila de reforço. Omitir o snippet impede o reveal do personagem ao final do tema. Além disso, `window.sabendoScore = pct` deve ser setado dentro de `updateGabarito()` **antes** de o `gabarito-panel` ficar visível (ver `GAMIFICACAO.md` para o padrão correto do handler).
+> **mapa-mental:** o `gamification.js` já exclui internamente esse tipo do cálculo de raridade e da fila de reforço. Omitir o snippet impede o reveal do personagem ao final do tema.
 
 ```html
 <!-- concluir-btn -->
@@ -233,31 +240,51 @@ Substituir apenas: `THEME_SLUG`, `ACTIVITY_TYPE` e os campos do `GAMI_CONFIG`.
   var btn = document.createElement("button");
   btn.id = "concluir-btn";
   btn.textContent = "Concluir atividade";
+  // Usar cor primária da disciplina: port=#7C3AED/#A78BFA/rgba(124,58,237,.4) | mat=#059669/#34D399/rgba(5,150,105,.4) | cien=#0284C7/#38BDF8/rgba(2,132,199,.4) | hist=#B45309/#F59E0B/rgba(180,83,9,.4) | geo=#15803D/#4ADE80/rgba(21,128,61,.4)
   btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
   document.body.appendChild(btn);
 
   var _capturedScore = null;
   function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
     if (btn.style.display === "none") {
-      _capturedScore = (typeof window.sabendoScore === "number") ? Math.round(window.sabendoScore) : null;
+      _capturedScore = Math.round(window._sabendoScoreInternal);
       btn.style.display = "block";
-    } else if (_capturedScore !== null) {
-      btn.textContent = "✓ Nota desta sessão: " + _capturedScore + "% · Concluir";
-      btn.style.background = "linear-gradient(135deg,#059669,#34D399)";
     }
   }
 
-  // MutationObserver genérico — detecta elementos com "result/score/gabarito" ficando visíveis
+  // Mecanismo principal: setter em window.sabendoScore dispara showBtn() automaticamente.
+  // A atividade só precisa fazer window.sabendoScore = pct — o botão aparece sozinho.
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) { /* já definido — ignorar */ }
+
+  // Fallback para criadores/wizards sem score numérico
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  // Fallback MutationObserver para atividades legadas
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       var el = m.target;
-      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
-        var sig = (el.id || "") + " " + (el.className || "");
-        if (/result|score|gabarito/i.test(sig)) showBtn();
-      }
       if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
         var sig2 = (el.id || "") + " " + (el.className || "");
-        if (/result|score|gabarito/i.test(sig2)) showBtn();
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
       }
     });
   });
@@ -309,12 +336,18 @@ Substituir apenas: `THEME_SLUG`, `ACTIVITY_TYPE` e os campos do `GAMI_CONFIG`.
 ```
 
 **Regras invioláveis do snippet:**
-- `_capturedScore` é obrigatório — trava o score no momento em que o botão aparece (anti-cheat: retry na mesma sessão não altera o score salvo)
+- A atividade DEVE fazer `window.sabendoScore = pct` (0–100) no momento em que o resultado aparece. O setter dispara `showBtn()` automaticamente — não é preciso nenhuma convenção de id/class no painel.
+- `_capturedScore` trava o score no momento do primeiro `showBtn()` (anti-cheat)
 - `is_first_attempt` DEVE ser verificado via `existCheck` antes de inserir no `activity_log`
-- A chamada DEVE ser `await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG)` — nunca `SabendoGamification.run(GAMI_CONFIG, score)` ou qualquer outra variante
-- `window.sabendoScore` deve ser setado pela atividade (em `showResult()` ou equivalente) **antes** de o botão aparecer
-- Para atividades sem tela de resultado numérico (wizards/criadores): `window.sabendoScore = 100` + `document.dispatchEvent(new Event('sabendo:criador-done'))` na última etapa; no snippet: `document.addEventListener('sabendo:criador-done', function(){ showBtn(); });`
-- Para flashcards: `window.sabendoScore = 100` + evento customizado quando o aluno chega ao último card do deck
+- A chamada DEVE ser `await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG)`
+- Para criadores/wizards sem score numérico: `window.sabendoScore = 100; document.dispatchEvent(new Event('sabendo:criador-done'));` na última etapa
+- Para flashcards: `window.sabendoScore = 100` quando o aluno chega ao último card
+
+---
+
+## Bugs conhecidos
+
+Consulte **`ERROS.md`** antes de gerar qualquer atividade. Contém bugs já diagnosticados em produção e checklist anti-bug obrigatório para o `gerador-atividades`.
 
 ---
 
@@ -326,7 +359,8 @@ Substituir apenas: `THEME_SLUG`, `ACTIVITY_TYPE` e os campos do `GAMI_CONFIG`.
 | `gerador-hq-prompt` | Cria `hq-[slug]-prompt.md` com prompts para o Codex |
 | `gerador-atividades` | Cria arquivos HTML das atividades interativas |
 | `atualizador-index` | Atualiza `index.html` para registrar o novo tema |
-| `revisor-qualidade` | Audita arquivos gerados e reporta conformidade pedagógica |
+| `revisor-qualidade` | Audita arquivos gerados — conformidade pedagógica + vazamento de resposta (seções 1–6 + 3c) |
+| `qa-simulador` | Valida runtime com Playwright mobile — 7 checks técnicos (console, assets, interação, sabendoScore, concluir-btn, gamificação, anti-conclusão-prematura) |
 | `gerador-hq-imagens` | Escreve JSON de pedido em `.claude/pending/`; faz polling até Codex confirmar em `.claude/done/` |
 | `colador-hq` | Empilha pg1–pg4 em `hq-[slug].png` pronto para o index |
 | `atualizador-docs` | Regenera `CONTEUDO.md` e atualiza tabela de agentes do `SQUAD.md` |

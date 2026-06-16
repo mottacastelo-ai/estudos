@@ -55,6 +55,46 @@ Para cada atividade de arrastar, ordenar, classificar ou parear — ler o HTML e
 
 Se qualquer item falhar, classificar como problema crítico e bloquear aprovação (`aprovado: false`), descrevendo o arquivo, o problema exato e como redesenhar.
 
+### 3c. Vazamento de resposta (crítico)
+
+Aplicar a **todas as atividades** que apresentem alternativas, opções ou categorias ao aluno (quiz, classificador, complete-lacuna, caca-erro, domino, missao, etc.). Ler o HTML/JS e verificar cada item abaixo.
+
+**3c-1 — Dados auxiliares junto às alternativas**
+- [ ] As opções exibem valores numéricos (%, medidas, quantidades) que permitem resolver a questão por cálculo ou comparação direta, sem aplicar o raciocínio pedagógico pedido?
+- Exemplos de FALHA: alternativas com porcentagens quando a pergunta pede "qual é maior"; alternativas com valores que deixam a conta evidente; nomes acompanhados de datas quando a pergunta pede "quem veio antes".
+- Se sim → `tipo: "vazamento_dado_auxiliar"`, `severidade: "critica"`. Ação: mover os valores para o feedback pós-resposta.
+
+**3c-2 — Codificação visual coincidente com resposta correta**
+- [ ] Verificar no CSS e na lógica de renderização: cor, posição, ícone, tamanho ou qualquer atributo visual é sistematicamente igual para todas as alternativas corretas (e diferente nas erradas)?
+- Exemplos de FALHA: opção correta sempre renderizada em azul antes do clique; ícone de estrela só nas respostas certas; borda mais grossa na alternativa certa antes da confirmação.
+- Se sim → `tipo: "vazamento_visual"`, `severidade: "critica"`. Ação: padronizar estilo inicial idêntico para todas as alternativas.
+
+**3c-3 — Alternativa correta sistematicamente mais longa ou detalhada**
+- [ ] Para cada questão, comparar o comprimento/detalhe das alternativas. A correta é consistentemente mais longa, mais específica ou usa termos técnicos enquanto as erradas são vagas?
+- Heurística: se a alternativa correta tem ≥ 40% mais palavras que a média das erradas em mais de metade das questões → FALHA.
+- Se sim → `tipo: "vazamento_comprimento"`, `severidade: "alta"`. Ação: equiparar nível de detalhe entre alternativas.
+
+**3c-4 — Ordem fixa das alternativas favorece adivinhação**
+- [ ] A alternativa correta aparece sempre na mesma posição (ex: sempre a 2ª, sempre a última)?
+- [ ] As alternativas são embaralhadas a cada render (`shuffle`) ou têm ordem fixa no código?
+- Se ordem fixa E padrão detectável → `tipo: "vazamento_posicao"`, `severidade: "alta"`. Ação: implementar embaralhamento no load.
+
+**3c-5 — Gabarito ou texto de resposta visível antes da interação**
+- [ ] Existe algum elemento com o gabarito (resposta certa, feedback "Correto!", índice da alternativa correta) que esteja no DOM com `display:none` mas cujo conteúdo seja legível via inspeção antes de o aluno interagir?
+- [ ] Verificar: `data-correct`, `data-answer`, `data-gabarito` ou atributos similares nos elementos de opção visíveis antes da interação.
+- [ ] Verificar se comentários HTML (`<!-- gabarito: B -->`) expõem a resposta.
+- Se sim → `tipo: "vazamento_dom"`, `severidade: "critica"`. Ação: não armazenar gabarito em atributos de elementos visíveis; manter apenas em variável JS.
+
+**3c-6 — IDs, classes ou atributos no código vazam a resposta**
+- [ ] Grep no HTML/JS por padrões: `id="opcao-correta"`, `class="correta"`, `class="resposta-certa"`, `data-correct="true"`, `isCorrect: true` em objetos de dados embutidos no HTML que um aluno poderia ler via DevTools.
+- [ ] Verificar se os objetos de dados JS (arrays de questões, objetos de alternativas) têm campo explícito de gabarito acessível sem executar lógica (ex: `{ text: "...", correct: true }`).
+  - **Exceção permitida:** campo `correct` em objeto JS interno é aceitável SE o array inteiro estiver embaralhado e não houver forma visual de identificar qual índice é o correto antes da interação.
+- Se IDs/classes visíveis vazam → `tipo: "vazamento_codigo"`, `severidade: "critica"`. Ação: renomear para nomes neutros; manter gabarito apenas em lógica de verificação.
+
+**Critério de falha da seção 3c:**
+Qualquer item com severidade "critica" → `aprovado: false` imediatamente.
+Dois ou mais itens com severidade "alta" → `aprovado: false`.
+
 ### 4. Gamificação (alta)
 - [ ] Toda atividade HTML tem sistema de pontuação?
 - [ ] Feedback imediato implementado (resposta certa/errada com explicação)?
@@ -113,7 +153,7 @@ Para cada conceito que envolva cálculo, algoritmo ou método nas 4 páginas:
   "problemas": [
     {
       "arquivo": "quiz-nome.html",
-      "tipo": "terminologia_ausente|escopo_violado|gamificacao_ausente|arquivo_faltando|design_inconsistente",
+      "tipo": "terminologia_ausente|escopo_violado|gamificacao_ausente|arquivo_faltando|design_inconsistente|criterio_implicito|mapa_mental_implementacao_errada|exemplo_insuficiente|vazamento_dado_auxiliar|vazamento_visual|vazamento_comprimento|vazamento_posicao|vazamento_dom|vazamento_codigo",
       "detalhe": "Descrição objetiva do problema",
       "severidade": "critica|alta|media|baixa",
       "acao_sugerida": "Como corrigir"

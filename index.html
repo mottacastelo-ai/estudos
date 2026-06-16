@@ -386,10 +386,11 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   position: relative;
   width: 100%;
   aspect-ratio: 280 / 400;
-  cursor: default;
-  transition: filter .2s;
+  cursor: pointer;
+  transition: filter .2s, transform .2s;
 }
-.carta-coll-outer:hover { filter: brightness(1.1); }
+.carta-coll-outer:hover { filter: brightness(1.12); transform: scale(1.05); }
+.carta-coll-outer:active { transform: scale(0.97); }
 .carta-coll-scaler {
   position: absolute;
   inset: 0;
@@ -401,7 +402,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   flex-shrink: 0;
   transform-origin: top left;
   animation: none !important;
-  cursor: default;
+  cursor: pointer;
 }
 .carta-coll-scaler .sgami-rev-card.rev-floating { animation: none !important; }
 .cartas-empty { text-align:center; padding:60px 20px; }
@@ -635,6 +636,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .tab-pages { font-size:9px; color:var(--muted); display:block; opacity:.65; margin-top:1px; font-family:"Space Mono",monospace; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="shared/gamification.js"></script>
 </head>
 <body>
 
@@ -3021,6 +3023,19 @@ async function loadCartas() {
     scaler.innerHTML = cardHtml;
     outer.appendChild(scaler);
     grid.appendChild(outer);
+
+    // Click → replay reveal cinematográfico
+    (function(r, cName, cEmoji, cImg, tLabel, avgScore) {
+      outer.addEventListener('click', function() {
+        SabendoGamification.showReveal(r, {
+          characterName:  cName,
+          characterEmoji: cEmoji,
+          characterImg:   cImg,
+          themeLabel:     tLabel,
+          assetBase:      './'
+        }, avgScore);
+      });
+    }(rarity, charName, emoji, charImg, themeLabel, card.avg_score != null ? card.avg_score : null));
 
     // Aplica escala assim que o elemento for adicionado ao DOM
     var cardEl = scaler.querySelector('.sgami-rev-card');
