@@ -138,6 +138,27 @@ Sistema completo documentado em `referencias/GAMIFICACAO.md`. Resumo:
 
 ---
 
+## Status Visual de Atividades
+
+Cada card de atividade no portal exibe um badge dinâmico baseado no `activity_log` do aluno:
+
+| Badge | Visual | Condição |
+|---|---|---|
+| "✓ Feito" | Verde (`#ECFDF5 / #065F46`) | Atividade tem ao menos 1 registro no `activity_log` |
+| "Seu melhor: X%" | Verde abaixo do badge | Score máximo registrado para aquele slot |
+| "Novo" | Roxo (`#F3F0FF / #5B21B6`) | Nenhum registro no `activity_log` |
+
+No menu lateral, cada tema recebe uma bolinha de progresso:
+- Verde — todas as atividades do tema concluídas
+- Amarelo — algumas concluídas
+- Cinza — nenhuma concluída
+
+**Implementação:** `loadActivityStatus()` em `index.html`, chamada no `initAuth()`. Usa um objeto `HREF_MAP` que mapeia cada `href` de `act-card` para `"theme_slug|activity_type"` — necessário porque os nomes dos arquivos nem sempre correspondem aos valores armazenados no Supabase.
+
+> **Regra obrigatória:** ao adicionar um novo tema, o `atualizador-index` deve incluir as entradas correspondentes no `HREF_MAP` dentro de `loadActivityStatus()`.
+
+---
+
 ## Sistema de Busca
 
 Campo de busca na home do portal (`index.html`), implementado e em produção.

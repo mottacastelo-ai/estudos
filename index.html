@@ -302,6 +302,14 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
 .act-title { font-family: "Space Mono", monospace; font-size: 14px; margin-bottom: 5px; }
 .act-desc { font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 10px; }
 .act-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.act-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; line-height: 1.6; pointer-events: none; }
+.act-badge-done { background: #ECFDF5; color: #065F46; }
+.act-badge-new { background: #F3F0FF; color: #5B21B6; }
+.act-score-line { font-size: 11px; color: #059669; font-weight: 700; margin-top: 5px; }
+.theme-progress-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
+.theme-progress-dot--done { background: #34D399; }
+.theme-progress-dot--partial { background: #F59E0B; }
+.theme-progress-dot--none { background: rgba(255,255,255,.2); }
 .tag { font-size: 10px; font-weight: 800; padding: 2px 9px; border-radius: 20px; }
 .tag-d  { background: var(--port-bg); color: #9D174D; }
 .tag-dm { background: var(--mat-bg); color: #1E3A8A; }
@@ -2592,6 +2600,7 @@ async function initAuth() {
     await loadStreak();
     await loadReinforcement();
     loadCartasCount();
+    await loadActivityStatus();
     initPwaInstall();
     initPushOptin();
     if (sbUser.email && sbUser.email.startsWith('teste-')) {
@@ -2615,6 +2624,177 @@ async function loadStreak() {
     sbStreak = result.data;
     renderStreak();
   }
+}
+
+async function loadActivityStatus() {
+  if (!sbUser) return;
+  var HREF_MAP = {
+    'portugues/anuncio-publicitario/criador-slogan-anuncio-publicitario.html':'anuncio-publicitario|criador',
+    'portugues/anuncio-publicitario/detetive-elementos-anuncio-publicitario.html':'anuncio-publicitario|detetive',
+    'portugues/anuncio-publicitario/mapa-mental-anuncio-publicitario.html':'anuncio-publicitario|mapa-mental',
+    'portugues/anuncio-publicitario/quiz-anuncio-publicitario.html':'anuncio-publicitario|quiz',
+    'portugues/entonacao/detector-entonacao.html':'entonacao|detector',
+    'portugues/entonacao/ensaiador-entonacao.html':'entonacao|ensaiador',
+    'portugues/entonacao/quiz-entonacao.html':'entonacao|quiz',
+    'portugues/entonacao/rubrica-entonacao.html':'entonacao|rubrica',
+    'portugues/infografico/criador-infografico.html':'infografico|criador',
+    'portugues/infografico/mapa-mental-infografico.html':'infografico|mapa-mental',
+    'portugues/infografico/ordenacao-infografico.html':'infografico|ordenacao',
+    'portugues/infografico/quiz-infografico.html':'infografico|quiz',
+    'portugues/letra-l/detetive-silaba-letra-l.html':'letral|detetive',
+    'portugues/letra-l/fabrica-letra-l.html':'letral|fabrica',
+    'portugues/letra-l/mapa-mental-letra-l.html':'letral|mapa-mental',
+    'portugues/letra-l/memoria-letra-l.html':'letral|memoria',
+    'portugues/letra-l/sortidor-letra-l.html':'letral|sortidor',
+    'portugues/pontuacao/detector-emocao-pontuacao.html':'pontuacao|detector-emocao',
+    'portugues/pontuacao/escolha-sinal-pontuacao.html':'pontuacao|escolha-sinal',
+    'portugues/pontuacao/mapa-mental-pontuacao-expressiva.html':'pontuacao|mapa-mental',
+    'portugues/pontuacao/quiz-pontuacao-expressiva.html':'pontuacao|quiz',
+    'portugues/pontuacao/transformador-emocao-pontuacao.html':'pontuacao|transformador-emocao',
+    'portugues/prefixo-sufixo/construtor-prefixo-sufixo.html':'prefixo-sufixo|construtor',
+    'portugues/prefixo-sufixo/flashcards-prefixo-sufixo.html':'prefixo-sufixo|flashcards',
+    'portugues/prefixo-sufixo/mapa-mental-prefixo-sufixo.html':'prefixo-sufixo|mapa-mental',
+    'portugues/prefixo-sufixo/quiz-prefixo-sufixo.html':'prefixo-sufixo|quiz',
+    'portugues/preposicoes/caca-ao-erro-preposicoes.html':'preposicoes|caca-erro',
+    'portugues/preposicoes/complete-lacuna-preposicoes.html':'preposicoes|complete-lacuna',
+    'portugues/preposicoes/criador-de-quiz-preposicoes.html':'preposicoes|criador',
+    'portugues/preposicoes/domino-preposicoes.html':'preposicoes|domino',
+    'portugues/preposicoes/frases-malucas-preposicoes.html':'preposicoes|frases',
+    'portugues/preposicoes/mapa-mental-preposicoes.html':'preposicoes|mapa-mental',
+    'portugues/preposicoes/missao-relampago-preposicoes.html':'preposicoes|missao',
+    'portugues/preposicoes/quiz-preposicoes.html':'preposicoes|quiz',
+    'portugues/sons-x-ch/batalha-sons-x-ch.html':'sons-x-ch|batalha',
+    'portugues/sons-x-ch/classificador-sons-x-ch.html':'sons-x-ch|classificador',
+    'portugues/sons-x-ch/mapa-mental-sons-x-ch.html':'sons-x-ch|mapa-mental',
+    'portugues/sons-x-ch/quiz-sons-x-ch.html':'sons-x-ch|quiz',
+    'portugues/tempos-verbais/caca-erro-tempos-verbais.html':'verbais|caca-erro',
+    'portugues/tempos-verbais/classificador-tempos-verbais.html':'verbais|classificador',
+    'portugues/tempos-verbais/complete-lacuna-tempos-verbais.html':'verbais|complete-lacuna',
+    'portugues/tempos-verbais/mapa-mental-tempos-verbais.html':'verbais|mapa-mental',
+    'portugues/tempos-verbais/quiz-tempos-verbais.html':'verbais|quiz',
+    'portugues/tempos-verbais/transformador-tempos-verbais.html':'verbais|transformador',
+    'portugues/texto-instrucional/caca-verbo-instrucional.html':'instrucional|caca-verbo',
+    'portugues/texto-instrucional/criador-texto-instrucional.html':'instrucional|criador',
+    'portugues/texto-instrucional/mapa-mental-texto-instrucional.html':'instrucional|mapa-mental',
+    'portugues/texto-instrucional/organizador-texto-instrucional.html':'instrucional|organizador',
+    'portugues/texto-instrucional/quiz-texto-instrucional.html':'instrucional|quiz',
+    'portugues/texto-teatral/caca-erro-texto-teatral.html':'teatral|caca-erro',
+    'portugues/texto-teatral/complete-lacuna-texto-teatral.html':'teatral|complete-lacuna',
+    'portugues/texto-teatral/criador-dialogo-texto-teatral.html':'teatral|criador',
+    'portugues/texto-teatral/mapa-mental-texto-teatral.html':'teatral|mapa-mental',
+    'portugues/texto-teatral/ordenacao-cenas-texto-teatral.html':'teatral|ordenacao',
+    'portugues/texto-teatral/quiz-texto-teatral.html':'teatral|quiz',
+    'portugues/variacao-linguistica/detector-variacao-linguistica.html':'variacao|detector',
+    'portugues/variacao-linguistica/mapa-mental-variacao-linguistica.html':'variacao|mapa-mental',
+    'portugues/variacao-linguistica/quiz-variacao-linguistica.html':'variacao|quiz',
+    'portugues/variacao-linguistica/reescritor-variacao-linguistica.html':'variacao|reescritor',
+    'portugues/variacao-linguistica/tradutor-regional-variacao.html':'variacao|tradutor',
+    'matematica/corpos-redondos-planificacao/mapa-mental-corpos-redondos-planificacao.html':'corpos-redondos-planificacao|mapa-mental',
+    'matematica/corpos-redondos-planificacao/quiz-corpos-redondos-planificacao.html':'corpos-redondos-planificacao|quiz',
+    'matematica/corpos-redondos-planificacao/reconhecedor-planificacoes-corpos-redondos-planificacao.html':'corpos-redondos-planificacao|reconhecedor',
+    'matematica/mdc-mmc-problemas/criador-mdc-mmc-problemas.html':'mdc-mmc-problemas|criador',
+    'matematica/mdc-mmc-problemas/mapa-mental-mdc-mmc-problemas.html':'mdc-mmc-problemas|mapa-mental',
+    'matematica/mdc-mmc-problemas/quiz-mdc-mmc-problemas.html':'mdc-mmc-problemas|quiz',
+    'matematica/mdc-mmc-problemas/transformador-mdc-mmc-problemas.html':'mdc-mmc-problemas|transformador',
+    'matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html':'multiplicacao-divisao|associador',
+    'matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html':'multiplicacao-divisao|construtor',
+    'matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html':'multiplicacao-divisao|mapa-mental',
+    'matematica/multiplicacao-divisao/resolvedor-problemas-multiplicacao-divisao.html':'multiplicacao-divisao|resolvedor',
+    'matematica/multiplos-divisores-criterios/complete-lacuna-multiplos-divisores-criterios.html':'multiplos-divisores-criterios|complete-lacuna',
+    'matematica/multiplos-divisores-criterios/domino-multiplos-divisores-criterios.html':'multiplos-divisores-criterios|domino',
+    'matematica/multiplos-divisores-criterios/mapa-mental-multiplos-divisores-criterios.html':'multiplos-divisores-criterios|mapa-mental',
+    'matematica/multiplos-divisores-criterios/quiz-multiplos-divisores-criterios.html':'multiplos-divisores-criterios|quiz',
+    'matematica/poliedros-prismas-piramides/classificador-solidos-poliedros-prismas-piramides.html':'poliedros-prismas-piramides|classificador',
+    'matematica/poliedros-prismas-piramides/mapa-mental-poliedros-prismas-piramides.html':'poliedros-prismas-piramides|mapa-mental',
+    'matematica/poliedros-prismas-piramides/quiz-poliedros-prismas-piramides.html':'poliedros-prismas-piramides|quiz',
+    'matematica/primos-compostos-fatoracao/mapa-mental-primos-compostos-fatoracao.html':'primos-compostos-fatoracao|mapa-mental',
+    'matematica/primos-compostos-fatoracao/missao-primos-compostos-fatoracao.html':'primos-compostos-fatoracao|missao',
+    'matematica/primos-compostos-fatoracao/ordenacao-primos-compostos-fatoracao.html':'primos-compostos-fatoracao|ordenacao',
+    'matematica/primos-compostos-fatoracao/quiz-primos-compostos-fatoracao.html':'primos-compostos-fatoracao|quiz',
+    'ciencias/agua-cidades-consumo/classificador-agua-cidades-consumo.html':'agua-cidades-consumo|classificador',
+    'ciencias/agua-cidades-consumo/fluxo-causal-agua-cidades.html':'agua-cidades-consumo|fluxo-causal',
+    'ciencias/agua-cidades-consumo/mapa-mental-agua-cidades-consumo.html':'agua-cidades-consumo|mapa-mental',
+    'ciencias/agua-cidades-consumo/noticia-agua-cidades.html':'agua-cidades-consumo|noticia',
+    'ciencias/agua-cidades-consumo/quiz-agua-cidades-consumo.html':'agua-cidades-consumo|quiz',
+    'ciencias/caminho-do-lixo/5rs-caminho-do-lixo.html':'caminho-do-lixo|5rs',
+    'ciencias/caminho-do-lixo/grafico-caminho-do-lixo.html':'caminho-do-lixo|grafico',
+    'ciencias/caminho-do-lixo/mapa-mental-caminho-do-lixo.html':'caminho-do-lixo|mapa-mental',
+    'ciencias/caminho-do-lixo/quiz-caminho-do-lixo.html':'caminho-do-lixo|quiz',
+    'ciencias/ciclo-da-agua/mapa-mental-ciclo-da-agua.html':'ciclo-da-agua|mapa-mental',
+    'ciencias/ciclo-da-agua/noticia-ciclo-da-agua.html':'ciclo-da-agua|noticia',
+    'ciencias/ciclo-da-agua/ordena-etapas-ciclo-da-agua.html':'ciclo-da-agua|ordenacao',
+    'ciencias/ciclo-da-agua/quiz-ciclo-da-agua.html':'ciclo-da-agua|quiz',
+    'ciencias/ciclo-da-agua/rotulador-ciclo-da-agua.html':'ciclo-da-agua|rotulador',
+    'ciencias/lixo-que-produzimos/detetive-lixo-que-produzimos.html':'lixo-que-produzimos|detetive',
+    'ciencias/lixo-que-produzimos/grafico-lixo-que-produzimos.html':'lixo-que-produzimos|grafico',
+    'ciencias/lixo-que-produzimos/mapa-mental-lixo-que-produzimos.html':'lixo-que-produzimos|mapa-mental',
+    'ciencias/lixo-que-produzimos/quiz-lixo-que-produzimos.html':'lixo-que-produzimos|quiz',
+    'ciencias/tecnologia-agropecuaria/classificador-agrossistemas-tecnologia-agropecuaria.html':'tecnologia-agropecuaria|classificador',
+    'ciencias/tecnologia-agropecuaria/mapa-mental-tecnologia-agropecuaria.html':'tecnologia-agropecuaria|mapa-mental',
+    'ciencias/tecnologia-agropecuaria/ordena-etapas-tecnologia-agropecuaria.html':'tecnologia-agropecuaria|ordenacao',
+    'ciencias/tecnologia-agropecuaria/quiz-tecnologia-agropecuaria.html':'tecnologia-agropecuaria|quiz',
+    'historia/calendarios-povos/comparador-calendarios-povos.html':'calendarios-povos|comparador',
+    'historia/calendarios-povos/mapa-mental-calendarios-povos.html':'calendarios-povos|mapa-mental',
+    'historia/calendarios-povos/quiz-calendarios-povos.html':'calendarios-povos|quiz',
+    'historia/diversidade-cultural/cartografo-cultural-diversidade-cultural.html':'diversidade-cultural|cartografo',
+    'historia/diversidade-cultural/mapa-mental-diversidade-cultural.html':'diversidade-cultural|mapa-mental',
+    'historia/diversidade-cultural/memoria-festas-diversidade-cultural.html':'diversidade-cultural|memoria-festas',
+    'historia/diversidade-cultural/quiz-diversidade-cultural.html':'diversidade-cultural|quiz',
+    'historia/marcos-memoria/detetive-nomes-marcos-memoria.html':'marcos-memoria|detetive-nomes',
+    'historia/marcos-memoria/mapa-mental-marcos-memoria.html':'marcos-memoria|mapa-mental',
+    'historia/marcos-memoria/quiz-marcos-memoria.html':'marcos-memoria|quiz',
+    'historia/memoria-negra-imigrantes/mapa-mental-memoria-negra-imigrantes.html':'memoria-negra-imigrantes|mapa-mental',
+    'historia/memoria-negra-imigrantes/quiz-memoria-negra-imigrantes.html':'memoria-negra-imigrantes|quiz',
+    'historia/memoria-negra-imigrantes/selos-da-memoria.html':'memoria-negra-imigrantes|selos',
+    'historia/pais-de-contrastes/detector-contrastes-pais-de-contrastes.html':'pais-de-contrastes|detector',
+    'historia/pais-de-contrastes/mapa-mental-pais-de-contrastes.html':'pais-de-contrastes|mapa-mental',
+    'historia/pais-de-contrastes/quiz-pais-de-contrastes.html':'pais-de-contrastes|quiz'
+  };
+  var res = await supa.from('activity_log').select('theme_slug,activity_type,score').eq('user_id', sbUser.id);
+  if (res.error || !res.data) return;
+  var doneMap = {};
+  res.data.forEach(function(row) {
+    var key = row.theme_slug + '|' + row.activity_type;
+    if (doneMap[key] === undefined || (row.score !== null && row.score > doneMap[key])) {
+      doneMap[key] = row.score !== null ? row.score : 0;
+    }
+  });
+  document.querySelectorAll('.act-card[href]').forEach(function(card) {
+    var key = HREF_MAP[card.getAttribute('href')];
+    if (!key) return;
+    var badge = document.createElement('span');
+    badge.className = 'act-badge';
+    if (doneMap.hasOwnProperty(key)) {
+      badge.classList.add('act-badge-done');
+      badge.textContent = '✓ Feito';
+      card.appendChild(badge);
+      var line = document.createElement('div');
+      line.className = 'act-score-line';
+      line.textContent = 'Seu melhor: ' + doneMap[key] + '%';
+      card.appendChild(line);
+    } else {
+      badge.classList.add('act-badge-new');
+      badge.textContent = 'Novo';
+      card.appendChild(badge);
+    }
+  });
+  document.querySelectorAll('.theme-link[onclick]').forEach(function(btn) {
+    var m = btn.getAttribute('onclick').match(/showTheme\(['"](\w+)['"],['"]([\w-]+)['"]\)/);
+    if (!m) return;
+    var themeContent = document.getElementById('theme-' + m[1] + '-' + m[2]);
+    if (!themeContent) return;
+    var allCards = themeContent.querySelectorAll('.act-card[href]');
+    var total = allCards.length, done = 0;
+    allCards.forEach(function(c) {
+      var k = HREF_MAP[c.getAttribute('href')];
+      if (k && doneMap.hasOwnProperty(k)) done++;
+    });
+    var state = done === 0 ? 'none' : (done >= total ? 'done' : 'partial');
+    var dot = document.createElement('span');
+    dot.className = 'theme-progress-dot theme-progress-dot--' + state;
+    dot.setAttribute('aria-hidden', 'true');
+    btn.insertBefore(dot, btn.firstChild);
+  });
 }
 
 function renderStreak() {

@@ -61,7 +61,7 @@ estudos/
 | `skill-analise-escopo` | `analisador-pedagogico` | Critérios de divisão de temas, captura de páginas do livro, sugestão de personagem e tipos de atividade |
 | `skill-gerar-hq-prompt` | `gerador-hq-prompt` | Arco narrativo das 4 páginas, regra de sem reticências (descrever tudo explicitamente), formato de painel |
 | `skill-gerar-atividades-html` | `gerador-atividades` | Design system completo (fontes, CSS vars, responsividade), templates de código por tipo de atividade, mapa mental canônico |
-| `skill-atualizar-index` | `atualizador-index` | 4 regiões do index.html, tabela de cores por disciplina, padrões HTML de sidebar e bloco de conteúdo |
+| `skill-atualizar-index` | `atualizador-index` | 4 regiões do index.html, tabela de cores por disciplina, padrões HTML de sidebar e bloco de conteúdo. **Obrigatório:** adicionar entradas no `HREF_MAP` de `loadActivityStatus()` para cada novo arquivo HTML gerado (mapeamento `href → "theme_slug\|activity_type"`). |
 | `skill-hq-imagens` | `gerador-hq-imagens` | Contrato Codex: campos do JSON de pedido, comportamento de polling (30s/30min), destinos de arquivo, responsabilidades do Codex (incluindo validação 1024×1536) |
 
 ---
