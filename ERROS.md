@@ -150,7 +150,8 @@ O valor `"any"` permite rotação livre — retrato e paisagem — respeitando o
 
 ### Atenção pós-correção
 
-O manifest é cacheado pelo service worker / SO. Após o deploy, pode ser necessário **desinstalar e reinstalar o app** no tablet do André para o novo valor ser lido.
+- **Android (Chrome)**: o manifest é re-fetchado automaticamente a cada ~24h ou no próximo lançamento. A correção propaga sozinha — assim como o bug propagou sem reinstalar.
+- **iOS (Safari)**: o manifest é cacheado no momento da instalação. Nesse caso sim é necessário desinstalar e reinstalar.
 
 ### Regra para a squad
 
