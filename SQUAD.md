@@ -1,5 +1,5 @@
 # SQUAD — Portal Educacional 5º Ano
-**Última atualização:** 2026-06-12
+**Última atualização:** 2026-06-18
 
 ---
 
@@ -49,8 +49,8 @@ estudos/
 | `gerador-atividades` | Sonnet 4.6 | Cria HTMLs das atividades interativas (quiz, mapa mental, etc.) | `skill-gerar-atividades-html` |
 | `gerador-hq-imagens` | Sonnet 4.6 | Escreve JSON de pedido em `.claude/pending/`; polling até Codex confirmar em `.claude/done/` | `skill-hq-imagens` |
 | `gerador-hq-prompt` | **Opus 4.7** | Cria `hq-[slug]-prompt.md` com narrativa de 4 páginas + folha de personagens | `skill-gerar-hq-prompt` |
-| `revisor-qualidade` | Haiku 4.5 | Audita terminologia, escopo, gamificação, mapa mental e vazamento de resposta (seção 3c) — retorna score JSON | — |
-| `qa-simulador` | Sonnet 4.6 | Valida runtime com Playwright mobile (375px) — 7 checks: console, assets, interação, sabendoScore, concluir-btn, gamificação, anti-conclusão-prematura | — |
+| `qa-simulador` | Sonnet 4.6 | Valida tecnicamente atividades HTML no browser com Playwright (viewport 375×812  | — |
+| `revisor-qualidade` | Haiku 4.5 | Audita terminologia, escopo, gamificação e mapa mental — retorna score JSON | — |
 
 ---
 
