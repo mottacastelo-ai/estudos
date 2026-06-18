@@ -665,9 +665,12 @@
     var rows = res.data || [];
     if (!rows.length) return { rarity: "comum", avg: 0 };
 
-    // Lendária: TODAS as atividades práticas são primeira tentativa com 100%
-    var allPerfect = rows.every(function(r) { return r.is_first_attempt === true && r.score === 100; });
-    if (allPerfect) return { rarity: "lendaria", avg: 100 };
+    // Lendária: TODAS as atividades práticas são primeira tentativa com ≥ 90%
+    var allPerfect = rows.every(function(r) { return r.is_first_attempt === true && r.score >= 90; });
+    if (allPerfect) {
+      var lendAvg = rows.reduce(function(acc, r) { return acc + r.score; }, 0) / rows.length;
+      return { rarity: "lendaria", avg: Math.round(lendAvg) };
+    }
 
     // Melhor score por tipo de atividade (cada atividade tem um "slot")
     var best = {};
