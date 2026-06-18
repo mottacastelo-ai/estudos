@@ -105,9 +105,9 @@ avg = média dos best values
 | ⚪ Comum | avg < 70% |
 | 🔵 Rara | avg 70–89% |
 | 🟣 Épica | avg ≥ 90% |
-| 🌟 Lendária | TODOS os registros com `is_first_attempt=true` E `score=100` |
+| 🌟 Lendária | TODOS os registros com `is_first_attempt=true` E `score ≥ 90` |
 
-> **Lendária é exclusiva da 1ª tentativa perfeita.** Se qualquer retry existe na tabela, `allPerfect` falha e Lendária nunca mais é atingível para aquele tema.
+> **Lendária é exclusiva da 1ª tentativa com alto acerto (≥ 90%).** Se qualquer retry existe na tabela, `allPerfect` falha e Lendária nunca mais é atingível para aquele tema.
 
 ### Melhora por repetição
 
