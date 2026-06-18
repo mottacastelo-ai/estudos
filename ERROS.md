@@ -126,6 +126,38 @@ document.getElementById('btn').addEventListener('click', function() {
 
 ---
 
+## ERR-003 — Portal travado em modo retrato no tablet após instalação do PWA
+
+**Arquivos afetados:** `manifest.json`
+**Data:** 2026-06-18
+**Tipo:** Configuração PWA — `orientation` incorreto
+
+### Causa raiz
+
+Durante a implementação do banner de instalação PWA (commit `c5171c7`), o campo `"orientation"` foi definido como `"portrait-primary"` no `manifest.json`. Esse valor instrui o sistema operacional a **travar o app em retrato permanentemente**, impedindo qualquer rotação no tablet do André.
+
+### Correção aplicada (2026-06-18)
+
+```json
+// ANTES (bugado)
+"orientation": "portrait-primary"
+
+// DEPOIS (correto)
+"orientation": "any"
+```
+
+O valor `"any"` permite rotação livre — retrato e paisagem — respeitando o bloqueio físico do dispositivo.
+
+### Atenção pós-correção
+
+O manifest é cacheado pelo service worker / SO. Após o deploy, pode ser necessário **desinstalar e reinstalar o app** no tablet do André para o novo valor ser lido.
+
+### Regra para a squad
+
+O `manifest.json` **nunca deve ser alterado** sem revisar cada campo individualmente. O campo `orientation` deve permanecer `"any"` para apps educacionais com suporte a tablet.
+
+---
+
 ## Checklist anti-bug para `gerador-atividades`
 
 Antes de finalizar qualquer arquivo HTML de atividade, verificar:
