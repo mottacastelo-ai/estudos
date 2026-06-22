@@ -156,6 +156,34 @@ body{background:var(--preto);color:var(--branco);font-family:'DM Sans',sans-seri
 }
 .scroll-hint.visible{opacity:1;animation:bounce 2s ease-in-out infinite}
 
+/* ── VIDEO ── */
+.video-section{padding:64px 24px;background:var(--preto)}
+.video-inner{max-width:860px;margin:0 auto;text-align:center}
+.video-wrap{
+  position:relative;width:100%;padding-bottom:56.25%;
+  border-radius:20px;overflow:hidden;
+  border:1px solid var(--border);
+  background:#000;
+  box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06);
+}
+.video-wrap iframe{
+  position:absolute;inset:0;width:100%;height:100%;
+  border:none;border-radius:20px;
+}
+.video-placeholder{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--surface2);gap:14px;
+}
+.video-placeholder-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--verde);display:flex;align-items:center;justify-content:center;
+  color:#0D0D0D;font-size:24px;
+  box-shadow:0 8px 28px rgba(0,200,150,.4);
+}
+.video-placeholder-text{font-size:13px;font-weight:300;color:var(--muted)}
+.video-caption{font-size:12px;font-weight:300;color:var(--muted);margin-top:16px;letter-spacing:.05em}
+
 /* ── STATS ── */
 .stats-bar{
   background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
@@ -515,6 +543,28 @@ footer{
     <div class="stat-item reveal d4"><span class="stat-num" data-target="100" data-suffix="%">0</span><div class="stat-label">Fiel ao livro</div></div>
   </div>
 </div>
+
+<!-- VIDEO -->
+<section class="video-section">
+  <div class="video-inner reveal">
+    <div class="section-kicker" style="margin-bottom:12px">Em ação</div>
+    <h2 class="section-title" style="margin-bottom:24px">Veja como funciona</h2>
+    <div class="video-wrap">
+      <!--
+        QUANDO O VÍDEO ESTIVER PRONTO:
+        1. Faça upload no YouTube
+        2. Substitua o src abaixo por: https://www.youtube.com/embed/SEU_ID_AQUI
+        3. Remova o div.video-placeholder
+      -->
+      <div class="video-placeholder">
+        <div class="video-placeholder-icon">▶</div>
+        <div class="video-placeholder-text">Vídeo em breve</div>
+      </div>
+      <!-- <iframe src="https://www.youtube.com/embed/SEU_ID_AQUI" allowfullscreen></iframe> -->
+    </div>
+    <div class="video-caption">sabendo.app — portal educacional do 5º ano</div>
+  </div>
+</section>
 
 <!-- PILARES -->
 <section class="section">
