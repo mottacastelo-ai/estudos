@@ -4,693 +4,617 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>sabendo.app — Portal educacional do 5º ano</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
 :root{
-  --bg:#F4F2FF;
-  --sidebar:#1A1035;
-  --card:#fff;
-  --text:#1A1A2E;
-  --muted:#6B7280;
-  --border:#E5E0FF;
-  --hero-from:#0F172A;
-  --hero-mid:#1E1B4B;
-  --hero-to:#312E81;
-  --port:#DB2777;
-  --port-l:#F472B6;
-  --port-bg:#FDF2F8;
-  --mat:#2563EB;
-  --mat-l:#60A5FA;
-  --mat-bg:#EFF6FF;
-  --cien:#0D9488;
-  --cien-l:#2DD4BF;
-  --cien-bg:#F0FDFA;
-  --hist:#EA580C;
-  --hist-l:#FB923C;
-  --hist-bg:#FFF7ED;
-  --geo:#16A34A;
-  --geo-l:#4ADE80;
-  --geo-bg:#F0FDF4;
-  --accent:#7C3AED;
-  --accent-l:#A78BFA;
+  --verde:#00C896;
+  --verde-d:#009E78;
+  --roxo:#5B2FD4;
+  --roxo-l:#7B52F4;
+  --laranja:#FF6B35;
+  --amarelo:#FFD23F;
+  --preto:#0D0D0D;
+  --surface:#111111;
+  --surface2:#181818;
+  --border:rgba(255,255,255,.08);
+  --muted:rgba(255,255,255,.4);
+  --branco:#FFFFFF;
 }
 
 html{scroll-behavior:smooth}
-body{font-family:"Baloo 2",cursive;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{background:var(--preto);color:var(--branco);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+
+/* ── SPLASH ── */
+@keyframes splashPrepo{
+  0%  {transform:scale(.2);opacity:0}
+  50% {transform:scale(1.08);opacity:1}
+  70% {transform:scale(.96);opacity:1}
+  85% {transform:scale(1.03);opacity:1}
+  100%{transform:scale(1);opacity:1}
+}
+@keyframes splashOut{
+  0%  {opacity:1;visibility:visible}
+  100%{opacity:0;visibility:hidden}
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(18px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+@keyframes heroIn{
+  from{opacity:0;transform:translateY(16px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+
+#splash{
+  position:fixed;inset:0;background:var(--preto);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  z-index:999;pointer-events:none;
+  animation:splashOut .5s ease 2s forwards;
+}
+#splash img{
+  width:min(180px,45vw);height:auto;
+  animation:splashPrepo 1.4s cubic-bezier(.34,1.56,.64,1) both;
+}
+#splash-label{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:36px;
+  color:var(--branco);letter-spacing:-1px;
+  opacity:0;animation:heroIn .4s ease 1.2s forwards;
+}
+#splash-label span{color:var(--verde)}
 
 /* ── NAV ── */
-.nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(244,242,255,.88);
-  backdrop-filter:blur(16px);
-  border-bottom:1.5px solid var(--border);
-  transition:background .3s;
-}
-.nav-inner{
-  max-width:1100px;margin:0 auto;
-  padding:0 32px;height:60px;
-  display:flex;align-items:center;justify-content:space-between;
+.site-nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,13,13,.95);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:14px 32px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  opacity:0;animation:fadeUp .4s ease 2.3s forwards;
 }
 .nav-brand{
-  font-family:"Space Mono",monospace;font-size:17px;font-weight:700;
-  color:var(--text);display:flex;align-items:center;gap:8px;text-decoration:none;
+  display:flex;align-items:center;gap:10px;text-decoration:none;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#fff;flex-shrink:0;
 }
-.nav-brand span{color:var(--accent)}
-.nav-badge{
-  font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  background:var(--border);color:var(--accent);
-  padding:2px 9px;border-radius:20px;
-}
+.nav-brand img{height:30px;width:auto}
+.nav-brand .dot{color:var(--verde)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-link{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;transition:color .15s}
+.nav-link:hover{color:#fff}
 .nav-cta{
-  background:linear-gradient(135deg,var(--accent),var(--accent-l));
-  color:#fff;border:none;border-radius:50px;
-  padding:9px 22px;font-size:13px;font-weight:800;
-  cursor:pointer;font-family:"Baloo 2",cursive;
-  transition:transform .15s,box-shadow .15s;
-  text-decoration:none;display:inline-block;
+  background:var(--verde);color:#0D0D0D;
+  border:none;border-radius:8px;padding:9px 20px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:13px;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:background .15s,transform .15s;
 }
-.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,58,237,.35)}
+.nav-cta:hover{background:var(--verde-d);transform:translateY(-1px)}
 
 /* ── HERO ── */
 .hero{
-  background:linear-gradient(135deg,var(--hero-from) 0%,var(--hero-mid) 60%,var(--hero-to) 100%);
-  padding:120px 32px 80px;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:40px 24px;
   position:relative;overflow:hidden;
 }
-.hero::before{
-  content:"";position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 70% 40%,rgba(124,58,237,.18) 0%,transparent 70%);
-  pointer-events:none;
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.bubble{position:absolute;border-radius:50%;pointer-events:none}
+.bubble-1{width:700px;height:700px;background:var(--verde);opacity:.05;top:-200px;left:-200px;animation:pulse 6s ease-in-out infinite}
+.bubble-2{width:500px;height:500px;background:var(--roxo);opacity:.07;bottom:-150px;right:-100px;animation:pulse 6s ease-in-out 2s infinite}
+.bubble-3{width:300px;height:300px;background:var(--amarelo);opacity:.04;top:40%;left:60%;animation:pulse 6s ease-in-out 4s infinite}
+
+.hero-content{
+  position:relative;z-index:1;
+  opacity:0;animation:heroIn .6s ease 2.3s both;
 }
-.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.28);
-  font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(255,255,255,.85);padding:5px 16px;border-radius:20px;
-  margin-bottom:20px;
+.hero-logo{
+  display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:24px;
 }
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-l);animation:pulse-dot 2s ease-in-out infinite}
-@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
-.hero h1{
-  font-family:"Space Mono",monospace;font-size:clamp(32px,5vw,54px);
-  color:#fff;line-height:1.08;margin-bottom:16px;
+.hero-logo img{height:64px;width:auto}
+.hero-title{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(44px,12vw,100px);color:#fff;
+  letter-spacing:-3px;line-height:1;
 }
-.hero h1 em{font-style:normal;color:var(--accent-l)}
-.hero-sub{font-size:16px;font-weight:600;color:rgba(255,255,255,.75);line-height:1.65;margin-bottom:32px;max-width:460px}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.hero-title .dot{color:var(--verde)}
+.hero-tagline{
+  font-family:'DM Sans',sans-serif;font-weight:300;font-style:italic;
+  font-size:clamp(15px,3.5vw,22px);color:rgba(255,255,255,.5);margin-top:16px;
+}
+.hero-tagline strong{color:var(--verde);font-style:normal;font-weight:500}
+.hero-actions{
+  display:flex;align-items:center;justify-content:center;gap:12px;margin-top:36px;flex-wrap:wrap;
+}
 .btn-primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent-l));
-  color:#fff;border:none;border-radius:50px;
-  padding:14px 28px;font-size:15px;font-weight:800;
-  cursor:pointer;font-family:"Baloo 2",cursive;
-  text-decoration:none;display:inline-block;
-  transition:transform .15s,box-shadow .15s;
-  box-shadow:0 4px 20px rgba(124,58,237,.4);
+  background:var(--verde);color:#0D0D0D;border:none;border-radius:10px;
+  padding:14px 28px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:background .15s,transform .15s,box-shadow .15s;
+  box-shadow:0 4px 20px rgba(0,200,150,.3);
 }
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.5)}
+.btn-primary:hover{background:var(--verde-d);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,200,150,.4)}
 .btn-ghost{
-  background:rgba(255,255,255,.1);
-  color:rgba(255,255,255,.9);
-  border:1.5px solid rgba(255,255,255,.25);border-radius:50px;
-  padding:14px 28px;font-size:15px;font-weight:800;
-  cursor:pointer;font-family:"Baloo 2",cursive;
-  text-decoration:none;display:inline-block;
+  background:rgba(255,255,255,.07);color:rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.15);border-radius:10px;
+  padding:14px 28px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;text-decoration:none;display:inline-block;
   transition:background .15s,border-color .15s;
 }
-.btn-ghost:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.45)}
-.hero-checks{display:flex;gap:20px;flex-wrap:wrap}
-.hero-check{font-size:12px;font-weight:700;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px}
-.hero-check::before{content:"✓";color:var(--accent-l);font-weight:900}
+.btn-ghost:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3)}
+.hero-checks{
+  display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:20px;
+}
+.hero-check{font-size:12px;font-weight:400;color:var(--muted);display:flex;align-items:center;gap:5px}
+.hero-check::before{content:"✓";color:var(--verde);font-weight:700}
 
-/* Hero card mockup */
-.hero-card{
-  background:rgba(255,255,255,.06);
-  border:1.5px solid rgba(255,255,255,.12);
-  border-radius:24px;padding:28px;
-  backdrop-filter:blur(8px);
-  position:relative;overflow:hidden;
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.scroll-hint{
+  display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:40px;
+  color:rgba(255,255,255,.35);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  opacity:0;transition:opacity .5s;cursor:pointer;
 }
-.hero-card::before{
-  content:"";position:absolute;inset:0;
-  background:conic-gradient(from var(--a),transparent 15%,rgba(124,58,237,.3) 30%,transparent 45%,rgba(167,139,250,.2) 60%,transparent 75%);
-  border-radius:24px;
-  animation:spin-glow 8s linear infinite;
-  --a:0deg;
-}
-@property --a{syntax:"<angle>";initial-value:0deg;inherits:false}
-@keyframes spin-glow{to{--a:360deg}}
-.hero-card-inner{position:relative;z-index:1}
-.hc-label{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:14px}
-.hc-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
-.hc-stat{
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
-  border-radius:14px;padding:14px;text-align:center;
-}
-.hc-stat-num{font-family:"Space Mono",monospace;font-size:28px;font-weight:700;color:#fff;display:block}
-.hc-stat-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.55);margin-top:2px}
-.hc-discs{display:flex;flex-direction:column;gap:8px}
-.hc-disc{
-  display:flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
-  border-radius:12px;padding:10px 14px;
-}
-.hc-disc-icon{font-size:18px}
-.hc-disc-name{flex:1;font-size:13px;font-weight:800;color:rgba(255,255,255,.9)}
-.hc-disc-bar{height:6px;border-radius:3px;flex:1}
-.hc-disc-pct{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:rgba(255,255,255,.7)}
+.scroll-hint.visible{opacity:1;animation:bounce 2s ease-in-out infinite}
 
-/* ── STATS BAR ── */
-.stats-bar{background:var(--sidebar);padding:28px 32px}
+/* ── STATS ── */
+.stats-bar{
+  background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:32px;
+}
 .stats-inner{
-  max-width:1100px;margin:0 auto;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:24px;
+  max-width:860px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center;
 }
-.stat-item{text-align:center}
 .stat-num{
-  font-family:"Space Mono",monospace;font-size:36px;font-weight:700;color:#fff;
-  display:block;line-height:1;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:40px;
+  color:var(--verde);display:block;line-height:1;
 }
-.stat-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.45);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+.stat-label{font-size:11px;font-weight:400;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
 
-/* ── SECTION UTILITIES ── */
-.section{padding:80px 32px}
-.section-inner{max-width:1100px;margin:0 auto}
-.section-label{
-  font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:10px;
+/* ── SECTIONS ── */
+.section{padding:80px 24px}
+.section-inner{max-width:860px;margin:0 auto}
+.section-kicker{
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--verde);margin-bottom:10px;
 }
 .section-title{
-  font-family:"Space Mono",monospace;
-  font-size:clamp(26px,3.5vw,38px);
-  color:var(--text);line-height:1.15;margin-bottom:14px;
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(28px,4vw,42px);color:#fff;
+  letter-spacing:-1px;line-height:1.12;margin-bottom:12px;
 }
-.section-sub{font-size:15px;font-weight:600;color:var(--muted);line-height:1.7;max-width:560px;margin-bottom:48px}
+.section-sub{
+  font-size:15px;font-weight:300;color:var(--muted);line-height:1.75;
+  max-width:520px;margin-bottom:48px;
+}
 
-/* ── HOW IT WORKS ── */
-.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+/* ── HOW ── */
+.how-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .how-step{
-  background:var(--card);border:2px solid var(--border);
-  border-radius:20px;padding:28px 22px;
-  transition:transform .25s,box-shadow .25s,border-color .25s;
-  cursor:default;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:28px;
+  transition:border-color .25s,transform .25s;
 }
-.how-step:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(124,58,237,.1);border-color:var(--accent-l)}
+.how-step:hover{border-color:rgba(0,200,150,.3);transform:translateY(-4px)}
 .how-num{
-  font-family:"Space Mono",monospace;font-size:11px;font-weight:700;
-  color:var(--accent);background:rgba(124,58,237,.1);
-  width:32px;height:32px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:16px;
+  font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.15em;
+  color:var(--verde);margin-bottom:18px;text-transform:uppercase;
 }
-.how-icon{font-size:36px;margin-bottom:12px;display:block}
-.how-title{font-family:"Space Mono",monospace;font-size:14px;margin-bottom:6px}
-.how-desc{font-size:13px;font-weight:600;color:var(--muted);line-height:1.6}
+.how-icon{font-size:36px;margin-bottom:12px;display:block;line-height:1}
+.how-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:8px}
+.how-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.65}
 
-/* ── DISCIPLINES ── */
-.disc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-.disc-card{
-  border-radius:20px;padding:24px;border:2px solid transparent;
-  transition:transform .2s,box-shadow .2s;
-  cursor:default;
-  background:linear-gradient(160deg,var(--disc-from,#fff) 0%,#fff 100%);
-  border-left:4px solid var(--disc-color,#ccc);
+/* ── PORTAIS ── */
+.portais-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.portal-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:24px;text-decoration:none;color:#fff;
+  transition:transform .25s,box-shadow .25s;
 }
-.disc-card:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,.08)}
-.disc-card.port{--disc-from:#FDF2F8;--disc-color:#DB2777;--glow:rgba(219,39,119,.12)}
-.disc-card.mat {--disc-from:#EFF6FF;--disc-color:#2563EB;--glow:rgba(37,99,235,.12)}
-.disc-card.cien{--disc-from:#F0FDFA;--disc-color:#0D9488;--glow:rgba(13,148,136,.12)}
-.disc-card.hist{--disc-from:#FFF7ED;--disc-color:#EA580C;--glow:rgba(234,88,12,.12)}
-.disc-card.geo {--disc-from:#F0FDF4;--disc-color:#16A34A;--glow:rgba(22,163,74,.12)}
-.disc-card:hover{box-shadow:0 10px 30px var(--glow)}
-.disc-icon{font-size:44px;margin-bottom:12px;display:block}
-.disc-name{font-family:"Space Mono",monospace;font-size:16px;color:var(--text);margin-bottom:4px}
-.disc-desc{font-size:12px;font-weight:600;color:var(--muted);line-height:1.55;margin-bottom:14px}
-.disc-chips{display:flex;flex-wrap:wrap;gap:5px}
-.disc-chip{font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;background:rgba(0,0,0,.06);color:var(--disc-color)}
-
-/* ── FEATURES ── */
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.feat-card{
-  background:var(--card);border:2px solid var(--border);
-  border-radius:20px;padding:28px;
-  transition:transform .2s,box-shadow .2s,border-color .2s;
-}
-.feat-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(124,58,237,.08);border-color:var(--accent-l)}
-.feat-icon{font-size:36px;margin-bottom:16px;display:block}
-.feat-title{font-family:"Space Mono",monospace;font-size:15px;margin-bottom:8px}
-.feat-desc{font-size:13px;font-weight:600;color:var(--muted);line-height:1.65}
-
-/* ── GAMIFICATION ── */
-.gami-section{background:var(--sidebar);padding:80px 32px}
-.gami-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.gami-text .section-label{color:var(--accent-l)}
-.gami-text .section-title{color:#fff}
-.gami-text .section-sub{color:rgba(255,255,255,.6);margin-bottom:32px}
-.rarity-list{display:flex;flex-direction:column;gap:10px}
-.rarity-row{
-  display:flex;align-items:center;justify-content:space-between;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
-  border-radius:14px;padding:14px 18px;
+.portal-card:hover{transform:translateY(-5px)}
+.portal-card.andre{border-top:3px solid var(--verde)}
+.portal-card.andre:hover{box-shadow:0 16px 48px rgba(0,200,150,.15)}
+.portal-card.lis{border-top:3px solid var(--roxo-l)}
+.portal-card.lis:hover{box-shadow:0 16px 48px rgba(91,47,212,.2)}
+.portal-icon{font-size:38px;margin-bottom:14px;line-height:1;display:block}
+.portal-name{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;margin-bottom:4px}
+.portal-grade{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.portal-grade.verde{color:var(--verde)}
+.portal-grade.roxo{color:var(--roxo-l)}
+.portal-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.portal-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px}
+.chip{border-radius:100px;padding:4px 12px;font-size:11px;font-weight:500}
+.chip-port{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:#A78BFA}
+.chip-mat {background:rgba(5,150,105,.15); border:1px solid rgba(5,150,105,.3); color:#34D399}
+.chip-cien{background:rgba(2,132,199,.15); border:1px solid rgba(2,132,199,.3); color:#38BDF8}
+.chip-hist{background:rgba(180,83,9,.15);  border:1px solid rgba(180,83,9,.3);  color:#F59E0B}
+.chip-geo {background:rgba(21,128,61,.15); border:1px solid rgba(21,128,61,.3); color:#4ADE80}
+.portal-btn{
+  display:block;width:100%;padding:13px;text-align:center;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  border-radius:10px;border:none;cursor:pointer;text-decoration:none;
   transition:background .2s;
 }
-.rarity-row:hover{background:rgba(255,255,255,.1)}
-.rarity-left{display:flex;align-items:center;gap:10px}
-.rarity-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.rarity-name{font-family:"Space Mono",monospace;font-size:13px;color:#fff}
-.rarity-cond{font-size:12px;font-weight:600;color:rgba(255,255,255,.5)}
-.rarity-common .rarity-dot{background:#9CA3AF}
-.rarity-rare .rarity-dot{background:#38BDF8;box-shadow:0 0 8px rgba(56,189,248,.6)}
-.rarity-epic .rarity-dot{background:var(--accent-l);box-shadow:0 0 8px rgba(167,139,250,.6)}
-.rarity-legendary .rarity-dot{background:linear-gradient(135deg,#F59E0B,#FCD34D);box-shadow:0 0 12px rgba(245,158,11,.8);animation:legendary-pulse 2s ease-in-out infinite}
-.rarity-legendary .rarity-name{background:linear-gradient(90deg,#F59E0B,#FCD34D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-@keyframes legendary-pulse{0%,100%{box-shadow:0 0 12px rgba(245,158,11,.8)}50%{box-shadow:0 0 24px rgba(245,158,11,1)}}
+.btn-verde{background:var(--verde);color:#0D0D0D}
+.btn-verde:hover{background:var(--verde-d)}
+.btn-roxo{background:var(--roxo);color:#fff}
+.btn-roxo:hover{background:var(--roxo-l)}
 
-/* Cartas */
-.cartas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+/* ── FEATURES ── */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:28px;
+  transition:border-color .2s,transform .2s;
+}
+.feat-card:hover{border-color:rgba(0,200,150,.25);transform:translateY(-3px)}
+.feat-icon{font-size:34px;margin-bottom:14px;display:block;line-height:1}
+.feat-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px}
+.feat-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.65}
+
+/* ── GAMIFICAÇÃO ── */
+.gami-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px}
+.gami-inner{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.rarity-list{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+.rarity-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:12px;padding:14px 18px;
+  transition:border-color .2s,background .2s;
+}
+.rarity-row:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15)}
+.rarity-left{display:flex;align-items:center;gap:10px}
+.rarity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.rarity-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px}
+.rarity-cond{font-size:12px;font-weight:300;color:var(--muted)}
+.dot-common{background:#6B7280}
+.dot-rare{background:#38BDF8;box-shadow:0 0 8px rgba(56,189,248,.6)}
+.dot-epic{background:var(--roxo-l);box-shadow:0 0 8px rgba(123,82,244,.6)}
+.dot-legendary{
+  background:linear-gradient(135deg,#F59E0B,#FCD34D);
+  box-shadow:0 0 14px rgba(245,158,11,.9);
+  animation:legendary-glow 2s ease-in-out infinite;
+}
+@keyframes legendary-glow{0%,100%{box-shadow:0 0 10px rgba(245,158,11,.9)}50%{box-shadow:0 0 22px rgba(245,158,11,1)}}
+.name-legendary{
+  background:linear-gradient(90deg,#F59E0B,#FCD34D);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+.cartas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .carta{
-  aspect-ratio:.65;border-radius:18px;
+  aspect-ratio:.65;border-radius:16px;position:relative;overflow:hidden;
   display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
-  padding:16px 12px;position:relative;overflow:hidden;
-  cursor:default;
+  padding:14px 10px;cursor:default;
   transition:transform .4s ease;
-  transform-style:preserve-3d;
-  perspective:800px;
+  transform-style:preserve-3d;perspective:600px;
 }
-.carta::before{
+.carta::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.7) 100%);
-  border-radius:18px;z-index:1;
+  background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.75) 100%);
+  border-radius:16px;z-index:1;
 }
-.carta-bg{position:absolute;inset:0;border-radius:18px;z-index:0}
-.carta-common .carta-bg{background:linear-gradient(135deg,#374151,#6B7280)}
-.carta-rare .carta-bg{background:linear-gradient(135deg,#0C4A6E,#0284C7)}
-.carta-legendary .carta-bg{background:linear-gradient(135deg,#78350F,#F59E0B,#FDE68A)}
-.carta-legendary{box-shadow:0 0 0 2px #F59E0B,0 8px 32px rgba(245,158,11,.5);animation:carta-glow 2s ease-in-out infinite}
-@keyframes carta-glow{0%,100%{box-shadow:0 0 0 2px #F59E0B,0 8px 32px rgba(245,158,11,.5)}50%{box-shadow:0 0 0 3px #FCD34D,0 12px 48px rgba(245,158,11,.8)}}
-.carta-emoji{font-size:40px;position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);z-index:2}
+.carta-bg{position:absolute;inset:0;border-radius:16px}
+.carta-common .carta-bg{background:linear-gradient(135deg,#1F2937,#4B5563)}
+.carta-rare   .carta-bg{background:linear-gradient(135deg,#0C4A6E,#0284C7)}
+.carta-legendary .carta-bg{background:linear-gradient(135deg,#78350F,#F59E0B 60%,#FDE68A)}
+.carta-legendary{
+  box-shadow:0 0 0 2px #F59E0B,0 8px 32px rgba(245,158,11,.4);
+  animation:carta-pulse 2s ease-in-out infinite;
+}
+@keyframes carta-pulse{
+  0%,100%{box-shadow:0 0 0 2px #F59E0B,0 8px 32px rgba(245,158,11,.4)}
+  50%    {box-shadow:0 0 0 3px #FCD34D,0 12px 48px rgba(245,158,11,.7)}
+}
+.carta-emoji{
+  font-size:36px;position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-60%);z-index:2;line-height:1;
+}
 .carta-info{position:relative;z-index:2;text-align:center}
-.carta-name{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:#fff;margin-bottom:3px}
-.carta-tag{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.carta-name{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:#fff;margin-bottom:2px}
+.carta-tag{font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55)}
 .carta-tag.legendary{color:#FCD34D}
 
-/* ── TESTIMONIALS ── */
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+/* ── PILARES ── */
+.pilares-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pilar{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:32px 24px;text-align:center;
+  transition:border-color .2s,transform .2s;
+}
+.pilar:hover{border-color:rgba(0,200,150,.25);transform:translateY(-4px)}
+.pilar-icon{font-size:38px;margin-bottom:16px;line-height:1}
+.pilar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:10px}
+.pilar-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.65}
+
+/* ── DEPOIMENTOS ── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .testi-card{
-  background:var(--card);border:2px solid var(--border);
-  border-radius:20px;padding:28px;
-  transition:transform .2s,box-shadow .2s;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:26px;
+  transition:transform .2s,border-color .2s;
 }
-.testi-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(0,0,0,.06)}
-.testi-stars{color:#F59E0B;font-size:14px;margin-bottom:12px;letter-spacing:2px}
-.testi-text{font-size:14px;font-weight:600;color:var(--text);line-height:1.7;margin-bottom:20px}
-.testi-author{display:flex;align-items:center;gap:12px}
-.testi-avatar{
-  width:40px;height:40px;border-radius:50%;
-  font-size:22px;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;background:var(--border);
-}
-.testi-name{font-family:"Space Mono",monospace;font-size:12px;color:var(--text)}
-.testi-role{font-size:11px;font-weight:700;color:var(--muted)}
+.testi-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.14)}
+.testi-stars{color:#F59E0B;font-size:13px;letter-spacing:2px;margin-bottom:12px}
+.testi-text{font-size:14px;font-weight:300;color:rgba(255,255,255,.75);line-height:1.75;margin-bottom:20px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface2);font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.testi-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
+.testi-role{font-size:11px;font-weight:300;color:var(--muted)}
 
 /* ── PRICING ── */
-.pricing-section{background:var(--card);padding:80px 32px;border-top:2px solid var(--border);border-bottom:2px solid var(--border)}
+.pricing-section{background:var(--surface2);padding:80px 24px;border-top:1px solid var(--border)}
 .pricing-toggle{
-  display:inline-flex;background:var(--bg);border:2px solid var(--border);
-  border-radius:50px;padding:4px;margin-bottom:48px;
+  display:inline-flex;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:3px;margin-bottom:44px;
 }
 .toggle-btn{
-  padding:8px 22px;border-radius:50px;border:none;background:transparent;
-  font-family:"Baloo 2",cursive;font-size:13px;font-weight:800;color:var(--muted);
-  cursor:pointer;transition:background .2s,color .2s;
+  padding:8px 20px;border-radius:8px;border:none;background:transparent;
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--muted);
+  cursor:pointer;transition:background .2s,color .2s;letter-spacing:.05em;
 }
-.toggle-btn.active{background:var(--accent);color:#fff}
-.pricing-badge{
-  display:inline-block;background:#DCFCE7;color:#15803D;
-  font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  padding:2px 9px;border-radius:20px;margin-left:6px;
+.toggle-btn.active{background:var(--verde);color:#0D0D0D}
+.discount-badge{
+  display:inline-block;background:rgba(0,200,150,.15);color:var(--verde);
+  border:1px solid rgba(0,200,150,.3);
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;margin-left:6px;
 }
-.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:700px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:680px;margin:0 auto}
 .pricing-card{
-  background:var(--bg);border:2px solid var(--border);
-  border-radius:24px;padding:32px;
-  transition:transform .2s,box-shadow .2s;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:32px;
+  transition:transform .2s,border-color .2s;
 }
-.pricing-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(124,58,237,.1)}
+.pricing-card:hover{transform:translateY(-4px)}
 .pricing-card.featured{
-  background:linear-gradient(135deg,var(--hero-from),var(--hero-mid));
-  border-color:var(--accent);
-  box-shadow:0 8px 32px rgba(124,58,237,.25);
+  border-color:var(--verde);
+  box-shadow:0 8px 40px rgba(0,200,150,.15);
 }
-.pricing-tag{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.pricing-card.featured .pricing-tag{color:var(--accent-l)}
-.pricing-name{font-family:"Space Mono",monospace;font-size:22px;color:var(--text);margin-bottom:4px}
-.pricing-card.featured .pricing-name,.pricing-card.featured .pricing-price,.pricing-card.featured .pricing-period,.pricing-card.featured .pricing-perks li{color:#fff}
-.pricing-price{font-family:"Space Mono",monospace;font-size:42px;font-weight:700;color:var(--text);line-height:1}
+.pricing-tag{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--verde);margin-bottom:8px}
+.pricing-name{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:4px}
+.pricing-price{font-family:'Syne',sans-serif;font-weight:800;font-size:44px;line-height:1;color:#fff}
 .pricing-price sup{font-size:20px;vertical-align:top;margin-top:10px;display:inline-block}
-.pricing-period{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:28px}
-.pricing-card.featured .pricing-period{color:rgba(255,255,255,.55)}
+.pricing-period{font-size:12px;font-weight:300;color:var(--muted);margin-bottom:28px}
 .pricing-perks{list-style:none;margin-bottom:28px;display:flex;flex-direction:column;gap:10px}
-.pricing-perks li{font-size:13px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:8px}
-.pricing-perks li::before{content:"✓";color:var(--accent);font-weight:900;flex-shrink:0}
-.pricing-card.featured .pricing-perks li::before{color:var(--accent-l)}
+.pricing-perks li{font-size:13px;font-weight:300;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:8px}
+.pricing-perks li::before{content:"✓";color:var(--verde);font-weight:700;flex-shrink:0}
 .pricing-btn{
-  width:100%;padding:14px;border-radius:50px;border:none;
-  font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;
-  cursor:pointer;transition:transform .15s,box-shadow .15s;
+  width:100%;padding:13px;border-radius:10px;border:none;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:background .2s,transform .15s;
 }
-.pricing-btn-outline{background:var(--card);color:var(--text);border:2px solid var(--border)}
-.pricing-btn-filled{background:linear-gradient(135deg,var(--accent),var(--accent-l));color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.35)}
-.pricing-btn-filled:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.5)}
+.pricing-btn-outline{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--border)}
+.pricing-btn-outline:hover{background:rgba(255,255,255,.12)}
+.pricing-btn-filled{background:var(--verde);color:#0D0D0D;box-shadow:0 4px 16px rgba(0,200,150,.3)}
+.pricing-btn-filled:hover{background:var(--verde-d);transform:translateY(-2px)}
 
 /* ── FAQ ── */
-.faq-list{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
-.faq-item{background:var(--card);border:2px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s}
-.faq-item.open{border-color:var(--accent-l)}
+.faq-list{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.faq-item.open{border-color:rgba(0,200,150,.35)}
 .faq-q{
   display:flex;align-items:center;justify-content:space-between;
   padding:18px 22px;cursor:pointer;
-  font-size:15px;font-weight:800;color:var(--text);
-  gap:16px;
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;gap:16px;
+  user-select:none;
 }
-.faq-icon{font-size:18px;font-weight:900;color:var(--accent);flex-shrink:0;transition:transform .25s}
+.faq-icon{font-size:20px;color:var(--verde);flex-shrink:0;transition:transform .25s;font-weight:300}
 .faq-item.open .faq-icon{transform:rotate(45deg)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 22px}
 .faq-item.open .faq-a{max-height:200px;padding:0 22px 18px}
-.faq-a p{font-size:14px;font-weight:600;color:var(--muted);line-height:1.7}
+.faq-a p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.75}
 
-/* ── CTA FINAL ── */
+/* ── CTA ── */
 .cta-section{
-  background:linear-gradient(135deg,var(--hero-from) 0%,var(--hero-mid) 60%,var(--hero-to) 100%);
-  padding:80px 32px;text-align:center;position:relative;overflow:hidden;
+  padding:100px 24px;text-align:center;
+  background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(0,200,150,.06) 0%,transparent 70%);
+  position:relative;overflow:hidden;
 }
-.cta-section::before{
-  content:"";position:absolute;inset:0;
-  background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(124,58,237,.25) 0%,transparent 70%);
-  pointer-events:none;
-}
-.cta-section .section-label{color:var(--accent-l)}
-.cta-section .section-title{color:#fff;margin:0 auto 14px;max-width:540px}
-.cta-section .section-sub{color:rgba(255,255,255,.65);margin:0 auto 36px;text-align:center}
-.cta-checks{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin-bottom:36px}
-.cta-check{font-size:13px;font-weight:700;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:6px}
-.cta-check::before{content:"✓";color:var(--accent-l)}
+.cta-checks{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:24px 0 40px}
+.cta-check{font-size:13px;font-weight:400;color:var(--muted);display:flex;align-items:center;gap:6px}
+.cta-check::before{content:"✓";color:var(--verde);font-weight:700}
 
 /* ── FOOTER ── */
-footer{background:var(--sidebar);padding:32px;text-align:center}
-.footer-brand{
-  font-family:"Space Mono",monospace;font-size:16px;font-weight:700;color:#fff;
-  margin-bottom:6px;
+footer{
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:40px 24px;text-align:center;
 }
-.footer-brand span{color:var(--accent-l)}
-.footer-sub{font-size:12px;font-weight:700;color:rgba(255,255,255,.35)}
+.footer-logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:10px}
+.footer-logo img{height:28px}
+.footer-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-1px}
+.footer-brand .dot{color:var(--verde)}
+.footer-copy{font-size:11px;font-weight:300;color:rgba(255,255,255,.2);letter-spacing:.15em;text-transform:uppercase;margin-top:4px}
 
-/* ── ANIMATIONS ── */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+/* ── REVEAL ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease}
 .reveal.visible{opacity:1;transform:none}
-.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .6s ease,transform .6s ease}
+.reveal-left{opacity:0;transform:translateX(-36px);transition:opacity .6s ease,transform .6s ease}
 .reveal-left.visible{opacity:1;transform:none}
-.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .6s ease,transform .6s ease}
+.reveal-right{opacity:0;transform:translateX(36px);transition:opacity .6s ease,transform .6s ease}
 .reveal-right.visible{opacity:1;transform:none}
-.d1{transition-delay:.1s}.d2{transition-delay:.18s}.d3{transition-delay:.26s}.d4{transition-delay:.34s}.d5{transition-delay:.42s}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.4s}
 
 /* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .hero-inner{grid-template-columns:1fr}
-  .hero-card{display:none}
-  .how-grid{grid-template-columns:repeat(2,1fr)}
-  .feat-grid{grid-template-columns:repeat(2,1fr)}
+@media(max-width:860px){
+  .how-grid{grid-template-columns:1fr}
+  .feat-grid,.pilares-grid,.testi-grid{grid-template-columns:repeat(2,1fr)}
   .gami-inner{grid-template-columns:1fr}
-  .testi-grid{grid-template-columns:1fr}
+  .portais-grid{grid-template-columns:1fr}
   .pricing-grid{grid-template-columns:1fr}
   .stats-inner{grid-template-columns:repeat(2,1fr)}
 }
-@media(max-width:600px){
-  .how-grid,.feat-grid{grid-template-columns:1fr}
+@media(max-width:560px){
+  .feat-grid,.pilares-grid,.testi-grid{grid-template-columns:1fr}
+  .how-grid{grid-template-columns:1fr}
   .cartas-grid{grid-template-columns:repeat(3,1fr)}
-  .disc-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+  #splash{animation:splashOut .01s ease .1s forwards}
+  #splash img{animation:none}
+  #splash-label{animation:none;opacity:1}
+  .hero-content{animation:none;opacity:1}
+  .site-nav{animation:none;opacity:1}
+  .scroll-hint.visible{animation:none}
+  .bubble{animation:none}
 }
 </style>
 </head>
 <body>
 
+<!-- SPLASH -->
+<div id="splash">
+  <img src="prepo-hd.png" alt="Prepo">
+  <div id="splash-label">sabendo<span>.</span></div>
+</div>
+
 <!-- NAV -->
-<nav class="nav">
-  <div class="nav-inner">
-    <a class="nav-brand" href="#">🤖 sabendo<span>.app</span></a>
-    <div style="display:flex;align-items:center;gap:12px">
-      <span class="nav-badge">5º ano</span>
-      <a class="nav-cta" href="#pricing">Começar agora →</a>
-    </div>
+<nav class="site-nav">
+  <a class="nav-brand" href="#"><img src="prepo-hd.png" alt="Prepo">sabendo<span class="dot">.</span></a>
+  <div class="nav-right">
+    <a class="nav-link" href="#como">Como funciona</a>
+    <a class="nav-link" href="#pricing">Preços</a>
+    <a class="nav-cta" href="#pricing">Começar grátis</a>
   </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-inner">
-    <div>
-      <div class="hero-badge"><span class="badge-dot"></span>Portal educacional do 5º ano</div>
-      <h1>Estudar virou<br><em>aventura.</em></h1>
-      <p class="hero-sub">HQs interativas, quizzes, flashcards e <strong style="color:#fff">cartas colecionáveis</strong> para dominar o 5º ano — fiel ao livro didático.</p>
-      <div class="hero-actions">
-        <a class="btn-primary" href="#pricing">Experimente grátis →</a>
-        <a class="btn-ghost" href="#how">▶ Como funciona</a>
-      </div>
-      <div class="hero-checks">
-        <span class="hero-check">Sem anúncios</span>
-        <span class="hero-check">Cancele quando quiser</span>
-        <span class="hero-check">2 temas grátis</span>
-      </div>
+<section class="hero" id="hero">
+  <div class="bubble bubble-1"></div>
+  <div class="bubble bubble-2"></div>
+  <div class="bubble bubble-3"></div>
+  <div class="hero-content">
+    <div class="hero-logo">
+      <img src="prepo-hd.png" alt="Prepo">
+      <span class="hero-title">sabendo<span class="dot">.</span></span>
     </div>
-    <div class="hero-card">
-      <div class="hero-card-inner">
-        <div class="hc-label">📊 Progresso do André</div>
-        <div class="hc-stats">
-          <div class="hc-stat"><span class="hc-stat-num" data-target="29" data-suffix="">0</span><div class="hc-stat-label">Temas</div></div>
-          <div class="hc-stat"><span class="hc-stat-num" data-target="125" data-suffix="">0</span><div class="hc-stat-label">Atividades</div></div>
-          <div class="hc-stat"><span class="hc-stat-num" data-target="14" data-suffix="">0</span><div class="hc-stat-label">Cartas</div></div>
-          <div class="hc-stat"><span class="hc-stat-num" data-target="87" data-suffix="%">0</span><div class="hc-stat-label">Score médio</div></div>
-        </div>
-        <div class="hc-discs">
-          <div class="hc-disc">
-            <span class="hc-disc-icon">📝</span>
-            <span class="hc-disc-name">Português</span>
-            <div class="hc-disc-bar" style="background:linear-gradient(90deg,#DB2777,#F472B6);width:90%"></div>
-            <span class="hc-disc-pct">90%</span>
-          </div>
-          <div class="hc-disc">
-            <span class="hc-disc-icon">🔢</span>
-            <span class="hc-disc-name">Matemática</span>
-            <div class="hc-disc-bar" style="background:linear-gradient(90deg,#2563EB,#60A5FA);width:72%"></div>
-            <span class="hc-disc-pct">72%</span>
-          </div>
-          <div class="hc-disc">
-            <span class="hc-disc-icon">🔬</span>
-            <span class="hc-disc-name">Ciências</span>
-            <div class="hc-disc-bar" style="background:linear-gradient(90deg,#0D9488,#2DD4BF);width:65%"></div>
-            <span class="hc-disc-pct">65%</span>
-          </div>
-        </div>
-      </div>
+    <p class="hero-tagline">Suas matérias <strong>viram game.</strong></p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#pricing">Experimentar grátis →</a>
+      <a class="btn-ghost" href="#como">▶ Como funciona</a>
     </div>
+    <div class="hero-checks">
+      <span class="hero-check">Sem anúncios</span>
+      <span class="hero-check">2 temas grátis</span>
+      <span class="hero-check">Cancele quando quiser</span>
+    </div>
+  </div>
+  <div class="scroll-hint" id="scroll-hint">
+    <span>saiba mais</span>
+    <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+      <path d="M7 11L14 18L21 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </div>
 </section>
 
-<!-- STATS BAR -->
+<!-- STATS -->
 <div class="stats-bar">
   <div class="stats-inner">
-    <div class="stat-item reveal d1">
-      <span class="stat-num" data-target="5" data-suffix="">0</span>
-      <div class="stat-label">Disciplinas</div>
-    </div>
-    <div class="stat-item reveal d2">
-      <span class="stat-num" data-target="29" data-suffix="">0</span>
-      <div class="stat-label">Temas</div>
-    </div>
-    <div class="stat-item reveal d3">
-      <span class="stat-num" data-target="125" data-suffix="+">0</span>
-      <div class="stat-label">Atividades</div>
-    </div>
-    <div class="stat-item reveal d4">
-      <span class="stat-num" data-target="100" data-suffix="%">0</span>
-      <div class="stat-label">Fiel ao livro</div>
-    </div>
+    <div class="stat-item reveal d1"><span class="stat-num" data-target="5" data-suffix="">0</span><div class="stat-label">Disciplinas</div></div>
+    <div class="stat-item reveal d2"><span class="stat-num" data-target="29" data-suffix="">0</span><div class="stat-label">Temas</div></div>
+    <div class="stat-item reveal d3"><span class="stat-num" data-target="125" data-suffix="+">0</span><div class="stat-label">Atividades</div></div>
+    <div class="stat-item reveal d4"><span class="stat-num" data-target="100" data-suffix="%">0</span><div class="stat-label">Fiel ao livro</div></div>
   </div>
 </div>
 
-<!-- HOW IT WORKS -->
-<section class="section" id="how">
+<!-- PILARES -->
+<section class="section">
   <div class="section-inner">
-    <div style="text-align:center" class="reveal">
-      <div class="section-label">Como funciona</div>
-      <h2 class="section-title">Do livro ao portal em 4 passos</h2>
-      <p class="section-sub" style="margin:0 auto 48px">Cada capítulo do livro do André vira uma aventura interativa com personagem, HQ e atividades.</p>
-    </div>
-    <div class="how-grid">
-      <div class="how-step reveal d1">
-        <div class="how-num">01</div>
-        <span class="how-icon">📸</span>
-        <div class="how-title">Conteúdo do livro</div>
-        <p class="how-desc">O conteúdo vem direto das páginas do livro didático — sem invenção, sem desvio.</p>
+    <div class="pilares-grid">
+      <div class="pilar reveal d1">
+        <div class="pilar-icon">📚</div>
+        <h3 class="pilar-title">Fiel ao livro</h3>
+        <p class="pilar-desc">Cada atividade usa os termos exatos do livro didático — nada que confunda na prova.</p>
       </div>
-      <div class="how-step reveal d2">
-        <div class="how-num">02</div>
-        <span class="how-icon">🦸</span>
-        <div class="how-title">HQ interativa</div>
-        <p class="how-desc">Um personagem exclusivo conta o tema em 4 páginas de história em quadrinhos.</p>
+      <div class="pilar reveal d2">
+        <div class="pilar-icon">🎮</div>
+        <h3 class="pilar-title">Aprender jogando</h3>
+        <p class="pilar-desc">HQs, quizzes, batalha e cartas colecionáveis transformam matéria em missão.</p>
       </div>
-      <div class="how-step reveal d3">
-        <div class="how-num">03</div>
-        <span class="how-icon">🎮</span>
-        <div class="how-title">Atividades variadas</div>
-        <p class="how-desc">Quiz, complete a lacuna, caça-erro, batalha, dominó — cada tema tem 4+ atividades.</p>
-      </div>
-      <div class="how-step reveal d4">
-        <div class="how-num">04</div>
-        <span class="how-icon">🃏</span>
-        <div class="how-title">Ganhe uma carta</div>
-        <p class="how-desc">Completar o tema desbloqueia a carta do personagem. Nota perfeita? Carta Lendária.</p>
+      <div class="pilar reveal d3">
+        <div class="pilar-icon">🔥</div>
+        <h3 class="pilar-title">Progresso visível</h3>
+        <p class="pilar-desc">Streak diário, histórico de atividades e raridade de cartas para manter o ritmo.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- DISCIPLINES -->
-<section class="section" style="padding-top:0">
+<!-- COMO FUNCIONA -->
+<section class="section" id="como" style="background:var(--surface);border-top:1px solid var(--border)">
   <div class="section-inner">
-    <div class="reveal">
-      <div class="section-label">Conteúdo</div>
-      <h2 class="section-title">5 disciplinas completas</h2>
-      <p class="section-sub">Todo o currículo do 5º ano coberto com a mesma metodologia.</p>
+    <div class="reveal" style="text-align:center;margin-bottom:48px">
+      <div class="section-kicker">Como funciona</div>
+      <h2 class="section-title">Do livro ao portal em 4 passos</h2>
     </div>
-    <div class="disc-grid">
-      <div class="disc-card port reveal d1">
-        <span class="disc-icon">📝</span>
-        <div class="disc-name">Português</div>
-        <p class="disc-desc">Gramática, interpretação e produção de texto</p>
-        <div class="disc-chips">
-          <span class="disc-chip">12 temas</span>
-          <span class="disc-chip">55 atividades</span>
-        </div>
+    <div class="how-grid">
+      <div class="how-step reveal d1">
+        <div class="how-num">01 — Conteúdo</div>
+        <span class="how-icon">📸</span>
+        <div class="how-title">Direto do livro didático</div>
+        <p class="how-desc">O conteúdo vem das páginas do livro do André — sem invenção, sem desvio do currículo.</p>
       </div>
-      <div class="disc-card mat reveal d2">
-        <span class="disc-icon">🔢</span>
-        <div class="disc-name">Matemática</div>
-        <p class="disc-desc">Operações, geometria e resolução de problemas</p>
-        <div class="disc-chips">
-          <span class="disc-chip">7 temas</span>
-          <span class="disc-chip">30 atividades</span>
-        </div>
+      <div class="how-step reveal d2">
+        <div class="how-num">02 — HQ</div>
+        <span class="how-icon">🦸</span>
+        <div class="how-title">Personagem conta a história</div>
+        <p class="how-desc">Cada tema tem um personagem exclusivo que explica o conteúdo em 4 páginas de HQ interativa.</p>
       </div>
-      <div class="disc-card cien reveal d3">
-        <span class="disc-icon">🔬</span>
-        <div class="disc-name">Ciências</div>
-        <p class="disc-desc">Meio ambiente, ciclos e tecnologia</p>
-        <div class="disc-chips">
-          <span class="disc-chip">4 temas</span>
-          <span class="disc-chip">18 atividades</span>
-        </div>
+      <div class="how-step reveal d3">
+        <div class="how-num">03 — Atividades</div>
+        <span class="how-icon">🎯</span>
+        <div class="how-title">Praticar de formas variadas</div>
+        <p class="how-desc">Quiz, batalha, dominó, mapa mental — cada tema tem 4+ atividades com feedback imediato.</p>
       </div>
-      <div class="disc-card hist reveal d4">
-        <span class="disc-icon">🏛️</span>
-        <div class="disc-name">História</div>
-        <p class="disc-desc">Memória, identidade e diversidade cultural</p>
-        <div class="disc-chips">
-          <span class="disc-chip">3 temas</span>
-          <span class="disc-chip">13 atividades</span>
-        </div>
-      </div>
-      <div class="disc-card geo reveal d5">
-        <span class="disc-icon">🌎</span>
-        <div class="disc-name">Geografia</div>
-        <p class="disc-desc">Espaço, território e relações socioeconômicas</p>
-        <div class="disc-chips">
-          <span class="disc-chip">3 temas</span>
-          <span class="disc-chip">13 atividades</span>
-        </div>
+      <div class="how-step reveal d4">
+        <div class="how-num">04 — Recompensa</div>
+        <span class="how-icon">🃏</span>
+        <div class="how-title">Desbloquear a carta</div>
+        <p class="how-desc">Completar o tema desbloqueia a carta do personagem. Nota perfeita na 1ª tentativa? Carta Lendária.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FEATURES -->
-<section class="section" style="background:var(--card);padding-top:64px;padding-bottom:64px;border-top:2px solid var(--border)">
+<section class="section">
   <div class="section-inner">
-    <div style="text-align:center" class="reveal">
-      <div class="section-label">Recursos</div>
+    <div class="reveal" style="margin-bottom:40px">
+      <div class="section-kicker">Recursos</div>
       <h2 class="section-title">Tudo que o André precisa</h2>
-      <p class="section-sub" style="margin:0 auto 48px">Projetado para complementar o estudo — não substituir o livro.</p>
     </div>
     <div class="feat-grid">
-      <div class="feat-card reveal d1">
-        <span class="feat-icon">📖</span>
-        <div class="feat-title">Fiel ao livro</div>
-        <p class="feat-desc">Cada atividade usa os termos exatos do livro didático. Nada de sinônimos que confundem na prova.</p>
-      </div>
-      <div class="feat-card reveal d2">
-        <span class="feat-icon">⚡</span>
-        <div class="feat-title">Feedback imediato</div>
-        <p class="feat-desc">Resposta certa ou errada aparece na hora. Com explicação didática para reforçar o conceito.</p>
-      </div>
-      <div class="feat-card reveal d3">
-        <span class="feat-icon">📱</span>
-        <div class="feat-title">Funciona no celular</div>
-        <p class="feat-desc">Todas as atividades são responsivas. Estude no tablet, no celular ou no computador.</p>
-      </div>
-      <div class="feat-card reveal d1">
-        <span class="feat-icon">🔥</span>
-        <div class="feat-title">Sequência de estudos</div>
-        <p class="feat-desc">O sistema registra dias consecutivos de estudo e cria hábito sem punição.</p>
-      </div>
-      <div class="feat-card reveal d2">
-        <span class="feat-icon">🗺️</span>
-        <div class="feat-title">Mapa mental interativo</div>
-        <p class="feat-desc">Em cada tema o André arrasta e conecta conceitos para construir o próprio mapa.</p>
-      </div>
-      <div class="feat-card reveal d3">
-        <span class="feat-icon">🎯</span>
-        <div class="feat-title">Reforço inteligente</div>
-        <p class="feat-desc">O portal sugere temas para revisar com base no desempenho — antes que a memória esqueça.</p>
-      </div>
+      <div class="feat-card reveal d1"><span class="feat-icon">⚡</span><div class="feat-title">Feedback imediato</div><p class="feat-desc">Cada resposta traz explicação didática na hora — sem esperar corretora.</p></div>
+      <div class="feat-card reveal d2"><span class="feat-icon">📱</span><div class="feat-title">Funciona no celular</div><p class="feat-desc">Todas as atividades são responsivas. Instala como app na tela inicial.</p></div>
+      <div class="feat-card reveal d3"><span class="feat-icon">🗺️</span><div class="feat-title">Mapa mental interativo</div><p class="feat-desc">Arrasta e conecta conceitos para construir o próprio mapa do tema.</p></div>
+      <div class="feat-card reveal d1"><span class="feat-icon">🔁</span><div class="feat-title">Reforço inteligente</div><p class="feat-desc">Sugere temas para revisar com base no desempenho — antes de esquecer.</p></div>
+      <div class="feat-card reveal d2"><span class="feat-icon">🏆</span><div class="feat-title">Streak diário</div><p class="feat-desc">Registra dias consecutivos de estudo. Hábito sem punição.</p></div>
+      <div class="feat-card reveal d3"><span class="feat-icon">📖</span><div class="feat-title">Termos do livro</div><p class="feat-desc">Nenhum sinônimo coloquial que confunda na prova — os termos são exatos.</p></div>
     </div>
   </div>
 </section>
 
-<!-- GAMIFICATION -->
+<!-- GAMIFICAÇÃO -->
 <section class="gami-section">
   <div class="gami-inner">
-    <div class="gami-text">
-      <div class="section-label reveal">Gamificação</div>
-      <h2 class="section-title reveal d1">Cartas que motivam de verdade.</h2>
-      <p class="section-sub reveal d2">Cada tema concluído desbloqueia uma carta com o personagem da aventura. Termine com nota perfeita na <strong style="color:#FCD34D">primeira tentativa</strong> e ganhe a carta Lendária.</p>
+    <div class="reveal-left">
+      <div class="section-kicker">Gamificação</div>
+      <h2 class="section-title">Cartas que motivam de verdade.</h2>
+      <p class="section-sub">Cada tema concluído desbloqueia uma carta com o personagem da aventura. Terminou com nota perfeita na <strong style="color:var(--amarelo)">primeira tentativa</strong>? Carta Lendária.</p>
       <div class="rarity-list">
-        <div class="rarity-row rarity-common reveal d1">
-          <div class="rarity-left">
-            <div class="rarity-dot"></div>
-            <span class="rarity-name">Comum</span>
-          </div>
+        <div class="rarity-row">
+          <div class="rarity-left"><div class="rarity-dot dot-common"></div><span class="rarity-name">Comum</span></div>
           <span class="rarity-cond">Completou o tema</span>
         </div>
-        <div class="rarity-row rarity-rare reveal d2">
-          <div class="rarity-left">
-            <div class="rarity-dot"></div>
-            <span class="rarity-name">Rara</span>
-          </div>
+        <div class="rarity-row">
+          <div class="rarity-left"><div class="rarity-dot dot-rare"></div><span class="rarity-name">Rara</span></div>
           <span class="rarity-cond">Score ≥ 80% em tudo</span>
         </div>
-        <div class="rarity-row rarity-epic reveal d3">
-          <div class="rarity-left">
-            <div class="rarity-dot"></div>
-            <span class="rarity-name">Épica</span>
-          </div>
+        <div class="rarity-row">
+          <div class="rarity-left"><div class="rarity-dot dot-epic"></div><span class="rarity-name">Épica</span></div>
           <span class="rarity-cond">Score ≥ 90% em tudo</span>
         </div>
-        <div class="rarity-row rarity-legendary reveal d4">
-          <div class="rarity-left">
-            <div class="rarity-dot"></div>
-            <span class="rarity-name">Lendária</span>
-          </div>
+        <div class="rarity-row">
+          <div class="rarity-left"><div class="rarity-dot dot-legendary"></div><span class="rarity-name name-legendary">Lendária</span></div>
           <span class="rarity-cond">Perfeito na 1ª tentativa</span>
         </div>
       </div>
@@ -699,38 +623,66 @@ footer{background:var(--sidebar);padding:32px;text-align:center}
       <div class="carta carta-common">
         <div class="carta-bg"></div>
         <div class="carta-emoji">🤖</div>
-        <div class="carta-info">
-          <div class="carta-name">Prepo</div>
-          <div class="carta-tag">COMUM</div>
-        </div>
+        <div class="carta-info"><div class="carta-name">Prepo</div><div class="carta-tag">COMUM</div></div>
       </div>
       <div class="carta carta-rare">
         <div class="carta-bg"></div>
         <div class="carta-emoji">🎭</div>
-        <div class="carta-info">
-          <div class="carta-name">Teatrão</div>
-          <div class="carta-tag">RARA</div>
-        </div>
+        <div class="carta-info"><div class="carta-name">Teatrão</div><div class="carta-tag">RARA</div></div>
       </div>
       <div class="carta carta-legendary">
         <div class="carta-bg"></div>
         <div class="carta-emoji">⚡</div>
-        <div class="carta-info">
-          <div class="carta-name">Verbão</div>
-          <div class="carta-tag legendary">LENDÁRIA</div>
-        </div>
+        <div class="carta-info"><div class="carta-name">Verbão</div><div class="carta-tag legendary">LENDÁRIA</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
+<!-- PORTAIS -->
 <section class="section">
   <div class="section-inner">
-    <div style="text-align:center" class="reveal">
-      <div class="section-label">Depoimentos</div>
+    <div class="reveal" style="text-align:center;margin-bottom:40px">
+      <div class="section-kicker">Alunos</div>
+      <h2 class="section-title">Portais personalizados</h2>
+      <p class="section-sub" style="margin:0 auto 0">Cada aluno tem o portal com o conteúdo do seu ano escolar.</p>
+    </div>
+    <div class="portais-grid">
+      <div class="portal-card andre">
+        <span class="portal-icon">🎓</span>
+        <div class="portal-name">André</div>
+        <div class="portal-grade verde">5º ANO · FUNDAMENTAL</div>
+        <p class="portal-desc">Portal completo com todas as disciplinas do 5º ano — fiel ao livro didático.</p>
+        <div class="portal-chips">
+          <span class="chip chip-port">Português</span>
+          <span class="chip chip-mat">Matemática</span>
+          <span class="chip chip-cien">Ciências</span>
+          <span class="chip chip-hist">História</span>
+          <span class="chip chip-geo">Geografia</span>
+        </div>
+        <a class="portal-btn btn-verde" href="#pricing">Assinar agora →</a>
+      </div>
+      <div class="portal-card lis">
+        <span class="portal-icon">✨</span>
+        <div class="portal-name">Lis</div>
+        <div class="portal-grade roxo">2º ANO · EM BREVE</div>
+        <p class="portal-desc">Portal para o 2º ano com o mesmo padrão de qualidade e fidelidade ao livro.</p>
+        <div class="portal-chips">
+          <span class="chip chip-port">Português</span>
+          <span class="chip chip-mat">Matemática</span>
+        </div>
+        <a class="portal-btn btn-roxo" href="#">Em breve</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="section" style="background:var(--surface);border-top:1px solid var(--border)">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:40px">
+      <div class="section-kicker">Depoimentos</div>
       <h2 class="section-title">O que dizem as famílias</h2>
-      <p class="section-sub" style="margin:0 auto 48px">Resultados reais de alunos do 5º ano.</p>
     </div>
     <div class="testi-grid">
       <div class="testi-card reveal d1">
@@ -738,21 +690,15 @@ footer{background:var(--sidebar);padding:32px;text-align:center}
         <p class="testi-text">"Minha filha nunca gostou de estudar história. Depois do Sabendo ela ficou pedindo para abrir o portal!"</p>
         <div class="testi-author">
           <div class="testi-avatar">👩</div>
-          <div>
-            <div class="testi-name">Ana Paula</div>
-            <div class="testi-role">Mãe da Laura, 5º ano</div>
-          </div>
+          <div><div class="testi-name">Ana Paula</div><div class="testi-role">Mãe da Laura, 5º ano</div></div>
         </div>
       </div>
       <div class="testi-card reveal d2">
         <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"O quiz ajuda demais na véspera de prova. Meu filho consegue revisar de forma divertida sem reclamar."</p>
+        <p class="testi-text">"O quiz ajuda demais na véspera de prova. Meu filho revisa de forma divertida sem reclamar."</p>
         <div class="testi-author">
           <div class="testi-avatar">👨</div>
-          <div>
-            <div class="testi-name">Rodrigo</div>
-            <div class="testi-role">Pai do Pedro, 5º ano</div>
-          </div>
+          <div><div class="testi-name">Rodrigo</div><div class="testi-role">Pai do Pedro, 5º ano</div></div>
         </div>
       </div>
       <div class="testi-card reveal d3">
@@ -760,10 +706,7 @@ footer{background:var(--sidebar);padding:32px;text-align:center}
         <p class="testi-text">"As cartas colecionáveis são incríveis. Minha filha quer a Lendária de cada tema — e estuda mais pra isso!"</p>
         <div class="testi-author">
           <div class="testi-avatar">👩</div>
-          <div>
-            <div class="testi-name">Camila</div>
-            <div class="testi-role">Mãe da Sofia, 5º ano</div>
-          </div>
+          <div><div class="testi-name">Camila</div><div class="testi-role">Mãe da Sofia, 5º ano</div></div>
         </div>
       </div>
     </div>
@@ -773,13 +716,13 @@ footer{background:var(--sidebar);padding:32px;text-align:center}
 <!-- PRICING -->
 <section class="pricing-section" id="pricing">
   <div class="section-inner" style="text-align:center">
-    <div class="section-label reveal">Planos</div>
+    <div class="section-kicker reveal">Planos</div>
     <h2 class="section-title reveal d1">Simples e transparente</h2>
-    <p class="section-sub reveal d2" style="margin:0 auto 24px">Sem pegadinhas. Cancele quando quiser.</p>
+    <p class="section-sub reveal d2" style="margin:0 auto 28px">Sem pegadinhas. Cancele quando quiser.</p>
     <div class="reveal d3">
       <div class="pricing-toggle">
         <button class="toggle-btn" id="btn-monthly" onclick="setTariff('monthly')">Mensal</button>
-        <button class="toggle-btn active" id="btn-annual" onclick="setTariff('annual')">Anual <span class="pricing-badge">-30%</span></button>
+        <button class="toggle-btn active" id="btn-annual" onclick="setTariff('annual')">Anual <span class="discount-badge">-30%</span></button>
       </div>
     </div>
     <div class="pricing-grid reveal d4">
@@ -808,7 +751,7 @@ footer{background:var(--sidebar);padding:32px;text-align:center}
           <li>Reforço inteligente</li>
           <li>Novas disciplinas inclusas</li>
         </ul>
-        <button class="pricing-btn pricing-btn-filled" onclick="this.textContent='Em breve!'">Assinar agora →</button>
+        <button class="pricing-btn pricing-btn-filled">Assinar agora →</button>
       </div>
     </div>
   </div>
@@ -817,33 +760,25 @@ footer{background:var(--sidebar);padding:32px;text-align:center}
 <!-- FAQ -->
 <section class="section">
   <div class="section-inner">
-    <div style="text-align:center;margin-bottom:48px" class="reveal">
-      <div class="section-label">Dúvidas</div>
+    <div style="text-align:center;margin-bottom:40px" class="reveal">
+      <div class="section-kicker">Dúvidas</div>
       <h2 class="section-title">Perguntas frequentes</h2>
     </div>
     <div class="faq-list">
       <div class="faq-item reveal d1">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          O conteúdo é do livro do meu filho? <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><p>Sim. Todo o conteúdo é extraído diretamente do livro didático do 5º ano — os mesmos termos técnicos, os mesmos conceitos, na mesma ordem curricular. Nada inventado.</p></div>
+        <div class="faq-q" onclick="toggleFaq(this)">O conteúdo é do livro do meu filho? <span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>Sim. Todo o conteúdo é extraído diretamente do livro didático — os mesmos termos técnicos, mesmos conceitos, na mesma ordem curricular. Nada inventado.</p></div>
       </div>
       <div class="faq-item reveal d2">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          Funciona no celular ou só no computador? <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><p>Funciona em qualquer dispositivo — celular, tablet ou computador. Todas as atividades são responsivas e o portal pode ser instalado como app direto na tela inicial do celular.</p></div>
+        <div class="faq-q" onclick="toggleFaq(this)">Funciona no celular? <span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>Funciona em qualquer dispositivo — celular, tablet ou computador. Pode ser instalado como app direto na tela inicial, sem precisar abrir o navegador.</p></div>
       </div>
       <div class="faq-item reveal d3">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          O que são as cartas colecionáveis? <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><p>Ao completar cada tema, o aluno desbloqueia uma carta com o personagem daquele conteúdo. A raridade (Comum, Rara, Épica ou Lendária) depende do desempenho — a Lendária só aparece com 100% na primeira tentativa.</p></div>
+        <div class="faq-q" onclick="toggleFaq(this)">O que são as cartas colecionáveis? <span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>Ao completar cada tema o aluno desbloqueia uma carta com o personagem daquele conteúdo. A raridade depende do desempenho — Lendária só com 100% na primeira tentativa.</p></div>
       </div>
       <div class="faq-item reveal d4">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          Posso cancelar a qualquer momento? <span class="faq-icon">+</span>
-        </div>
+        <div class="faq-q" onclick="toggleFaq(this)">Posso cancelar a qualquer momento? <span class="faq-icon">+</span></div>
         <div class="faq-a"><p>Sim. Sem fidelidade e sem burocracia. Se cancelar, o acesso fica ativo até o fim do período pago.</p></div>
       </div>
     </div>
@@ -852,107 +787,87 @@ footer{background:var(--sidebar);padding:32px;text-align:center}
 
 <!-- CTA FINAL -->
 <section class="cta-section">
-  <div style="position:relative;z-index:1">
-    <div class="section-label reveal">Comece hoje</div>
-    <h2 class="section-title reveal d1">Pronto para a próxima aventura?</h2>
-    <p class="section-sub reveal d2">Experimente 2 temas completos grátis — sem cartão de crédito.</p>
-    <div class="cta-checks reveal d3">
-      <span class="cta-check">Sem anúncios</span>
-      <span class="cta-check">Sem cartão</span>
-      <span class="cta-check">2 temas grátis</span>
-    </div>
-    <a class="btn-primary reveal d4" href="#pricing" style="font-size:16px;padding:16px 36px">Experimentar grátis →</a>
+  <div class="section-kicker reveal">Comece hoje</div>
+  <h2 class="section-title reveal d1" style="max-width:440px;margin:0 auto 12px">Pronto para a próxima aventura?</h2>
+  <p class="section-sub reveal d2" style="margin:0 auto">Experimente 2 temas completos grátis — sem cartão de crédito.</p>
+  <div class="cta-checks reveal d3">
+    <span class="cta-check">Sem anúncios</span>
+    <span class="cta-check">Sem cartão</span>
+    <span class="cta-check">2 temas grátis</span>
   </div>
+  <a class="btn-primary reveal d4" href="#pricing" style="font-size:16px;padding:16px 36px">Experimentar grátis →</a>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-brand">🤖 sabendo<span>.app</span></div>
-  <div class="footer-sub">Portal educacional do 5º ano — fiel ao livro didático</div>
+  <div class="footer-logo">
+    <img src="prepo-hd.png" alt="Prepo">
+    <span class="footer-brand">sabendo<span class="dot">.</span></span>
+  </div>
+  <p class="footer-copy">© 2026 sabendo.app</p>
 </footer>
 
 <script>
+// Scroll hint
+var hint = document.getElementById('scroll-hint');
+setTimeout(function(){hint.classList.add('visible')}, 2800);
+window.addEventListener('scroll', function(){
+  if(window.scrollY>60) hint.style.opacity='0';
+}, {passive:true});
+hint.addEventListener('click', function(){
+  document.querySelector('.stats-bar').scrollIntoView({behavior:'smooth'});
+});
+
 // Scroll reveal
-var observer = new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting) e.target.classList.add('visible');
-  });
+var revealObs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting) e.target.classList.add('visible')});
 },{threshold:.12});
-document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(function(el){observer.observe(el)});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(function(el){revealObs.observe(el)});
 
 // Animated counters
 var counted = false;
-var statsObserver = new IntersectionObserver(function(entries){
+var statsObs = new IntersectionObserver(function(entries){
   if(entries[0].isIntersecting && !counted){
     counted = true;
-    document.querySelectorAll('[data-target]').forEach(function(el){
-      var target = +el.dataset.target;
-      var suffix = el.dataset.suffix || '';
-      var start = 0;
-      var dur = 1200;
-      var step = 16;
-      var inc = target/(dur/step);
-      var timer = setInterval(function(){
+    document.querySelectorAll('.stat-num[data-target]').forEach(function(el){
+      var target = +el.dataset.target, suffix = el.dataset.suffix||'';
+      var start=0, dur=1200, step=16, inc=target/(dur/step);
+      var t = setInterval(function(){
         start = Math.min(start+inc, target);
         el.textContent = Math.round(start)+suffix;
-        if(start>=target) clearInterval(timer);
-      },step);
+        if(start>=target) clearInterval(t);
+      }, step);
     });
   }
 },{threshold:.3});
 var statsBar = document.querySelector('.stats-bar');
-if(statsBar) statsObserver.observe(statsBar);
+if(statsBar) statsObs.observe(statsBar);
 
 // FAQ
 function toggleFaq(el){
   var item = el.closest('.faq-item');
-  var isOpen = item.classList.contains('open');
+  var open = item.classList.contains('open');
   document.querySelectorAll('.faq-item').forEach(function(i){i.classList.remove('open')});
-  if(!isOpen) item.classList.add('open');
+  if(!open) item.classList.add('open');
 }
 
 // Pricing toggle
 function setTariff(t){
   document.getElementById('btn-monthly').classList.toggle('active', t==='monthly');
   document.getElementById('btn-annual').classList.toggle('active', t==='annual');
-  document.getElementById('price-display').innerHTML = t==='annual' ? '<sup>R$</sup>19' : '<sup>R$</sup>27';
-  document.getElementById('period-display').textContent = t==='annual' ? 'por mês, cobrado anualmente' : 'por mês';
+  document.getElementById('price-display').innerHTML = t==='annual'?'<sup>R$</sup>19':'<sup>R$</sup>27';
+  document.getElementById('period-display').textContent = t==='annual'?'por mês, cobrado anualmente':'por mês';
 }
 
-// Hero card counters (no delay)
-document.querySelectorAll('.hc-stat-num[data-target]').forEach(function(el){
-  var target = +el.dataset.target;
-  var suffix = el.dataset.suffix || '';
-  setTimeout(function(){
-    var start = 0;
-    var dur = 1400;
-    var step = 16;
-    var inc = target/(dur/step);
-    var timer = setInterval(function(){
-      start = Math.min(start+inc, target);
-      el.textContent = Math.round(start)+suffix;
-      if(start>=target) clearInterval(timer);
-    },step);
-  }, 400);
-});
-
 // Carta 3D tilt
-document.querySelectorAll('.carta').forEach(function(carta){
-  carta.addEventListener('mousemove',function(e){
-    var r = carta.getBoundingClientRect();
-    var x = (e.clientX - r.left)/r.width - .5;
-    var y = (e.clientY - r.top)/r.height - .5;
-    carta.style.transform = 'perspective(600px) rotateY('+x*20+'deg) rotateX('+(-y*20)+'deg) scale(1.05)';
+document.querySelectorAll('.carta').forEach(function(c){
+  c.addEventListener('mousemove', function(e){
+    var r = c.getBoundingClientRect();
+    var x = (e.clientX-r.left)/r.width-.5;
+    var y = (e.clientY-r.top)/r.height-.5;
+    c.style.transform = 'perspective(500px) rotateY('+(x*22)+'deg) rotateX('+(-y*22)+'deg) scale(1.06)';
   });
-  carta.addEventListener('mouseleave',function(){
-    carta.style.transform = '';
-  });
-});
-
-// Nav scroll style
-window.addEventListener('scroll',function(){
-  document.querySelector('.nav').style.background =
-    window.scrollY>40 ? 'rgba(244,242,255,.97)' : 'rgba(244,242,255,.88)';
+  c.addEventListener('mouseleave', function(){c.style.transform=''});
 });
 </script>
 </body>
