@@ -58,7 +58,7 @@ body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height
   <div class="btn-row">
     <button class="btn btn-primary" onclick="checkOrder()">✅ Verificar</button>
     <button class="btn btn-secondary" onclick="shuffleAndReset()">🔀 Embaralhar</button>
-    <button class="btn btn-back" onclick="window.close()">← Portal</button>
+    <button class="btn btn-back" onclick="voltarAoPortal()">← Portal</button>
   </div>
   <div class="result-section" id="resultSection"></div>
 </div>
@@ -189,7 +189,7 @@ function checkOrder(){
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
       <button class="btn btn-primary" onclick="shuffleAndReset()">🔀 Tentar novamente</button>
-      <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+      <button class="btn btn-back" onclick="voltarAoPortal()">← Voltar ao Portal</button>
     </div>`;
 }
 
@@ -317,5 +317,6 @@ shuffleAndReset();
   });
 })();
 </script>
+<script src="../../shared/portal-back.js"></script>
 </body>
 </html>

@@ -346,6 +346,18 @@ Substituir apenas: `DISCIPLINE`, `THEME_SLUG`, `ACTIVITY_TYPE`, `btn.style.cssTe
 - Para criadores/wizards sem score numérico: `window.sabendoScore = 100; document.dispatchEvent(new Event('sabendo:criador-done'));` na última etapa
 - Para flashcards: `window.sabendoScore = 100` quando o aluno chega ao último card
 
+### Navegação de Volta ao Portal
+
+**Nunca usar `onclick="window.close()"` em botões de retorno.** Browsers modernos bloqueiam `window.close()` em abas abertas por links.
+
+**Padrão obrigatório:** todo HTML de atividade deve incluir antes de `</body>`:
+```html
+<script src="../../shared/portal-back.js"></script>
+```
+E todo botão/link "Voltar ao Portal" deve usar `onclick="voltarAoPortal()"`.
+
+A função (`shared/portal-back.js`) lê o tema ativo via `window.opener`, tenta fechar a aba e, como fallback, navega para `../../index.html#theme-{disc}-{slug}` — retornando direto ao tema correto.
+
 ---
 
 ## Bugs conhecidos

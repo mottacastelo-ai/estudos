@@ -78,7 +78,7 @@ body{font-family:"Baloo 2",cursive;background:var(--bg);color:#1A1A2E;min-height
   <div class="card-area" id="cardArea"></div>
   <div class="btn-row">
     <button class="btn btn-primary" onclick="restart()">🔄 Recomeçar</button>
-    <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+    <button class="btn btn-back" onclick="voltarAoPortal()">← Voltar ao Portal</button>
   </div>
   <div class="summary" id="summary"></div>
 </div>
@@ -150,7 +150,7 @@ function showSummary(){
   s.innerHTML=`<div class="sum-emoji">${e}</div><div class="sum-score">${score}/${cards.length}</div><div class="sum-msg">${m}</div>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-primary" onclick="restart()">🔄 Tentar novamente</button>
-      <button class="btn btn-back" onclick="window.close()">← Voltar ao Portal</button>
+      <button class="btn btn-back" onclick="voltarAoPortal()">← Voltar ao Portal</button>
     </div>`;
 }
 
@@ -287,5 +287,6 @@ render();
   });
 })();
 </script>
+<script src="../../shared/portal-back.js"></script>
 </body>
 </html>

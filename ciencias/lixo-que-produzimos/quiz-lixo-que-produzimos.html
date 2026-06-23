@@ -67,7 +67,7 @@ footer{text-align:center;padding:16px;font-size:.8rem;color:var(--neutral);}
     <div class="result-title">Quiz concluído!</div>
     <div class="result-score" id="result-score"></div>
     <div class="result-msg" id="result-msg"></div>
-    <button class="back-btn" onclick="window.close()">← Voltar ao Portal</button>
+    <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao Portal</button>
     <button class="retry-btn" onclick="restartQuiz()">Tentar novamente</button>
   </div>
 </div>
@@ -262,5 +262,6 @@ renderQuestion();
   });
 })();
 </script>
+<script src="../../shared/portal-back.js"></script>
 </body>
 </html>
