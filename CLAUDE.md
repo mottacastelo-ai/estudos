@@ -27,7 +27,9 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 │  [gerador-hq-prompt]    → hq-[slug]-prompt.md      │  ← paralelo
 │  [gerador-atividades]   → *.html na pasta do tema  │  ← paralelo
 └────────────────────────────────────────────────────┘
-         ↓ (ambos concluídos)
+         ↓ (gerador-hq-prompt concluído — NÃO esperar o restante)
+[Orquestrador escreve .claude/pending/hq-[slug].json]  ← IMEDIATO, Codex já começa em paralelo
+         ↓ (em paralelo com Codex gerando imagens)
 [atualizador-index] → index.html atualizado
          ↓
    ┌─────┴──────────────────────────┐
@@ -39,7 +41,7 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
               ↓
    [Orquestrador consolida — bloqueia publicação se qualquer um reprovar]
          ↓
-[gerador-hq-imagens] → escreve .claude/pending/hq-[slug].json → aguarda Codex processar
+[gerador-hq-imagens] → polling em .claude/done/ até Codex confirmar (JSON já foi escrito antes)
                      → chars.png (em Personagens\5o ano\) + pg1–pg4 (na pasta do tema)
          ↓
 [colador-hq] → hq-[slug].png pronto para o portal
@@ -77,7 +79,7 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 3. **Escopo restrito às fotos fornecidas** — nenhum conceito inventado.
 4. **Variedade de atividades** — sem repetição de tipos na mesma disciplina.
 5. **Orquestrador não escreve HTML, prompts ou código** — delega sempre.
-6. **HQ via Codex** — `gerador-hq-imagens` escreve o JSON de pedido em `.claude/pending/`; Codex gera e salva as imagens; `colador-hq` empilha pg1–pg4 em `hq-[slug].png`. Nenhuma ação manual de Léo nessa etapa.
+6. **JSON Codex IMEDIATO após gerador-hq-prompt** — o orquestrador escreve `.claude/pending/hq-[slug].json` assim que o `gerador-hq-prompt` confirmar o arquivo .md, sem esperar o restante do pipeline. O Codex processa em paralelo enquanto atividades e index são gerados. `gerador-hq-imagens` apenas faz polling em `.claude/done/`. Encoding: UTF-8 sem BOM via `[System.IO.File]::WriteAllText(path, json, [System.Text.UTF8Encoding]::new($false))`.
 7. **Documentação imediata** — toda mudança validada (novo recurso, nova regra, nova convenção) deve ser registrada nos docs do repositório na mesma sessão em que foi aprovada. Nenhuma melhoria fica apenas na memória do Claude.
 8. **Opções de quiz não podem entregar a resposta** — antes de finalizar qualquer questão, verificar se as opções permitem responder sem saber o conteúdo. Casos proibidos:
    - Opções com valores numéricos quando a pergunta pede "maior/menor/mais/menos" → o aluno resolve por matemática, não por conhecimento. Mover os números para a explicação (feedback pós-resposta).
