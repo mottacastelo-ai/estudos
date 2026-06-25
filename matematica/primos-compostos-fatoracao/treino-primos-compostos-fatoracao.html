@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treino no Papel — Primos e Fatoração</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#059669;--light:#34D399;--bg:#ECFDF5;--dark:#064E3B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:16px}
+.header{background:linear-gradient(135deg,var(--dark),var(--primary));border-radius:16px;padding:20px 24px;color:#fff;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.header-emoji{font-size:48px;line-height:1}
+.header h1{font-family:'Space Mono',monospace;font-size:18px;margin-bottom:4px}
+.header p{font-size:14px;opacity:.85}
+.toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.btn-print{padding:12px 20px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;cursor:pointer}
+.btn-gabarito{padding:12px 20px;background:#fff;color:var(--primary);border:2px solid var(--primary);border-radius:12px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;cursor:pointer}
+.btn-concluir-paper{padding:12px 20px;background:linear-gradient(135deg,var(--primary),var(--light));color:#fff;border:none;border-radius:12px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;cursor:pointer}
+.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;border:2px solid #D1FAE5}
+.card h2{font-size:15px;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.num-ex{background:var(--primary);color:#fff;width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0}
+.enunciado{font-size:14px;color:#374151;line-height:1.7;margin-bottom:12px}
+.enunciado strong{color:var(--dark)}
+.linha-resposta{border:none;border-bottom:1.5px solid #D1FAE5;width:100%;padding:6px 2px;font-family:'Baloo 2',cursive;font-size:14px;color:#374151;background:transparent;margin-bottom:8px;outline:none}
+.linha-resposta:focus{border-bottom-color:var(--primary)}
+.instrucao{background:var(--bg);border-left:4px solid var(--primary);padding:12px 16px;border-radius:0 12px 12px 0;font-size:13px;color:var(--dark);margin-bottom:14px}
+.gabarito-box{display:none;background:var(--bg);border:2px solid var(--primary);border-radius:12px;padding:16px;margin-top:16px}
+.gabarito-box h3{color:var(--dark);font-size:14px;margin-bottom:10px}
+.gabarito-box p,.gabarito-box li{font-size:13px;color:#374151;line-height:1.9}
+.gabarito-box ul{padding-left:20px}
+.fat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:8px}
+.fat-item{background:#fff;border-radius:10px;padding:12px;border:1.5px solid #D1FAE5;text-align:center}
+.fat-item .fat-n{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--dark)}
+.fat-item .fat-resp{font-family:'Space Mono',monospace;font-size:12px;color:var(--primary);margin-top:4px}
+.fat-area{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.fat-box{flex:1;min-width:100px;border:1.5px dashed #D1FAE5;border-radius:10px;min-height:120px;padding:8px;font-size:12px;color:#9CA3AF;text-align:center;padding-top:40px}
+.classificar-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.class-col{border:1.5px solid #D1FAE5;border-radius:12px;padding:12px}
+.class-col h4{font-size:13px;color:var(--dark);margin-bottom:8px;text-align:center}
+.class-col .numeros-lista{font-family:'Space Mono',monospace;font-size:14px;min-height:60px;border-bottom:1px dashed #D1FAE5;padding-bottom:8px;color:#6B7280}
+.numeros-banco{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.num-tag{font-family:'Space Mono',monospace;font-size:14px;padding:6px 12px;border-radius:8px;background:var(--bg);color:var(--dark);border:1.5px solid #D1FAE5}
+.verificar-primo-wrap{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+.verif-item{border:1.5px solid #D1FAE5;border-radius:12px;padding:14px}
+.verif-item .verif-n{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--dark);margin-bottom:8px}
+.verif-item .passos-area{min-height:40px}
+.verif-item input{border:none;border-bottom:1px solid #D1FAE5;width:100%;font-family:'Baloo 2',cursive;font-size:13px;padding:4px;background:transparent;outline:none;color:#374151}
+.crivo-wrap{margin-top:12px}
+.crivo-grid{display:flex;flex-wrap:wrap;gap:6px;max-width:340px}
+.crivo-num{width:36px;height:36px;border-radius:8px;background:var(--bg);border:1.5px solid #D1FAE5;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--dark);cursor:pointer;user-select:none;transition:all .2s}
+.crivo-num.riscado{background:#FEE2E2;color:#9CA3AF;text-decoration:line-through;border-color:#FECACA}
+.crivo-num.primo{background:#D1FAE5;color:var(--dark);border-color:var(--primary)}
+@media print{
+  .toolbar{display:none}
+  body{background:#fff;padding:8px}
+  .header{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .card{border:1px solid #ccc;break-inside:avoid}
+  .gabarito-box{display:none!important}
+  .crivo-num{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-emoji">📝</div>
+  <div>
+    <h1>Treino no Papel</h1>
+    <p>Primos, Compostos e Fatoração · Matemática 5º ano</p>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimir</button>
+  <button class="btn-gabarito" id="btn-gab" onclick="toggleGabarito()">👁️ Ver gabarito</button>
+  <button class="btn-concluir-paper" onclick="concluirPapel()">✔ Já fiz no papel!</button>
+</div>
+
+<div class="instrucao">Resolva cada exercício no papel. Após terminar, clique em <strong>Ver gabarito</strong> para conferir.</div>
+
+<!-- Ex 1 -->
+<div class="card">
+  <h2><span class="num-ex">1</span> Primo ou composto?</h2>
+  <div class="enunciado">Classifique cada número abaixo como <strong>primo</strong> ou <strong>composto</strong>. Escreva a justificativa.</div>
+  <div class="numeros-banco" style="margin-bottom:14px">
+    <span class="num-tag">17</span><span class="num-tag">24</span><span class="num-tag">37</span>
+    <span class="num-tag">51</span><span class="num-tag">61</span><span class="num-tag">91</span>
+  </div>
+  <div class="classificar-grid">
+    <div class="class-col"><h4>✅ Primos</h4><div class="numeros-lista"></div></div>
+    <div class="class-col"><h4>📦 Compostos</h4><div class="numeros-lista"></div></div>
+  </div>
+  <div class="gabarito-box" id="gab1">
+    <h3>✅ Gabarito</h3>
+    <ul>
+      <li><strong>17</strong> — primo (divisível só por 1 e 17)</li>
+      <li><strong>24</strong> — composto (2×12, 3×8, 4×6)</li>
+      <li><strong>37</strong> — primo (não divisível por 2,3,5 — √37≈6,1)</li>
+      <li><strong>51</strong> — composto (3×17, pois 5+1=6 ÷ 3)</li>
+      <li><strong>61</strong> — primo (não divisível por 2,3,5,7 — √61≈7,8)</li>
+      <li><strong>91</strong> — composto (7×13)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Ex 2 -->
+<div class="card">
+  <h2><span class="num-ex">2</span> Verificação passo a passo</h2>
+  <div class="enunciado">Para verificar se um número é primo, divida-o pelos primos menores que sua raiz quadrada. Aplique o método nos números abaixo.</div>
+  <div class="verificar-primo-wrap">
+    <div class="verif-item">
+      <div class="verif-n">53 é primo?</div>
+      <div class="passos-area">
+        <input placeholder="53 ÷ 2 = ?  (resto ?)">
+        <input placeholder="53 ÷ 3 = ?  (resto ?)">
+        <input placeholder="53 ÷ 5 = ?  (resto ?)">
+        <input placeholder="53 ÷ 7 = ?  (resto ?)  →  √53 ≈ 7,3  →  parar aqui">
+        <input placeholder="Conclusão: 53 é ___">
+      </div>
+    </div>
+    <div class="verif-item">
+      <div class="verif-n">77 é primo?</div>
+      <div class="passos-area">
+        <input placeholder="77 ÷ 2 = ?  (resto ?)">
+        <input placeholder="77 ÷ 3 = ?  (resto ?)">
+        <input placeholder="77 ÷ 5 = ?  (resto ?)">
+        <input placeholder="77 ÷ 7 = ?  (resto ?)">
+        <input placeholder="Conclusão: 77 é ___">
+      </div>
+    </div>
+  </div>
+  <div class="gabarito-box" id="gab2">
+    <h3>✅ Gabarito</h3>
+    <p><strong>53:</strong> 53÷2=26 r1 | 53÷3=17 r2 | 53÷5=10 r3 | 53÷7=7 r4 → <strong>primo!</strong> (√53≈7,3, testamos até 7)</p>
+    <p style="margin-top:8px"><strong>77:</strong> 77÷2=38 r1 | 77÷3=25 r2 | 77÷5=15 r2 | 77÷7=<strong>11 r0</strong> → <strong>composto!</strong> (7×11=77)</p>
+  </div>
+</div>
+
+<!-- Ex 3 -->
+<div class="card">
+  <h2><span class="num-ex">3</span> Decomposição em fatores primos</h2>
+  <div class="enunciado">Faça a <strong>decomposição em fatores primos</strong> de cada número usando o método da divisão.</div>
+  <div class="fat-grid">
+    <div class="fat-item"><div class="fat-n">48</div><div class="fat-resp">= ?</div></div>
+    <div class="fat-item"><div class="fat-n">75</div><div class="fat-resp">= ?</div></div>
+    <div class="fat-item"><div class="fat-n">108</div><div class="fat-resp">= ?</div></div>
+    <div class="fat-item"><div class="fat-n">210</div><div class="fat-resp">= ?</div></div>
+  </div>
+  <p style="font-size:12px;color:#9CA3AF;margin-top:12px">Use o espaço abaixo para os cálculos:</p>
+  <div class="fat-area">
+    <div class="fat-box">48</div>
+    <div class="fat-box">75</div>
+    <div class="fat-box">108</div>
+    <div class="fat-box">210</div>
+  </div>
+  <div class="gabarito-box" id="gab3">
+    <h3>✅ Gabarito</h3>
+    <p>48 = 2⁴ × 3 &nbsp;|&nbsp; 75 = 3 × 5² &nbsp;|&nbsp; 108 = 2² × 3³ &nbsp;|&nbsp; 210 = 2 × 3 × 5 × 7</p>
+    <p style="margin-top:8px;font-size:12px;color:#6B7280">Dica: comece sempre pelo menor primo divisor (2), depois 3, depois 5, depois 7…</p>
+  </div>
+</div>
+
+<!-- Ex 4 — Crivo -->
+<div class="card">
+  <h2><span class="num-ex">4</span> Crivo de Eratóstenes</h2>
+  <div class="enunciado">Risque os múltiplos de 2, 3, 5 e 7 (que não sejam eles próprios). Os números que sobrarem são <strong>primos</strong>! Clique para riscar.</div>
+  <div class="crivo-wrap">
+    <div class="crivo-grid" id="crivo-grid"></div>
+  </div>
+  <div class="gabarito-box" id="gab4">
+    <h3>✅ Primos de 2 a 50</h3>
+    <p>2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47</p>
+    <p style="margin-top:6px;font-size:12px;color:#6B7280">São 15 primos entre 2 e 50.</p>
+  </div>
+</div>
+
+<script>
+var gabOpen = false;
+function toggleGabarito() {
+  gabOpen = !gabOpen;
+  document.querySelectorAll('.gabarito-box').forEach(function(el) { el.style.display = gabOpen ? 'block' : 'none'; });
+  document.getElementById('btn-gab').textContent = gabOpen ? '🙈 Esconder gabarito' : '👁️ Ver gabarito';
+  if (gabOpen) window.sabendoScore = 100;
+}
+function concluirPapel() { window.sabendoScore = 100; }
+
+var primos50 = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
+var grid = document.getElementById('crivo-grid');
+for (var i = 2; i <= 50; i++) {
+  var d = document.createElement('div');
+  d.className = 'crivo-num';
+  d.textContent = i;
+  d.dataset.n = i;
+  d.onclick = (function(el) { return function() {
+    if (el.classList.contains('primo')) { el.classList.remove('primo'); }
+    else if (el.classList.contains('riscado')) { el.classList.remove('riscado'); }
+    else { el.classList.add('riscado'); }
+  }; })(d);
+  grid.appendChild(d);
+}
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "primos-compostos-fatoracao";
+  var ACTIVITY_TYPE = "treino";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+  var GAMI_CONFIG = {
+    characterName: "Primo", characterEmoji: "🔍",
+    characterImg: "chars/primos-compostos-fatoracao-hd.png",
+    themeLabel: "Primos e Fatoração · Matemática",
+    totalActivities: 4, primaryColor: "#059669", lightColor: "#34D399",
+    bgColor: "#ECFDF5", glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-primos-compostos-fatoracao",
+    activityType: ACTIVITY_TYPE,
+  };
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn"; btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;";
+  document.body.appendChild(btn);
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") { _capturedScore = Math.round(window._sabendoScoreInternal); btn.style.display = "block"; }
+  }
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', { configurable:true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName==="style" && el.style && el.style.display==="block") { var s=(el.id||"")+" "+(el.className||""); if(/result|score|gabarito|feedback|correc/i.test(s)) showBtn(); }
+      if (m.attributeName==="class" && el.classList && el.classList.contains("show")) { var s2=(el.id||"")+" "+(el.className||""); if(/result|score|gabarito|feedback|correc/i.test(s2)) showBtn(); }
+    });
+  });
+  observer.observe(document.body, { subtree:true, attributes:true, attributeFilter:["class","style"] });
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession(); var session = res.data.session;
+    if (!session) { btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444"; setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000); return; }
+    var uid = session.user.id; var score = _capturedScore; var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id:uid, discipline:DISCIPLINE, theme_slug:THEME_SLUG, activity_type:ACTIVITY_TYPE, score:score, is_first_attempt:isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if (sr.data) { var s=sr.data; var yest=new Date(); yest.setDate(yest.getDate()-1); var yStr=yest.toISOString().split("T")[0]; var ns=(s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1; await supa.from("streaks").update({ current_streak:ns, longest_streak:Math.max(ns,s.longest_streak), last_activity_date:today, total_activities:s.total_activities+1, updated_at:new Date().toISOString() }).eq("user_id",uid); }
+    btn.style.display = "none";
+    if (window.SabendoGamification) { await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG); }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

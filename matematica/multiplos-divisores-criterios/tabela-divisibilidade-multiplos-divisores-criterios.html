@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabela da Divisibilidade — Múltiplos e Divisores</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary:#059669;--light:#34D399;--bg:#ECFDF5;--dark:#064E3B; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Baloo 2',cursive;background:var(--bg);min-height:100vh;padding:16px}
+.header{background:linear-gradient(135deg,var(--dark),var(--primary));border-radius:16px;padding:20px 24px;color:#fff;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.header-emoji{font-size:48px;line-height:1}
+.header h1{font-family:'Space Mono',monospace;font-size:18px;margin-bottom:4px}
+.header p{font-size:14px;opacity:.85}
+.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;border:2px solid #D1FAE5}
+.card h2{font-size:16px;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.instrucao{background:var(--bg);border-left:4px solid var(--primary);padding:12px 16px;border-radius:0 12px 12px 0;font-size:14px;color:var(--dark);margin-bottom:16px}
+.tabela-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--primary);color:#fff;padding:10px 8px;text-align:center;font-family:'Space Mono',monospace;font-size:13px}
+th.num-col{background:var(--dark);min-width:64px}
+td{border:1px solid #D1FAE5;padding:8px;text-align:center;vertical-align:middle}
+td.num-cell{font-family:'Space Mono',monospace;font-weight:700;color:var(--dark);font-size:15px;background:#F0FDF4}
+td.crit-cell{cursor:pointer;font-size:20px;user-select:none;transition:background .15s;min-width:48px}
+td.crit-cell:hover{background:#D1FAE5}
+td.crit-cell.marcado{background:#ECFDF5;color:var(--primary)}
+td.crit-cell.correto{background:#D1FAE5;color:#065F46}
+td.crit-cell.errado{background:#FEE2E2;color:#991B1B}
+.btn-verificar{width:100%;padding:14px;background:linear-gradient(135deg,var(--primary),var(--light));color:#fff;border:none;border-radius:12px;font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;cursor:pointer;margin-top:16px;transition:opacity .2s}
+.btn-verificar:hover{opacity:.9}
+.btn-verificar:disabled{opacity:.5;cursor:not-allowed}
+.resultado{display:none;background:linear-gradient(135deg,var(--dark),var(--primary));border-radius:14px;padding:20px;color:#fff;text-align:center;margin-top:16px}
+.resultado .placar{font-size:48px;font-weight:900;font-family:'Space Mono',monospace}
+.resultado .msg{font-size:16px;margin-top:8px;opacity:.9}
+.legenda{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-top:12px}
+.leg-item{display:flex;align-items:center;gap:6px}
+.leg-box{width:20px;height:20px;border-radius:4px;font-size:14px;display:flex;align-items:center;justify-content:center}
+.desafio{margin-top:8px}
+.desafio h2{color:var(--dark)}
+.opcoes-dig{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.opcao-btn{padding:12px 16px;border:2px solid #D1FAE5;border-radius:12px;background:#fff;font-family:'Baloo 2',cursive;font-size:14px;cursor:pointer;text-align:left;transition:all .2s}
+.opcao-btn:hover{border-color:var(--primary);background:var(--bg)}
+.opcao-btn.certa{border-color:var(--primary);background:#D1FAE5;color:#065F46;pointer-events:none}
+.opcao-btn.errada{border-color:#F87171;background:#FEE2E2;color:#991B1B;pointer-events:none}
+.feedback-dig{display:none;padding:14px;border-radius:12px;font-size:14px;margin-top:12px;font-weight:600}
+.feedback-dig.ok{background:#D1FAE5;color:#065F46;border:1.5px solid var(--primary)}
+.feedback-dig.nok{background:#FEE2E2;color:#991B1B;border:1.5px solid #F87171}
+.btn-reiniciar{padding:12px 24px;background:#fff;color:var(--primary);border:2px solid var(--primary);border-radius:12px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;transition:all .2s}
+.btn-reiniciar:hover{background:var(--bg)}
+.tag-dificil{background:var(--dark);color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;margin-left:8px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-emoji">🔢</div>
+  <div>
+    <h1>Tabela da Divisibilidade</h1>
+    <p>Múltiplos, Divisores e Critérios · Matemática 5º ano</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📋 Complete a tabela</h2>
+  <div class="instrucao">
+    Para cada número, clique nas células para marcar <strong>✕</strong> quando ele for divisível pelo critério. Deixe em branco quando não for. Depois clique em <strong>Verificar</strong>.
+  </div>
+  <div class="tabela-wrap">
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th class="num-col">Número</th>
+          <th>÷ 2</th><th>÷ 3</th><th>÷ 5</th><th>÷ 6</th><th>÷ 9</th><th>÷ 10</th>
+        </tr>
+      </thead>
+      <tbody id="corpo-tabela"></tbody>
+    </table>
+  </div>
+  <div class="legenda">
+    <div class="leg-item"><div class="leg-box" style="background:#ECFDF5;color:var(--primary)">✕</div><span>Divisível (marcado)</span></div>
+    <div class="leg-item"><div class="leg-box" style="background:#fff;border:1px solid #D1FAE5"></div><span>Não divisível (vazio)</span></div>
+  </div>
+  <button class="btn-verificar" id="btn-verificar" onclick="verificar()">✔ Verificar respostas</button>
+  <div class="resultado" id="resultado">
+    <div class="placar" id="placar-txt"></div>
+    <div class="msg" id="resultado-msg"></div>
+    <button class="btn-reiniciar" onclick="reiniciar()">🔄 Recomeçar</button>
+  </div>
+</div>
+
+<div class="card desafio">
+  <h2>🔍 Desafio do algarismo <span class="tag-dificil">Difícil</span></h2>
+  <div class="instrucao">
+    O número <strong>7a5b</strong> deve ser divisível por 2, 3, 5, 9 e 10 ao mesmo tempo.<br>
+    Qual é o valor de <strong>a</strong> e de <strong>b</strong>?
+  </div>
+  <div class="opcoes-dig" id="opcoes-dig">
+    <button class="opcao-btn" onclick="responderDesafio(this, false)">a = 3 e b = 0</button>
+    <button class="opcao-btn" onclick="responderDesafio(this, false)">a = 6 e b = 5</button>
+    <button class="opcao-btn" onclick="responderDesafio(this, true)">a = 6 e b = 0</button>
+    <button class="opcao-btn" onclick="responderDesafio(this, false)">a = 0 e b = 6</button>
+  </div>
+  <div class="feedback-dig" id="feedback-dig"></div>
+</div>
+
+<script>
+var numeros = [132, 400, 645, 720, 1080, 5200];
+var criterios = [2, 3, 5, 6, 9, 10];
+var correto = [
+  [true,  true,  false, true,  false, false],
+  [true,  false, true,  false, false, true ],
+  [false, true,  true,  false, false, false],
+  [true,  true,  true,  true,  true,  true ],
+  [true,  true,  true,  true,  true,  true ],
+  [true,  false, true,  false, false, true ]
+];
+var marcado = numeros.map(function() { return criterios.map(function() { return false; }); });
+var verificado = false;
+var desafioRespondido = false;
+
+function buildTable() {
+  var tbody = document.getElementById('corpo-tabela');
+  tbody.innerHTML = '';
+  numeros.forEach(function(n, i) {
+    var tr = document.createElement('tr');
+    var tdNum = document.createElement('td');
+    tdNum.className = 'num-cell'; tdNum.textContent = n.toLocaleString('pt-BR');
+    tr.appendChild(tdNum);
+    criterios.forEach(function(c, j) {
+      var td = document.createElement('td');
+      td.className = 'crit-cell'; td.id = 'c' + i + '_' + j;
+      td.textContent = marcado[i][j] ? '✕' : '';
+      td.onclick = (function(ii, jj) { return function() { toggle(ii, jj); }; })(i, j);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function toggle(i, j) {
+  if (verificado) return;
+  marcado[i][j] = !marcado[i][j];
+  var td = document.getElementById('c' + i + '_' + j);
+  td.textContent = marcado[i][j] ? '✕' : '';
+  td.className = 'crit-cell' + (marcado[i][j] ? ' marcado' : '');
+}
+
+function verificar() {
+  verificado = true;
+  var acertos = 0, total = numeros.length * criterios.length;
+  numeros.forEach(function(n, i) {
+    criterios.forEach(function(c, j) {
+      var td = document.getElementById('c' + i + '_' + j);
+      if (marcado[i][j] === correto[i][j]) {
+        acertos++;
+        td.className = 'crit-cell correto'; td.textContent = correto[i][j] ? '✕' : '—';
+      } else {
+        td.className = 'crit-cell errado'; td.textContent = correto[i][j] ? '✕' : '—';
+      }
+    });
+  });
+  document.getElementById('btn-verificar').disabled = true;
+  var pct = Math.round((acertos / total) * 100);
+  window.sabendoScore = pct;
+  var res = document.getElementById('resultado');
+  res.style.display = 'block';
+  document.getElementById('placar-txt').textContent = acertos + '/' + total;
+  var msgs = ['Continue praticando! Revise os critérios e tente novamente. 💪', 'Bom trabalho! Você está no caminho certo. Tente outra vez! 😊', 'Muito bem! Você domina bem os critérios! 🌟', 'Perfeito! Você acertou tudo! Divi ficaria orgulhoso! 🏆'];
+  document.getElementById('resultado-msg').textContent = pct < 50 ? msgs[0] : pct < 75 ? msgs[1] : pct < 100 ? msgs[2] : msgs[3];
+}
+
+function reiniciar() {
+  verificado = false;
+  marcado = numeros.map(function() { return criterios.map(function() { return false; }); });
+  document.getElementById('resultado').style.display = 'none';
+  document.getElementById('btn-verificar').disabled = false;
+  buildTable();
+}
+
+function responderDesafio(btn, correto) {
+  if (desafioRespondido) return;
+  desafioRespondido = true;
+  var fd = document.getElementById('feedback-dig');
+  document.querySelectorAll('.opcao-btn').forEach(function(b) { b.disabled = true; });
+  if (correto) {
+    btn.className = 'opcao-btn certa';
+    fd.className = 'feedback-dig ok'; fd.style.display = 'block';
+    fd.innerHTML = '✓ Correto! <strong>b = 0</strong> porque divisível por 10 exige terminar em 0. Divisível por 9 exige soma divisível por 9: 7+a+5+0 = 12+a → a = <strong>6</strong> (pois 18 ÷ 9 = 2 ✓). Verifique: 7 <strong>6</strong> 5 <strong>0</strong> = 7650.';
+  } else {
+    btn.className = 'opcao-btn errada';
+    fd.className = 'feedback-dig nok'; fd.style.display = 'block';
+    fd.innerHTML = '✗ Não é essa. Dica: divisível por 10 → último algarismo b = 0. Divisível por 9 → 7+a+5+0 = 12+a deve ser múltiplo de 9 → a = <strong>6</strong>.';
+  }
+}
+
+buildTable();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "multiplos-divisores-criterios";
+  var ACTIVITY_TYPE = "tabela-divisibilidade";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+  var GAMI_CONFIG = {
+    characterName: "Divi", characterEmoji: "🔢",
+    characterImg: "chars/multiplos-divisores-criterios-hd.png",
+    themeLabel: "Múltiplos e Divisores · Matemática",
+    totalActivities: 4, primaryColor: "#059669", lightColor: "#34D399",
+    bgColor: "#ECFDF5", glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-multiplos-divisores-criterios",
+    activityType: ACTIVITY_TYPE,
+  };
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn"; btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") { _capturedScore = Math.round(window._sabendoScoreInternal); btn.style.display = "block"; }
+  }
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', { configurable:true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName==="style" && el.style && el.style.display==="block") { var s=(el.id||"")+" "+(el.className||""); if(/result|score|gabarito|feedback|correc/i.test(s)) showBtn(); }
+      if (m.attributeName==="class" && el.classList && el.classList.contains("show")) { var s2=(el.id||"")+" "+(el.className||""); if(/result|score|gabarito|feedback|correc/i.test(s2)) showBtn(); }
+    });
+  });
+  observer.observe(document.body, { subtree:true, attributes:true, attributeFilter:["class","style"] });
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession(); var session = res.data.session;
+    if (!session) { btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444"; setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000); return; }
+    var uid = session.user.id; var score = _capturedScore; var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id:uid, discipline:DISCIPLINE, theme_slug:THEME_SLUG, activity_type:ACTIVITY_TYPE, score:score, is_first_attempt:isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if (sr.data) { var s=sr.data; var yest=new Date(); yest.setDate(yest.getDate()-1); var yStr=yest.toISOString().split("T")[0]; var ns=(s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1; await supa.from("streaks").update({ current_streak:ns, longest_streak:Math.max(ns,s.longest_streak), last_activity_date:today, total_activities:s.total_activities+1, updated_at:new Date().toISOString() }).eq("user_id",uid); }
+    btn.style.display = "none";
+    if (window.SabendoGamification) { await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG); }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
