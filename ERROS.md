@@ -159,11 +159,58 @@ O `manifest.json` **nunca deve ser alterado** sem revisar cada campo individualm
 
 ---
 
+## ERR-004 — `sabendoScore` acima de 100% em atividades
+
+**Arquivos afetados:** `matematica/multiplos-divisores-criterios/complete-lacuna-multiplos-divisores-criterios.html`, `domino-multiplos-divisores-criterios.html`
+**Data:** 2026-06-27
+**Tipo:** Cálculo de score — dupla multiplicação por 100
+
+### Causa raiz
+
+Dois padrões de erro distintos, ambos resultando em scores salvos acima de 100 no banco (ex: 9000%), que se propagam para o display "Acerto: X%" na carta de gamificação.
+
+**Padrão A — `pct` já é porcentagem, mas é multiplicado por 100 de novo:**
+```javascript
+// ❌ BUGADO
+const pct = (totalScore / realMax) * 100;  // pct é 0–100
+window.sabendoScore = Math.round(pct * 100); // salva até 10000
+
+// ✅ CORRETO
+window.sabendoScore = Math.round(pct); // pct já é 0–100
+```
+
+**Padrão B — score setado na função errada (progresso parcial em vez de resultado final):**
+```javascript
+// ❌ BUGADO — chamado a cada seção concluída, usa progresso (0/3, 1/3...) não acerto
+function updateProgress() {
+  const pct = (sectionsDone / 3) * 100;
+  window.sabendoScore = Math.round(pct * 100); // duplo bug: timing + double-multiply
+}
+
+// ✅ CORRETO — score setado em showResult() com o acerto real
+function showResult() {
+  const pct = (totalScore / 22) * 100;
+  window.sabendoScore = Math.round(pct);
+}
+```
+
+### Regra para a squad
+
+Antes de setar `window.sabendoScore`, checar:
+
+1. **`pct` é fração (0–1)?** → usar `Math.round(pct * 100)`
+2. **`pct` é porcentagem (0–100)?** → usar `Math.round(pct)` ou `pct` diretamente
+3. **O setter está em `showResult()` / função de conclusão final?** → nunca em funções de progresso parcial
+
+Regra de ouro: `window.sabendoScore` deve ser sempre um inteiro entre 0 e 100.
+
+---
+
 ## Checklist anti-bug para `gerador-atividades`
 
 Antes de finalizar qualquer arquivo HTML de atividade, verificar:
 
-- [ ] A atividade chama `window.sabendoScore = pct` (0–100) antes de exibir o resultado?
+- [ ] A atividade chama `window.sabendoScore = pct` (0–100) antes de exibir o resultado? (se `pct` for fração 0–1, usar `Math.round(pct * 100)`; se já for 0–100, usar `Math.round(pct)` — nunca `Math.round(pct * 100)` quando pct já é porcentagem)
 - [ ] Se houver botão "Ver gabarito" independente: `window.sabendoScore` é setado ANTES de mostrar o elemento?
 - [ ] Se o score é incremental (acertos parciais): `window.sabendoScore` só é setado na conclusão final (não a cada acerto)?
 - [ ] Para criadores: `window.sabendoScore = 100` + `document.dispatchEvent(new Event('sabendo:criador-done'))` na última etapa?
