@@ -476,7 +476,6 @@ function checkC() {
 
 function updateProgress() {
   const pct = (sectionsDone / 3) * 100;
-  window.sabendoScore = Math.round(pct * 100);
   document.getElementById("prog-fill").style.width = pct + "%";
   document.getElementById("prog-label").textContent = `${sectionsDone} de 3 seções concluídas`;
 }
@@ -484,6 +483,7 @@ function updateProgress() {
 function showResult() {
   document.getElementById("all-sections").classList.add("hidden");
   const pct = (totalScore / 22) * 100; // 22 = máximo possível (7+10+5)
+  window.sabendoScore = Math.round(pct);
   let emoji, msg;
   if (pct >= 90) { emoji = "🏆"; msg = "Parabéns! Você dominou múltiplos, divisores e critérios com maestria!"; }
   else if (pct >= 70) { emoji = "⭐"; msg = "Muito bem! Revise os pontos que deixou em branco e tente novamente!"; }

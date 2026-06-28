@@ -326,7 +326,7 @@ function showResult() {
   // Máximo real: 6 rodadas, cada uma valendo 10 pontos no melhor caso
   const realMax = NUMBERS.length * 10;
   const pct = (totalScore / realMax) * 100;
-  window.sabendoScore = Math.round(pct * 100);
+  window.sabendoScore = Math.round(pct);
   let emoji, msg;
   if (pct >= 90) { emoji = "🏆"; msg = "Você é um expert em critérios de divisibilidade! Divi ficaria orgulhoso!"; }
   else if (pct >= 70) { emoji = "⭐"; msg = "Muito bem! Você domina a maioria dos critérios. Revise o que errou!"; }
