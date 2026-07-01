@@ -16,6 +16,26 @@
  *   backUrl             // opcional — redireciona após o reveal da carta
  * }
  */
+// Sync de sessão cross-tab: se a aba da atividade não tem sessão local,
+// toma emprestado do opener (portal) antes do usuário interagir.
+(async function syncSessionFromOpener() {
+  try {
+    if (!window.opener || window.opener.closed) return;
+    if (!window.supabase) return;
+    var _URL = 'https://mmtrzxmitklpibfilbio.supabase.co';
+    var _KEY = 'sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_';
+    var _client = window.supabase.createClient(_URL, _KEY);
+    var localRes = await _client.auth.getSession();
+    if (localRes.data.session) return; // sessão já presente, nada a fazer
+    var openerRes = await window.opener.supa.auth.getSession();
+    if (!openerRes || !openerRes.data.session) return;
+    await _client.auth.setSession({
+      access_token:  openerRes.data.session.access_token,
+      refresh_token: openerRes.data.session.refresh_token,
+    });
+  } catch (e) { /* opener fechado ou sem sessão — silencia */ }
+})();
+
 (function () {
   "use strict";
 
