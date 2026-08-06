@@ -134,6 +134,8 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 | Calê (moeda/medalha dourada) | Diversos Calendários | `chars/calendarios-povos-hd.png` |
 | Memo (estela de pedra) | Marcos de Memória | `chars/marcos-memoria-hd.png` |
 | Timbre (selo postal laranja) | Zumbi e Imigrantes | `chars/memoria-negra-imigrantes-hd.png` |
+| Lupa (lupa detetive dourada, boné de detetive marrom) | Fontes Históricas e Impactos Ambientais | `chars/fontes-historicas-ambiente-hd.png` |
+| Fio (novelo de linha âmbar/marrom animado) | Do Artesanato à Indústria | `chars/artesanato-industria-hd.png` |
 
 > Caminhos de portrait são relativos a `_landing/`. Folhas de personagens em `Personagens\5o ano\`.
 > Novos personagens devem ser **metáforas visuais do conceito central** do tema.
@@ -145,7 +147,7 @@ estudos/
 ├── portugues/[slug]/     ← 12 temas
 ├── matematica/[slug]/    ← 7 temas
 ├── ciencias/[slug]/      ← 4 temas
-├── historia/[slug]/      ← 3 temas
+├── historia/[slug]/      ← 5 temas
 ├── geografia/[slug]/     ← 3 temas
 └── _landing/
     ├── prepo-hd.png      ← portrait do Prepo (raiz)

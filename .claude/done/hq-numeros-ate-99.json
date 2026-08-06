@@ -1,0 +1,9 @@
+{
+  "slug": "numeros-ate-99",
+  "tema": "Números até 99 e Comparar Quantidades",
+  "disciplina": "matematica",
+  "raiz": "estudos-2ano",
+  "prompt_md": "C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos-2ano\\\\matematica\\\\numeros-ate-99\\\\hq-numeros-ate-99-prompt.md",
+  "subfolder": "matematica/numeros-ate-99",
+  "expected_outputs": ["pg1", "pg2", "pg3", "pg4"]
+}

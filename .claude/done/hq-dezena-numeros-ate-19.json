@@ -1,0 +1,9 @@
+{
+  "slug": "dezena-numeros-ate-19",
+  "tema": "A Dezena e os Números até 19",
+  "disciplina": "matematica",
+  "raiz": "estudos-2ano",
+  "prompt_md": "C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos-2ano\\\\matematica\\\\dezena-numeros-ate-19\\\\hq-dezena-numeros-ate-19-prompt.md",
+  "subfolder": "matematica/dezena-numeros-ate-19",
+  "expected_outputs": ["pg1", "pg2", "pg3", "pg4"]
+}

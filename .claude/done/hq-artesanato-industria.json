@@ -1,0 +1,14 @@
+{
+    "canonicas_path":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+    "slug":  "artesanato-industria",
+    "expected_outputs":  [
+                             "hq-artesanato-industria-pg1.png",
+                             "hq-artesanato-industria-pg2.png",
+                             "hq-artesanato-industria-pg3.png",
+                             "hq-artesanato-industria-pg4.png"
+                         ],
+    "prompt_path":  "historia/artesanato-industria/hq-artesanato-industria-prompt.md",
+    "disciplina":  "historia",
+    "raiz":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+    "output_dir":  "historia/artesanato-industria"
+}

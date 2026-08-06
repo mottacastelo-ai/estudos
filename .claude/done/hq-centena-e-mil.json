@@ -1,0 +1,9 @@
+{
+  "slug": "centena-e-mil",
+  "tema": "A Centena e o Número 1.000",
+  "disciplina": "matematica",
+  "raiz": "estudos-2ano",
+  "prompt_md": "C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos-2ano\\\\matematica\\\\centena-e-mil\\\\hq-centena-e-mil-prompt.md",
+  "subfolder": "matematica/centena-e-mil",
+  "expected_outputs": ["pg1", "pg2", "pg3", "pg4"]
+}

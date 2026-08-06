@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário do Artesão — Do Artesanato à Indústria</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; --correct: #059669; --wrong: #DC2626; --neutral: #374151; --border: #FDE68A; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: var(--neutral); overflow-x: hidden; }
+.header { background: linear-gradient(135deg, var(--dark), var(--primary) 60%, var(--light)); color: white; padding: 28px 28px 24px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7); text-decoration: none; margin-bottom: 14px; transition: color .15s; background: none; border: none; cursor: pointer; font-family: 'Baloo 2', sans-serif; }
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+.main { max-width: 720px; margin: 0 auto; padding: 24px 20px 60px; }
+.instrucao { background: white; border: 2px solid var(--border); border-radius: 16px; padding: 16px 18px; font-size: 14px; font-weight: 600; color: var(--neutral); margin-bottom: 18px; line-height: 1.6; }
+.instrucao strong { color: var(--dark); }
+.cenario { background: #fff7ed; border-left: 4px solid var(--primary); border-radius: 10px; padding: 12px 16px; font-size: 13.5px; font-style: italic; color: var(--dark); margin-bottom: 18px; line-height: 1.5; }
+.termos-box { background: white; border: 2px solid var(--border); border-radius: 16px; padding: 14px 18px; margin-bottom: 20px; }
+.termos-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--dark); letter-spacing: .05em; margin-bottom: 10px; }
+.termos-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { background: var(--bg); border: 2px solid var(--light); color: var(--dark); font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: all .15s; min-height: 32px; display: inline-flex; align-items: center; }
+.chip:hover { background: var(--light); color: white; }
+.chip.used { background: var(--correct); border-color: var(--correct); color: white; opacity: .8; }
+.card { background: white; border-radius: 16px; padding: 18px; box-shadow: 0 2px 12px rgba(180,83,9,.08); margin-bottom: 16px; border-top: 4px solid var(--primary); }
+.card-label { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+.card-prompt { font-size: 13.5px; font-weight: 600; color: var(--neutral); margin-bottom: 10px; line-height: 1.5; font-style: italic; }
+textarea { width: 100%; min-height: 100px; border: 2.5px solid var(--border); border-radius: 12px; padding: 12px 14px; font-family: 'Baloo 2', sans-serif; font-size: 16px; color: var(--neutral); resize: vertical; transition: border-color .15s; }
+textarea:focus { outline: none; border-color: var(--primary); }
+.char-count { font-size: 11.5px; color: #9CA3AF; text-align: right; margin-top: 4px; font-weight: 700; }
+.save-btn, .voltar-btn { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; border: none; border-radius: 12px; padding: .85rem 2rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: transform .15s; display: block; margin: 0 auto; min-height: 48px; }
+.save-btn:hover { transform: scale(1.03); }
+.save-btn:disabled { opacity: .5; cursor: default; transform: none; }
+.feedback-box { border-radius: 12px; padding: 14px 18px; margin-top: 16px; margin-bottom: 16px; display: none; font-size: 13.5px; font-weight: 700; line-height: 1.5; }
+.feedback-box.show { display: block; }
+.feedback-box.wrong { background: #fee2e2; border: 2px solid #fca5a5; color: #7f1d1d; }
+.feedback-box.correct { background: #d1fae5; border: 2px solid #6ee7b7; color: #065f46; }
+.result-card { display: none; text-align: center; background: white; border-radius: 20px; padding: 2.5rem 1.5rem; box-shadow: 0 4px 24px rgba(180,83,9,.12); margin-top: 20px; }
+.result-card.show { display: block; }
+.result-emoji { font-size: 3.5rem; margin-bottom: .5rem; }
+.result-msg { font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 1.2rem; }
+.voltar-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); }
+.voltar-btn:hover { background: var(--primary); color: white; }
+@media (max-width: 480px) {
+  .header h1 { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="../../index.html" class="back-btn" onclick="event.preventDefault(); voltarAoPortal();">← Voltar</a>
+  <h1>Diário do Artesão</h1>
+  <p>Do Artesanato à Indústria · História 5º ano</p>
+</div>
+<div class="main">
+  <div class="instrucao">
+    <strong>Sua missão:</strong> Você é um(a) artesão(ã) que vive no final do século XVIII. Escreva uma entrada de diário contando o que aconteceu quando uma fábrica com um tear mecânico chegou na sua cidade. Complete os três trechos abaixo com suas próprias palavras.
+  </div>
+  <div class="cenario">
+    "Hoje é um dia diferente. Ouvi dizer que, na Inglaterra e em outras partes, grandes máquinas estão mudando a forma como as pessoas trabalham. E agora, isso chegou até aqui, na minha própria rua..."
+  </div>
+
+  <div class="termos-box">
+    <div class="termos-title">TERMOS QUE VOCÊ DEVE USAR (clique para inserir no texto — use pelo menos 2)</div>
+    <div class="termos-chips" id="chips"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">PARTE 1 — Como era o meu trabalho antes</div>
+    <div class="card-prompt">Conte como você trabalhava antes da fábrica chegar: você fazia tudo sozinho(a)? Quem era o dono das suas ferramentas e da matéria-prima que usava?</div>
+    <textarea id="parte1" placeholder="Eu sempre trabalhei com minhas próprias mãos, fazendo cada peça do início ao fim..." oninput="updateState()"></textarea>
+    <div class="char-count" id="count1">0 caracteres</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">PARTE 2 — O que eu vi chegar na cidade</div>
+    <div class="card-prompt">Descreva o que você viu: o galpão grande, as máquinas, os muitos trabalhadores reunidos, os sons e a fumaça.</div>
+    <textarea id="parte2" placeholder="Hoje, ao passar pela rua, vi um galpão enorme sendo construído perto do rio..." oninput="updateState()"></textarea>
+    <div class="char-count" id="count2">0 caracteres</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">PARTE 3 — O que eu sinto sobre essa mudança</div>
+    <div class="card-prompt">Escreva o que você pensa e sente: você está com medo, curioso, preocupado com o seu trabalho? O que pode acontecer com artesãos como você?</div>
+    <textarea id="parte3" placeholder="Não sei bem o que pensar sobre essas máquinas novas. Meu coração está confuso..." oninput="updateState()"></textarea>
+    <div class="char-count" id="count3">0 caracteres</div>
+  </div>
+
+  <div class="feedback-box" id="feedback-box"></div>
+
+  <button class="save-btn" id="save-btn" onclick="checkDiario()" disabled>Salvar entrada do diário</button>
+
+  <div class="result-card" id="result-card">
+    <div class="result-emoji">🏆</div>
+    <div class="result-msg" id="result-msg">Seu diário foi concluído! Muito bem, artesão(ã) — você contou essa história usando os termos certos.</div>
+    <button class="voltar-btn" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  </div>
+</div>
+<script>
+var TERMOS = [
+  'artesanato', 'meios de produção', 'instrumentos rudimentares',
+  'divisão do trabalho', 'fábrica', 'indústria', 'tear mecânico'
+];
+
+var MIN_CHARS = 20;
+var activeTextarea = null;
+
+function normalize(str) {
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function renderChips() {
+  var wrap = document.getElementById('chips');
+  wrap.innerHTML = '';
+  TERMOS.forEach(function(termo) {
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip';
+    chip.id = 'chip-' + termo.replace(/\s+/g, '-');
+    chip.textContent = termo;
+    chip.addEventListener('click', function() {
+      var target = activeTextarea || document.getElementById('parte1');
+      var start = target.selectionStart != null ? target.selectionStart : target.value.length;
+      var end = target.selectionEnd != null ? target.selectionEnd : target.value.length;
+      var before = target.value.slice(0, start);
+      var after = target.value.slice(end);
+      var insert = termo;
+      if (before.length && !/\s$/.test(before)) insert = ' ' + insert;
+      if (after.length && !/^\s/.test(after)) insert = insert + ' ';
+      target.value = before + insert + after;
+      target.focus();
+      updateState();
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+['parte1', 'parte2', 'parte3'].forEach(function(id) {
+  var el = document.getElementById(id);
+  el.addEventListener('focus', function() { activeTextarea = el; });
+});
+
+function updateState() {
+  var p1 = document.getElementById('parte1').value;
+  var p2 = document.getElementById('parte2').value;
+  var p3 = document.getElementById('parte3').value;
+  document.getElementById('count1').textContent = p1.length + ' caracteres';
+  document.getElementById('count2').textContent = p2.length + ' caracteres';
+  document.getElementById('count3').textContent = p3.length + ' caracteres';
+
+  var combined = normalize(p1 + ' ' + p2 + ' ' + p3);
+  var usedTermos = TERMOS.filter(function(t) { return combined.indexOf(normalize(t)) !== -1; });
+
+  TERMOS.forEach(function(termo) {
+    var chip = document.getElementById('chip-' + termo.replace(/\s+/g, '-'));
+    if (chip) chip.classList.toggle('used', usedTermos.indexOf(termo) !== -1);
+  });
+
+  var allLongEnough = p1.length >= MIN_CHARS && p2.length >= MIN_CHARS && p3.length >= MIN_CHARS;
+  var enoughTermos = usedTermos.length >= 2;
+  document.getElementById('save-btn').disabled = !(allLongEnough && enoughTermos);
+
+  var fb = document.getElementById('feedback-box');
+  if (!allLongEnough) {
+    fb.className = 'feedback-box show wrong';
+    fb.textContent = '✏️ Escreva um pouco mais em cada parte (pelo menos ' + MIN_CHARS + ' caracteres) para completar seu diário.';
+  } else if (!enoughTermos) {
+    fb.className = 'feedback-box show wrong';
+    fb.textContent = '📌 Use pelo menos 2 dos termos técnicos (clique nos balões acima para inserir). Termos usados até agora: ' + (usedTermos.length ? usedTermos.join(', ') : 'nenhum');
+  } else {
+    fb.className = 'feedback-box show correct';
+    fb.textContent = '✅ Ótimo! Você já usou: ' + usedTermos.join(', ') + '. Pode salvar seu diário quando quiser.';
+  }
+}
+
+function checkDiario() {
+  document.getElementById('save-btn').style.display = 'none';
+  document.getElementById('feedback-box').className = 'feedback-box';
+  document.getElementById('result-card').className = 'result-card show';
+  window.sabendoScore = 100;
+  document.dispatchEvent(new Event('sabendo:criador-done'));
+}
+
+renderChips();
+updateState();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "artesanato-industria";
+  var ACTIVITY_TYPE = "diario-do-personagem-historico";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Fio",
+    characterEmoji: "🧵",
+    characterImg:   "chars/artesanato-industria-hd.png",
+    themeLabel:     "Do Artesanato à Indústria · História",
+    totalActivities: 5,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: '../../index.html#theme-hist-artesanato-industria',
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
+  }
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

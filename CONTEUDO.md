@@ -1,5 +1,5 @@
 # Conteúdo do Portal — Estado Atual
-**Última atualização:** 2026-06-22
+**Última atualização:** 2026-08-06
 
 ---
 
@@ -8,11 +8,11 @@
 | Disciplina | Temas | Atividades |
 |---|---|---|
 | 📝 Português | 12 | 59 |
-| 🔢 Matemática | 7 | 26 |
+| 🔢 Matemática | 7 | 32 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
-| 📜 História | 3 | 9 |
-| **Total** | **29** | **123** |
+| 📜 História | 5 | 19 |
+| **Total** | **31** | **139** |
 
 ---
 
@@ -235,6 +235,8 @@
 | Associador de Critérios | ✅ `domino-multiplos-divisores-criterios.html` |
 | Complete a Lacuna | ✅ `complete-lacuna-multiplos-divisores-criterios.html` |
 | Mapa Mental | ✅ `mapa-mental-multiplos-divisores-criterios.html` |
+| Tabela da Divisibilidade | ✅ `tabela-divisibilidade-multiplos-divisores-criterios.html` |
+| Treino no Papel | ✅ `treino-multiplos-divisores-criterios.html` |
 
 ---
 
@@ -247,6 +249,8 @@
 | Ordene a Fatoração | ✅ `ordenacao-primos-compostos-fatoracao.html` |
 | Missão do Detetive Primo | ✅ `missao-primos-compostos-fatoracao.html` |
 | Mapa Mental | ✅ `mapa-mental-primos-compostos-fatoracao.html` |
+| Fatoração Guiada | ✅ `fatoracao-guiada-primos-compostos-fatoracao.html` |
+| Treino no Papel | ✅ `treino-primos-compostos-fatoracao.html` |
 
 ---
 
@@ -259,6 +263,8 @@
 | Criador de Fatoração | ✅ `criador-mdc-mmc-problemas.html` |
 | Transformador de Problemas | ✅ `transformador-mdc-mmc-problemas.html` |
 | Mapa Mental | ✅ `mapa-mental-mdc-mmc-problemas.html` |
+| Problemas Contextuais | ✅ `problemas-mdc-mmc-problemas.html` |
+| Treino no Papel | ✅ `treino-mdc-mmc-problemas.html` |
 
 ---
 
@@ -384,6 +390,34 @@
 | Quiz Interativo | ✅ `quiz-memoria-negra-imigrantes.html` |
 | Selos da Memória | ✅ `selos-da-memoria.html` |
 | Mapa Mental | ✅ `mapa-mental-memoria-negra-imigrantes.html` |
+
+---
+
+### Fontes Historicas Ambiente
+**Personagem:** Lupa
+**HQ:** ✅ `hq-fontes-historicas-ambiente.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz — Fontes e Impactos Ambientais | ✅ `quiz-fontes-historicas-ambiente.html` |
+| Classificador de Fontes | ✅ `classificador-fontes-historicas-ambiente.html` |
+| Analisador de Fonte Histórica | ✅ `analisador-fonte-fontes-historicas-ambiente.html` |
+| Juiz da História | ✅ `juiz-inspecao-veicular-fontes-historicas-ambiente.html` |
+| Mapa Mental | ✅ `mapa-mental-fontes-historicas-ambiente.html` |
+
+---
+
+### Artesanato Industria
+**Personagem:** Fio
+**HQ:** ✅ `hq-artesanato-industria.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz — Artesanato e Indústria | ✅ `quiz-artesanato-industria.html` |
+| Antes e Depois | ✅ `antes-e-depois-artesanato-industria.html` |
+| Linha do Tempo dos Teares | ✅ `linha-do-tempo-teares-artesanato-industria.html` |
+| Diário do Artesão | ✅ `diario-artesao-artesanato-industria.html` |
+| Mapa Mental | ✅ `mapa-mental-artesanato-industria.html` |
 
 ---
 

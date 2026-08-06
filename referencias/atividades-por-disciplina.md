@@ -180,7 +180,7 @@ Estas duas atividades são geradas sempre, independentemente da disciplina ou do
 
 ---
 
-## 📜 História (3 temas)
+## 📜 História (5 temas)
 
 ### Tipos já usados (não repetir)
 
@@ -189,18 +189,18 @@ Estas duas atividades são geradas sempre, independentemente da disciplina ou do
 | Comparador de calendários | Diversos Calendários | L1 |
 | Detetive de nomes (identificação em contexto) | Marcos de Memória | L2 |
 | Selos da memória (produção de registro visual) | Zumbi e Imigrantes | L3 |
+| Classificador de fontes | Fontes Históricas e Impactos Ambientais | L2 |
+| Analisador de fonte histórica | Fontes Históricas e Impactos Ambientais | L1 |
+| Juiz da história | Fontes Históricas e Impactos Ambientais | L3 |
+| Antes e depois | Do Artesanato à Indústria | L2 |
+| Linha do tempo interativa | Do Artesanato à Indústria | L2 |
+| Diário do personagem histórico | Do Artesanato à Indústria | L3 |
 
 ### Tipos disponíveis (não usados em História)
 
 | Tipo | Descrição | Nível | Conteúdos que servem bem | Conteúdos que servem mal | Complexidade |
 |---|---|---|---|---|---|
-| **Linha do tempo interativa** | O aluno posiciona eventos em uma timeline arrastável; pode ter ramificações para simultâneos | L2 | Períodos históricos, sequência de eventos, civilizações | Conceitos abstratos | Média |
-| **Analisador de fonte histórica** | O aluno examina um documento/imagem histórica e responde perguntas guiadas (quem produziu, para quê, o que revela) | L1 | Fontes primárias, iconografia, propaganda | Cronologia | Baixa |
-| **Juiz da história** | O aluno avalia afirmações sobre um período como verdadeiras, falsas ou "depende do ponto de vista" — com justificativa | L3 | Múltiplas perspectivas, revisão histórica, direitos | Cronologia linear | Média |
 | **Construtor de linha causal** | O aluno conecta evento → causa → consequência em cadeia, podendo ramificar | L2 | Revoluções, guerras, mudanças sociais, migrações | Cultura material, cotidiano | Alta |
-| **Diário do personagem histórico** | O aluno escreve uma entrada de diário fictícia de um personagem histórico com termos corretos do período | L3 | Perspectiva histórica, empatia, cotidiano | Cronologia, datas | Média |
-| **Antes e depois** | Imagens ou descrições de um lugar/grupo em dois momentos históricos; o aluno identifica e explica as mudanças | L2 | Transformações urbanas, migrações, industrialização | Conceitos abstratos | Baixa |
-| **Classificador de fontes** | O aluno recebe uma lista de fontes e classifica por tipo, período e confiabilidade | L2 | Metodologia histórica, fontes primárias e secundárias | Cronologia | Baixa |
 | **Mapa de poder** | O aluno posiciona grupos sociais em um diagrama de relações de poder (quem domina quem, quem resiste) | L3 | Escravidão, colonização, relações sociais, política | Cronologia, datas | Alta |
 | **Investigador de permanências** | O aluno identifica o que de um período histórico ainda existe hoje (leis, costumes, estruturas) | L1 | História do Brasil, cultura, direito | Cronologia linear | Baixa |
 | **Simulador de decisão histórica** | O aluno é colocado no lugar de um agente histórico e escolhe entre opções reais do período; o sistema mostra a consequência real | L3 | Períodos de ruptura, guerras, abolição, migração | Cultura material | Alta |

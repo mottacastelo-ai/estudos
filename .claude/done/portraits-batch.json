@@ -1,33 +1,14 @@
 {
-  "type": "portraits-batch",
-  "version": "1.0",
-  "project_root": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
-  "chars_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
-  "portraits_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars",
-  "characters": [
-    {
-      "name": "Publinho",
-      "char_sheet": "Publinho.png",
-      "portrait_output": "_landing\\chars\\anuncio-publicitario-hd.png",
-      "portrait_prompt_file": "_landing\\chars\\anuncio-publicitario-portrait-prompt.md"
-    },
-    {
-      "name": "Raizinha",
-      "char_sheet": "Raizinha.png",
-      "portrait_output": "_landing\\chars\\prefixo-sufixo-hd.png",
-      "portrait_prompt_file": "_landing\\chars\\prefixo-sufixo-portrait-prompt.md"
-    },
-    {
-      "name": "Xis",
-      "char_sheet": "Xis.png",
-      "portrait_output": "_landing\\chars\\sons-x-ch-hd.png",
-      "portrait_prompt_file": "_landing\\chars\\sons-x-ch-portrait-prompt.md"
-    },
-    {
-      "name": "Grafo",
-      "char_sheet": "Grafo.png",
-      "portrait_output": "_landing\\chars\\infografico-hd.png",
-      "portrait_prompt_file": "_landing\\chars\\infografico-portrait-prompt.md"
-    }
-  ]
+    "portraits":  [
+                      {
+                          "descricao":  "A fully animated detective magnifying glass character named Lupa, for a Brazilian 5th-grade educational comic book. Her body is a round glass lens (circular, transparent with a subtle golden shine), attached to a golden metal handle (#F59E0B) that bends and transforms into her arms and legs (thin golden limbs, small three-fingered hands). Large expressive cartoon eyes are drawn inside the lens glass itself, with a small stitched-style smile. She wears a small detective deerstalker cap in dark brown (#78350F) on top of her lens-head. The glass lens glows bright golden-yellow with small sparkle effects. Full-body illustration, standing pose, one arm raised in a confident happy gesture, big smile, cap slightly tilted. Vibrant Brazilian children\u0027s educational comic book style, bold outlines, clean cel-shading, bright saturated colors, exaggerated cartoonish proportions. Warm amber/gold palette: primary #B45309, light accent #F59E0B, dark shadow #78350F. Plain solid background, no scenery, no text, no speech bubbles, no other characters.",
+                          "output_path":  "_landing\\chars\\fontes-historicas-ambiente-hd.png",
+                          "slug":  "fontes-historicas-ambiente"
+                      },
+                      {
+                          "descricao":  "An animated ball of yarn / weaving thread character named Fio, for a Brazilian 5th-grade educational comic book. Body shaped like a rounded, plump yarn spool/skein made of soft looping thread coils. Main color: warm amber/golden yellow (#F59E0B) for the bulk of the yarn body, with darker brown thread details (#B45309) wrapped in decorative spiral patterns around the body. A single loose thread end extends from the top of Fio\u0027s body and moves expressively like a small arm, curling upward in a friendly wave gesture. Two large round expressive cartoon eyes are embroidered/stitched directly onto the yarn body (simple stitched-cross pupils), with a small stitched smiling mouth below them. No visible legs, Fio hovers with a gentle bounce, small motion lines beneath the body. Full-body illustration, cheerful greeting pose. Vibrant Brazilian children\u0027s educational comic book style, bold outlines, clean cel-shading, bright saturated colors, exaggerated cartoonish proportions. Warm amber/brown palette: primary #B45309, light accent #F59E0B, dark shadow #78350F. Plain solid background, no scenery, no text, no speech bubbles, no other characters.",
+                          "output_path":  "_landing\\chars\\artesanato-industria-hd.png",
+                          "slug":  "artesanato-industria"
+                      }
+                  ]
 }

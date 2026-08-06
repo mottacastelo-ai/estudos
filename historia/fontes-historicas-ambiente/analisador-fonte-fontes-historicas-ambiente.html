@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisador de Fonte — Fontes Históricas e Impactos Ambientais</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; --correct: #059669; --wrong: #DC2626; --neutral: #374151; --border: #FDE9C8; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: var(--neutral); overflow-x: hidden; }
+.hero { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 2rem 1.5rem 1.5rem; text-align: center; color: white; }
+.hero-emoji { font-size: 3rem; margin-bottom: .4rem; }
+.hero h1 { font-size: 1.5rem; font-weight: 900; line-height: 1.2; }
+.hero p { font-size: .95rem; opacity: .9; margin-top: .4rem; }
+.container { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.source-card { background: white; border: 2px solid var(--border); border-radius: 18px; padding: 1.3rem 1.4rem; margin-bottom: 1.2rem; box-shadow: 0 2px 12px rgba(180,83,9,.08); }
+.source-label { font-family: 'Space Mono', monospace; font-size: .75rem; font-weight: 800; color: var(--primary); letter-spacing: .05em; margin-bottom: .5rem; }
+.source-icon { font-size: 2rem; margin-bottom: .4rem; }
+.source-text { font-size: .98rem; line-height: 1.6; color: var(--neutral); }
+.source-text strong { color: var(--dark); }
+.progress-bar-wrap { background: #e5e7eb; border-radius: 99px; height: 10px; margin: 0 0 1.2rem; }
+.progress-bar { background: linear-gradient(90deg, var(--primary), var(--light)); height: 10px; border-radius: 99px; transition: width .4s; }
+.q-label { font-family: 'Space Mono', monospace; font-size: .8rem; color: var(--primary); font-weight: 700; margin-bottom: .3rem; }
+.q-text { font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; line-height: 1.4; }
+.options { display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1rem; }
+.opt-btn { background: white; border: 2.5px solid #e5e7eb; border-radius: 12px; padding: .85rem 1.1rem; font-family: 'Baloo 2', sans-serif; font-size: .98rem; font-weight: 600; cursor: pointer; text-align: left; transition: all .2s; color: var(--neutral); min-height: 48px; }
+.opt-btn:hover:not(:disabled) { border-color: var(--primary); background: #fff7ed; transform: translateX(4px); }
+.opt-btn.correct { border-color: var(--correct); background: #d1fae5; color: #065f46; }
+.opt-btn.wrong { border-color: var(--wrong); background: #fee2e2; color: #7f1d1d; }
+.opt-btn:disabled { cursor: default; }
+.feedback { border-radius: 12px; padding: .9rem 1.1rem; font-weight: 700; font-size: .95rem; margin-bottom: 1rem; display: none; line-height: 1.4; }
+.feedback.show { display: block; }
+.feedback.correct { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
+.feedback.wrong { background: #fee2e2; color: #7f1d1d; border: 2px solid #fca5a5; }
+.next-btn { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; border: none; border-radius: 12px; padding: .85rem 2rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; display: none; transition: transform .15s; min-height: 48px; }
+.next-btn:hover { transform: scale(1.04); }
+.next-btn.show { display: inline-block; }
+.result-card { display: none; text-align: center; background: white; border-radius: 20px; padding: 2.5rem 1.5rem; box-shadow: 0 4px 24px rgba(180,83,9,.12); }
+.result-card.show { display: block; }
+.result-emoji { font-size: 4rem; margin-bottom: .5rem; }
+.result-score { font-size: 3rem; font-weight: 900; color: var(--primary); margin: .5rem 0; }
+.result-msg { font-size: 1.05rem; font-weight: 600; color: var(--neutral); margin-bottom: 1.5rem; }
+.result-breakdown { background: var(--bg); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; font-size: .95rem; }
+.back-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .75rem 1.8rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; min-height: 48px; }
+.back-btn:hover { background: var(--primary); color: white; }
+.card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(180,83,9,.08); margin-bottom: 1rem; border-top: 4px solid var(--primary); }
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.25rem; }
+  .q-text { font-size: .95rem; }
+  .opt-btn { font-size: .88rem; padding: .75rem .9rem; }
+  .source-text { font-size: .9rem; }
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-emoji">🖼️</div>
+  <h1>Analisador de Fonte Histórica</h1>
+  <p>O Cartum de 1874 · História 5º ano</p>
+</div>
+<div class="container">
+  <div class="source-card">
+    <div class="source-label">FONTE HISTÓRICA VISUAL — CARTUM DE 1874</div>
+    <div class="source-icon">🖼️</div>
+    <div class="source-text">
+      Em 1874, um cartunista desenhou uma cena nas praias do Rio de Janeiro: pessoas tomando banho de mar <strong>completamente vestidas</strong> — com roupas longas, chapéus e sombrinhas — seguindo os costumes e a moda da época. Nessa mesma época, <strong>o esgoto das casas da cidade era despejado diretamente no mar, sem qualquer tipo de tratamento</strong>.
+    </div>
+  </div>
+
+  <div id="quiz-area">
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress" style="width:20%"></div></div>
+    <div class="card">
+      <div class="q-label" id="q-label">Pergunta 1 de 5</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Próxima pergunta →</button>
+    </div>
+  </div>
+  <div class="result-card" id="result-card">
+    <div class="result-emoji" id="result-emoji"></div>
+    <div style="font-size:1.1rem;font-weight:700;color:#6b7280;margin-bottom:.3rem">Sua pontuação</div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="result-breakdown" id="result-breakdown"></div>
+    <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    q: "Que tipo de fonte histórica é o cartum de 1874 descrito acima?",
+    opts: ["Fonte histórica oral", "Fonte histórica visual (ou iconográfica)", "Fonte histórica material", "Fonte histórica escrita"],
+    correct: 1,
+    explanation: "O cartum é uma imagem — por isso é uma fonte histórica visual (ou iconográfica), um tipo de fonte formado por desenhos, pinturas e fotografias que registram uma época."
+  },
+  {
+    q: "Segundo a descrição da fonte, como as pessoas aparecem ao tomar banho de mar em 1874?",
+    opts: ["Sem roupas, como é comum atualmente", "Completamente vestidas, com roupas longas, chapéus e sombrinhas", "Usando roupas de banho modernas", "Usando apenas toalhas na cintura"],
+    correct: 1,
+    explanation: "A fonte mostra que as pessoas tomavam banho de mar completamente vestidas — um costume bem diferente do que se vê nas praias hoje em dia."
+  },
+  {
+    q: "O que essa forma de se vestir na praia revela sobre a época retratada no cartum?",
+    opts: ["Que não havia moda definida em 1874", "Que os costumes e a moda de vestir eram diferentes dos atuais", "Que era proibido entrar no mar", "Que só os ricos podiam ir à praia"],
+    correct: 1,
+    explanation: "A forma de se vestir registrada na fonte mostra que os costumes e a moda da época eram bem diferentes dos atuais — as pessoas se vestiam de forma mais coberta mesmo para o banho de mar."
+  },
+  {
+    q: "Segundo a descrição da fonte, o que acontecia com o esgoto das casas do Rio de Janeiro na época do cartum?",
+    opts: ["Era tratado antes de chegar ao mar", "Era despejado diretamente no mar, sem qualquer tratamento", "Não existia esgoto nas casas", "Era reaproveitado para irrigação"],
+    correct: 1,
+    explanation: "A fonte informa que, na época do cartum, o esgoto das casas era despejado diretamente no mar, sem nenhum tipo de tratamento — um problema ambiental que a cena não mostra diretamente, mas que ajuda a contextualizar."
+  },
+  {
+    q: "Por que uma fonte histórica visual, como esse cartum, é útil para os historiadores estudarem o passado?",
+    opts: ["Porque substitui qualquer outro tipo de fonte histórica", "Porque permite observar costumes, vestimentas e cenas do cotidiano de uma época", "Porque é sempre mais confiável que uma fotografia", "Porque mostra exatamente o que uma pessoa pensava"],
+    correct: 1,
+    explanation: "Fontes históricas visuais, como cartuns e imagens, permitem observar costumes, vestimentas e cenas do cotidiano — como a moda de se vestir para o banho de mar em 1874."
+  }
+];
+
+let current = 0, score = 0;
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('q-label').textContent = `Pergunta ${current + 1} de ${questions.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress').style.width = `${((current + 1) / questions.length) * 100}%`;
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').className = 'next-btn';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.correct].classList.add('correct');
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct show';
+    fb.textContent = '✅ Correto! ' + q.explanation;
+  } else {
+    btns[idx].classList.add('wrong');
+    fb.className = 'feedback wrong show';
+    fb.textContent = '❌ Errado. ' + q.explanation;
+  }
+  document.getElementById('next-btn').className = 'next-btn show';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) loadQuestion();
+  else showResult();
+}
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const card = document.getElementById('result-card');
+  card.className = 'result-card show';
+  const pct = Math.round((score / questions.length) * 100);
+  window.sabendoScore = pct;
+  document.getElementById('result-score').textContent = `${score}/${questions.length}`;
+  let emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Excelente! Você sabe analisar uma fonte histórica visual!'; }
+  else if (pct >= 70) { emoji = '🌟'; msg = 'Muito bem! Você entendeu o que a fonte revela sobre a época.'; }
+  else if (pct >= 50) { emoji = '📚'; msg = 'Bom esforço! Releia a descrição da fonte e tente novamente.'; }
+  else { emoji = '💪'; msg = 'Continue estudando! Observe com atenção os detalhes da fonte histórica.'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-breakdown').innerHTML = `<strong>Acertos:</strong> ${score} &nbsp;|&nbsp; <strong>Erros:</strong> ${questions.length - score} &nbsp;|&nbsp; <strong>Aproveitamento:</strong> ${pct}%`;
+}
+
+loadQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "fontes-historicas-ambiente";
+  var ACTIVITY_TYPE = "analisador-fonte";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Lupa",
+    characterEmoji: "🖼️",
+    characterImg:   "chars/fontes-historicas-ambiente-hd.png",
+    themeLabel:     "Fontes Históricas e Impactos Ambientais · História",
+    totalActivities: 5,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: '../../index.html#theme-hist-fontes-historicas-ambiente',
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
+  }
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

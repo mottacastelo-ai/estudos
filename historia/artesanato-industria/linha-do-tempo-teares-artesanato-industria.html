@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linha do Tempo dos Teares — Do Artesanato à Indústria</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; --correct: #059669; --wrong: #DC2626; --neutral: #374151; --border: #FDE68A; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: var(--neutral); overflow-x: hidden; }
+.header { background: linear-gradient(135deg, var(--dark), var(--primary) 60%, var(--light)); color: white; padding: 28px 28px 24px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7); text-decoration: none; margin-bottom: 14px; transition: color .15s; background: none; border: none; cursor: pointer; font-family: 'Baloo 2', sans-serif; }
+.back-btn:hover { color: white; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 22px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+.main { max-width: 780px; margin: 0 auto; padding: 24px 20px 60px; }
+.instrucao { background: white; border: 2px solid var(--border); border-radius: 16px; padding: 14px 18px; font-size: 14px; font-weight: 600; color: var(--neutral); margin-bottom: 18px; line-height: 1.5; }
+.instrucao strong { color: var(--dark); }
+.progress-wrap { background: #e5e7eb; border-radius: 99px; height: 10px; margin-bottom: 20px; }
+.progress-fill { background: linear-gradient(90deg, var(--primary), var(--light)); height: 10px; border-radius: 99px; transition: width .4s; }
+.timeline { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.slot { background: white; border-radius: 18px; border: 2px dashed var(--border); padding: 14px 16px; min-height: 80px; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 14px; }
+.slot:hover { border-color: var(--light); background: #fffdf5; }
+.slot-century { font-family: "Space Mono", monospace; font-size: 15px; font-weight: 900; color: var(--dark); background: var(--bg); border: 2px solid var(--light); border-radius: 12px; padding: 8px 14px; min-width: 78px; text-align: center; flex-shrink: 0; }
+.slot-body { flex: 1; }
+.slot-placeholder { font-size: 13px; font-weight: 600; color: #9CA3AF; font-style: italic; }
+.placed-card { background: var(--bg); border: 2px solid var(--light); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; font-weight: 700; line-height: 1.35; }
+.placed-card.correct { background: #d1fae5; border-color: var(--correct); color: #065f46; }
+.placed-card.wrong { background: #fee2e2; border-color: var(--wrong); color: #7f1d1d; }
+.bank-title { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 10px; letter-spacing: .04em; }
+.bank { display: flex; flex-direction: column; gap: 10px; }
+.drag-card { min-height: 56px; background: white; border: 2.5px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 10px; }
+.drag-card:hover { border-color: var(--light); background: #fffdf5; }
+.drag-card.selected { outline: 3px solid var(--primary); outline-offset: 3px; box-shadow: 0 0 0 6px rgba(180,83,9,.2); transform: scale(1.02); border-color: var(--primary); }
+.drag-emoji { font-size: 20px; flex-shrink: 0; }
+.hint { font-size: 12.5px; font-weight: 700; color: var(--primary); text-align: center; margin-bottom: 14px; min-height: 18px; }
+.result-card { display: none; text-align: center; background: white; border-radius: 20px; padding: 2.5rem 1.5rem; box-shadow: 0 4px 24px rgba(180,83,9,.12); margin-top: 20px; }
+.result-card.show { display: block; }
+.result-emoji { font-size: 3.5rem; margin-bottom: .5rem; }
+.result-score { font-size: 2.6rem; font-weight: 900; color: var(--primary); margin: .5rem 0; }
+.result-msg { font-size: 1.05rem; font-weight: 600; color: var(--neutral); margin-bottom: 1.2rem; }
+.check-btn, .retry-btn, .voltar-btn { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; border: none; border-radius: 12px; padding: .85rem 2rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: transform .15s; display: block; margin: 0 auto; min-height: 48px; }
+.check-btn:hover, .retry-btn:hover, .voltar-btn:hover { transform: scale(1.03); }
+.check-btn:disabled { opacity: .4; cursor: default; transform: none; }
+.voltar-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); margin-top: 10px; }
+.voltar-btn:hover { background: var(--primary); color: white; }
+@media (max-width: 560px) {
+  .header h1 { font-size: 18px; }
+  .slot { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="../../index.html" class="back-btn" onclick="event.preventDefault(); voltarAoPortal();">← Voltar</a>
+  <h1>Linha do Tempo dos Teares</h1>
+  <p>Do Artesanato à Indústria · História 5º ano</p>
+</div>
+<div class="main">
+  <div class="instrucao">
+    <strong>Como fazer:</strong> Clique em uma descrição de tear na lista abaixo e depois clique no século correspondente na linha do tempo. Você pode trocar de século clicando na descrição já colocada.
+  </div>
+  <div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  <div class="timeline" id="timeline"></div>
+  <div class="hint" id="hint">Selecione uma descrição abaixo</div>
+  <div class="bank-title">DESCRIÇÕES PARA CLASSIFICAR</div>
+  <div class="bank" id="bank"></div>
+  <button class="check-btn" id="check-btn" onclick="checkAnswers()" disabled style="margin-top:20px;">Verificar respostas</button>
+
+  <div class="result-card" id="result-card">
+    <div class="result-emoji" id="result-emoji"></div>
+    <div style="font-size:1.05rem;font-weight:700;color:#6b7280;margin-bottom:.3rem">Sua pontuação</div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <button class="retry-btn" id="retry-btn" onclick="resetActivity()">↺ Tentar novamente</button>
+    <button class="voltar-btn" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  </div>
+</div>
+<script>
+var CENTURIES = [
+  {id:'xv',  label:'Século XV'},
+  {id:'xix', label:'Século XIX'},
+  {id:'xxi', label:'Século XXI'},
+];
+
+var ITEMS = [
+  {id:'d1', emoji:'🧵', text:'O tecelão trabalha em um tear manual, movido por um pedal.', answer:'xv'},
+  {id:'d2', emoji:'💨', text:'As trabalhadoras operam um tear mecânico, movido por máquinas a vapor.', answer:'xix'},
+  {id:'d3', emoji:'🤖', text:'O tear automático industrial é acionado por braços robóticos.', answer:'xxi'},
+];
+
+var placements = {}; // itemId -> centuryId
+var selectedId = null;
+var locked = false;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+var order = shuffle(ITEMS.map(function(it){ return it.id; }));
+
+function itemById(id) {
+  for (var i = 0; i < ITEMS.length; i++) if (ITEMS[i].id === id) return ITEMS[i];
+  return null;
+}
+
+function renderTimeline() {
+  var tl = document.getElementById('timeline');
+  tl.innerHTML = '';
+  CENTURIES.forEach(function(c) {
+    var slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.id = 'slot-' + c.id;
+    slot.setAttribute('data-century', c.id);
+
+    var centuryTag = document.createElement('div');
+    centuryTag.className = 'slot-century';
+    centuryTag.textContent = c.label;
+    slot.appendChild(centuryTag);
+
+    var body = document.createElement('div');
+    body.className = 'slot-body';
+    body.id = 'body-' + c.id;
+
+    var placedId = null;
+    Object.keys(placements).forEach(function(itemId) {
+      if (placements[itemId] === c.id) placedId = itemId;
+    });
+
+    if (placedId) {
+      var it = itemById(placedId);
+      var card = document.createElement('div');
+      card.className = 'placed-card';
+      card.id = 'placed-' + placedId;
+      card.textContent = it.emoji + ' ' + it.text;
+      card.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (locked) return;
+        delete placements[placedId];
+        selectedId = placedId;
+        renderBank();
+        renderTimeline();
+        updateProgress();
+      });
+      body.appendChild(card);
+    } else {
+      var ph = document.createElement('div');
+      ph.className = 'slot-placeholder';
+      ph.textContent = 'Clique aqui para colocar a descrição selecionada';
+      body.appendChild(ph);
+    }
+    slot.appendChild(body);
+
+    slot.addEventListener('click', function() {
+      if (locked || !selectedId) return;
+      var centuryId = this.getAttribute('data-century');
+      Object.keys(placements).forEach(function(k) {
+        if (placements[k] === centuryId) delete placements[k];
+      });
+      placements[selectedId] = centuryId;
+      selectedId = null;
+      renderBank();
+      renderTimeline();
+      updateProgress();
+    });
+
+    tl.appendChild(slot);
+  });
+}
+
+function renderBank() {
+  var bank = document.getElementById('bank');
+  bank.innerHTML = '';
+  order.forEach(function(id) {
+    if (placements[id]) return;
+    var it = itemById(id);
+    var el = document.createElement('div');
+    el.className = 'drag-card' + (selectedId === id ? ' selected' : '');
+    el.id = 'card-' + id;
+    el.innerHTML = '<span class="drag-emoji">' + it.emoji + '</span><span>' + it.text + '</span>';
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (locked) return;
+      selectedId = (selectedId === id) ? null : id;
+      renderBank();
+    });
+    bank.appendChild(el);
+  });
+}
+
+function updateProgress() {
+  var done = Object.keys(placements).length;
+  document.getElementById('progress').style.width = Math.round((done / ITEMS.length) * 100) + '%';
+  document.getElementById('check-btn').disabled = done < ITEMS.length;
+  document.getElementById('hint').textContent = done < ITEMS.length
+    ? 'Selecione uma descrição e clique no século correspondente'
+    : 'Tudo posicionado! Clique em Verificar respostas.';
+}
+
+function checkAnswers() {
+  locked = true;
+  var correct = 0;
+  ITEMS.forEach(function(it) {
+    var el = document.getElementById('placed-' + it.id);
+    if (!el) return;
+    if (placements[it.id] === it.answer) {
+      el.classList.add('correct');
+      correct++;
+    } else {
+      el.classList.add('wrong');
+    }
+  });
+  document.getElementById('check-btn').style.display = 'none';
+  var pct = Math.round((correct / ITEMS.length) * 100);
+  window.sabendoScore = pct;
+  var card = document.getElementById('result-card');
+  card.className = 'result-card show';
+  document.getElementById('result-score').textContent = correct + '/' + ITEMS.length;
+  var emoji, msg;
+  if (pct === 100) { emoji = '🏆'; msg = 'Perfeito! Você entende a evolução dos teares ao longo do tempo!'; }
+  else if (pct >= 67) { emoji = '🌟'; msg = 'Muito bem! Revise a que errou para fixar a ordem.'; }
+  else { emoji = '📚'; msg = 'Continue estudando! Pense em como o tear foi mudando: manual, a vapor e robótico.'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function resetActivity() {
+  placements = {};
+  selectedId = null;
+  locked = false;
+  order = shuffle(ITEMS.map(function(it){ return it.id; }));
+  document.getElementById('result-card').className = 'result-card';
+  document.getElementById('check-btn').style.display = 'block';
+  document.getElementById('check-btn').disabled = true;
+  renderBank();
+  renderTimeline();
+  updateProgress();
+}
+
+renderBank();
+renderTimeline();
+updateProgress();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "artesanato-industria";
+  var ACTIVITY_TYPE = "linha-do-tempo-interativa";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Fio",
+    characterEmoji: "🧵",
+    characterImg:   "chars/artesanato-industria-hd.png",
+    themeLabel:     "Do Artesanato à Indústria · História",
+    totalActivities: 5,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: '../../index.html#theme-hist-artesanato-industria',
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
+  }
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

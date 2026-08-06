@@ -1,0 +1,14 @@
+{
+    "canonicas_path":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+    "slug":  "fontes-historicas-ambiente",
+    "expected_outputs":  [
+                             "hq-fontes-historicas-ambiente-pg1.png",
+                             "hq-fontes-historicas-ambiente-pg2.png",
+                             "hq-fontes-historicas-ambiente-pg3.png",
+                             "hq-fontes-historicas-ambiente-pg4.png"
+                         ],
+    "prompt_path":  "historia/fontes-historicas-ambiente/hq-fontes-historicas-ambiente-prompt.md",
+    "disciplina":  "historia",
+    "raiz":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+    "output_dir":  "historia/fontes-historicas-ambiente"
+}

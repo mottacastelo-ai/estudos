@@ -1,0 +1,124 @@
+{
+  "type": "portraits-batch",
+  "version": "1.0",
+  "raiz": "estudos-2ano",
+  "project_root": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos-2ano",
+  "portraits_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos-2ano\\_landing\\chars",
+  "error_message": "Contrato inválido: esperado objeto com a propriedade 'portraits', contendo itens com 'slug', 'descricao' e 'output_path'. O arquivo recebido contém 'characters' e não fornece descrições explícitas para geração independente.",
+  "characters": [
+    {
+      "name": "Bilheto",
+      "theme": "bilhete-cartao-pessoal",
+      "discipline": "portugues",
+      "char_sheet": "portugues\\bilhete-cartao-pessoal\\folha-personagens-bilheto.png",
+      "hq_ref": "portugues\\bilhete-cartao-pessoal\\hq-bilhete-cartao-pessoal-pg1.png",
+      "portrait_output": "_landing\\chars\\bilhete-cartao-pessoal-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\bilhete-cartao-pessoal-portrait-prompt.md"
+    },
+    {
+      "name": "Pontinho",
+      "theme": "letras-silabas-pontuacao",
+      "discipline": "portugues",
+      "char_sheet": "portugues\\letras-silabas-pontuacao\\folha-personagens-pontinho.png",
+      "hq_ref": "portugues\\letras-silabas-pontuacao\\hq-letras-silabas-pontuacao-pg1.png",
+      "portrait_output": "_landing\\chars\\letras-silabas-pontuacao-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\letras-silabas-pontuacao-portrait-prompt.md"
+    },
+    {
+      "name": "Tarta",
+      "theme": "animais-ciclo-vida",
+      "discipline": "ciencias",
+      "char_sheet": "ciencias\\animais-ciclo-vida\\hq-animais-cien-p1.png",
+      "portrait_output": "_landing\\chars\\animais-ciclo-vida-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\animais-ciclo-vida-portrait-prompt.md"
+    },
+    {
+      "name": "Sensinho",
+      "theme": "orgaos-sentidos",
+      "discipline": "ciencias",
+      "char_sheet": "ciencias\\orgaos-sentidos\\hq-orgaos-sentidos-p1.png",
+      "portrait_output": "_landing\\chars\\orgaos-sentidos-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\orgaos-sentidos-portrait-prompt.md"
+    },
+    {
+      "name": "Eciona",
+      "theme": "preservando-meio-ambiente",
+      "discipline": "ciencias",
+      "char_sheet": "ciencias\\preservando-meio-ambiente\\hq-preservando-meio-ambiente-p1.png",
+      "portrait_output": "_landing\\chars\\preservando-meio-ambiente-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\preservando-meio-ambiente-portrait-prompt.md"
+    },
+    {
+      "name": "Flora",
+      "theme": "onde-vivem-plantas",
+      "discipline": "ciencias",
+      "char_sheet": "ciencias\\onde-vivem-plantas\\hq-onde-vivem-plantas-p1.png",
+      "portrait_output": "_landing\\chars\\onde-vivem-plantas-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\onde-vivem-plantas-portrait-prompt.md"
+    },
+    {
+      "name": "Viu",
+      "theme": "representar-lugares",
+      "discipline": "geografia",
+      "char_sheet": "geografia\\representar-lugares\\hq-representar-lugares-p1.png",
+      "portrait_output": "_landing\\chars\\representar-lugares-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\representar-lugares-portrait-prompt.md"
+    },
+    {
+      "name": "Beto",
+      "theme": "paisagem-bairros",
+      "discipline": "geografia",
+      "char_sheet": "geografia\\paisagem-bairros\\hq-paisagem-bairros-p1.png",
+      "portrait_output": "_landing\\chars\\paisagem-bairros-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\paisagem-bairros-portrait-prompt.md"
+    },
+    {
+      "name": "Foca",
+      "theme": "memorias-lugares",
+      "discipline": "historia",
+      "char_sheet": "historia\\memorias-lugares\\hq-memorias-lugares-pg1.png",
+      "portrait_output": "_landing\\chars\\memorias-lugares-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\memorias-lugares-portrait-prompt.md"
+    },
+    {
+      "name": "Cade",
+      "theme": "meu-lugar-viver",
+      "discipline": "historia",
+      "char_sheet": "historia\\meu-lugar-viver\\hq-meu-lugar-viver-pg1.png",
+      "portrait_output": "_landing\\chars\\meu-lugar-viver-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\meu-lugar-viver-portrait-prompt.md"
+    },
+    {
+      "name": "Tambo",
+      "theme": "convivencia-pessoas",
+      "discipline": "historia",
+      "char_sheet": "historia\\convivencia-pessoas\\hq-convivencia-pessoas-pg1.png",
+      "portrait_output": "_landing\\chars\\convivencia-pessoas-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\convivencia-pessoas-portrait-prompt.md"
+    },
+    {
+      "name": "Combi",
+      "theme": "regras-convivencia",
+      "discipline": "historia",
+      "char_sheet": "historia\\regras-convivencia\\hq-regras-convivencia-pg1.png",
+      "portrait_output": "_landing\\chars\\regras-convivencia-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\regras-convivencia-portrait-prompt.md"
+    },
+    {
+      "name": "Tempa",
+      "theme": "mudancas-convivencia",
+      "discipline": "historia",
+      "char_sheet": "historia\\mudancas-convivencia\\hq-mudancas-convivencia-pg1.png",
+      "portrait_output": "_landing\\chars\\mudancas-convivencia-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\mudancas-convivencia-portrait-prompt.md"
+    },
+    {
+      "name": "Primo",
+      "theme": "numeros-ordinais",
+      "discipline": "matematica",
+      "char_sheet": "matematica\\numeros-ordinais\\hq-numeros-ordinais-pg1.png",
+      "portrait_output": "_landing\\chars\\numeros-ordinais-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\numeros-ordinais-portrait-prompt.md"
+    }
+  ]
+}

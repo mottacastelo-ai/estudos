@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juiz da História — Inspeção Veicular</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --hist: #B45309; --hist-light: #F59E0B; --hist-bg: #FFFBEB;
+  --hist-dark: #78350F; --border: #FDE9C8;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--hist-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 60px; overflow-x: hidden; }
+.wrap { max-width: 880px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--hist); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(180,83,9,.1); }
+.card-header { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 34px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--border); background: var(--hist-bg); line-height: 1.6; }
+.instrucao strong { color: var(--text); }
+.texts-wrap { padding: 18px 24px 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.text-card { border-radius: 16px; border: 2px solid var(--border); padding: 14px 16px; background: #fffdf7; }
+.text-card.fav { border-color: #6EE7B7; background: #ECFDF5; }
+.text-card.contra { border-color: #FCA5A5; background: #FEF2F2; }
+.text-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; letter-spacing: .04em; margin-bottom: 6px; }
+.text-card.fav .text-title { color: #065F46; }
+.text-card.contra .text-title { color: #991B1B; }
+.text-body { font-size: 12.5px; line-height: 1.55; color: var(--text); }
+.score-bar { display: flex; align-items: center; gap: 12px; padding: 14px 24px 10px; border-bottom: 2px solid var(--border); background: #fffdf7; flex-wrap: wrap; }
+.score-txt { font-size: 13px; font-weight: 800; color: var(--hist); }
+.check-btn { background: var(--hist); color: #fff; border: none; border-radius: 999px; padding: 7px 20px; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800; cursor: pointer; margin-left: auto; min-height: 40px; }
+.check-btn:hover { opacity: .85; }
+.check-btn:disabled { opacity: .4; cursor: default; }
+.reset-btn { background: transparent; color: var(--muted); border: 2px solid var(--border); border-radius: 999px; padding: 6px 16px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; cursor: pointer; min-height: 40px; }
+.reset-btn:hover { border-color: var(--hist-light); color: var(--hist); }
+.game-area { padding: 18px 20px 8px; }
+.pool-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; margin-bottom: 10px; }
+.pool { display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; padding: 10px; border-radius: var(--radius); border: 2px dashed var(--border); background: var(--hist-bg); margin-bottom: 20px; }
+.drag-item { background: #fff; border: 2px solid var(--border); border-radius: 14px; padding: 10px 14px; font-size: 13px; font-weight: 700; cursor: pointer; user-select: none; transition: transform .12s, box-shadow .12s, outline .1s; max-width: 260px; line-height: 1.35; min-height: 48px; display: flex; align-items: center; }
+.drag-item:hover { border-color: var(--hist-light); box-shadow: 0 3px 12px rgba(180,83,9,.15); transform: scale(1.02); }
+.drag-item.selected { outline: 3px solid var(--hist); outline-offset: 3px; box-shadow: 0 0 0 6px rgba(180,83,9,.25) !important; transform: scale(1.03); }
+.drag-item.correct { background: #D1FAE5; border-color: #059669; color: #065F46; cursor: default; }
+.drag-item.wrong { background: #FEE2E2; border-color: #DC2626; color: #991B1B; cursor: default; }
+.columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.col-zone { border-radius: var(--radius); border: 2px solid var(--border); overflow: hidden; }
+.col-header { padding: 10px 12px; font-size: 12.5px; font-weight: 800; }
+.col-header.fav      { background: #D1FAE5; color: #065F46; border-bottom: 2px solid #6EE7B7; }
+.col-header.contra    { background: #FEE2E2; color: #991B1B; border-bottom: 2px solid #FCA5A5; }
+.col-header.depende   { background: #FEF3C7; color: #92400E; border-bottom: 2px solid #FDE68A; }
+.drop-zone { min-height: 130px; cursor: pointer; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; background: #fafafa; }
+.result-panel { margin: 0 20px 20px; padding: 16px; border-radius: var(--radius); display: none; }
+.result-panel.show { display: block; }
+.result-panel.all-correct { background: #D1FAE5; border: 2px solid #6EE7B7; }
+.result-panel.partial { background: #FEF3C7; border: 2px solid #FCD34D; }
+.result-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.result-msg { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.5; }
+@media (max-width: 700px) {
+  .texts-wrap { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .columns { grid-template-columns: 1fr; }
+  .drag-item { font-size: 12px; padding: 9px 12px; max-width: 100%; }
+  .game-area { padding: 14px 12px 8px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="event.preventDefault(); voltarAoPortal();">← Voltar ao Portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">⚖️</div>
+      <div><h1>Juiz da História</h1><p>A Inspeção Veicular em Debate</p></div>
+      <div class="hbadge">🧠 Julgar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Leia os dois textos de revista (2012) abaixo. Depois, classifique cada frase como <strong>Favorável</strong>, <strong>Contrária</strong> ou <strong>Depende do ponto de vista</strong>, com base no que os dois textos defendem sobre a inspeção veicular.
+    </div>
+    <div class="texts-wrap">
+      <div class="text-card fav">
+        <div class="text-title">TEXTO 1 — A FAVOR DA INSPEÇÃO VEICULAR</div>
+        <div class="text-body">A inspeção veicular ajuda a controlar a poluição do ar nas cidades. Várias metrópoles do mundo que adotaram esse tipo de fiscalização tiveram bons resultados na redução da poluição. Porém, o texto também defende que a inspeção deveria levar em conta o tipo de combustível usado por cada veículo.</div>
+      </div>
+      <div class="text-card contra">
+        <div class="text-title">TEXTO 2 — CONTRA A INSPEÇÃO VEICULAR (COMO É FEITA)</div>
+        <div class="text-body">A inspeção veicular, do jeito que é feita hoje, só testa carros novos — que já poluem menos por causa da tecnologia mais avançada. O texto defende que a fiscalização deveria focar nos carros mais antigos, que são os que mais poluem.</div>
+      </div>
+    </div>
+    <div class="score-bar">
+      <span class="score-txt" id="score-txt">0 de 8 julgadas</span>
+      <button class="reset-btn" id="reset-btn">↺ Recomeçar</button>
+      <button class="check-btn" id="check-btn" disabled>Verificar ✓</button>
+    </div>
+    <div class="game-area">
+      <div class="pool-title">FRASES PARA JULGAR — selecione e toque na coluna destino</div>
+      <div class="pool" id="pool"></div>
+      <div class="columns">
+        <div class="col-zone">
+          <div class="col-header fav">✅ Favorável</div>
+          <div class="drop-zone" id="zone-fav" data-zone="fav"></div>
+        </div>
+        <div class="col-zone">
+          <div class="col-header contra">❌ Contrária</div>
+          <div class="drop-zone" id="zone-contra" data-zone="contra"></div>
+        </div>
+        <div class="col-zone">
+          <div class="col-header depende">🤔 Depende do ponto de vista</div>
+          <div class="drop-zone" id="zone-depende" data-zone="depende"></div>
+        </div>
+      </div>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-title" id="result-title"></div>
+      <div class="result-msg" id="result-msg"></div>
+    </div>
+  </div>
+</div>
+<script>
+var ITEMS = [
+  { id:'i1', text:'A inspeção veicular ajuda a controlar a poluição do ar nas grandes cidades.', cat:'fav' },
+  { id:'i2', text:'Metrópoles que adotaram a inspeção veicular tiveram bons resultados na redução da poluição.', cat:'fav' },
+  { id:'i3', text:'A inspeção veicular deveria considerar o tipo de combustível usado por cada veículo.', cat:'fav' },
+  { id:'i4', text:'A inspeção veicular, do jeito que é feita hoje, não é totalmente eficiente.', cat:'contra' },
+  { id:'i5', text:'Testar somente carros novos não resolve o problema, pois eles já poluem menos.', cat:'contra' },
+  { id:'i6', text:'A fiscalização deveria focar nos carros mais antigos, que são os que mais poluem.', cat:'contra' },
+  { id:'i7', text:'Tanto quem defende quanto quem critica a inspeção veicular concordam que a poluição do ar é um problema a ser resolvido.', cat:'depende' },
+  { id:'i8', text:'Os dois textos concordam que a forma como a fiscalização é feita influencia o resultado da inspeção veicular.', cat:'depende' }
+];
+
+var placements = {};
+var checked = false;
+var selectedId = null;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+
+function buildItems() {
+  document.getElementById('pool').innerHTML = '';
+  ['zone-fav','zone-contra','zone-depende'].forEach(function(z){ document.getElementById(z).innerHTML=''; });
+  placements = {};
+  checked = false;
+  selectedId = null;
+  document.getElementById('result-panel').className = 'result-panel';
+  document.getElementById('check-btn').disabled = true;
+  document.getElementById('score-txt').textContent = '0 de 8 julgadas';
+  shuffle(ITEMS).forEach(function(item) {
+    placements[item.id] = 'pool';
+    document.getElementById('pool').appendChild(createEl(item));
+  });
+}
+
+function createEl(item) {
+  var el = document.createElement('div');
+  el.className = 'drag-item';
+  el.textContent = item.text;
+  el.id = 'el-' + item.id;
+  el.dataset.id = item.id;
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (checked) return;
+    if (selectedId === item.id) {
+      el.classList.remove('selected');
+      selectedId = null;
+      return;
+    }
+    if (selectedId) {
+      var prev = document.getElementById('el-' + selectedId);
+      if (prev) prev.classList.remove('selected');
+    }
+    selectedId = item.id;
+    el.classList.add('selected');
+  });
+  return el;
+}
+
+function moveToZone(itemId, zoneName) {
+  if (checked) return;
+  var el = document.getElementById('el-' + itemId);
+  el.classList.remove('selected');
+  placements[itemId] = zoneName;
+  selectedId = null;
+  if (zoneName === 'pool') {
+    document.getElementById('pool').appendChild(el);
+  } else {
+    document.getElementById('zone-' + zoneName).appendChild(el);
+  }
+  updateScore();
+}
+
+function updateScore() {
+  var n = Object.values(placements).filter(function(v){ return v !== 'pool'; }).length;
+  document.getElementById('score-txt').textContent = n + ' de 8 julgadas';
+  document.getElementById('check-btn').disabled = n < 8;
+}
+
+['pool','zone-fav','zone-contra','zone-depende'].forEach(function(zid) {
+  var zoneEl = document.getElementById(zid);
+  var zoneName = zid === 'pool' ? 'pool' : zoneEl.dataset.zone;
+  zoneEl.addEventListener('click', function() {
+    if (checked || !selectedId) return;
+    if (placements[selectedId] === zoneName) {
+      var el = document.getElementById('el-' + selectedId);
+      if (el) el.classList.remove('selected');
+      selectedId = null;
+      return;
+    }
+    moveToZone(selectedId, zoneName);
+  });
+});
+
+document.getElementById('check-btn').addEventListener('click', function() {
+  checked = true;
+  selectedId = null;
+  var correct = 0;
+  ITEMS.forEach(function(item) {
+    var el = document.getElementById('el-' + item.id);
+    el.classList.remove('selected');
+    if (placements[item.id] === item.cat) { el.classList.add('correct'); correct++; }
+    else el.classList.add('wrong');
+  });
+  window.sabendoScore = Math.round(correct / 8 * 100);
+  var rp = document.getElementById('result-panel');
+  if (correct === 8) {
+    rp.className = 'result-panel all-correct show';
+    document.getElementById('result-title').textContent = '🎉 Perfeito! 8 de 8 julgamentos corretos!';
+    document.getElementById('result-msg').textContent = 'Você conseguiu identificar corretamente os argumentos favoráveis e contrários à inspeção veicular, além de reconhecer os pontos em que os dois textos concordam.';
+  } else {
+    rp.className = 'result-panel partial show';
+    document.getElementById('result-title').textContent = '✓ ' + correct + ' de 8 corretos';
+    document.getElementById('result-msg').textContent = 'As frases em vermelho foram julgadas de forma errada. Releia o Texto 1 (a favor) e o Texto 2 (contra a forma como a inspeção é feita) para identificar de qual texto vem cada argumento. Tente novamente!';
+  }
+});
+
+document.getElementById('reset-btn').addEventListener('click', buildItems);
+buildItems();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "fontes-historicas-ambiente";
+  var ACTIVITY_TYPE = "juiz-da-historia";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Lupa",
+    characterEmoji: "⚖️",
+    characterImg:   "chars/fontes-historicas-ambiente-hd.png",
+    themeLabel:     "Fontes Históricas e Impactos Ambientais · História",
+    totalActivities: 5,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: '../../index.html#theme-hist-fontes-historicas-ambiente',
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
+  }
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

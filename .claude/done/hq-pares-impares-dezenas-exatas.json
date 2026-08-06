@@ -1,0 +1,9 @@
+{
+  "slug": "pares-impares-dezenas-exatas",
+  "tema": "Números Pares, Ímpares e Dezenas Exatas",
+  "disciplina": "matematica",
+  "raiz": "estudos-2ano",
+  "prompt_md": "C:\\\\Users\\\\wizar\\\\OneDrive\\\\Documentos\\\\Projeto Estudos\\\\estudos-2ano\\\\matematica\\\\pares-impares-dezenas-exatas\\\\hq-pares-impares-dezenas-exatas-prompt.md",
+  "subfolder": "matematica/pares-impares-dezenas-exatas",
+  "expected_outputs": ["pg1", "pg2", "pg3", "pg4"]
+}

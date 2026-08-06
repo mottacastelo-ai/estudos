@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Do Artesanato à Indústria</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; --correct: #059669; --wrong: #DC2626; --neutral: #374151; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: var(--neutral); overflow-x: hidden; }
+.hero { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 2rem 1.5rem 1.5rem; text-align: center; color: white; }
+.hero-emoji { font-size: 3rem; margin-bottom: .4rem; }
+.hero h1 { font-size: 1.6rem; font-weight: 900; line-height: 1.2; }
+.hero p { font-size: .95rem; opacity: .9; margin-top: .4rem; }
+.container { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.progress-bar-wrap { background: #e5e7eb; border-radius: 99px; height: 10px; margin: 1.2rem 0; }
+.progress-bar { background: linear-gradient(90deg, var(--primary), var(--light)); height: 10px; border-radius: 99px; transition: width .4s; }
+.q-label { font-family: 'Space Mono', monospace; font-size: .8rem; color: var(--primary); font-weight: 700; margin-bottom: .3rem; }
+.q-text { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.2rem; line-height: 1.4; }
+.options { display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1rem; }
+.opt-btn { background: white; border: 2.5px solid #e5e7eb; border-radius: 12px; padding: .85rem 1.1rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: left; transition: all .2s; color: var(--neutral); min-height: 48px; }
+.opt-btn:hover:not(:disabled) { border-color: var(--primary); background: #fff7ed; transform: translateX(4px); }
+.opt-btn.correct { border-color: var(--correct); background: #d1fae5; color: #065f46; }
+.opt-btn.wrong { border-color: var(--wrong); background: #fee2e2; color: #7f1d1d; }
+.opt-btn:disabled { cursor: default; }
+.feedback { border-radius: 12px; padding: .9rem 1.1rem; font-weight: 700; font-size: .95rem; margin-bottom: 1rem; display: none; line-height: 1.4; }
+.feedback.show { display: block; }
+.feedback.correct { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
+.feedback.wrong { background: #fee2e2; color: #7f1d1d; border: 2px solid #fca5a5; }
+.next-btn { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; border: none; border-radius: 12px; padding: .85rem 2rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; display: none; transition: transform .15s; min-height: 48px; }
+.next-btn:hover { transform: scale(1.04); }
+.next-btn.show { display: inline-block; }
+.result-card { display: none; text-align: center; background: white; border-radius: 20px; padding: 2.5rem 1.5rem; box-shadow: 0 4px 24px rgba(180,83,9,.12); }
+.result-card.show { display: block; }
+.result-emoji { font-size: 4rem; margin-bottom: .5rem; }
+.result-score { font-size: 3rem; font-weight: 900; color: var(--primary); margin: .5rem 0; }
+.result-msg { font-size: 1.1rem; font-weight: 600; color: var(--neutral); margin-bottom: 1.5rem; }
+.result-breakdown { background: var(--bg); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; font-size: .95rem; }
+.back-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .75rem 1.8rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all .2s; min-height: 48px; }
+.back-btn:hover { background: var(--primary); color: white; }
+.card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(180,83,9,.08); margin-bottom: 1rem; border-top: 4px solid var(--primary); }
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.3rem; }
+  .q-text { font-size: 1.05rem; }
+  .opt-btn { font-size: .95rem; padding: .75rem 1rem; }
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-emoji">🧵</div>
+  <h1>Do Artesanato à Indústria</h1>
+  <p>Quiz Interativo · 10 questões · História 5º ano</p>
+</div>
+<div class="container">
+  <div id="quiz-area">
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress" style="width:10%"></div></div>
+    <div class="card">
+      <div class="q-label" id="q-label">Questão 1 de 10</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Próxima questão →</button>
+    </div>
+  </div>
+  <div class="result-card" id="result-card">
+    <div class="result-emoji" id="result-emoji"></div>
+    <div style="font-size:1.1rem;font-weight:700;color:#6b7280;margin-bottom:.3rem">Sua pontuação</div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="result-breakdown" id="result-breakdown"></div>
+    <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    q: "No artesanato, quem é o dono dos meios de produção (matéria-prima e instrumentos)?",
+    opts: ["O dono da fábrica", "O próprio artesão, que também é dono do produto do seu trabalho", "O Estado", "Os comerciantes que compram o produto"],
+    correct: 1,
+    explanation: "No artesanato, o trabalhador é dono dos meios de produção — matéria-prima e instrumentos — e também do produto do seu próprio trabalho."
+  },
+  {
+    q: "Como é a divisão do trabalho em uma atividade artesanal?",
+    opts: ["Elementar: o artesão faz quase todas as etapas sozinho", "Muito complexa, com centenas de trabalhadores especializados", "Feita por máquinas automáticas", "Não existe divisão do trabalho no artesanato"],
+    correct: 0,
+    explanation: "No artesanato, a divisão do trabalho é elementar — o próprio artesão realiza quase todas as etapas da produção, usando instrumentos rudimentares."
+  },
+  {
+    q: "As gravuras de artesãos de 1425 mostravam, por exemplo, um alfaiate cortando tecido e um marceneiro trabalhando a madeira. O que essas cenas representam?",
+    opts: ["Trabalhadores de uma fábrica moderna", "Uma atividade produtiva individual ou de pequenos grupos, com instrumentos rudimentares", "Operários usando tear mecânico", "Um galpão industrial do século XIX"],
+    correct: 1,
+    explanation: "As gravuras de 1425 retratam o artesanato: atividade produtiva individual ou de pequenos grupos, realizada com instrumentos rudimentares, como a tesoura do alfaiate e as ferramentas do marceneiro."
+  },
+  {
+    q: "Onde e quando surgiram as grandes mudanças na produção, com o desenvolvimento de máquinas complexas como o tear mecânico?",
+    opts: ["Na França, no século XVI", "Na Inglaterra, no final do século XVIII", "No Brasil, no século XX", "Na China, na Idade Média"],
+    correct: 1,
+    explanation: "As grandes mudanças na produção ocorreram na Inglaterra, no final do século XVIII, com o desenvolvimento de máquinas complexas como o tear mecânico."
+  },
+  {
+    q: "O que o tear mecânico permitiu, em comparação com a produção artesanal?",
+    opts: ["Aumentar a produção com menos trabalhadores", "Reduzir a produção pela metade", "Eliminar totalmente a necessidade de fábricas", "Manter a produção artesanal sem mudanças"],
+    correct: 0,
+    explanation: "O tear mecânico permitia aumentar a produção usando menos trabalhadores, o que foi uma das grandes mudanças na produção no final do século XVIII."
+  },
+  {
+    q: "O que eram as primeiras fábricas/indústrias surgidas na Inglaterra?",
+    opts: ["Pequenas oficinas de um único artesão", "Grandes galpões com máquinas, reunindo centenas de trabalhadores", "Mercados de troca de produtos artesanais", "Escolas de formação de artesãos"],
+    correct: 1,
+    explanation: "As primeiras fábricas/indústrias eram grandes galpões com máquinas, reunindo centenas de trabalhadores — bem diferente da produção individual do artesanato."
+  },
+  {
+    q: "Na linha do tempo dos teares, no século XV, como o tecelão trabalhava?",
+    opts: ["Em tear automático industrial", "Em tear mecânico movido a vapor", "Em tear manual, movido por um pedal", "Usando braços robóticos"],
+    correct: 2,
+    explanation: "No século XV, o tecelão trabalhava em um tear manual, movido por um pedal — uma etapa da produção artesanal."
+  },
+  {
+    q: "No século XIX, como era o tear operado pelas trabalhadoras, segundo a linha do tempo dos teares?",
+    opts: ["Tear manual com pedal", "Tear mecânico, movido por máquinas a vapor", "Tear automático com braços robóticos", "Tear digital controlado por computador"],
+    correct: 1,
+    explanation: "No século XIX, as trabalhadoras operavam o tear mecânico, movido por máquinas a vapor — parte das grandes mudanças na produção industrial."
+  },
+  {
+    q: "No século XXI, como funciona o tear automático industrial, segundo a linha do tempo do livro?",
+    opts: ["É movido por um pedal manual", "É acionado por braços robóticos", "Não existe mais tear industrial", "É movido apenas por força humana"],
+    correct: 1,
+    explanation: "No século XXI, o tear automático industrial é acionado por braços robóticos — mostrando a evolução dos teares ao longo do tempo, do manual ao robótico."
+  },
+  {
+    q: "Qual é a principal diferença entre o artesanato e a indústria quanto aos meios de produção?",
+    opts: ["No artesanato o trabalhador é dono dos meios de produção; na indústria, a produção é feita em fábricas, com máquinas e muitos trabalhadores reunidos", "Não existe diferença entre artesanato e indústria", "A indústria sempre usa instrumentos rudimentares", "O artesanato sempre reúne centenas de trabalhadores em um galpão"],
+    correct: 0,
+    explanation: "No artesanato, o trabalhador é dono dos meios de produção (matéria-prima e instrumentos) e usa instrumentos rudimentares. Já a indústria surgiu com máquinas complexas, como o tear mecânico, reunindo centenas de trabalhadores em fábricas."
+  }
+];
+
+let current = 0, score = 0;
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('q-label').textContent = `Questão ${current + 1} de ${questions.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress').style.width = `${((current + 1) / questions.length) * 100}%`;
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').className = 'next-btn';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.correct].classList.add('correct');
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback correct show';
+    fb.textContent = '✅ Correto! ' + q.explanation;
+  } else {
+    btns[idx].classList.add('wrong');
+    fb.className = 'feedback wrong show';
+    fb.textContent = '❌ Errado. ' + q.explanation;
+  }
+  document.getElementById('next-btn').className = 'next-btn show';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) loadQuestion();
+  else showResult();
+}
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const card = document.getElementById('result-card');
+  card.className = 'result-card show';
+  const pct = Math.round((score / questions.length) * 100);
+  window.sabendoScore = pct;
+  document.getElementById('result-score').textContent = `${score}/${questions.length}`;
+  let emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Excelente! Você entende bem como o artesanato virou indústria!'; }
+  else if (pct >= 70) { emoji = '🌟'; msg = 'Muito bem! Você conhece a passagem do artesanato à indústria.'; }
+  else if (pct >= 50) { emoji = '📚'; msg = 'Bom esforço! Releia a HQ e tente novamente.'; }
+  else { emoji = '💪'; msg = 'Continue estudando! O tear mecânico mudou a história.'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-breakdown').innerHTML = `<strong>Acertos:</strong> ${score} &nbsp;|&nbsp; <strong>Erros:</strong> ${questions.length - score} &nbsp;|&nbsp; <strong>Aproveitamento:</strong> ${pct}%`;
+}
+
+loadQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "artesanato-industria";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Fio",
+    characterEmoji: "🧵",
+    characterImg:   "chars/artesanato-industria-hd.png",
+    themeLabel:     "Do Artesanato à Indústria · História",
+    totalActivities: 5,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: '../../index.html#theme-hist-artesanato-industria',
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {
+    // fallback se ja foi definido
+  }
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
