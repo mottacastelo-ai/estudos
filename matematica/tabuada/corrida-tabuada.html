@@ -106,10 +106,9 @@
     </div>
     <div class="setup-title">Como jogar</div>
     <div class="how-list">
-      🏃 Você corre sozinho, sem parar — a pista fica mais rápida com o tempo.<br>
-      🪨 Desvie das pedras trocando de pista.<br>
+      🏃 Você corre sozinho, sem parar — a pista fica mais rápida aos poucos.<br>
       🔢 De vez em quando aparece uma conta lá em cima. As 3 pistas mostram respostas — fique na pista com a resposta <b>certa</b> antes de chegar nela.<br>
-      ❤️ Você tem 3 vidas. Errar ou bater numa pedra tira uma vida.
+      ❤️ Você tem 3 vidas. Errar tira uma vida.
     </div>
     <button class="btn-start" id="btn-start" onclick="startGame()" disabled>▶️ Começar a corrida</button>
   </div>
@@ -157,9 +156,9 @@ function toggleAll(){
 [2,3,4,5,6,7,8,9,10].forEach(function(n){ tog(n); }); // seleção inicial padrão: tabuadas 2 a 10
 
 var DIFFICULTIES = {
-  facil:   { base: 2.2, max: 5.5, ramp: 0.07 },
-  normal:  { base: 3.2, max: 8.5, ramp: 0.14 },
-  dificil: { base: 4.4, max: 11.5, ramp: 0.22 }
+  facil:   { base: 2.2, max: 5.5, ramp: 0.07, gateSeconds: 6.5, leadMs: 1100 },
+  normal:  { base: 3.2, max: 8.5, ramp: 0.14, gateSeconds: 5.0, leadMs: 700 },
+  dificil: { base: 4.4, max: 11.5, ramp: 0.22, gateSeconds: 3.8, leadMs: 350 }
 };
 var difficulty = 'normal';
 function setDiff(key, btn){
@@ -195,9 +194,9 @@ function newState(){
     speed: d.base, baseSpeed: d.base, maxSpeed: d.max, ramp: d.ramp,
     score:0, streak:0, lives:3,
     correct:0, wrong:0, errLog:{},
-    objects: [], // {type:'obstacle'|'gate', lane, y, w,h, text, correctFlag, resolved}
-    distSinceQuestion: 0, distSinceObstacle: 0,
-    questionActive:false, elapsed:0
+    objects: [], // {type:'gate', lane, y, w,h, text, correctFlag, resolved, spd}
+    distSinceQuestion: 0,
+    questionActive:false, awaitingGateSpawn:false, elapsed:0
   };
 }
 
@@ -221,24 +220,31 @@ function genQuestion(){
   return { a:a, b:b, correctVal:correctVal, opts:opts };
 }
 
-function spawnObstacle(){
-  var lane = Math.floor(Math.random()*LANES);
-  state.objects.push({type:'obstacle', lane:lane, y:-60, w:W/LANES*0.5, h:44, resolved:false});
-}
-
 function spawnQuestionGates(){
   var q = genQuestion();
+  var diff = DIFFICULTIES[difficulty] || DIFFICULTIES.normal;
   state.questionActive = true;
+  state.awaitingGateSpawn = true;
   var banner = document.getElementById('q-banner');
   banner.textContent = q.a + ' × ' + q.b + ' = ?';
   banner.classList.add('show');
-  for(var i=0;i<LANES;i++){
-    state.objects.push({
-      type:'gate', lane:i, y:-90, w:W/LANES*0.78, h:56,
-      text:String(q.opts[i]), correctFlag:(q.opts[i]===q.correctVal),
-      qa:q.a, qb:q.b, resolved:false
-    });
-  }
+  // pistas de resposta viajam numa velocidade fixa (não a da corrida), dando
+  // sempre o mesmo tempo de leitura/cálculo — além de um tempo de leitura
+  // (leadMs) antes delas sequer começarem a se mover.
+  var distance = H*PLAYER_Y_RATIO + 90;
+  var gateSpd = distance / (diff.gateSeconds*60);
+  var myState = state;
+  setTimeout(function(){
+    if(myState !== state || !state.running) return;
+    state.awaitingGateSpawn = false;
+    for(var i=0;i<LANES;i++){
+      state.objects.push({
+        type:'gate', lane:i, y:-90, w:W/LANES*0.78, h:56,
+        text:String(q.opts[i]), correctFlag:(q.opts[i]===q.correctVal),
+        qa:q.a, qb:q.b, resolved:false, spd:gateSpd
+      });
+    }
+  }, diff.leadMs);
 }
 
 function updateHUD(){
@@ -301,25 +307,19 @@ function draw(){
   }
   ctx.setLineDash([]);
 
-  // objetos
+  // pistas de resposta (gates)
   state.objects.forEach(function(o){
     var x = laneX(o.lane);
-    if(o.type==='obstacle'){
-      ctx.font = (o.h*0.9) + 'px serif';
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('🪨', x, o.y);
-    } else {
-      var gw=o.w, gh=o.h;
-      ctx.fillStyle = o.resolved ? (o.correctFlag ? 'rgba(46,204,113,.85)' : 'rgba(231,76,60,.6)') : 'rgba(245,166,35,.92)';
-      ctx.strokeStyle = '#0F0F1A';
-      ctx.lineWidth=2;
-      roundRect(ctx, x-gw/2, o.y-gh/2, gw, gh, 12);
-      ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#1A1A2E';
-      ctx.font = '700 22px "Space Mono", monospace';
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(o.text, x, o.y+1);
-    }
+    var gw=o.w, gh=o.h;
+    ctx.fillStyle = o.resolved ? (o.correctFlag ? 'rgba(46,204,113,.85)' : 'rgba(231,76,60,.6)') : 'rgba(245,166,35,.92)';
+    ctx.strokeStyle = '#0F0F1A';
+    ctx.lineWidth=2;
+    roundRect(ctx, x-gw/2, o.y-gh/2, gw, gh, 12);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1A1A2E';
+    ctx.font = '700 22px "Space Mono", monospace';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(o.text, x, o.y+1);
   });
 
   // jogador (Prepo)
@@ -359,49 +359,42 @@ function step(t){
   if(!state.running) return;
   if(!lastT) lastT=t;
   var dt = Math.min(40, t-lastT); lastT=t;
+  var dtFactor = dt/16.6667; // normaliza o movimento para ~60fps, independente da taxa real de quadros do aparelho
   state.elapsed += dt;
 
   // dificuldade progressiva
   state.speed = Math.min(state.maxSpeed, state.baseSpeed + state.elapsed/1000*state.ramp);
 
   // pista suave
-  state.lane += (state.targetLane-state.lane)*0.28;
+  state.lane += (state.targetLane-state.lane)*Math.min(1, 0.28*dtFactor);
 
   // pontos por distância
-  state.score += state.speed*0.045;
+  state.score += state.speed*0.045*dtFactor;
 
   // spawns
-  state.distSinceQuestion += state.speed;
-  state.distSinceObstacle += state.speed;
-  if(!state.questionActive && state.distSinceQuestion > 620){
+  state.distSinceQuestion += state.speed*dtFactor;
+  if(!state.questionActive && state.distSinceQuestion > 340){
     state.distSinceQuestion = 0;
     spawnQuestionGates();
-  } else if(!state.questionActive && state.distSinceObstacle > 130){
-    state.distSinceObstacle = 0;
-    if(Math.random()<0.72) spawnObstacle();
   }
 
   // mover objetos
   var playerY = H*PLAYER_Y_RATIO;
   var playerLaneRounded = Math.round(state.lane);
-  var stillQuestion=false;
+  var stillQuestion = state.awaitingGateSpawn;
   state.objects.forEach(function(o){
-    o.y += state.speed*1.6;
-    if(o.type==='gate') stillQuestion = stillQuestion || (!o.resolved && o.y < playerY+80);
+    o.y += o.spd*dtFactor;
+    stillQuestion = stillQuestion || (!o.resolved && o.y < playerY+80);
     if(!o.resolved && o.y >= playerY-10 && o.y <= playerY+10 && o.lane===playerLaneRounded){
       o.resolved = true;
-      if(o.type==='obstacle'){
-        flash('nok'); loseLife();
+      if(o.correctFlag){
+        state.correct++; state.streak++; state.score += 15;
+        flash('ok');
       } else {
-        if(o.correctFlag){
-          state.correct++; state.streak++; state.score += 15;
-          flash('ok');
-        } else {
-          state.wrong++;
-          var k = o.qa+'×'+o.qb;
-          state.errLog[k] = (state.errLog[k]||0)+1;
-          flash('nok'); loseLife();
-        }
+        state.wrong++;
+        var k = o.qa+'×'+o.qb;
+        state.errLog[k] = (state.errLog[k]||0)+1;
+        flash('nok'); loseLife();
       }
       updateHUD();
     }
