@@ -1,14 +1,9 @@
 {
-    "portraits":  [
-                      {
-                          "descricao":  "A fully animated detective magnifying glass character named Lupa, for a Brazilian 5th-grade educational comic book. Her body is a round glass lens (circular, transparent with a subtle golden shine), attached to a golden metal handle (#F59E0B) that bends and transforms into her arms and legs (thin golden limbs, small three-fingered hands). Large expressive cartoon eyes are drawn inside the lens glass itself, with a small stitched-style smile. She wears a small detective deerstalker cap in dark brown (#78350F) on top of her lens-head. The glass lens glows bright golden-yellow with small sparkle effects. Full-body illustration, standing pose, one arm raised in a confident happy gesture, big smile, cap slightly tilted. Vibrant Brazilian children\u0027s educational comic book style, bold outlines, clean cel-shading, bright saturated colors, exaggerated cartoonish proportions. Warm amber/gold palette: primary #B45309, light accent #F59E0B, dark shadow #78350F. Plain solid background, no scenery, no text, no speech bubbles, no other characters.",
-                          "output_path":  "_landing\\chars\\fontes-historicas-ambiente-hd.png",
-                          "slug":  "fontes-historicas-ambiente"
-                      },
-                      {
-                          "descricao":  "An animated ball of yarn / weaving thread character named Fio, for a Brazilian 5th-grade educational comic book. Body shaped like a rounded, plump yarn spool/skein made of soft looping thread coils. Main color: warm amber/golden yellow (#F59E0B) for the bulk of the yarn body, with darker brown thread details (#B45309) wrapped in decorative spiral patterns around the body. A single loose thread end extends from the top of Fio\u0027s body and moves expressively like a small arm, curling upward in a friendly wave gesture. Two large round expressive cartoon eyes are embroidered/stitched directly onto the yarn body (simple stitched-cross pupils), with a small stitched smiling mouth below them. No visible legs, Fio hovers with a gentle bounce, small motion lines beneath the body. Full-body illustration, cheerful greeting pose. Vibrant Brazilian children\u0027s educational comic book style, bold outlines, clean cel-shading, bright saturated colors, exaggerated cartoonish proportions. Warm amber/brown palette: primary #B45309, light accent #F59E0B, dark shadow #78350F. Plain solid background, no scenery, no text, no speech bubbles, no other characters.",
-                          "output_path":  "_landing\\chars\\artesanato-industria-hd.png",
-                          "slug":  "artesanato-industria"
-                      }
-                  ]
+  "portraits": [
+    {
+      "descricao": "A living antique brass tram bell character named Trilim, for a Brazilian 2nd-grade educational comic book. Round and pot-bellied like an old-fashioned table bell, aged brass with a warm golden-purple sheen and soft verdigris patina in the grooves. A round expressive cartoon face is embossed on the metal belly: big glossy eyes, softly hammered brass eyebrows shaped like a tiny curled mustache, and the bell's internal clapper hangs out the bottom like a round little nose. Thin curved wire arms end in small three-fingered rounded brass hands, one arm raised in a warm friendly wave. No legs -- Trilim glides atop a small circular base shaped like two miniature curved train rails. On top of his head he wears a small triangular purple pennant flag. A purple-and-lilac plaid ribbon is tied around his neck where the bell narrows. Light scuffs and dents in the brass give him a lovingly-used charm. Full-body illustration, cheerful standing pose, big warm smile. Vibrant Brazilian children's educational comic book style, bold black outlines, clean cel-shading, bright saturated colors, exaggerated cartoonish chibi proportions, no sharp edges. Purple palette: primary #A855F7, light accent #D08EF8, brass tones #C9A05C and #7A4A12. Plain solid background, no scenery, no text, no speech bubbles, no other characters.",
+      "output_path": "_landing\\chars\\convivencia-transportes-coletivos-hd.png",
+      "slug": "convivencia-transportes-coletivos"
+    }
+  ]
 }

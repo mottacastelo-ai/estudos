@@ -70,6 +70,8 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 >
 > Sem isso, os JSONs ficarão em `pending/` sem ser processados.
 
+> **Alternativa via MCP (desde 2026-08-11):** existe um servidor MCP `codex` registrado em `C:\Users\wizar\.claude.json` para este projeto (`estudos`), rodando `codex mcp-server` via `C:\Users\wizar\AppData\Roaming\npm\codex.cmd` — mesma config já usada no projeto `Wizard`. Permite chamar o Codex diretamente como tool, sem depender do Codex Desktop aberto nem das automações de polling em pasta. Exige reiniciar a sessão do Claude Code após o registro para a tool aparecer. `gerador-hq-imagens` tenta esse modo primeiro e cai para o fluxo de arquivo acima como fallback — nenhuma das duas vias deve ser removida até o MCP estar validado de ponta a ponta em produção.
+
 ---
 
 ## Regras invioláveis
@@ -378,6 +380,6 @@ Consulte **`ERROS.md`** antes de gerar qualquer atividade. Contém bugs já diag
 | `atualizador-index` | Atualiza `index.html` para registrar o novo tema |
 | `revisor-qualidade` | Audita arquivos gerados — conformidade pedagógica + vazamento de resposta (seções 1–6 + 3c) |
 | `qa-simulador` | Valida runtime com Playwright mobile — 7 checks técnicos (console, assets, interação, sabendoScore, concluir-btn, gamificação, anti-conclusão-prematura) |
-| `gerador-hq-imagens` | Escreve JSON de pedido em `.claude/pending/`; faz polling até Codex confirmar em `.claude/done/` |
+| `gerador-hq-imagens` | Chama Codex via MCP (preferencial) ou escreve JSON em `.claude/pending/` + polling (fallback) |
 | `colador-hq` | Empilha pg1–pg4 em `hq-[slug].png` pronto para o index |
 | `atualizador-docs` | Regenera `CONTEUDO.md` e atualiza tabela de agentes do `SQUAD.md` |

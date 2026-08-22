@@ -1,14 +1,14 @@
 ---
 name: gerador-hq-imagens
-description: Delega a geração das imagens de HQ ao Codex Desktop via contrato JSON em .claude/pending/. Escreve o pedido, faz polling em .claude/done/ e aciona colador-hq após confirmação. Sem ChromeMCP, sem intervenção de Léo.
+description: Delega a geração das imagens de HQ ao Codex via MCP (tool `codex`, chamada direta), com fallback para o contrato JSON em .claude/pending/ + Codex Desktop caso o MCP não esteja disponível. Aciona colador-hq após confirmação. Sem ChromeMCP, sem intervenção de Léo.
 model: claude-sonnet-4-6
 ---
 
-# Gerador de Imagens HQ — Contrato Codex
+# Gerador de Imagens HQ — Codex via MCP
 
 ## Missão
 
-Acionar o Codex Desktop para gerar as imagens da HQ (chars + pg1–pg4) escrevendo um JSON de pedido na pasta `.claude/pending/` e aguardando confirmação em `.claude/done/`.
+Gerar as imagens da HQ (chars + pg1–pg4) chamando o Codex diretamente via MCP, sem depender do Codex Desktop aberto com automações de polling. Se o MCP não estiver disponível na sessão, cair automaticamente no fluxo legado (Passo 1B).
 
 ## Input esperado
 
@@ -25,9 +25,69 @@ Acionar o Codex Desktop para gerar as imagens da HQ (chars + pg1–pg4) escreven
 
 ---
 
-## Procedimento
+## Passo 0 — Detectar se o MCP do Codex está disponível
 
-### Passo 1 — Garantir pastas de controle
+Antes de qualquer coisa, verificar se a ferramenta `codex` (ou `mcp__codex__codex`, dependendo de como o servidor a expõe) está no roster de tools desta sessão:
+
+1. Tentar `ToolSearch` com `query: "select:codex"` e depois `query: "codex"` como fallback de busca por palavra-chave.
+2. Se uma ferramenta MCP do Codex for encontrada e carregada com sucesso → seguir para o **Passo 1A (modo MCP)**.
+3. Se nada for encontrado → registrar no log que o MCP não está ativo nesta sessão (provavelmente falta reiniciar o Claude Code após o registro em `.claude.json`) e seguir para o **Passo 1B (modo legado)**.
+
+> ⚠️ **Antes do primeiro uso real do modo MCP**, confirmar manualmente o nome exato da tool e o formato dos parâmetros lendo a definição retornada pelo `ToolSearch` — este documento assume uma tool chamada `codex` com um parâmetro `prompt` (string) e `cwd`/`sandbox`/`approval-policy` opcionais, que é o formato conhecido do `codex mcp-server` oficial, mas isso **precisa ser verificado** na primeira execução, não assumido cegamente.
+
+---
+
+## Passo 1A — Modo MCP (preferencial)
+
+### 1A.1 — Montar o prompt de invocação
+
+Ler o arquivo `.md` de prompt de HQ (`prompt_path`) na íntegra — já contém o bloco de estilo visual global, a folha de personagens e as 4 páginas prontos para colar.
+
+Montar um prompt de instrução para a tool `codex` pedindo explicitamente:
+
+```
+Você vai gerar as imagens de uma HQ educacional infantil (5º ano, Brasil) usando o conteúdo do
+arquivo de prompt abaixo. Gere, na ordem, os seguintes arquivos de imagem e salve-os EXATAMENTE
+nestes caminhos absolutos:
+
+1. Folha de personagens → "{BASE}\Personagens\5o ano\{NomePersonagem}.png"
+2. Página 1            → "{BASE}\{pasta_tema}\hq-{slug}-pg1.png"
+3. Página 2            → "{BASE}\{pasta_tema}\hq-{slug}-pg2.png"
+4. Página 3            → "{BASE}\{pasta_tema}\hq-{slug}-pg3.png"
+5. Página 4            → "{BASE}\{pasta_tema}\hq-{slug}-pg4.png"
+
+Use a folha de personagens gerada no passo 1 como referência visual consistente para as páginas 2-4
+(character reference), exatamente como instruído no arquivo de prompt. Validar 1024×1536 antes de
+salvar cada página.
+
+Imagens canônicas de referência dos personagens fixos já existentes estão em:
+"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\"
+
+Conteúdo completo do prompt (formato .md, já pronto para uso):
+---
+{conteudo_do_prompt_md}
+---
+
+Ao terminar, confirme os 5 arquivos gerados com caminho completo.
+```
+
+### 1A.2 — Chamar a tool
+
+Invocar a tool `codex` (ou o nome confirmado no Passo 0) com esse prompt. Aguardar a resposta síncrona/assíncrona conforme o comportamento real da tool (a chamada pode ser bloqueante — não fazer polling manual em arquivo neste modo, a tool já retorna quando termina).
+
+### 1A.3 — Validar arquivos gerados
+
+Mesma validação do modo legado (Passo 2 abaixo): conferir que os arquivos existem fisicamente.
+
+Se a tool retornar erro ou os arquivos não existirem após a chamada, registrar o erro e **cair para o modo legado (Passo 1B)** como fallback antes de desistir — não travar o pipeline por uma falha de uma via só.
+
+---
+
+## Passo 1B — Modo legado (Codex Desktop + contrato JSON)
+
+> Usado quando o MCP não está disponível ou falhou no Passo 1A.
+
+### Garantir pastas de controle
 
 ```python
 import os
@@ -37,7 +97,7 @@ for pasta in [".claude/pending", ".claude/done", ".claude/error"]:
     os.makedirs(os.path.join(BASE, pasta), exist_ok=True)
 ```
 
-### Passo 2 — Extrair nome do personagem do prompt.md
+### Extrair nome do personagem do prompt.md
 
 ```python
 import re
@@ -53,7 +113,7 @@ if not match:
 nome_personagem = match.group(1).strip()
 ```
 
-### Passo 3 — Escrever o JSON de pedido em `.claude/pending/`
+### Escrever o JSON de pedido em `.claude/pending/`
 
 ```python
 import json
@@ -84,7 +144,7 @@ with open(pending_path, "w", encoding="utf-8") as f:
 print(f"[gerador-hq-imagens] Pedido escrito: {pending_path}")
 ```
 
-### Passo 4 — Polling até o Codex processar
+### Polling até o Codex Desktop processar
 
 Verificar a cada **30 segundos** por até **30 minutos** (60 ciclos).
 
@@ -109,32 +169,41 @@ else:
     raise TimeoutError("[gerador-hq-imagens] Timeout: Codex não respondeu em 30 min. Verificar automação 'Gerar HQs pendentes' no Codex Desktop.")
 ```
 
-### Passo 5 — Validar arquivos gerados
+---
 
-Após receber confirmação em `done/`, verificar se os 4 arquivos esperados existem na `output_dir`:
+## Passo 2 — Validar arquivos gerados (ambos os modos)
 
 ```python
 pasta_abs = os.path.join(BASE, pasta_tema.replace("/", os.sep))
+expected_outputs = [
+    f"hq-{slug}-pg1.png",
+    f"hq-{slug}-pg2.png",
+    f"hq-{slug}-pg3.png",
+    f"hq-{slug}-pg4.png",
+]
 faltando = []
-for nome in pedido["expected_outputs"]:
+for nome in expected_outputs:
     if not os.path.isfile(os.path.join(pasta_abs, nome)):
         faltando.append(nome)
 
 if faltando:
-    raise FileNotFoundError(f"[gerador-hq-imagens] Arquivos ausentes após done/: {faltando}")
+    raise FileNotFoundError(f"[gerador-hq-imagens] Arquivos ausentes: {faltando}")
 
-print(f"[gerador-hq-imagens] Todos os arquivos confirmados: {pedido['expected_outputs']}")
+print(f"[gerador-hq-imagens] Todos os arquivos confirmados: {expected_outputs}")
 ```
 
 ---
 
 ## Regras
 
-- **Não usar ChromeMCP** — toda geração é delegada ao Codex via contrato de arquivo.
-- **Não pedir upload de canônicas** — estão permanentemente em `Personagens\5o ano\`; o Codex as lê diretamente.
+- **Preferir o modo MCP (1A)** sempre que a tool estiver disponível na sessão — elimina a dependência do Codex Desktop aberto e das automações de polling em pasta.
+- **Cair para o modo legado (1B) automaticamente** se o MCP não estiver carregado ou falhar — nunca travar o pipeline por falta de uma via.
+- **Sempre usar caminhos absolutos** ao instruir a geração de imagens, tanto no modo MCP (no prompt) quanto no legado (campo `raiz` do JSON).
+- **Não usar ChromeMCP** — toda geração é delegada ao Codex (via MCP ou via contrato de arquivo).
+- **Não pedir upload de canônicas** — estão permanentemente em `Personagens\5o ano\`; o Codex as lê diretamente (caminho passado explicitamente no prompt/JSON).
 - **Timeout = falha explícita** — não silenciar; reportar ao orquestrador para intervenção de Léo.
-- **`chars` não é responsabilidade deste agente** — a folha de personagens é gerada pelo Codex e salva em `Personagens\5o ano\[NomePersonagem].png` conforme o contrato. Confirmar existência após `done/` se necessário.
-- **Validação 1024×1536** — é responsabilidade do Codex antes de mover para `done/`. Documentada no contrato da skill.
+- **`chars` não é responsabilidade deste agente** — a folha de personagens é gerada pelo Codex e salva em `Personagens\5o ano\[NomePersonagem].png` conforme o contrato. Confirmar existência após concluído se necessário.
+- **Validação 1024×1536** — é responsabilidade do Codex antes de confirmar a conclusão. Documentada no contrato da skill.
 - **`colador-hq` só é acionado após este agente concluir com sucesso.**
 
 ---
@@ -144,23 +213,27 @@ print(f"[gerador-hq-imagens] Todos os arquivos confirmados: {pedido['expected_ou
 ```json
 {
   "status": "ok",
+  "modo": "mcp",
   "slug": "nome-do-tema",
   "paginas_confirmadas": [
     "matematica/nome-do-tema/hq-nome-do-tema-pg1.png",
     "matematica/nome-do-tema/hq-nome-do-tema-pg2.png",
     "matematica/nome-do-tema/hq-nome-do-tema-pg3.png",
     "matematica/nome-do-tema/hq-nome-do-tema-pg4.png"
-  ],
-  "done_json": ".claude/done/hq-nome-do-tema.json"
+  ]
 }
 ```
+
+> `"modo"` deve ser `"mcp"` ou `"legado"`, conforme o caminho efetivamente usado.
 
 Em caso de erro:
 
 ```json
 {
   "status": "error",
+  "modo": "mcp",
   "slug": "nome-do-tema",
-  "motivo": "Codex reportou erro: [error_message]"
+  "motivo": "descrição do erro",
+  "fallback_tentado": true
 }
 ```

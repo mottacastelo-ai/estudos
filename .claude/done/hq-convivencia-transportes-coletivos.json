@@ -1,0 +1,15 @@
+{
+  "slug": "convivencia-transportes-coletivos",
+  "disciplina": "historia",
+  "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos-2ano",
+  "prompt_path": "historia/convivencia-transportes-coletivos/hq-convivencia-transportes-coletivos-prompt.md",
+  "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\2o ano",
+  "output_dir": "historia/convivencia-transportes-coletivos",
+  "expected_outputs": [
+    "hq-convivencia-transportes-coletivos-chars.png",
+    "hq-convivencia-transportes-coletivos-pg1.png",
+    "hq-convivencia-transportes-coletivos-pg2.png",
+    "hq-convivencia-transportes-coletivos-pg3.png",
+    "hq-convivencia-transportes-coletivos-pg4.png"
+  ]
+}

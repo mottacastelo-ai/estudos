@@ -1,5 +1,5 @@
 # Conteúdo do Portal — Estado Atual
-**Última atualização:** 2026-08-06
+**Última atualização:** 2026-08-22
 
 ---
 
@@ -8,11 +8,11 @@
 | Disciplina | Temas | Atividades |
 |---|---|---|
 | 📝 Português | 12 | 59 |
-| 🔢 Matemática | 7 | 32 |
+| 🔢 Matemática | 7 | 33 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **31** | **139** |
+| **Total** | **31** | **140** |
 
 ---
 
@@ -186,6 +186,7 @@
 | Treino Cronometrado | ✅ `treino-tabuada.html` |
 | Batalha da Tabuada | ✅ `batalha-tabuada.html` |
 | Caça ao Erro | ✅ `caca-erro-tabuada.html` |
+| Corrida da Tabuada | ✅ `corrida-tabuada.html` |
 
 ---
 
