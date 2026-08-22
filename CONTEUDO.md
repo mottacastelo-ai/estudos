@@ -432,6 +432,7 @@
 | `Calco.png` |
 | `Calê.png` |
 | `Ciclao.png` |
+| `Dicio.png` |
 | `Divi.png` |
 | `Elastico.png` |
 | `Elinho.png` |
