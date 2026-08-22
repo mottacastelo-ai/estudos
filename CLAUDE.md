@@ -141,6 +141,11 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 | Virelivro (livro vivo, capa terracota/vinho, chapéu de bobo da corte com guizos) | Reconto e Anedota | `chars/reconto-anedota-hd.png` |
 | Travessão (travessão vivo roxo, dois modos: direto/indireto) | Discurso Direto e Indireto | `chars/discurso-direto-indireto-hd.png` |
 | Elástico (elo/elástico roxo que conecta palavras, muda de figurino por década) | Gírias e Coesão | `chars/girias-coesao-hd.png` |
+| Morá (pergaminho dourado animado, com pena e tinta) | Fábulas: Conflito e Moral | `chars/fabulas-conflito-moral-hd.png` |
+| Elo (elo de corrente dourado, flexível e conectante) | Conjunções | `chars/conjuncoes-hd.png` |
+| Dicio (livro-dicionário animado, capa azul com marcadores) | Estudo do Dicionário: Verbetes | `chars/dicionario-verbetes-hd.png` |
+| Ziguinho (letras animadas que mudam de forma e tamanho) | Poema Visual e Onomatopeias | `chars/poema-visual-onomatopeias-hd.png` |
+| Acentin (acento agudo animado, expressivo com múltiplas emoções) | Acentuação: Paroxítonas e Proparoxítonas | `chars/acentuacao-paroxitonas-proparoxitonas-hd.png` |
 
 > Caminhos de portrait são relativos a `_landing/`. Folhas de personagens em `Personagens\5o ano\`.
 > Novos personagens devem ser **metáforas visuais do conceito central** do tema.
