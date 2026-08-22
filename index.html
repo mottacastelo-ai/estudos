@@ -684,7 +684,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
     <span class="d-icon">📝</span>
     <span class="d-name">Português</span>
-    <span class="d-count">88</span>
+    <span class="d-count">92</span>
   </button>
   <div class="theme-sub" id="sub-port">
     <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
@@ -848,9 +848,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Português</div>
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#FDF2F8;color:#9D174D">19 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">71 atividades</span>
-            <span class="chip" style="background:#FEF3C7;color:#92400E">15 HQs</span>
+            <span class="chip" style="background:#FDF2F8;color:#9D174D">20 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">75 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">16 HQs</span>
           </div>
         </button>
         <button class="disc-home-card mat" onclick="showDisc('mat')">
@@ -3509,6 +3509,7 @@ var THEME_CATALOG = [
   { disc:'port', slug:'conjuncoes',                 label:'Conjunções',                  emoji:'🔗', pages:[178,180], charName:'Elo',        charImg:'chars/conjuncoes-hd.png' },
   { disc:'port', slug:'poema-visual-onomatopeias', label:'Poema Visual e Onomatopeias', emoji:'🐟', pages:[190,193], charName:'Ziguinho',   charImg:'chars/poema-visual-onomatopeias-hd.png' },
   { disc:'port', slug:'dicionario-verbetes',       label:'Estudo do Dicionário: Verbetes', emoji:'📔', pages:[186,189], charName:'Dicio',    charImg:'chars/dicionario-verbetes-hd.png' },
+  { disc:'port', slug:'acentuacao-paroxitonas-proparoxitonas', label:'Acentuação: Paroxítonas e Proparoxítonas', emoji:'✒️', pages:[196,197], charName:'Acentin', charImg:'chars/acentuacao-paroxitonas-proparoxitonas-hd.png' },
   // ── Matemática
   { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null, charName:'Prepo',    charImg:'prepo-hd.png' },
   { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null, charName:'Calco',    charImg:'chars/multiplicacao-divisao-hd.png' },
@@ -3660,7 +3661,8 @@ var THEME_META = {
   'girias-coesao':               { label: 'Gírias e Coesão',              navId: 'nav-port', disc: 'port' },
   'conjuncoes':                  { label: 'Conjunções',                   navId: 'nav-port', disc: 'port' },
   'poema-visual-onomatopeias':  { label: 'Poema Visual e Onomatopeias',  navId: 'nav-port', disc: 'port' },
-  'dicionario-verbetes':        { label: 'Estudo do Dicionário: Verbetes', navId: 'nav-port', disc: 'port' }
+  'dicionario-verbetes':        { label: 'Estudo do Dicionário: Verbetes', navId: 'nav-port', disc: 'port' },
+  'acentuacao-paroxitonas-proparoxitonas': { label: 'Acentuação: Paroxítonas e Proparoxítonas', navId: 'nav-port', disc: 'port' }
 };
 var ACTIVITY_FILE_PATHS = {
   'preposicoes:quiz':                          'portugues/preposicoes/quiz-preposicoes.html',
@@ -3712,6 +3714,10 @@ var ACTIVITY_FILE_PATHS = {
   'dicionario-verbetes:classificador':         'portugues/dicionario-verbetes/classificador-dicionario-verbetes.html',
   'dicionario-verbetes:complete-lacuna':       'portugues/dicionario-verbetes/complete-lacuna-dicionario-verbetes.html',
   'dicionario-verbetes:mapa-mental':           'portugues/dicionario-verbetes/mapa-mental-dicionario-verbetes.html',
+  'acentuacao-paroxitonas-proparoxitonas:quiz':         'portugues/acentuacao-paroxitonas-proparoxitonas/quiz-acentuacao-paroxitonas-proparoxitonas.html',
+  'acentuacao-paroxitonas-proparoxitonas:caca-erro':    'portugues/acentuacao-paroxitonas-proparoxitonas/caca-erro-acentuacao-paroxitonas-proparoxitonas.html',
+  'acentuacao-paroxitonas-proparoxitonas:classificador':'portugues/acentuacao-paroxitonas-proparoxitonas/classificador-acentuacao-paroxitonas-proparoxitonas.html',
+  'acentuacao-paroxitonas-proparoxitonas:mapa-mental':  'portugues/acentuacao-paroxitonas-proparoxitonas/mapa-mental-acentuacao-paroxitonas-proparoxitonas.html',
   'letral:detetive':                           'portugues/letra-l/detetive-silaba-letra-l.html',
   'letral:fabrica':                            'portugues/letra-l/fabrica-letra-l.html',
   'letral:mapa-mental':                        'portugues/letra-l/mapa-mental-letra-l.html',

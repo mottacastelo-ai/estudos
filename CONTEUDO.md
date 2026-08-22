@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 19 | 88 |
+| 📝 Português | 20 | 92 |
 | 🔢 Matemática | 7 | 33 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **38** | **169** |
+| **Total** | **39** | **173** |
 
 ---
 
@@ -260,6 +260,19 @@
 | Classificador | ✅ `classificador-dicionario-verbetes.html` |
 | Complete a Lacuna | ✅ `complete-lacuna-dicionario-verbetes.html` |
 | Mapa Mental | ✅ `mapa-mental-dicionario-verbetes.html` |
+
+---
+
+### Acentuacao Paroxitonas Proparoxitonas
+**Personagem:** Acentin (acento agudo animado com chapeuzinho no formato de acento)
+**HQ:** ✅ `hq-acentuacao-paroxitonas-proparoxitonas.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-acentuacao-paroxitonas-proparoxitonas.html` |
+| Caça-Erro | ✅ `caca-erro-acentuacao-paroxitonas-proparoxitonas.html` |
+| Classificador | ✅ `classificador-acentuacao-paroxitonas-proparoxitonas.html` |
+| Mapa Mental | ✅ `mapa-mental-acentuacao-paroxitonas-proparoxitonas.html` |
 
 ---
 
