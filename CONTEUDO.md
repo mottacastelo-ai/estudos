@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 16 | 76 |
+| 📝 Português | 17 | 80 |
 | 🔢 Matemática | 7 | 33 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **35** | **157** |
+| **Total** | **36** | **161** |
 
 ---
 
@@ -223,6 +223,19 @@
 | Detetive da Coesão | ✅ `detetive-coesao-girias-coesao.html` |
 | Viajante do Tempo | ✅ `viajante-tempo-girias-coesao.html` |
 | Mapa Mental | ✅ `mapa-mental-girias-coesao.html` |
+
+---
+
+### Conjuncoes
+**Personagem:** Elo (elo de corrente dourado animado)
+**HQ:** ✅ `hq-conjuncoes.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-conjuncoes.html` |
+| Classificador de Conjunções | ✅ `classificador-conjuncoes.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-conjuncoes.html` |
+| Mapa Mental | ✅ `mapa-mental-conjuncoes.html` |
 
 ---
 
