@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Gírias e Coesão</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;
+  --text:#1A1A2E;--muted:#6B7280;--border:#DDD6FE;--card:#fff;
+  --green:#059669;--green-bg:#ECFDF5;--red:#DC2626;--red-bg:#FEF2F2;
+  --radius:18px;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:680px;margin:0 auto;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);background:none;border:none;cursor:pointer;padding:0;margin-bottom:16px;font-family:"Baloo 2",cursive;}
+.back-btn:hover{opacity:.7;}
+.activity-card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.1);}
+.card-header{background:linear-gradient(135deg,#2D1B69,#7C3AED 60%,#A78BFA);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:36px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:17px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+.progress-wrap{padding:12px 24px 8px;border-bottom:2px solid var(--border);background:var(--port-bg);}
+.progress-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+.prog-track{height:8px;border-radius:999px;background:var(--border);}
+.prog-fill{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--port),var(--port-light));transition:width .4s;}
+.question-area{padding:24px;}
+.q-number{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--port);letter-spacing:.06em;margin-bottom:10px;}
+.q-text{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:18px;color:var(--text);}
+.options{display:flex;flex-direction:column;gap:10px;}
+.option{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-radius:14px;border:2px solid var(--border);background:var(--card);cursor:pointer;font-family:"Baloo 2",cursive;font-size:15px;font-weight:600;color:var(--text);text-align:left;transition:border-color .15s,background .15s;}
+.option:hover:not(:disabled){border-color:var(--port-light);background:var(--port-bg);}
+.opt-letter{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:8px;background:var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:12px;font-weight:700;flex-shrink:0;transition:background .15s,color .15s;}
+.option.correct{border-color:var(--green);background:var(--green-bg);}
+.option.correct .opt-letter{background:var(--green);color:#fff;}
+.option.wrong{border-color:var(--red);background:var(--red-bg);}
+.option.wrong .opt-letter{background:var(--red);color:#fff;}
+.option:disabled{cursor:default;}
+.feedback{border-radius:14px;padding:14px 18px;font-size:14px;font-weight:700;margin-top:14px;display:none;animation:popIn .25s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.feedback.show{display:flex;gap:10px;align-items:flex-start;}
+.feedback.correct-fb{background:var(--green-bg);color:#065F46;border:2px solid var(--green);}
+.feedback.wrong-fb{background:var(--red-bg);color:#7F1D1D;border:2px solid var(--red);}
+.feedback-icon{font-size:20px;flex-shrink:0;}
+.btn-next{width:100%;background:var(--port);color:#fff;border:none;border-radius:14px;padding:15px;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px;display:none;transition:all .18s;}
+.btn-next:hover{background:#6D28D9;transform:translateY(-2px);box-shadow:0 6px 16px rgba(124,58,237,.35);}
+.btn-next.show{display:block;}
+.results{padding:40px 28px;text-align:center;display:none;}
+.results.show{display:block;}
+.results-emoji{font-size:64px;margin-bottom:12px;}
+.results h2{font-family:"Space Mono",monospace;font-size:22px;color:var(--port);margin-bottom:8px;}
+.results-score{font-size:52px;font-weight:900;color:var(--text);margin:12px 0 4px;}
+.results-score span{color:var(--port);}
+.results-sub{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:24px;}
+.medal{display:inline-block;background:var(--port-bg);border:2px solid var(--border);border-radius:14px;padding:10px 24px;font-size:15px;font-weight:800;margin-bottom:24px;color:var(--port);}
+.review-list{text-align:left;margin-bottom:24px;display:flex;flex-direction:column;gap:8px;}
+.review-item{padding:10px 14px;border-radius:12px;border:1.5px solid;display:flex;align-items:flex-start;gap:8px;font-size:13px;font-weight:600;}
+.review-item.ok{background:var(--green-bg);border-color:var(--green);color:#065F46;}
+.review-item.nok{background:var(--red-bg);border-color:var(--red);color:#7F1D1D;}
+.review-item .ri-icon{flex-shrink:0;font-size:15px;}
+.btn-restart{background:var(--port);color:#fff;border:none;border-radius:14px;padding:15px 36px;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;transition:all .18s;}
+.btn-restart:hover{background:#6D28D9;transform:translateY(-2px);}
+@media(max-width:480px){.card-header h1{font-size:15px;}.q-text{font-size:15px;}.option{font-size:14px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🔗</div>
+      <div>
+        <h1>Quiz Interativo</h1>
+        <p>Gírias e Coesão · Português 5º ano</p>
+      </div>
+      <div class="hbadge">📖 Retrieval</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="question-area" id="question-area">
+      <div class="q-number" id="q-number">QUESTÃO 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"><span class="feedback-icon" id="fb-icon"></span><span id="fb-text"></span></div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima questão →</button>
+    </div>
+    <div class="results" id="results">
+      <div class="results-emoji" id="res-emoji"></div>
+      <h2>Resultado final</h2>
+      <div class="results-score"><span id="res-score">0</span>/10</div>
+      <div class="results-sub" id="res-sub"></div>
+      <div class="medal" id="res-medal"></div>
+      <div class="review-list" id="review-list"></div>
+      <button class="btn-restart" onclick="restart()">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QUESTIONS = [
+  {
+    q: "O que é uma gíria?",
+    opts: ["Uma palavra do dicionário formal","Uma expressão ligada ao falar de um grupo social","Uma regra gramatical obrigatória","Um tipo de texto literário"],
+    ans: 1,
+    fb: "Gírias são expressões ligadas ao falar de um grupo social. Elas revelam a criatividade dos falantes e fazem parte da identidade do grupo."
+  },
+  {
+    q: "Quais expressões o livro usa para dizer que Cinderela estava \"um espetáculo\"?",
+    opts: ["Um fracasso, um susto, um absurdo","Um arraso, um show, um estouro","Um encanto, uma novidade, um charme","Uma vitória, um avanço, um triunfo"],
+    ans: 1,
+    fb: "O livro usa gírias como 'um arraso', 'um show', 'um estouro', 'um uau', 'um pitéu' e 'uma teteia' para dizer que Cinderela estava um espetáculo."
+  },
+  {
+    q: "Por que algumas gírias caem em desuso ao longo do tempo?",
+    opts: ["Porque os dicionários as proíbem","Porque as escolas determinam quais palavras usar","Porque os falantes param de usá-las ao longo do tempo","Porque são palavras importadas de outros idiomas"],
+    ans: 2,
+    fb: "A língua varia ao longo do tempo porque os próprios falantes fazem palavras e expressões entrarem ou saírem de uso — não há nenhuma autoridade que decida isso."
+  },
+  {
+    q: "Na crônica \"Antigamente\" de Carlos Drummond de Andrade, o que significa a expressão \"completar primaveras\"?",
+    opts: ["Plantar flores na chegada da primavera","Terminar os estudos no ano","Viajar para lugares novos","Fazer aniversário"],
+    ans: 3,
+    fb: "Na crônica 'Antigamente', 'completar primaveras' era a forma poética de dizer 'fazer aniversário'. Hoje essa expressão caiu em desuso."
+  },
+  {
+    q: "O que é a coesão textual?",
+    opts: ["A correção dos erros de ortografia em um texto","A separação do texto em parágrafos iguais","A organização harmônica e lógica das ideias em um texto","A definição do título e do autor do texto"],
+    ans: 2,
+    fb: "A coesão textual organiza de modo harmônico e lógico as ideias do texto, relacionando palavras dentro de uma frase ou entre frases e parágrafos."
+  },
+  {
+    q: "Quando o pronome \"isso\" aparece em um texto após uma informação, ele serve para:",
+    opts: ["Introduzir uma ideia nova que ainda não foi mencionada","Indicar o tempo em que a ação acontece","Retomar uma informação já apresentada","Substituir o nome de um lugar específico"],
+    ans: 2,
+    fb: "O pronome 'isso' é um recurso de coesão textual que retoma uma informação já apresentada antes dele no texto."
+  },
+  {
+    q: "Em uma notícia, o texto usa \"o animal\" e \"o bicho\" no lugar de \"raposa\". Qual é a função desse recurso?",
+    opts: ["Mostrar que o animal era desconhecido pelo autor","Evitar a repetição da mesma palavra por meio da coesão textual","Indicar que havia mais de um animal na história","Tornar o texto mais difícil de entender"],
+    ans: 1,
+    fb: "Usar 'o animal' e 'o bicho' como sinônimos de 'raposa' é um recurso de coesão textual que evita a repetição e torna o texto mais fluido e agradável."
+  },
+  {
+    q: "Na crônica \"Antigamente\", o que a palavra \"mademoiselles\" significava?",
+    opts: ["Professoras da escola","Festas de aniversário","Vestidos elegantes","Moças"],
+    ans: 3,
+    fb: "Na crônica 'Antigamente' de Carlos Drummond de Andrade, 'mademoiselles' era uma expressão usada para se referir a 'moças'. Hoje caiu em desuso."
+  },
+  {
+    q: "As gírias revelam o dinamismo da língua porque:",
+    opts: ["São sempre palavras importadas de outros idiomas","São criadas apenas por escritores famosos","Mostram a criatividade dos falantes e a capacidade da língua de se renovar","São usadas somente em textos formais e acadêmicos"],
+    ans: 2,
+    fb: "As gírias revelam o dinamismo da língua e a criatividade dos falantes, mostrando que a língua é viva e se renova constantemente com o uso."
+  },
+  {
+    q: "Quando o pronome \"isto\" aparece antes de uma explicação em um texto, ele:",
+    opts: ["Retoma algo que já foi dito anteriormente","Indica a quantidade de coisas mencionadas","Antecipa uma informação que ainda virá","Substitui o nome de uma pessoa específica"],
+    ans: 2,
+    fb: "O pronome 'isto' é um recurso de coesão textual que antecipa uma informação que será explicada na sequência do texto — ao contrário de 'isso', que retoma."
+  }
+];
+
+var currentQ = 0, quizScore = 0, quizLog = [];
+
+function renderQuestion() {
+  var q = QUESTIONS[currentQ];
+  document.getElementById('prog-label').textContent = 'Questão '+(currentQ+1)+' de '+QUESTIONS.length;
+  document.getElementById('prog-fill').style.width = (currentQ/QUESTIONS.length*100)+'%';
+  document.getElementById('q-number').textContent = 'QUESTÃO '+(currentQ+1);
+  document.getElementById('q-text').textContent = q.q;
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  var letters = ['A','B','C','D'];
+  q.opts.forEach(function(opt,i){
+    var btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+opt;
+    btn.addEventListener('click', function(){ answerQuestion(i); });
+    opts.appendChild(btn);
+  });
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  document.getElementById('btn-next').className = 'btn-next';
+}
+
+function answerQuestion(idx) {
+  var q = QUESTIONS[currentQ];
+  var correct = idx === q.ans;
+  if(correct) quizScore++;
+  quizLog.push({q:q.q,chosen:idx,ans:q.ans,correct:correct});
+  var btns = document.getElementById('options').querySelectorAll('.option');
+  btns.forEach(function(btn,i){
+    btn.disabled = true;
+    if(i===q.ans) btn.classList.add('correct');
+    else if(i===idx && !correct) btn.classList.add('wrong');
+  });
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback '+(correct?'correct-fb':'wrong-fb')+' show';
+  document.getElementById('fb-icon').textContent = correct?'✓':'✗';
+  document.getElementById('fb-text').textContent = q.fb;
+  var btnNext = document.getElementById('btn-next');
+  btnNext.textContent = currentQ < QUESTIONS.length-1 ? 'Próxima questão →' : 'Ver resultado';
+  btnNext.className = 'btn-next show';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if(currentQ < QUESTIONS.length){
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('question-area').style.display = 'none';
+  var pct = Math.round((quizScore/QUESTIONS.length)*100);
+  window.sabendoScore = pct;
+  var res = document.getElementById('results');
+  res.className = 'results show';
+  var emoji = pct>=90?'🏆':pct>=70?'⭐':pct>=50?'💪':'📚';
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-score').textContent = quizScore;
+  document.getElementById('res-sub').textContent = pct+'% de acerto';
+  var medal = pct>=90?'Excelente! Gíria e coesão dominadas!':pct>=70?'Muito bem! Continue praticando.':pct>=50?'Bom começo! Revise e tente novamente.':'Revise o conteúdo e tente de novo!';
+  document.getElementById('res-medal').textContent = medal;
+  var rev = document.getElementById('review-list');
+  rev.innerHTML = '';
+  quizLog.forEach(function(item,i){
+    var div = document.createElement('div');
+    div.className = 'review-item '+(item.correct?'ok':'nok');
+    div.innerHTML = '<span class="ri-icon">'+(item.correct?'✓':'✗')+'</span><span>Q'+(i+1)+': '+item.q.substring(0,60)+(item.q.length>60?'…':'')+'</span>';
+    rev.appendChild(div);
+  });
+}
+
+function restart() {
+  currentQ = 0; quizScore = 0; quizLog = [];
+  document.getElementById('question-area').style.display = 'block';
+  document.getElementById('results').className = 'results';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+<script src="../../shared/portal-back.js"></script>
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "girias-coesao";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Elástico",
+    characterEmoji: "🔗",
+    characterImg:   "chars/girias-coesao-hd.png",
+    themeLabel:     "Gírias e Coesão · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-girias-coesao",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id||"")+" "+(el.className||"");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id||"")+" "+(el.className||"");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444";
+      setTimeout(function(){ btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id, scoreVal = _capturedScore, today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({user_id:uid,discipline:DISCIPLINE,theme_slug:THEME_SLUG,activity_type:ACTIVITY_TYPE,score:scoreVal,is_first_attempt:isFirst});
+    var sr = await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if (sr.data) {
+      var s = sr.data, yest = new Date(); yest.setDate(yest.getDate()-1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;
+      await supa.from("streaks").update({current_streak:ns,longest_streak:Math.max(ns,s.longest_streak),last_activity_date:today,total_activities:s.total_activities+1,updated_at:new Date().toISOString()}).eq("user_id",uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa,uid,THEME_SLUG,DISCIPLINE,GAMI_CONFIG);
+  });
+})();
+</script>
+</body>
+</html>

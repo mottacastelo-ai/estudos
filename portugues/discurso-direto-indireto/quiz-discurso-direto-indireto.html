@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Discurso Direto e Indireto</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;--port-dark:#4C1D95;--border:#DDD6FE;
+  --text:#1A1A2E;--muted:#6B7280;--card:#fff;--radius:18px;
+  --correct:#059669;--correct-bg:#ECFDF5;--wrong:#DC2626;--wrong-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:24px 16px 80px}
+.wrap{max-width:680px;margin:0 auto}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);text-decoration:none;margin-bottom:16px;cursor:pointer;background:none;border:none;padding:0}
+.back-link:hover{opacity:.7}
+.activity-card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.1)}
+.card-header{background:linear-gradient(135deg,var(--port-dark),var(--port) 60%,var(--port-light));padding:20px 24px 18px;display:flex;align-items:center;gap:14px}
+.hicon{font-size:32px;line-height:1}
+.card-header h1{font-family:"Space Mono",monospace;font-size:17px;color:#fff;line-height:1.2}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap}
+.prog-area{padding:16px 24px 12px;border-bottom:2px solid var(--border)}
+.prog-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.prog-track{height:8px;border-radius:999px;background:#EDE9FE}
+.prog-fill{height:8px;border-radius:999px;background:var(--port);transition:width .4s}
+.score-bar{display:flex;gap:16px;padding:10px 24px;background:var(--port-bg);border-bottom:2px solid var(--border);font-size:13px;font-weight:700}
+.score-bar span{color:var(--muted)}
+.score-bar strong{color:var(--port)}
+.question-area{padding:24px}
+.q-tag{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--port);letter-spacing:.06em;margin-bottom:10px}
+.q-text{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:20px}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:2px solid var(--border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-weight:600;text-align:left;transition:all .15s;width:100%}
+.opt:hover:not(:disabled){border-color:var(--port-light);background:var(--port-bg)}
+.opt:disabled{cursor:default}
+.opt-letter{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--port-bg);color:var(--port);font-family:"Space Mono",monospace;font-size:12px;font-weight:700;flex-shrink:0}
+.opt.correct{border-color:var(--correct);background:var(--correct-bg)}
+.opt.correct .opt-letter{background:#D1FAE5;color:var(--correct)}
+.opt.wrong{border-color:var(--wrong);background:var(--wrong-bg)}
+.opt.wrong .opt-letter{background:#FEE2E2;color:var(--wrong)}
+.feedback{margin-top:16px;padding:14px 16px;border-radius:14px;font-size:13px;font-weight:600;line-height:1.6;display:none}
+.feedback.show{display:flex;gap:10px;align-items:flex-start}
+.feedback.correct-fb{background:var(--correct-bg);border:2px solid #6EE7B7;color:#065F46}
+.feedback.wrong-fb{background:var(--wrong-bg);border:2px solid #FCA5A5;color:#991B1B}
+.feedback-icon{font-size:18px;flex-shrink:0}
+.btn-next{display:none;margin-top:20px;padding:12px 28px;border-radius:999px;background:var(--port);color:#fff;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;border:none;cursor:pointer;transition:opacity .2s}
+.btn-next.show{display:inline-flex}
+.btn-next:hover{opacity:.85}
+.result-panel{display:none;padding:32px 24px;text-align:center}
+.result-panel.show{display:block}
+.result-emoji{font-size:56px;margin-bottom:12px}
+.result-title{font-family:"Space Mono",monospace;font-size:22px;font-weight:700;color:var(--port-dark);margin-bottom:8px}
+.result-score{font-size:42px;font-weight:900;color:var(--port);margin-bottom:4px}
+.result-sub{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:24px}
+.result-bars{display:flex;flex-direction:column;gap:8px;margin-bottom:28px;text-align:left}
+.result-row{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.result-track{flex:1;height:10px;border-radius:999px;background:#EDE9FE}
+.result-fill-c{height:10px;border-radius:999px;background:var(--correct);transition:width .6s}
+.result-fill-w{height:10px;border-radius:999px;background:var(--wrong);transition:width .6s}
+.btn-restart{padding:14px 32px;border-radius:999px;background:var(--port);color:#fff;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;border:none;cursor:pointer}
+.btn-restart:hover{opacity:.85}
+@media(max-width:480px){
+  .q-text{font-size:15px}
+  .opt{font-size:13px;padding:12px 14px}
+  .card-header h1{font-size:15px}
+  .result-score{font-size:36px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">—</div>
+      <div><h1>Quiz Interativo</h1><p>Discurso Direto e Indireto</p></div>
+      <div class="hbadge">📖 Retrieval</div>
+    </div>
+    <div class="prog-area">
+      <div class="prog-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="score-bar">
+      <span>Acertos: <strong id="hits-n">0</strong></span>
+      <span>Pontos: <strong id="pts-n">0</strong></span>
+    </div>
+    <div class="question-area" id="question-area">
+      <div class="q-tag" id="q-tag">QUESTÃO 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"><span class="feedback-icon" id="fb-icon"></span><span id="fb-text"></span></div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima questão →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title">Resultado Final</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="result-bars">
+        <div class="result-row"><span style="color:var(--correct);min-width:64px">Acertos</span><div class="result-track"><div class="result-fill-c" id="bar-c" style="width:0%"></div></div><span id="bar-c-n"></span></div>
+        <div class="result-row"><span style="color:var(--wrong);min-width:64px">Erros</span><div class="result-track"><div class="result-fill-w" id="bar-w" style="width:0%"></div></div><span id="bar-w-n"></span></div>
+      </div>
+      <button class="btn-restart" onclick="restart()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QUESTIONS = [
+  {
+    text: 'O que marca o início da fala de uma personagem no <strong>discurso direto</strong>?',
+    opts: ['Ponto final (.)', 'Vírgula (,)', 'Travessão (—)', 'Dois-pontos (:)'],
+    correct: 2,
+    expl: 'No discurso direto, o travessão (—) indica que uma personagem começou a falar. Ele separa a voz do narrador da fala da personagem.'
+  },
+  {
+    text: 'Qual é a diferença entre <strong>discurso direto</strong> e <strong>discurso indireto</strong>?',
+    opts: [
+      'No direto, o narrador resume as falas; no indireto, reproduz literalmente.',
+      'No direto, as falas são reproduzidas literalmente com travessão; no indireto, o narrador conta o que foi dito.',
+      'No direto, só o narrador fala; no indireto, só as personagens falam.',
+      'No direto, usa-se exclamação; no indireto, usa-se ponto final.'
+    ],
+    correct: 1,
+    expl: 'Discurso direto = fala literal da personagem, marcada com travessão. Discurso indireto = o narrador conta o que foi dito, sem reproduzir as palavras exatas.'
+  },
+  {
+    text: 'Os <strong>verbos de elocução</strong> servem para:',
+    opts: [
+      'Descrever o cenário do conto',
+      'Indicar o tempo em que ocorre a história',
+      'Anunciar as ações e a expressividade das falas das personagens',
+      'Substituir os substantivos nas frases'
+    ],
+    correct: 2,
+    expl: 'Verbos de elocução como "disse", "continuou" e "prosseguiu" anunciam as falas e revelam a expressividade do diálogo — eles fazem parte do que é contado pelo narrador.'
+  },
+  {
+    text: 'No trecho: "— Ah! — <strong>disse</strong> a fada, <strong>mexendo</strong> sua varinha —, este sapato é para Josefina." Qual dos termos destacados é um <strong>verbo de elocução</strong>?',
+    opts: ['mexendo', 'disse', 'é', 'Ah'],
+    correct: 1,
+    expl: '"Disse" é o verbo de elocução — anuncia a fala da fada. "Mexendo" é um verbo de ação simultânea (a fada mexia a varinha enquanto falava), não de fala.'
+  },
+  {
+    text: 'Por que os autores usam "continuou" ou "prosseguiu" em vez de repetir sempre "disse"?',
+    opts: [
+      'Porque "disse" indica apenas silêncio, nunca fala',
+      'Para variar o vocabulário e tornar o texto mais interessante',
+      'Porque "disse" só pode aparecer em discurso indireto',
+      'Porque "continuou" indica que a personagem gritou'
+    ],
+    correct: 1,
+    expl: '"Disse", "continuou" e "prosseguiu" são sinônimos entre si. Usá-los alternadamente evita a repetição e deixa o texto mais fluente.'
+  },
+  {
+    text: 'Leia: "Desesperado, Godofredo <strong>mandou</strong> que, no dia seguinte, levassem o sapato de casa em casa." O verbo "mandou" indica que:',
+    opts: [
+      'Godofredo correu de casa em casa carregando o sapato',
+      'Godofredo descreveu como o sapato havia sido fabricado',
+      'Godofredo deu uma ordem — estamos no discurso indireto',
+      'O narrador não sabia o que Godofredo disse'
+    ],
+    correct: 2,
+    expl: '"Mandou" é um verbo de elocução no discurso indireto. Godofredo deu uma ordem e o narrador a conta sem reproduzir as palavras exatas — característica do discurso indireto.'
+  },
+  {
+    text: 'Qual das opções abaixo está no <strong>discurso direto</strong>?',
+    opts: [
+      'A fada mexeu sua varinha e deu um sapato para Josefina.',
+      'Godofredo mandou que levassem o sapato de casa em casa.',
+      '— Este sapato é para você! — prosseguiu a fada.',
+      'O narrador contou que a fada tinha uma varinha mágica.'
+    ],
+    correct: 2,
+    expl: 'A opção C usa travessão e reproduz literalmente a fala da fada — é discurso direto. As demais têm o narrador contando os fatos sem reproduzir falas (discurso indireto).'
+  },
+  {
+    text: 'Qual das opções abaixo está no <strong>discurso indireto</strong>?',
+    opts: [
+      '— Vou encontrar o dono do sapato! — disse Godofredo.',
+      '— Aqui está o seu sapato! — exclamou a fada.',
+      'Godofredo disse que encontraria o dono do sapato.',
+      '— Procure o sapato amanhã! — ordenou a rainha.'
+    ],
+    correct: 2,
+    expl: 'A opção C não tem travessão e o narrador conta o que Godofredo disse — é discurso indireto. As demais reproduzem literalmente as falas com travessão (discurso direto).'
+  },
+  {
+    text: '"A fada disse que <strong>aquele</strong> par de sapatos era para Josefina." Por que o texto usa "aquele" e não "este"?',
+    opts: [
+      'Porque "aquele" é mais elegante do que "este"',
+      'Porque no discurso indireto, os pronomes se ajustam ao ponto de vista do narrador',
+      'Porque "este" não existe em língua portuguesa',
+      'Porque "aquele" indica um sapato comprado recentemente'
+    ],
+    correct: 1,
+    expl: 'No discurso direto, a fada diria "este" (perto dela). No discurso indireto, o narrador usa "aquele", ajustando o pronome ao seu próprio ponto de vista.'
+  },
+  {
+    text: 'O <strong>verbo de elocução</strong> no discurso indireto:',
+    opts: [
+      'Substitui o travessão e indica com quem a personagem fala, revelando a expressividade do diálogo',
+      'Sempre aparece entre dois travessões, separando o narrador da personagem',
+      'Só pode ser o verbo "dizer" — outros verbos não são permitidos',
+      'Indica que o narrador não conhece a personagem e inventa a fala'
+    ],
+    correct: 0,
+    expl: 'No discurso indireto, verbos como "mandou", "prosseguiu" e "disse que" substituem o travessão, indicam quem fala e revelam o tom da fala (ordem, continuação, anúncio).'
+  }
+];
+
+var current = 0, hits = 0, pts = 0, answered = false;
+
+function loadQuestion() {
+  answered = false;
+  var q = QUESTIONS[current];
+  document.getElementById('q-tag').textContent = 'QUESTÃO ' + (current+1);
+  document.getElementById('q-text').innerHTML = q.text;
+  document.getElementById('prog-label').textContent = 'Questão ' + (current+1) + ' de ' + QUESTIONS.length;
+  document.getElementById('prog-fill').style.width = (current / QUESTIONS.length * 100) + '%';
+
+  var optsEl = document.getElementById('options');
+  optsEl.innerHTML = '';
+  var letters = ['A','B','C','D'];
+  q.opts.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + opt;
+    btn.addEventListener('click', function() { selectOpt(i); });
+    optsEl.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '<span class="feedback-icon" id="fb-icon"></span><span id="fb-text"></span>';
+  document.getElementById('btn-next').className = 'btn-next';
+  document.getElementById('btn-next').textContent = current < QUESTIONS.length - 1 ? 'Próxima questão →' : 'Ver resultado';
+}
+
+function selectOpt(idx) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[current];
+  var opts = document.querySelectorAll('.opt');
+  opts.forEach(function(o) { o.disabled = true; });
+
+  var fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    opts[idx].classList.add('correct');
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = '<span class="feedback-icon">✅</span><span>' + q.expl + '</span>';
+    hits++;
+    pts += 10;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = '<span class="feedback-icon">❌</span><span>' + q.expl + '</span>';
+  }
+  document.getElementById('hits-n').textContent = hits;
+  document.getElementById('pts-n').textContent = pts;
+  document.getElementById('btn-next').className = 'btn-next show';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < QUESTIONS.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  var pct = Math.round((hits / QUESTIONS.length) * 100);
+  window.sabendoScore = pct;
+
+  document.getElementById('question-area').style.display = 'none';
+  document.getElementById('prog-area').style.display = 'none';
+
+  var panel = document.getElementById('result-panel');
+  var emojis = ['😔','😅','🙂','😊','🎉'];
+  var msgs = ['Continue tentando!','Quase lá!','Bom trabalho!','Muito bem!','Perfeito!'];
+  var tier = hits <= 2 ? 0 : hits <= 4 ? 1 : hits <= 6 ? 2 : hits <= 8 ? 3 : 4;
+  document.getElementById('result-emoji').textContent = emojis[tier];
+  document.getElementById('result-score').textContent = pct + '%';
+  document.getElementById('result-sub').textContent = hits + ' de ' + QUESTIONS.length + ' corretas — ' + msgs[tier];
+  document.getElementById('bar-c').style.width = (hits / QUESTIONS.length * 100) + '%';
+  document.getElementById('bar-w').style.width = ((QUESTIONS.length - hits) / QUESTIONS.length * 100) + '%';
+  document.getElementById('bar-c-n').textContent = hits;
+  document.getElementById('bar-w-n').textContent = QUESTIONS.length - hits;
+  panel.className = 'result-panel show';
+}
+
+function restart() {
+  current = 0; hits = 0; pts = 0; answered = false;
+  document.getElementById('question-area').style.display = '';
+  document.getElementById('prog-area').style.display = '';
+  document.getElementById('result-panel').className = 'result-panel';
+  document.getElementById('hits-n').textContent = 0;
+  document.getElementById('pts-n').textContent = 0;
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+<script src="../../shared/portal-back.js"></script>
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "discurso-direto-indireto";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Travessão",
+    characterEmoji: "—",
+    characterImg:   "chars/discurso-direto-indireto-hd.png",
+    themeLabel:     "Discurso Direto e Indireto · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-discurso-direto-indireto",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+</body>
+</html>

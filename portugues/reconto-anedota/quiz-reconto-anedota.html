@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Reconto e Anedota</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .75; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+/* Progress */
+.prog-wrap { padding: 16px 24px 0; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.prog-track { background: var(--border); border-radius: 999px; height: 8px; }
+.prog-fill  { background: linear-gradient(90deg, var(--port), var(--port-light)); height: 8px; border-radius: 999px; transition: width .4s; }
+.dots { display: flex; gap: 5px; flex-wrap: wrap; padding: 10px 24px 0; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background .3s; }
+.dot.hit  { background: #059669; }
+.dot.miss { background: #DC2626; }
+.dot.curr { background: var(--port); }
+
+/* Question */
+.q-area { padding: 20px 24px; }
+.q-num { font-size: 11px; font-weight: 800; letter-spacing: .07em; color: var(--port); text-transform: uppercase; margin-bottom: 8px; }
+.q-text { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 18px; }
+.options { display: grid; gap: 10px; }
+.opt { border: 2px solid var(--border); border-radius: 14px; padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; background: var(--card); color: var(--text); transition: border-color .15s, background .15s; font-family: "Baloo 2", cursive; line-height: 1.4; }
+.opt:hover:not(:disabled) { border-color: var(--port-light); background: var(--port-bg); }
+.opt.correct { border-color: #059669; background: #ECFDF5; color: #065F46; }
+.opt.wrong   { border-color: #DC2626; background: #FEF2F2; color: #991B1B; }
+.opt:disabled { cursor: default; }
+
+/* Feedback */
+.feedback { margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; line-height: 1.5; display: none; }
+.feedback.correct { background: #ECFDF5; border: 2px solid #86efac; color: #065F46; }
+.feedback.wrong   { background: #FEF2F2; border: 2px solid #fca5a5; color: #991B1B; }
+.feedback-icon { font-size: 16px; margin-right: 6px; }
+.btn-next { margin-top: 14px; background: var(--port); color: #fff; border: none; border-radius: 12px; padding: 11px 24px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: "Baloo 2", cursive; display: none; }
+.btn-next:hover { background: var(--dark); }
+
+/* Results */
+.results { padding: 32px 24px; text-align: center; display: none; }
+.results-emoji { font-size: 52px; margin-bottom: 12px; }
+.results h2 { font-family: "Space Mono", monospace; font-size: 22px; color: var(--port); margin-bottom: 8px; }
+.results-score { font-size: 48px; font-weight: 900; color: var(--port); }
+.results-score small { font-size: 18px; color: var(--muted); }
+.results-sub { font-size: 14px; color: var(--muted); font-weight: 600; margin: 8px 0 20px; }
+.medal { font-size: 28px; margin-bottom: 16px; }
+.btn-restart { background: var(--port); color: #fff; border: none; border-radius: 12px; padding: 12px 28px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: "Baloo 2", cursive; }
+.btn-restart:hover { background: var(--dark); }
+.review-list { margin: 16px 0; text-align: left; }
+.review-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; font-weight: 600; padding: 8px 10px; border-radius: 10px; margin-bottom: 6px; line-height: 1.4; }
+.review-item.hit  { background: #ECFDF5; color: #065F46; }
+.review-item.miss { background: #FEF2F2; color: #991B1B; }
+
+@media (max-width: 480px) {
+  .q-text { font-size: 15px; }
+  .opt { font-size: 13px; }
+  .card-header h1 { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal();return false;">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">📚</div>
+      <div><h1>Quiz Interativo</h1><p>Reconto e Anedota · Virelivro</p></div>
+      <div class="hbadge">📖 Retrieval</div>
+    </div>
+
+    <div class="prog-wrap">
+      <div class="prog-label"><span id="prog-text">Questão 1 de 10</span><span id="score-disp">0 pts</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="dots" id="dots"></div>
+
+    <div class="q-area" id="q-area">
+      <div class="q-num" id="q-num">Questão 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"><span class="feedback-icon" id="fb-icon"></span><span id="fb-text"></span></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima pergunta →</button>
+    </div>
+
+    <div class="results" id="results">
+      <div class="results-emoji" id="res-emoji">🏆</div>
+      <h2 id="res-title">Parabéns!</h2>
+      <div class="results-score"><span id="res-score">0</span> <small>pts</small></div>
+      <div class="results-sub" id="res-sub"></div>
+      <div class="medal" id="res-medal"></div>
+      <div class="review-list" id="review-list"></div>
+      <button class="btn-restart" onclick="restart()">Jogar de novo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var QUESTIONS = [
+  {
+    text: "O que define um <strong>conto de encantamento</strong>?",
+    opts: [
+      "Histórias sobre personagens históricos reais e suas batalhas",
+      "Histórias com seres fantásticos ou elementos mágicos, com versões diferentes entre gerações",
+      "Histórias curtas com o objetivo de ensinar boas maneiras",
+      "Histórias de aventura em que o herói viaja por países diferentes"
+    ],
+    correct: 1,
+    exp: "O conto de encantamento tem seres fantásticos ou elementos mágicos e costuma existir em diferentes versões orais transmitidas entre gerações."
+  },
+  {
+    text: "O que é um <strong>reconto</strong>?",
+    opts: [
+      "Uma cópia do conto original sem nenhuma mudança",
+      "Um resumo curtíssimo do enredo para facilitar o estudo",
+      "Uma nova versão de um conto tradicional que pode mudar início, meio e fim",
+      "Uma tradução do conto original para outra língua"
+    ],
+    correct: 2,
+    exp: "O reconto é uma nova versão de um conto tradicional — pode mudar início, meio e fim, inserir elementos atuais ou misturar personagens de contos diferentes."
+  },
+  {
+    text: "Qual é o objetivo principal de uma <strong>anedota</strong>?",
+    opts: [
+      "Descrever paisagens naturais com muitos detalhes",
+      "Ensinar lições morais por meio de fábulas com animais",
+      "Provocar o riso do leitor por meio de uma situação inesperada",
+      "Narrar batalhas épicas entre heróis e vilões"
+    ],
+    correct: 2,
+    exp: "A anedota é um gênero narrativo curto cujo objetivo é provocar o riso, geralmente com uma quebra de expectativa no desfecho."
+  },
+  {
+    text: "No reconto da Cinderela do livro, quem recebe a ajuda da fada madinha?",
+    opts: [
+      "Apenas o príncipe Godofredo",
+      "A própria Cinderela, como no conto original",
+      "Nenhum personagem — a fada desiste de ajudar",
+      "As irmãs Josefina e Madalena"
+    ],
+    correct: 3,
+    exp: "No reconto, a fada ajuda as irmãs Josefina e Madalena, dando-lhes sapatos mágicos — uma inversão do conto tradicional."
+  },
+  {
+    text: "No reconto da Cinderela, como ela conquista o príncipe Godofredo?",
+    opts: [
+      "Com um par de sapatos mágicos fornecidos pela fada madinha",
+      "Por conta própria, sem ajuda de magia",
+      "Pedindo ajuda para as irmãs Josefina e Madalena",
+      "Participando de um torneio organizado pelo rei"
+    ],
+    correct: 1,
+    exp: "Neste reconto, Cinderela é gentil e conquista o príncipe por conta própria — sem magia, sem fada. É a inversão de papéis do conto tradicional."
+  },
+  {
+    text: "O que é o <strong>desfecho</strong> de uma história?",
+    opts: [
+      "A apresentação dos personagens e do cenário no início",
+      "O momento de maior tensão, quando o conflito está no auge",
+      "A parte final que resolve o conflito e conclui a narrativa",
+      "O trecho em que o narrador explica o tema da história"
+    ],
+    correct: 2,
+    exp: "O desfecho é a parte final da história, onde o conflito é resolvido e a narrativa chega ao fim."
+  },
+  {
+    text: "Para que um reconto seja reconhecível como versão de um conto, ele deve:",
+    opts: [
+      "Reproduzir todos os diálogos do original sem alteração",
+      "Manter conflito, solução e desfecho, com elementos que remetam ao conto original",
+      "Acontecer no mesmo local e época do conto que inspirou",
+      "Usar exatamente os mesmos nomes de todos os personagens"
+    ],
+    correct: 1,
+    exp: "O reconto deve manter conflito, solução e desfecho, além de elementos que permitam identificar o conto original — mas pode mudar personagens, época e muito mais."
+  },
+  {
+    text: "Na <strong>anedota</strong> do livro, o menino encontra uma lâmpada mágica no deserto. O que ele faz ao encontrar o gênio?",
+    opts: [
+      "Pede riquezas e volta para casa com uma grande fortuna",
+      "Usa a magia do gênio para voar e sair do deserto",
+      "Fica com medo e vai embora sem fazer nenhum pedido",
+      "Faz um pedido muito simples, como pedir para ir para casa"
+    ],
+    correct: 3,
+    exp: "O menino fez um pedido bem simples ao gênio — esse comportamento inesperado cria a quebra de expectativa que torna a anedota engraçada."
+  },
+  {
+    text: "Numa história, quem é o <strong>narrador</strong>?",
+    opts: [
+      "Sempre o personagem principal, que conta sua própria aventura",
+      "O autor do livro, que aparece pessoalmente na história",
+      "A voz que conta a história, apresentando personagens e acontecimentos",
+      "O vilão da história, que narra o enredo ao contrário"
+    ],
+    correct: 2,
+    exp: "O narrador é a voz que conta a história — apresenta os personagens, descreve o cenário e narra os acontecimentos, mas não é necessariamente o autor."
+  },
+  {
+    text: "Um reconto pode incluir qual dos seguintes recursos?",
+    opts: [
+      "Copiar todos os diálogos do conto original sem alterar nada",
+      "Retirar completamente o conflito para tornar a história mais tranquila",
+      "Eliminar o desfecho deixando a história sem solução",
+      "Misturar personagens de contos diferentes ou inserir elementos atuais"
+    ],
+    correct: 3,
+    exp: "O reconto pode misturar personagens de contos diferentes ou inserir elementos atuais (como tecnologia), desde que mantenha conflito, solução e desfecho."
+  }
+];
+
+var cur = 0, pontos = 0, answered = false;
+var resultados = [];
+
+function initDots() {
+  var d = document.getElementById('dots');
+  d.innerHTML = '';
+  QUESTIONS.forEach(function(_, i) {
+    var el = document.createElement('div');
+    el.className = 'dot' + (i === 0 ? ' curr' : '');
+    el.id = 'dot-' + i;
+    d.appendChild(el);
+  });
+}
+
+function renderQ() {
+  var q = QUESTIONS[cur];
+  document.getElementById('q-num').textContent = 'Questão ' + (cur + 1);
+  document.getElementById('q-text').innerHTML = q.text;
+  document.getElementById('prog-text').textContent = 'Questão ' + (cur + 1) + ' de ' + QUESTIONS.length;
+  document.getElementById('prog-fill').style.width = (cur / QUESTIONS.length * 100) + '%';
+
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach(function(txt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = txt;
+    btn.onclick = function() { answer(i); };
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+  answered = false;
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[cur];
+  var opts = document.querySelectorAll('.opt');
+  opts.forEach(function(b) { b.disabled = true; });
+  var isHit = idx === q.correct;
+  if (isHit) { pontos += 10; }
+  opts[q.correct].classList.add('correct');
+  if (!isHit) opts[idx].classList.add('wrong');
+
+  resultados.push({ hit: isHit, text: q.text });
+  var dot = document.getElementById('dot-' + cur);
+  dot.classList.remove('curr');
+  dot.classList.add(isHit ? 'hit' : 'miss');
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (isHit ? 'correct' : 'wrong');
+  document.getElementById('fb-icon').textContent = isHit ? '✓' : '✗';
+  document.getElementById('fb-text').textContent = q.exp;
+  fb.style.display = 'block';
+
+  document.getElementById('score-disp').textContent = pontos + ' pts';
+  document.getElementById('btn-next').style.display = 'inline-block';
+  document.getElementById('btn-next').textContent = cur < QUESTIONS.length - 1 ? 'Próxima pergunta →' : 'Ver resultado';
+}
+
+function nextQ() {
+  cur++;
+  if (cur >= QUESTIONS.length) { showResult(); return; }
+  document.getElementById('dot-' + cur).classList.add('curr');
+  renderQ();
+}
+
+function showResult() {
+  document.getElementById('q-area').style.display = 'none';
+  var res = document.getElementById('results');
+  res.style.display = 'block';
+
+  var pct = Math.round((pontos / (QUESTIONS.length * 10)) * 100);
+  window.sabendoScore = pct;
+
+  document.getElementById('res-score').textContent = pontos;
+  var hits = resultados.filter(function(r) { return r.hit; }).length;
+  document.getElementById('res-sub').textContent = hits + ' de ' + QUESTIONS.length + ' acertos (' + pct + '%)';
+
+  var emoji, title, medal;
+  if (pct >= 90) { emoji = '🏆'; title = 'Excelente!'; medal = '🥇 Ouro'; }
+  else if (pct >= 70) { emoji = '⭐'; title = 'Muito bem!'; medal = '🥈 Prata'; }
+  else if (pct >= 50) { emoji = '👏'; title = 'Bom trabalho!'; medal = '🥉 Bronze'; }
+  else { emoji = '📚'; title = 'Continue estudando!'; medal = ''; }
+
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-medal').textContent = medal;
+
+  var rl = document.getElementById('review-list');
+  rl.innerHTML = '';
+  resultados.forEach(function(r, i) {
+    var d = document.createElement('div');
+    d.className = 'review-item ' + (r.hit ? 'hit' : 'miss');
+    d.innerHTML = (r.hit ? '✓' : '✗') + ' Questão ' + (i + 1);
+    rl.appendChild(d);
+  });
+}
+
+function restart() {
+  cur = 0; pontos = 0; answered = false; resultados = [];
+  document.getElementById('q-area').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('score-disp').textContent = '0 pts';
+  initDots();
+  renderQ();
+}
+
+initDots();
+renderQ();
+</script>
+
+<script src="../../shared/portal-back.js"></script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "reconto-anedota";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Virelivro",
+    characterEmoji: "📚",
+    characterImg:   "chars/reconto-anedota-hd.png",
+    themeLabel:     "Reconto e Anedota · Português",
+    totalActivities: 5,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-reconto-anedota",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+</body>
+</html>

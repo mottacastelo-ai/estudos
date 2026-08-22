@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparador de Versões — Reconto e Anedota</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .75; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+.instrucao { padding: 14px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+
+/* Score bar */
+.score-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; border-bottom: 2px solid var(--border); background: #f8f6ff; }
+.score-bar-label { font-size: 12px; font-weight: 700; color: var(--muted); }
+.score-bar-val { font-size: 14px; font-weight: 900; color: var(--port); }
+
+/* Legends */
+.version-legend { display: flex; gap: 10px; padding: 14px 24px 0; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 999px; }
+.leg-t   { background: #EEF2FF; color: #3730A3; border: 2px solid #C7D2FE; }
+.leg-r   { background: #F3E8FF; color: #6B21A8; border: 2px solid #E9D5FF; }
+.leg-a   { background: #FDF4FF; color: #86198F; border: 2px solid #F0ABFC; }
+
+/* Statements */
+.stmts { padding: 16px 24px 24px; display: grid; gap: 14px; }
+.stmt-card { border: 2px solid var(--border); border-radius: 16px; overflow: hidden; }
+.stmt-text { padding: 12px 16px; font-size: 14px; font-weight: 700; line-height: 1.5; background: #faf9ff; border-bottom: 2px solid var(--border); }
+.stmt-btns { display: flex; gap: 0; }
+.vbtn { flex: 1; border: none; padding: 10px 6px; font-size: 12px; font-weight: 800; cursor: pointer; font-family: "Baloo 2", cursive; transition: background .15s, color .15s; background: var(--card); color: var(--muted); border-right: 1px solid var(--border); line-height: 1.3; }
+.vbtn:last-child { border-right: none; }
+.vbtn:hover:not(.selected):not(.locked) { background: var(--port-bg); color: var(--port); }
+.vbtn.sel-t   { background: #EEF2FF; color: #3730A3; }
+.vbtn.sel-r   { background: #F3E8FF; color: #6B21A8; }
+.vbtn.sel-a   { background: #FDF4FF; color: #86198F; }
+.vbtn.locked { cursor: default; }
+
+/* Feedback per card */
+.stmt-fb { padding: 8px 16px; font-size: 12px; font-weight: 700; display: none; line-height: 1.4; }
+.stmt-fb.correct { background: #ECFDF5; color: #065F46; }
+.stmt-fb.wrong   { background: #FEF2F2; color: #991B1B; }
+
+/* Submit */
+.submit-row { padding: 0 24px 24px; }
+.btn-submit { background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 13px 28px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: "Baloo 2", cursive; width: 100%; }
+.btn-submit:disabled { opacity: .5; cursor: default; }
+.btn-submit:hover:not(:disabled) { background: var(--dark); }
+
+/* Result panel */
+.result-panel { display: none; padding: 28px 24px; text-align: center; }
+.result-panel .big-emoji { font-size: 52px; margin-bottom: 10px; }
+.result-panel h2 { font-family: "Space Mono", monospace; font-size: 20px; color: var(--port); margin-bottom: 8px; }
+.result-panel .pct { font-size: 48px; font-weight: 900; color: var(--port); }
+.result-sub { font-size: 14px; color: var(--muted); font-weight: 600; margin: 6px 0 18px; }
+.btn-restart { background: var(--port); color: #fff; border: none; border-radius: 12px; padding: 12px 28px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: "Baloo 2", cursive; }
+.btn-restart:hover { background: var(--dark); }
+
+@media (max-width: 540px) {
+  .stmt-text { font-size: 13px; }
+  .vbtn { font-size: 11px; padding: 9px 4px; }
+  .version-legend { gap: 6px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal();return false;">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">⚖️</div>
+      <div><h1>Comparador de Versões</h1><p>Reconto e Anedota · Virelivro</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+
+    <div class="instrucao">
+      <strong>O que fazer:</strong> Leia cada afirmação sobre a Cinderela e clique em qual versão ela pertence:
+      <strong>Tradicional</strong> (conto original), <strong>Reconto</strong> (versão do livro) ou <strong>Ambas</strong>.
+      Classifique todas e depois clique em <strong>Verificar respostas</strong>.
+    </div>
+
+    <div class="score-bar">
+      <span class="score-bar-label">Afirmações classificadas</span>
+      <span class="score-bar-val" id="classified-count">0 de 8</span>
+    </div>
+
+    <div class="version-legend">
+      <div class="leg leg-t">📜 Tradicional</div>
+      <div class="leg leg-r">✨ Reconto do livro</div>
+      <div class="leg leg-a">🔁 Ambas as versões</div>
+    </div>
+
+    <div class="stmts" id="stmts-area"></div>
+
+    <div class="submit-row">
+      <button class="btn-submit" id="btn-submit" onclick="verificar()" disabled>Verificar respostas</button>
+    </div>
+
+    <div class="result-panel" id="result-panel">
+      <div class="big-emoji" id="res-emoji">🏆</div>
+      <h2 id="res-title">Parabéns!</h2>
+      <div class="pct" id="res-pct">0%</div>
+      <div class="result-sub" id="res-sub"></div>
+      <button class="btn-restart" onclick="restart()">Tentar de novo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var STMTS = [
+  { text: "A fada madinha dá sapatos mágicos para as irmãs da Cinderela.", correct: "r",
+    exp: "No reconto do livro, a fada ajuda Josefina e Madalena, as irmãs — inversão do conto original." },
+  { text: "A Cinderela conquista o príncipe sem ajuda de magia.", correct: "r",
+    exp: "No reconto, Cinderela é gentil e conquista o príncipe Godofredo por conta própria — sem fada nem sapatos mágicos." },
+  { text: "A história tem uma fada madinha como personagem.", correct: "a",
+    exp: "A fada madinha aparece nas duas versões — no original ajuda Cinderela; no reconto ajuda as irmãs." },
+  { text: "Cinderela usa um sapato especial que a diferencia das demais.", correct: "t",
+    exp: "No conto tradicional, Cinderela usa o sapato de cristal — símbolo que a identifica no baile." },
+  { text: "As irmãs são desajeitadas nas tarefas domésticas e recebem ajuda mágica.", correct: "r",
+    exp: "No reconto do livro, as irmãs Josefina e Madalena são desajeitadas e recebem sapatos que crescem de tamanho." },
+  { text: "O príncipe que se apaixona por Cinderela se chama Godofredo.", correct: "r",
+    exp: "O nome Godofredo é exclusivo do reconto do livro — no conto tradicional o príncipe não tem nome definido." },
+  { text: "O enredo envolve um baile e a presença de Cinderela e do príncipe.", correct: "a",
+    exp: "O baile e o encontro de Cinderela com o príncipe são elementos presentes nas duas versões." },
+  { text: "Cinderela recebe sapatos mágicos da fada madinha para ir ao baile.", correct: "t",
+    exp: "No conto tradicional, a fada ajuda Cinderela — ela recebe vestido, carruagem e sapatos de cristal para ir ao baile." }
+];
+
+var selecoes = {};
+var bloqueado = false;
+
+function buildStmts() {
+  var area = document.getElementById('stmts-area');
+  area.innerHTML = '';
+  STMTS.forEach(function(s, i) {
+    var card = document.createElement('div');
+    card.className = 'stmt-card';
+    card.id = 'card-' + i;
+    card.innerHTML = '<div class="stmt-text">' + (i+1) + '. ' + s.text + '</div>'
+      + '<div class="stmt-btns">'
+      + '<button class="vbtn" id="btn-t-' + i + '" onclick="selecionar(' + i + ',\'t\')">📜 Tradicional</button>'
+      + '<button class="vbtn" id="btn-r-' + i + '" onclick="selecionar(' + i + ',\'r\')">✨ Reconto</button>'
+      + '<button class="vbtn" id="btn-a-' + i + '" onclick="selecionar(' + i + ',\'a\')">🔁 Ambas</button>'
+      + '</div>'
+      + '<div class="stmt-fb" id="fb-' + i + '"></div>';
+    area.appendChild(card);
+  });
+}
+
+function selecionar(i, val) {
+  if (bloqueado) return;
+  selecoes[i] = val;
+  ['t','r','a'].forEach(function(v) {
+    var b = document.getElementById('btn-' + v + '-' + i);
+    b.className = 'vbtn' + (v === val ? ' sel-' + v : '');
+  });
+  document.getElementById('classified-count').textContent = Object.keys(selecoes).length + ' de ' + STMTS.length;
+  document.getElementById('btn-submit').disabled = Object.keys(selecoes).length < STMTS.length;
+}
+
+function verificar() {
+  bloqueado = true;
+  document.getElementById('btn-submit').disabled = true;
+  var acertos = 0;
+  STMTS.forEach(function(s, i) {
+    var sel = selecoes[i];
+    var isHit = sel === s.correct;
+    if (isHit) acertos++;
+    ['t','r','a'].forEach(function(v) {
+      var b = document.getElementById('btn-' + v + '-' + i);
+      b.classList.add('locked');
+    });
+    var fb = document.getElementById('fb-' + i);
+    fb.className = 'stmt-fb ' + (isHit ? 'correct' : 'wrong');
+    fb.textContent = (isHit ? '✓ ' : '✗ ') + s.exp;
+    fb.style.display = 'block';
+  });
+  var pct = Math.round((acertos / STMTS.length) * 100);
+  window.sabendoScore = pct;
+  mostrarResultado(acertos, pct);
+}
+
+function mostrarResultado(acertos, pct) {
+  document.getElementById('result-panel').style.display = 'block';
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-sub').textContent = acertos + ' de ' + STMTS.length + ' afirmações corretas';
+  var emoji, title;
+  if (pct >= 88) { emoji = '🏆'; title = 'Excelente!'; }
+  else if (pct >= 63) { emoji = '⭐'; title = 'Muito bem!'; }
+  else { emoji = '📚'; title = 'Revise o reconto!'; }
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('result-panel').scrollIntoView({ behavior: 'smooth' });
+}
+
+function restart() {
+  selecoes = {}; bloqueado = false;
+  document.getElementById('result-panel').style.display = 'none';
+  document.getElementById('classified-count').textContent = '0 de ' + STMTS.length;
+  document.getElementById('btn-submit').disabled = true;
+  buildStmts();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildStmts();
+</script>
+
+<script src="../../shared/portal-back.js"></script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "reconto-anedota";
+  var ACTIVITY_TYPE = "comparador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Virelivro",
+    characterEmoji: "📚",
+    characterImg:   "chars/reconto-anedota-hd.png",
+    themeLabel:     "Reconto e Anedota · Português",
+    totalActivities: 5,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-reconto-anedota",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+</body>
+</html>
