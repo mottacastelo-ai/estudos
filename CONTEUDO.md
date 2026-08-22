@@ -435,6 +435,7 @@
 | `Divi.png` |
 | `Elastico.png` |
 | `Elinho.png` |
+| `Elo.png` |
 | `Esfer.png` |
 | `Faca.png` |
 | `Gotinha.png` |
@@ -457,6 +458,7 @@
 | `Virelivro.png` |
 | `Xis.png` |
 | `Ze e Das Gracas.png` |
+| `Ziguinho.png` |
 | `memo e timbre.png` |
 
 ---
