@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador — Acentuação: Paroxítonas e Proparoxítonas</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;
+  --port-dark:#4C1D95;--border:#DDD6FE;
+  --card:#fff;--text:#1A1A2E;--muted:#6B7280;
+  --green:#059669;--red:#DC2626;--green-bg:#ECFDF5;--red-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:760px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);text-decoration:none;margin-bottom:14px;cursor:pointer;background:none;border:none;padding:0;}
+.back-link:hover{opacity:.7;}
+.card{background:var(--card);border:2px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.08);}
+.card-header{background:linear-gradient(135deg,#2D1B69,#7C3AED 60%,#A78BFA);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:32px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+
+.defs-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 20px 0;}
+.def-box{padding:10px 14px;border-radius:12px;border:2px solid var(--border);background:var(--port-bg);}
+.def-box .db-title{font-family:"Space Mono",monospace;font-size:10px;font-weight:700;color:var(--port);letter-spacing:.06em;margin-bottom:4px;}
+.def-box p{font-size:12px;font-weight:600;color:var(--text);line-height:1.4;}
+.def-box strong{color:var(--port);}
+
+.instrucao{padding:10px 24px 4px;font-size:13px;font-weight:600;color:var(--muted);}
+.instrucao strong{color:var(--text);}
+
+.bank-area{padding:12px 20px 6px;}
+.bank-title{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.06em;margin-bottom:10px;}
+.bank{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;padding:8px;border-radius:12px;border:2px dashed var(--border);background:var(--port-bg);}
+.chip{display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;border:2px solid var(--border);background:var(--card);font-family:"Space Mono",monospace;font-size:12px;font-weight:700;color:var(--text);cursor:grab;user-select:none;transition:all .15s;touch-action:none;}
+.chip:hover{border-color:var(--port-light);background:var(--port-bg);transform:translateY(-2px);}
+.chip.dragging{opacity:.4;cursor:grabbing;}
+.chip.placed-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);cursor:default;}
+.chip.placed-wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);cursor:default;text-decoration:line-through;}
+
+.zones-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 20px 16px;}
+.zone{border:2px dashed var(--border);border-radius:14px;min-height:120px;padding:10px;transition:border-color .15s,background .15s;}
+.zone.drag-over{border-color:var(--port);background:var(--port-bg);}
+.zone-title{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--port);margin-bottom:8px;letter-spacing:.04em;}
+.zone-sub{font-size:10px;color:var(--muted);font-weight:600;margin-bottom:8px;}
+.zone-chips{display:flex;flex-wrap:wrap;gap:6px;}
+
+.prog-row{padding:0 20px 10px;display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--muted);}
+.prog-row span{color:var(--port);}
+
+.result-panel{display:none;margin:0 20px 20px;padding:22px;border-radius:16px;border:2px solid var(--border);background:var(--port-bg);text-align:center;}
+.result-panel .r-emoji{font-size:44px;margin-bottom:8px;}
+.result-panel .r-pct{font-size:34px;font-weight:900;color:var(--port);margin-bottom:4px;}
+.result-panel .r-bar-wrap{background:var(--border);border-radius:999px;height:10px;margin:8px 0 12px;overflow:hidden;}
+.result-panel .r-bar{height:10px;border-radius:999px;background:linear-gradient(90deg,var(--port),var(--port-light));transition:width .6s;}
+.result-panel .r-title{font-family:"Space Mono",monospace;font-size:15px;font-weight:700;color:var(--port);margin-bottom:4px;}
+.result-panel .r-sub{font-size:13px;color:var(--muted);font-weight:600;}
+.btn-check{font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;padding:11px 32px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--port),var(--port-light));color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.3);margin:4px 20px 16px;display:block;width:calc(100% - 40px);}
+.btn-check:hover{opacity:.85;}
+.btn-retry{font-family:"Baloo 2",cursive;font-size:13px;font-weight:700;padding:9px 22px;border-radius:999px;border:2px solid var(--border);background:var(--card);color:var(--port);cursor:pointer;margin-top:10px;}
+.btn-retry:hover{border-color:var(--port);}
+
+@media(max-width:500px){
+  .defs-row{grid-template-columns:1fr;}
+  .zones-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">🗂️</div>
+      <div><h1>Classificador de Palavras</h1><p>Acentuação: Paroxítonas e Proparoxítonas</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+
+    <div class="defs-row">
+      <div class="def-box">
+        <div class="db-title">PAROXÍTONA</div>
+        <p>Sílaba tônica na <strong>penúltima</strong> sílaba (segunda contando do final).<br>Ex: ca-<strong>SA</strong>, ní-<strong>vel</strong></p>
+      </div>
+      <div class="def-box">
+        <div class="db-title">PROPAROXÍTONA</div>
+        <p>Sílaba tônica na <strong>antepenúltima</strong> sílaba (terceira contando do final).<br>Ex: <strong>mé</strong>-di-co, <strong>pás</strong>-sa-ro</p>
+      </div>
+    </div>
+
+    <div class="instrucao" style="padding:10px 20px 6px;">
+      <strong>Classifique cada palavra:</strong> arraste os cartões para a categoria correta (paroxítona ou proparoxítona). Em celular, toque e segure para arrastar, ou toque no cartão e depois na zona de destino.
+    </div>
+
+    <div class="bank-area">
+      <div class="bank-title">PALAVRAS PARA CLASSIFICAR</div>
+      <div class="bank" id="bank"></div>
+    </div>
+
+    <div class="zones-row">
+      <div class="zone" id="zone-parox" data-cat="parox">
+        <div class="zone-title">PAROXÍTONA</div>
+        <div class="zone-sub">tônica na penúltima</div>
+        <div class="zone-chips" id="chips-parox"></div>
+      </div>
+      <div class="zone" id="zone-proparox" data-cat="proparox">
+        <div class="zone-title">PROPAROXÍTONA</div>
+        <div class="zone-sub">tônica na antepenúltima</div>
+        <div class="zone-chips" id="chips-proparox"></div>
+      </div>
+    </div>
+
+    <div class="prog-row">
+      Classificadas: <span id="placed-count">0</span> / <span id="total-count">12</span>
+    </div>
+
+    <button class="btn-check" id="btn-check" onclick="verificar()">Verificar classificação</button>
+
+    <div class="result-panel" id="result-panel">
+      <div class="r-emoji" id="r-emoji">🎉</div>
+      <div class="r-pct" id="r-pct">0%</div>
+      <div class="r-bar-wrap"><div class="r-bar" id="r-bar" style="width:0%"></div></div>
+      <div class="r-title" id="r-title"></div>
+      <div class="r-sub" id="r-sub"></div>
+      <button class="btn-retry" onclick="reiniciar()">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var ITEMS = [
+  // Paroxítonas que recebem acento (terminações especiais)
+  {id:'nivel',    label:'nível',    cat:'parox',    sil:'ní-vel',          tip:'termina em L'},
+  {id:'tunel',    label:'túnel',    cat:'parox',    sil:'tú-nel',          tip:'termina em L'},
+  {id:'forceps',  label:'fórceps',  cat:'parox',    sil:'fór-ceps',        tip:'termina em PS'},
+  {id:'bonus',    label:'bônus',    cat:'parox',    sil:'bô-nus',          tip:'termina em US'},
+  {id:'hifen',    label:'hífen',    cat:'parox',    sil:'hí-fen',          tip:'termina em N'},
+  {id:'adoravel', label:'adorável', cat:'parox',    sil:'a-do-rá-vel',     tip:'termina em L'},
+  // Proparoxítonas (sempre acentuadas)
+  {id:'medico',   label:'médico',   cat:'proparox', sil:'mé-di-co',        tip:'proparoxítona'},
+  {id:'lagrima',  label:'lágrima',  cat:'proparox', sil:'lá-gri-ma',       tip:'proparoxítona'},
+  {id:'passaro',  label:'pássaro',  cat:'proparox', sil:'pás-sa-ro',       tip:'proparoxítona'},
+  {id:'memoria',  label:'memória',  cat:'proparox', sil:'me-mó-ri-a',      tip:'proparoxítona'},
+  {id:'arvore',   label:'árvore',   cat:'proparox', sil:'ár-vo-re',        tip:'proparoxítona'},
+  {id:'especie',  label:'espécie',  cat:'proparox', sil:'es-pé-ci-e',      tip:'proparoxítona'},
+];
+
+function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+var placed = {}; // id → 'parox' | 'proparox'
+var dragId = null;
+var tapSelected = null; // for tap-to-place on mobile
+var finished = false;
+
+function renderBank() {
+  var bank = document.getElementById('bank');
+  bank.innerHTML = '';
+  document.getElementById('chips-parox').innerHTML = '';
+  document.getElementById('chips-proparox').innerHTML = '';
+  placed = {};
+  finished = false;
+  document.getElementById('result-panel').style.display = 'none';
+  document.getElementById('btn-check').style.display = 'block';
+  updateCount();
+
+  var order = shuffle(ITEMS.map(function(it){return it.id;}));
+  order.forEach(function(id) {
+    var item = ITEMS.find(function(it){return it.id===id;});
+    var chip = makeChip(item);
+    bank.appendChild(chip);
+  });
+}
+
+function makeChip(item) {
+  var chip = document.createElement('div');
+  chip.className = 'chip';
+  chip.id = 'chip-'+item.id;
+  chip.textContent = item.label;
+  chip.draggable = true;
+  chip.dataset.id = item.id;
+
+  // Drag events (desktop)
+  chip.addEventListener('dragstart', function(e) {
+    if (finished) return;
+    dragId = item.id;
+    chip.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  chip.addEventListener('dragend', function() {
+    chip.classList.remove('dragging');
+    dragId = null;
+  });
+
+  // Touch/tap: tap to select, then tap zone
+  chip.addEventListener('click', function(e) {
+    if (finished) return;
+    e.stopPropagation();
+    if (placed[item.id]) return; // already placed
+    if (tapSelected === item.id) {
+      tapSelected = null;
+      chip.style.outline = '';
+    } else {
+      if (tapSelected) {
+        var prev = document.getElementById('chip-'+tapSelected);
+        if (prev) prev.style.outline = '';
+      }
+      tapSelected = item.id;
+      chip.style.outline = '3px solid var(--port)';
+      chip.style.outlineOffset = '2px';
+    }
+  });
+
+  return chip;
+}
+
+function setupZones() {
+  ['parox','proparox'].forEach(function(cat) {
+    var zone = document.getElementById('zone-'+cat);
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      if (!dragId || finished) return;
+      placeChip(dragId, cat);
+    });
+    zone.addEventListener('click', function() {
+      if (!tapSelected || finished) return;
+      placeChip(tapSelected, cat);
+      var chip = document.getElementById('chip-'+tapSelected);
+      if (chip) chip.style.outline = '';
+      tapSelected = null;
+    });
+  });
+}
+
+function placeChip(id, cat) {
+  if (placed[id] === cat) return; // already in same zone
+  // Remove from previous location
+  var chip = document.getElementById('chip-'+id);
+  if (!chip) return;
+  chip.style.outline = '';
+  // If was in another zone, move it back to bank first
+  if (placed[id] && placed[id] !== cat) {
+    delete placed[id];
+  }
+  if (!placed[id]) {
+    // remove from bank
+    var bank = document.getElementById('bank');
+    if (chip.parentElement === bank) bank.removeChild(chip);
+    // remove from other zone
+    ['parox','proparox'].forEach(function(z){
+      var zc = document.getElementById('chips-'+z);
+      if (chip.parentElement === zc) zc.removeChild(chip);
+    });
+  }
+  placed[id] = cat;
+  document.getElementById('chips-'+cat).appendChild(chip);
+  updateCount();
+}
+
+function updateCount() {
+  document.getElementById('placed-count').textContent = Object.keys(placed).length;
+}
+
+function verificar() {
+  if (finished) return;
+  finished = true;
+  document.getElementById('btn-check').style.display = 'none';
+  tapSelected = null;
+
+  var hits = 0, total = ITEMS.length;
+  ITEMS.forEach(function(item) {
+    var chip = document.getElementById('chip-'+item.id);
+    if (!chip) return;
+    chip.style.outline = '';
+    chip.draggable = false;
+    var userCat = placed[item.id];
+    if (userCat === item.cat) {
+      hits++;
+      chip.className = 'chip placed-correct';
+      chip.title = item.sil + ' — ' + item.tip;
+    } else if (userCat) {
+      chip.className = 'chip placed-wrong';
+      chip.title = 'Categoria errada! Era '+item.cat+'. '+item.sil;
+    } else {
+      // Not placed — show in bank as wrong-miss
+      chip.style.opacity = '0.5';
+      chip.title = 'Não classificada. Era '+item.cat+'.';
+    }
+  });
+
+  var pct = Math.round((hits / total) * 100);
+  window.sabendoScore = pct;
+
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  document.getElementById('r-pct').textContent = pct + '%';
+  document.getElementById('r-bar').style.width = pct + '%';
+
+  var emoji, title, sub;
+  if (pct >= 90) { emoji='🏆'; title='Excelente!'; sub=hits+' de '+total+' palavras classificadas corretamente!'; }
+  else if (pct >= 70) { emoji='🎉'; title='Muito bem!'; sub=hits+' de '+total+' corretas. Veja quais erramos.'; }
+  else if (pct >= 50) { emoji='💪'; title='Continue!'; sub='Dica: conte as sílabas e veja em qual posição está a mais forte.'; }
+  else { emoji='📚'; title='Revise!'; sub='Releia as definições acima e tente identificar qual sílaba é a tônica em cada palavra.'; }
+
+  document.getElementById('r-emoji').textContent = emoji;
+  document.getElementById('r-title').textContent = title;
+  document.getElementById('r-sub').textContent = sub;
+}
+
+function reiniciar() {
+  renderBank();
+}
+
+setupZones();
+renderBank();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "acentuacao-paroxitonas-proparoxitonas";
+  var ACTIVITY_TYPE = "classificador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Acentin",
+    characterEmoji: "´",
+    characterImg:   "chars/acentuacao-paroxitonas-proparoxitonas-hd.png",
+    themeLabel:     "Acentuação: Paroxítonas e Proparoxítonas · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-acentuacao-paroxitonas-proparoxitonas",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var classScore = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: classScore, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
