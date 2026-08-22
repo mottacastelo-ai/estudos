@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador — Poema Visual e Onomatopeias</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF; --port-dark: #4C1D95;
+  --text: #1A1A2E; --muted: #6B7280; --border: #DDD6FE; --card: #fff; --radius: 18px;
+  --move: #0284C7; --move-bg: #E0F2FE; --move-border: #BAE6FD;
+  --imob: #059669; --imob-bg: #D1FAE5; --imob-border: #6EE7B7;
+  --green: #059669; --green-bg: #D1FAE5;
+  --red: #DC2626; --red-bg: #FEE2E2;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+.wrap { max-width: 760px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .75; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 14px 20px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.prog-area { padding: 12px 20px 0; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+.prog-track { height: 7px; background: var(--port-bg); border-radius: 999px; overflow: hidden; }
+.prog-fill { height: 7px; background: linear-gradient(90deg, var(--port), var(--port-light)); border-radius: 999px; transition: width .4s; }
+.card-area { padding: 18px 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.item-card { background: var(--card); border: 2px solid var(--border); border-radius: 14px; padding: 16px 20px; width: 100%; max-width: 440px; text-align: center; }
+.item-tag { font-size: 11px; font-weight: 800; color: var(--port); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+.item-text { font-size: 18px; font-weight: 800; color: var(--text); line-height: 1.3; font-style: italic; }
+.item-hint { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 4px; }
+.btn-row { display: flex; gap: 12px; width: 100%; max-width: 440px; }
+.btn-class { flex: 1; padding: 14px 10px; border: 2px solid; border-radius: 14px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; transition: all .15s; line-height: 1.3; }
+.btn-move { border-color: var(--move-border); background: var(--move-bg); color: var(--move); }
+.btn-move:hover { background: #BAE6FD; }
+.btn-imob { border-color: var(--imob-border); background: var(--imob-bg); color: var(--imob); }
+.btn-imob:hover { background: #A7F3D0; }
+.btn-class:disabled { opacity: .5; cursor: default; }
+.feedback-inline { width: 100%; max-width: 440px; padding: 12px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; line-height: 1.5; display: none; }
+.feedback-inline.correct { background: var(--green-bg); border: 2px solid var(--green); color: #065F46; }
+.feedback-inline.wrong { background: var(--red-bg); border: 2px solid var(--red); color: #991B1B; }
+.next-btn { padding: 11px 28px; background: linear-gradient(135deg, var(--port), var(--port-light)); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; display: none; }
+.result-panel { padding: 28px 24px; text-align: center; display: none; }
+.result-emoji { font-size: 52px; margin-bottom: 10px; }
+.score-big { font-size: 44px; font-weight: 900; color: var(--port); }
+.result-title { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--port); margin: 6px 0 4px; }
+.result-sub { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+.restart-btn { padding: 12px 32px; background: linear-gradient(135deg, var(--port), var(--port-light)); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.score-bar { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 8px 20px 0; }
+.score-badge { font-size: 12px; font-weight: 800; padding: 4px 14px; border-radius: 999px; }
+.sb-move { background: var(--move-bg); color: var(--move); }
+.sb-imob { background: var(--imob-bg); color: var(--imob); }
+@media (max-width: 480px) {
+  .btn-row { flex-direction: column; }
+  .item-text { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal(); return false;">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🗂️</div>
+      <div><h1>Classificador</h1><p>Movimento ou Imobilidade?</p></div>
+      <div class="hbadge">8 itens</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Leia cada elemento abaixo e classifique se ele sugere
+      <strong style="color:#0284C7">movimento</strong> ou <strong style="color:#059669">imobilidade</strong>
+      nos poemas visuais de Sérgio Capparelli. Clique no botão correto!
+    </div>
+    <div class="prog-area">
+      <div class="prog-label" id="prog-label">Item 1 de 8</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="card-area">
+      <div class="item-card" id="item-card">
+        <div class="item-tag" id="item-tag">Poema: "Canção para ninar gato com insônia"</div>
+        <div class="item-text" id="item-text"></div>
+        <div class="item-hint" id="item-hint"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-class btn-move" id="btn-move" onclick="classify('move')">🌊 Sugere movimento</button>
+        <button class="btn-class btn-imob" id="btn-imob" onclick="classify('imob')">😴 Sugere imobilidade</button>
+      </div>
+      <div class="feedback-inline" id="feedback-inline"></div>
+      <button class="next-btn" id="next-btn" onclick="nextItem()">Próximo →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="score-big" id="score-big"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <button class="restart-btn" onclick="restartGame()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var ITEMS = [
+  {
+    poema: 'Poema: "Canção para ninar gato com insônia"',
+    texto: '"ron ron ron"',
+    hint: 'Onomatopeia do ronronar do gato no poema de Capparelli',
+    answer: 'imob',
+    feedback: 'Imobilidade! "ron ron ron" forma a espiral de um gato enrolado e parado, sugerindo sono e descanso.'
+  },
+  {
+    poema: 'Poema: "Canção para ninar gato com insônia"',
+    texto: '"zzz"',
+    hint: 'Onomatopeia presente no mesmo poema do gato',
+    answer: 'imob',
+    feedback: 'Imobilidade! "zzz" é a onomatopeia do som de dormir. O poema do gato inteiro sugere imobilidade e sono.'
+  },
+  {
+    poema: 'Poema: "Canção para ninar gato com insônia"',
+    texto: 'Palavras dispostas em espiral formando um gato enrolado',
+    hint: 'Pense na imagem que a disposição das palavras cria',
+    answer: 'imob',
+    feedback: 'Imobilidade! Um gato enrolado está parado e quieto. A espiral reforça a sensação de sono e repouso.'
+  },
+  {
+    poema: 'Poema: "zig e zag saíram..."',
+    texto: '"zig" e "zag" alternados',
+    hint: 'Como se movem os peixes no poema de Capparelli e Gruszynski?',
+    answer: 'move',
+    feedback: 'Movimento! "zig" e "zag" alternados criam visualmente o trajeto em zigue-zague dos peixes.'
+  },
+  {
+    poema: 'Poema: "zig e zag saíram..."',
+    texto: '"saíram sem direção"',
+    hint: 'O que os peixes fazem no início do poema?',
+    answer: 'move',
+    feedback: 'Movimento! Os peixes saem e se deslocam — ainda que sem rumo. O poema todo retrata o movimento em zigue-zague deles.'
+  },
+  {
+    poema: 'Poema: "zig e zag saíram..."',
+    texto: '"sumiram no horizonte"',
+    hint: 'O que acontece ao final do poema dos peixes?',
+    answer: 'move',
+    feedback: 'Movimento! Sumir no horizonte indica deslocamento — os peixes se afastaram nadando até desaparecer ao longe.'
+  },
+  {
+    poema: 'Poema: "Canção para ninar gato com insônia"',
+    texto: 'A imagem geral do poema do gato',
+    hint: 'Pense no que o poema inteiro representa visualmente',
+    answer: 'imob',
+    feedback: 'Imobilidade! O poema do gato representa repouso e sono — a posição enrolada e as onomatopeias "zzz" e "ron ron ron" reforçam a imobilidade.'
+  },
+  {
+    poema: 'Poema: "zig e zag saíram..."',
+    texto: 'A imagem geral do poema dos peixes',
+    hint: 'Pense no que o poema inteiro representa visualmente',
+    answer: 'move',
+    feedback: 'Movimento! O poema dos peixes representa o nado em zigue-zague — as palavras "zig" e "zag" alternadas criam essa sensação de movimento contínuo.'
+  }
+];
+
+var currentIdx = 0;
+var acertos = 0;
+var answered = false;
+
+function renderItem() {
+  var item = ITEMS[currentIdx];
+  document.getElementById('prog-label').textContent = 'Item ' + (currentIdx+1) + ' de ' + ITEMS.length;
+  document.getElementById('prog-fill').style.width = ((currentIdx / ITEMS.length) * 100) + '%';
+  document.getElementById('item-tag').textContent = item.poema;
+  document.getElementById('item-text').textContent = item.texto;
+  document.getElementById('item-hint').textContent = item.hint;
+  document.getElementById('btn-move').disabled = false;
+  document.getElementById('btn-imob').disabled = false;
+  document.getElementById('btn-move').style.opacity = '1';
+  document.getElementById('btn-imob').style.opacity = '1';
+  var fb = document.getElementById('feedback-inline');
+  fb.style.display = 'none'; fb.className = 'feedback-inline';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function classify(choice) {
+  if (answered) return;
+  answered = true;
+  var item = ITEMS[currentIdx];
+  var isCorrect = choice === item.answer;
+  if (isCorrect) acertos++;
+  document.getElementById('btn-move').disabled = true;
+  document.getElementById('btn-imob').disabled = true;
+  if (choice === 'move') { document.getElementById('btn-imob').style.opacity = '.4'; }
+  else { document.getElementById('btn-move').style.opacity = '.4'; }
+  var fb = document.getElementById('feedback-inline');
+  fb.className = 'feedback-inline ' + (isCorrect ? 'correct' : 'wrong');
+  fb.textContent = (isCorrect ? '✓ ' : '✗ ') + item.feedback;
+  fb.style.display = 'block';
+  var nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = currentIdx < ITEMS.length - 1 ? 'Próximo →' : 'Ver resultado';
+}
+
+function nextItem() {
+  currentIdx++;
+  if (currentIdx < ITEMS.length) {
+    renderItem();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  var pct = Math.round((acertos / ITEMS.length) * 100);
+  window.sabendoScore = pct;
+  document.getElementById('card-area') && (document.getElementById('card-area').style.display = 'none');
+  document.querySelector('.card-area').style.display = 'none';
+  document.getElementById('result-panel').style.display = 'block';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Concluído!';
+  document.getElementById('score-big').textContent = acertos + '/' + ITEMS.length;
+  var emoji, title, sub;
+  if (pct >= 88) { emoji = '🌟'; title = 'Expert em poemas visuais!'; sub = 'Você distingue perfeitamente movimento de imobilidade nos poemas!'; }
+  else if (pct >= 62) { emoji = '✨'; title = 'Muito bem!'; sub = 'Você entende bem como os poemas visuais sugerem movimento ou imobilidade.'; }
+  else { emoji = '💪'; title = 'Continue estudando!'; sub = 'Releia os dois poemas e observe como as palavras se dispõem na página.'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+}
+
+function restartGame() {
+  currentIdx = 0; acertos = 0; answered = false;
+  document.querySelector('.card-area').style.display = 'flex';
+  document.getElementById('result-panel').style.display = 'none';
+  renderItem();
+}
+
+renderItem();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "poema-visual-onomatopeias";
+  var ACTIVITY_TYPE = "classificador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Ziguinho",
+    characterEmoji: "🔤",
+    characterImg:   "chars/poema-visual-onomatopeias-hd.png",
+    themeLabel:     "Poema Visual e Onomatopeias · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-poema-visual-onomatopeias",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

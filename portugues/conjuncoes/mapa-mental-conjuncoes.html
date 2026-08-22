@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Conjunções</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; cursor: pointer; background: none; border: none; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+.instrucao { padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--border); flex-wrap: wrap; background: #faf9ff; }
+.toolbar button { font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 999px; cursor: pointer; border: 2px solid var(--border); background: var(--card); color: var(--muted); transition: all .15s; user-select: none; }
+.toolbar button:hover { border-color: var(--port-light); color: var(--port); }
+.toolbar button.active { background: var(--port-bg); border-color: var(--port); color: var(--port); }
+.tsep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#hint-bar { font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 80px; }
+#conn-count { font-size: 12px; font-weight: 800; color: var(--port); white-space: nowrap; }
+.stage-wrap { position: relative; padding: 16px 20px 20px; }
+#pending-msg { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); background: #EDE9FE; border: 2px solid #7C3AED; color: #4C1D95; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+#stage { position: relative; width: 100%; height: calc(100svh - 340px); background: var(--port-bg); border-radius: 18px; border: 2px solid var(--border); overflow: hidden; user-select: none; }
+.node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 12px; font-weight: 700; padding: 8px 16px; min-width: 80px; line-height: 1.3; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .12s, box-shadow .12s; }
+.node:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,.13); }
+.node.selected { outline: 3px solid #7C3AED; outline-offset: 2px; }
+.n-root   { background: linear-gradient(135deg, #4C1D95, #7C3AED, #A78BFA); color: white; border: 2px solid #4C1D95; font-size: 13px; font-weight: 800; min-width: 145px; padding: 11px 20px; z-index: 11; }
+.n-level1 { background: #EDE9FE; border: 2px solid #DDD6FE; color: #4C1D95; }
+.gabarito-panel { margin: 0 20px 20px; padding: 14px 16px; border-radius: 16px; border: 2px solid #DDD6FE; background: #F3F0FF; display: none; }
+.gabarito-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: #4C1D95; margin-bottom: 10px; letter-spacing: .06em; }
+#gabarito-svg { width: 100%; border-radius: 12px; background: #F3F0FF; display: block; }
+.score-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.score-track { flex: 1; height: 8px; border-radius: 999px; background: #DDD6FE; }
+.score-fill { height: 8px; border-radius: 999px; background: #7C3AED; transition: width .4s; }
+.score-label { font-size: 12px; font-weight: 800; color: #4C1D95; white-space: nowrap; }
+@media (max-width: 600px) {
+  #stage { height: calc(100svh - 340px) !important; min-height: 380px; }
+  .node { font-size: 11px !important; padding: 7px 12px !important; min-width: 70px !important; }
+  .n-root { min-width: 120px !important; font-size: 12px !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🗺️</div>
+      <div><h1>Mapa Mental</h1><p>Conjunções · Português 5º ano</p></div>
+      <div class="hbadge">🏆 Síntese</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Use <strong>✥ Mover</strong> para arrastar os balões e organizar o mapa.
+      Use <strong>+ Conectar</strong> para criar setas entre o balão central <em>Conjunção</em> e cada relação de sentido.
+      Quando terminar, clique em <strong>Ver gabarito</strong> para comparar com a estrutura correta.
+    </div>
+    <div class="toolbar">
+      <button id="btn-connect">+ Conectar</button>
+      <button id="btn-move" class="active">✥ Mover</button>
+      <button id="btn-erase">✕ Apagar seta</button>
+      <div class="tsep"></div>
+      <button id="btn-reset">↺ Reiniciar</button>
+      <div class="tsep"></div>
+      <span id="conn-count">0 conexões</span>
+      <span id="hint-bar">Clique e arraste qualquer balão</span>
+      <button id="btn-gabarito">Ver gabarito</button>
+    </div>
+    <div class="stage-wrap">
+      <div id="pending-msg">Clique em outro balão para conectar ✔</div>
+      <div id="stage">
+        <svg id="arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
+          <defs>
+            <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#7C3AED" opacity="0.7"/></marker>
+            <marker id="mRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626" opacity="0.7"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="gabarito-panel" id="gabarito-panel">
+      <div class="gabarito-title">ESTRUTURA DO MAPA — GABARITO</div>
+      <svg id="gabarito-svg" viewBox="0 0 700 330" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+        <defs>
+          <linearGradient id="rg2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4C1D95"/>
+            <stop offset="100%" stop-color="#A78BFA"/>
+          </linearGradient>
+          <marker id="ga2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#7C3AED" opacity="0.6"/>
+          </marker>
+        </defs>
+        <!-- Lines from root (350,165) to each level1 -->
+        <line x1="350" y1="165" x2="490" y2="165" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga2)"/>
+        <line x1="350" y1="165" x2="440" y2="80"  stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga2)"/>
+        <line x1="350" y1="165" x2="350" y2="35"  stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga2)"/>
+        <line x1="350" y1="165" x2="260" y2="80"  stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga2)"/>
+        <line x1="350" y1="165" x2="210" y2="165" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga2)"/>
+        <line x1="350" y1="165" x2="260" y2="250" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga2)"/>
+        <line x1="350" y1="165" x2="350" y2="295" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga2)"/>
+        <line x1="350" y1="165" x2="440" y2="250" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" marker-end="url(#ga2)"/>
+        <!-- Root node -->
+        <rect x="280" y="148" width="140" height="34" rx="17" fill="url(#rg2)" stroke="#4C1D95" stroke-width="2"/>
+        <text x="350" y="170" text-anchor="middle" font-size="11" font-weight="800" fill="white">🔗 Conjunção</text>
+        <!-- Adição (right) -->
+        <rect x="430" y="152" width="120" height="26" rx="13" fill="#EDE9FE" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="490" y="169" text-anchor="middle" font-size="9" font-weight="700" fill="#4C1D95">Adição (e)</text>
+        <!-- Oposição (up-right) -->
+        <rect x="380" y="67" width="120" height="26" rx="13" fill="#EDE9FE" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="440" y="84" text-anchor="middle" font-size="9" font-weight="700" fill="#4C1D95">Oposição (mas, porém)</text>
+        <!-- Tempo (up) -->
+        <rect x="272" y="22" width="156" height="26" rx="13" fill="#EDE9FE" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="350" y="39" text-anchor="middle" font-size="9" font-weight="700" fill="#4C1D95">Tempo (enquanto, quando)</text>
+        <!-- Condição (up-left) -->
+        <rect x="196" y="67" width="128" height="26" rx="13" fill="#EDE9FE" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="260" y="84" text-anchor="middle" font-size="9" font-weight="700" fill="#4C1D95">Condição (se)</text>
+        <!-- Explicação (left) -->
+        <rect x="142" y="152" width="136" height="26" rx="13" fill="#EDE9FE" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="210" y="169" text-anchor="middle" font-size="9" font-weight="700" fill="#4C1D95">Explicação (pois)</text>
+        <!-- Finalidade (down-left) -->
+        <rect x="196" y="237" width="128" height="26" rx="13" fill="#EDE9FE" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="260" y="254" text-anchor="middle" font-size="9" font-weight="700" fill="#4C1D95">Finalidade (para)</text>
+        <!-- Alternância (down) -->
+        <rect x="272" y="282" width="156" height="26" rx="13" fill="#EDE9FE" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="350" y="299" text-anchor="middle" font-size="9" font-weight="700" fill="#4C1D95">Alternância (ou)</text>
+        <!-- Comparação (down-right) -->
+        <rect x="380" y="237" width="120" height="26" rx="13" fill="#EDE9FE" stroke="#DDD6FE" stroke-width="1.5"/>
+        <text x="440" y="254" text-anchor="middle" font-size="9" font-weight="700" fill="#4C1D95">Comparação (como)</text>
+      </svg>
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="score-label" id="score-label">0 de 8 conexões</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var NODES = [
+  {id:'root',  label:'🔗 Conjunção',              cls:'n-root'},
+  {id:'add',   label:'Adição (e)',                 cls:'n-level1'},
+  {id:'opos',  label:'Oposição (mas, porém)',      cls:'n-level1'},
+  {id:'tempo', label:'Tempo (enquanto, quando)',   cls:'n-level1'},
+  {id:'cond',  label:'Condição (se)',              cls:'n-level1'},
+  {id:'expl',  label:'Explicação (pois)',          cls:'n-level1'},
+  {id:'fin',   label:'Finalidade (para)',          cls:'n-level1'},
+  {id:'alt',   label:'Alternância (ou)',           cls:'n-level1'},
+  {id:'comp',  label:'Comparação (como)',          cls:'n-level1'},
+];
+
+var GABARITO = [
+  ['root','add'],['root','opos'],['root','tempo'],['root','cond'],
+  ['root','expl'],['root','fin'],['root','alt'],['root','comp']
+];
+
+var SHUFFLE = ['opos','fin','root','tempo','alt','add','comp','cond','expl'];
+
+var stage = document.getElementById('stage');
+var svgEl = document.getElementById('arrows');
+var positions = {}, arrows = [], mode = 'move', arrowFrom = null, dragging = null, dragOff = {}, gabVisible = false;
+
+function calcPositions() {
+  var W = stage.clientWidth;
+  var COLS = W < 480 ? 2 : 3;
+  var ROWS = Math.ceil(SHUFFLE.length / COLS);
+  var padX = 20, padY = 36;
+  var colW = (W - padX * 2) / COLS;
+  var rowH = Math.max(80, (stage.clientHeight - padY * 2) / ROWS);
+  var minH = padY * 2 + ROWS * rowH;
+  if (minH > stage.clientHeight) stage.style.height = minH + 'px';
+  SHUFFLE.forEach(function(id, i) {
+    positions[id] = {
+      x: padX + (i % COLS + 0.5) * colW,
+      y: padY + (Math.floor(i / COLS) + 0.5) * rowH
+    };
+  });
+}
+
+function renderNodes() {
+  NODES.forEach(function(n) {
+    var el = document.getElementById('nd-' + n.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'nd-' + n.id; el.className = 'node ' + n.cls; el.textContent = n.label;
+      stage.appendChild(el);
+      el.addEventListener('mousedown',  function(e) { onDown(e, n.id); });
+      el.addEventListener('touchstart', function(e) { onTouchDown(e, n.id); }, {passive: false});
+      el.addEventListener('click',      function(e) { onNodeClick(e, n.id); });
+    }
+    placeNode(n.id);
+  });
+}
+
+function placeNode(id) {
+  var el = document.getElementById('nd-' + id), p = positions[id];
+  var hw = el.offsetWidth / 2, hh = el.offsetHeight / 2;
+  var W = stage.clientWidth, H = stage.clientHeight;
+  var cx = Math.max(hw + 4, Math.min(W - hw - 4, p.x));
+  var cy = Math.max(hh + 4, Math.min(H - hh - 4, p.y));
+  el.style.left = (cx - hw) + 'px'; el.style.top = (cy - hh) + 'px';
+}
+
+function center(id) {
+  var el = document.getElementById('nd-' + id);
+  return { x: parseFloat(el.style.left) + el.offsetWidth / 2, y: parseFloat(el.style.top) + el.offsetHeight / 2 };
+}
+
+function drawArrows() {
+  while (svgEl.children.length > 1) svgEl.removeChild(svgEl.lastChild);
+  var isErase = mode === 'erase';
+  arrows.forEach(function(a, i) {
+    var f = center(a.from), t = center(a.to), dx = t.x - f.x, dy = t.y - f.y;
+    var len = Math.sqrt(dx * dx + dy * dy) || 1;
+    var toEl = document.getElementById('nd-' + a.to);
+    var rad = Math.min(toEl.offsetWidth, toEl.offsetHeight) / 2 + 3;
+    var ex = t.x - (dx / len) * rad, ey = t.y - (dy / len) * rad;
+    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', f.x); line.setAttribute('y1', f.y);
+    line.setAttribute('x2', ex);  line.setAttribute('y2', ey);
+    line.setAttribute('stroke', isErase ? '#DC2626' : '#7C3AED');
+    line.setAttribute('stroke-width', '2'); line.setAttribute('opacity', '0.7');
+    line.setAttribute('marker-end', isErase ? 'url(#mRed)' : 'url(#mArr)');
+    if (isErase) {
+      line.style.pointerEvents = 'stroke'; line.style.cursor = 'pointer';
+      (function(idx) { line.addEventListener('click', function() { arrows.splice(idx, 1); drawArrows(); updateCount(); updateGabarito(); }); })(i);
+    }
+    svgEl.appendChild(line);
+  });
+}
+
+function updateCount() { var n = arrows.length; document.getElementById('conn-count').textContent = n + (n === 1 ? ' conexão' : ' conexões'); }
+
+function setMode(m) {
+  mode = m;
+  if (arrowFrom) { document.getElementById('nd-' + arrowFrom).classList.remove('selected'); arrowFrom = null; }
+  document.getElementById('pending-msg').style.display = 'none';
+  ['connect','move','erase'].forEach(function(k) { document.getElementById('btn-' + k).classList.toggle('active', k === m); });
+  drawArrows();
+  document.getElementById('hint-bar').textContent = {
+    connect: 'Clique em dois balões para criar uma seta',
+    move: 'Clique e arraste qualquer balão',
+    erase: 'Clique em uma seta para apagá-la'
+  }[m];
+}
+
+function onNodeClick(e, id) {
+  if (mode !== 'connect') return;
+  if (!arrowFrom) {
+    arrowFrom = id;
+    document.getElementById('nd-' + id).classList.add('selected');
+    document.getElementById('pending-msg').style.display = 'block';
+  } else {
+    document.getElementById('nd-' + arrowFrom).classList.remove('selected');
+    document.getElementById('nd-' + id).classList.remove('selected');
+    if (arrowFrom !== id) {
+      var dup = arrows.some(function(a) { return (a.from === arrowFrom && a.to === id) || (a.from === id && a.to === arrowFrom); });
+      if (!dup) { arrows.push({from: arrowFrom, to: id}); updateCount(); drawArrows(); updateGabarito(); }
+    }
+    arrowFrom = null; document.getElementById('pending-msg').style.display = 'none';
+  }
+  e.stopPropagation();
+}
+
+function onDown(e, id) {
+  if (mode !== 'move') return; e.preventDefault();
+  var r = stage.getBoundingClientRect(), el = document.getElementById('nd-' + id); dragging = id;
+  dragOff = {x: e.clientX - r.left - parseFloat(el.style.left) - el.offsetWidth / 2, y: e.clientY - r.top - parseFloat(el.style.top) - el.offsetHeight / 2};
+}
+function onTouchDown(e, id) {
+  if (mode !== 'move') return; e.preventDefault();
+  var t = e.touches[0], r = stage.getBoundingClientRect(), el = document.getElementById('nd-' + id); dragging = id;
+  dragOff = {x: t.clientX - r.left - parseFloat(el.style.left) - el.offsetWidth / 2, y: t.clientY - r.top - parseFloat(el.style.top) - el.offsetHeight / 2};
+}
+document.addEventListener('mousemove', function(e) { if (!dragging) return; var r = stage.getBoundingClientRect(); positions[dragging] = {x: e.clientX - r.left - dragOff.x, y: e.clientY - r.top - dragOff.y}; placeNode(dragging); drawArrows(); });
+document.addEventListener('mouseup', function() { dragging = null; });
+document.addEventListener('touchmove', function(e) { if (!dragging) return; var t = e.touches[0], r = stage.getBoundingClientRect(); positions[dragging] = {x: t.clientX - r.left - dragOff.x, y: t.clientY - r.top - dragOff.y}; placeNode(dragging); drawArrows(); }, {passive: true});
+document.addEventListener('touchend', function() { dragging = null; });
+
+document.getElementById('btn-connect').addEventListener('click', function() { setMode('connect'); });
+document.getElementById('btn-move').addEventListener('click', function() { setMode('move'); });
+document.getElementById('btn-erase').addEventListener('click', function() { setMode(mode === 'erase' ? 'connect' : 'erase'); });
+document.getElementById('btn-reset').addEventListener('click', function() { arrows = []; calcPositions(); NODES.forEach(function(n) { placeNode(n.id); }); drawArrows(); updateCount(); updateGabarito(); });
+document.getElementById('btn-gabarito').addEventListener('click', function() {
+  gabVisible = !gabVisible;
+  if (gabVisible) updateGabarito();
+  document.getElementById('gabarito-panel').style.display = gabVisible ? 'block' : 'none';
+  document.getElementById('btn-gabarito').textContent = gabVisible ? 'Ocultar gabarito' : 'Ver gabarito';
+});
+
+function updateGabarito() {
+  if (!gabVisible) return;
+  var hits = 0;
+  GABARITO.forEach(function(pair) {
+    if (arrows.some(function(a) { return (a.from === pair[0] && a.to === pair[1]) || (a.from === pair[1] && a.to === pair[0]); })) hits++;
+  });
+  var total = GABARITO.length, pct = Math.round((hits / total) * 100);
+  window.sabendoScore = pct;
+  document.getElementById('score-fill').style.width = pct + '%';
+  document.getElementById('score-label').textContent = hits + ' de ' + total + ' conexões (' + pct + '%)';
+}
+
+window.addEventListener('resize', function() { calcPositions(); NODES.forEach(function(n) { placeNode(n.id); }); drawArrows(); });
+window.addEventListener('load', function() { calcPositions(); renderNodes(); setMode('move'); });
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "conjuncoes";
+  var ACTIVITY_TYPE = "mapa-mental";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Elo",
+    characterEmoji: "🔗",
+    characterImg: "chars/conjuncoes-hd.png",
+    themeLabel: "Conjunções · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-conjuncoes",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100; showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: _capturedScore, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
