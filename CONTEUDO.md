@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 18 | 84 |
+| 📝 Português | 19 | 88 |
 | 🔢 Matemática | 7 | 33 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **37** | **165** |
+| **Total** | **38** | **169** |
 
 ---
 
@@ -248,6 +248,18 @@
 | Classificador | ✅ `classificador-poema-visual-onomatopeias.html` |
 | Complete a Lacuna | ✅ `complete-lacuna-poema-visual-onomatopeias.html` |
 | Mapa Mental | ✅ `mapa-mental-poema-visual-onomatopeias.html` |
+
+---
+
+### Dicionario Verbetes
+**HQ:** ✅ `hq-dicionario-verbetes.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-dicionario-verbetes.html` |
+| Classificador | ✅ `classificador-dicionario-verbetes.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-dicionario-verbetes.html` |
+| Mapa Mental | ✅ `mapa-mental-dicionario-verbetes.html` |
 
 ---
 

@@ -684,7 +684,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
     <span class="d-icon">📝</span>
     <span class="d-name">Português</span>
-    <span class="d-count">84</span>
+    <span class="d-count">88</span>
   </button>
   <div class="theme-sub" id="sub-port">
     <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
@@ -705,6 +705,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('port','girias-coesao')">🔗 Gírias e Coesão</button>
     <button class="theme-link" onclick="showTheme('port','conjuncoes')">🔗 Conjunções</button>
     <button class="theme-link" onclick="showTheme('port','poema-visual-onomatopeias')">🐟 Poema Visual e Onomatopeias</button>
+    <button class="theme-link" onclick="showTheme('port','dicionario-verbetes')">📔 Estudo do Dicionário: Verbetes</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
@@ -846,9 +847,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Português</div>
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#FDF2F8;color:#9D174D">18 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">67 atividades</span>
-            <span class="chip" style="background:#FEF3C7;color:#92400E">14 HQs</span>
+            <span class="chip" style="background:#FDF2F8;color:#9D174D">19 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">71 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">15 HQs</span>
           </div>
         </button>
         <button class="disc-home-card mat" onclick="showDisc('mat')">
@@ -929,6 +930,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn" onclick="showTheme('port','girias-coesao')">🔗 Gírias e Coesão</button>
         <button class="theme-tab-btn" onclick="showTheme('port','conjuncoes')">🔗 Conjunções</button>
         <button class="theme-tab-btn" onclick="showTheme('port','poema-visual-onomatopeias')">🐟 Poema Visual e Onomatopeias</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','dicionario-verbetes')">📔 Estudo do Dicionário: Verbetes</button>
       </div>
 
       <!-- TEMA: TEXTO TEATRAL -->
@@ -1831,6 +1833,50 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <a class="act-card port" href="portugues/poema-visual-onomatopeias/mapa-mental-poema-visual-onomatopeias.html" target="sabendo-atividade">
             <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
             <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema de poema visual e onomatopeias.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">✏️ Complete a Lacuna</span><span class="sched-act port">🔎 Classificador</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: ESTUDO DO DICIONÁRIO: VERBETES -->
+      <div class="theme-content" id="theme-port-dicionario-verbetes">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/dicionario-verbetes/hq-dicionario-verbetes.png" alt="HQ Estudo do Dicionário: Verbetes"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>O Segredo do Verbete — 4 páginas · Personagens: Dicio, Bia, Prepo · Tema: estudo do dicionário e verbetes · pp. 186–189</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/dicionario-verbetes/quiz-dicionario-verbetes.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre dicionário, verbetes, entrada, classe gramatical, definição e uso.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/dicionario-verbetes/classificador-dicionario-verbetes.html" target="sabendo-atividade">
+            <div class="act-icon">🔎</div><div class="act-title">Classificador</div>
+            <div class="act-desc">Classifique cada palavra como adjetivo ou substantivo usando as informações do verbete do dicionário.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/dicionario-verbetes/complete-lacuna-dicionario-verbetes.html" target="sabendo-atividade">
+            <div class="act-icon">✏️</div><div class="act-title">Complete a Lacuna</div>
+            <div class="act-desc">Complete as partes do verbete escolhendo a informação correta para cada campo: entrada, classe, definição e exemplo.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Aplicar</span></div>
+            <div class="level lv1">💬 Discutir (70%)</div>
+          </a>
+          <a class="act-card port" href="portugues/dicionario-verbetes/mapa-mental-dicionario-verbetes.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema de dicionário e verbetes.</div>
             <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
             <div class="level lv3">🏆 Ensinar (90%)</div>
           </a>
@@ -3416,6 +3462,7 @@ var THEME_CATALOG = [
   { disc:'port', slug:'girias-coesao',              label:'Gírias e Coesão',             emoji:'🔗', pages:[154,170], charName:'Elástico',  charImg:'chars/girias-coesao-hd.png' },
   { disc:'port', slug:'conjuncoes',                 label:'Conjunções',                  emoji:'🔗', pages:[178,180], charName:'Elo',        charImg:'chars/conjuncoes-hd.png' },
   { disc:'port', slug:'poema-visual-onomatopeias', label:'Poema Visual e Onomatopeias', emoji:'🐟', pages:[190,193], charName:'Ziguinho',   charImg:'chars/poema-visual-onomatopeias-hd.png' },
+  { disc:'port', slug:'dicionario-verbetes',       label:'Estudo do Dicionário: Verbetes', emoji:'📔', pages:[186,189], charName:'Dicio',    charImg:'chars/dicionario-verbetes-hd.png' },
   // ── Matemática
   { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null, charName:'Prepo',    charImg:'prepo-hd.png' },
   { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null, charName:'Calco',    charImg:'chars/multiplicacao-divisao-hd.png' },
@@ -3566,7 +3613,8 @@ var THEME_META = {
   'discurso-direto-indireto':    { label: 'Discurso Direto e Indireto',   navId: 'nav-port', disc: 'port' },
   'girias-coesao':               { label: 'Gírias e Coesão',              navId: 'nav-port', disc: 'port' },
   'conjuncoes':                  { label: 'Conjunções',                   navId: 'nav-port', disc: 'port' },
-  'poema-visual-onomatopeias':  { label: 'Poema Visual e Onomatopeias',  navId: 'nav-port', disc: 'port' }
+  'poema-visual-onomatopeias':  { label: 'Poema Visual e Onomatopeias',  navId: 'nav-port', disc: 'port' },
+  'dicionario-verbetes':        { label: 'Estudo do Dicionário: Verbetes', navId: 'nav-port', disc: 'port' }
 };
 var ACTIVITY_FILE_PATHS = {
   'preposicoes:quiz':                          'portugues/preposicoes/quiz-preposicoes.html',
@@ -3614,6 +3662,10 @@ var ACTIVITY_FILE_PATHS = {
   'poema-visual-onomatopeias:complete-lacuna': 'portugues/poema-visual-onomatopeias/complete-lacuna-poema-visual-onomatopeias.html',
   'poema-visual-onomatopeias:mapa-mental':     'portugues/poema-visual-onomatopeias/mapa-mental-poema-visual-onomatopeias.html',
   'poema-visual-onomatopeias:quiz':            'portugues/poema-visual-onomatopeias/quiz-poema-visual-onomatopeias.html',
+  'dicionario-verbetes:quiz':                  'portugues/dicionario-verbetes/quiz-dicionario-verbetes.html',
+  'dicionario-verbetes:classificador':         'portugues/dicionario-verbetes/classificador-dicionario-verbetes.html',
+  'dicionario-verbetes:complete-lacuna':       'portugues/dicionario-verbetes/complete-lacuna-dicionario-verbetes.html',
+  'dicionario-verbetes:mapa-mental':           'portugues/dicionario-verbetes/mapa-mental-dicionario-verbetes.html',
   'letral:detetive':                           'portugues/letra-l/detetive-silaba-letra-l.html',
   'letral:fabrica':                            'portugues/letra-l/fabrica-letra-l.html',
   'letral:mapa-mental':                        'portugues/letra-l/mapa-mental-letra-l.html',
