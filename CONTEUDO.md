@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 17 | 80 |
+| 📝 Português | 18 | 84 |
 | 🔢 Matemática | 7 | 33 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **36** | **161** |
+| **Total** | **37** | **165** |
 
 ---
 
@@ -236,6 +236,18 @@
 | Classificador de Conjunções | ✅ `classificador-conjuncoes.html` |
 | Complete a Lacuna | ✅ `complete-lacuna-conjuncoes.html` |
 | Mapa Mental | ✅ `mapa-mental-conjuncoes.html` |
+
+---
+
+### Poema Visual Onomatopeias
+**HQ:** ✅ `hq-poema-visual-onomatopeias.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-poema-visual-onomatopeias.html` |
+| Classificador | ✅ `classificador-poema-visual-onomatopeias.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-poema-visual-onomatopeias.html` |
+| Mapa Mental | ✅ `mapa-mental-poema-visual-onomatopeias.html` |
 
 ---
 
