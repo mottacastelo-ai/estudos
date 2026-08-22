@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador — Conjunções</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 860px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; cursor: pointer; background: none; border: none; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+.instrucao { padding: 14px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.body-area { padding: 20px 24px 24px; }
+.bank-title { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--port); letter-spacing: .07em; margin-bottom: 10px; }
+.bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; padding: 10px 12px; background: var(--port-bg); border: 2px dashed var(--border); border-radius: 14px; margin-bottom: 20px; }
+.conj-chip { font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; padding: 8px 20px; border-radius: 999px; border: 2px solid var(--border); background: #fff; color: var(--port-dark); cursor: pointer; transition: all .15s; user-select: none; }
+.conj-chip:hover { border-color: var(--port); background: var(--port-bg); transform: scale(1.05); }
+.conj-chip.selected { border-color: var(--port); background: var(--port); color: #fff; box-shadow: 0 2px 12px rgba(124,58,237,.3); }
+.conj-chip.placed { opacity: .45; pointer-events: none; }
+.categories-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.cat-box { border: 2px solid var(--border); border-radius: 14px; padding: 10px; background: #faf9ff; min-height: 90px; cursor: pointer; transition: border-color .15s, background .15s; }
+.cat-box:hover { border-color: var(--port-light); background: var(--port-bg); }
+.cat-box.highlight { border-color: var(--port); background: var(--port-bg); }
+.cat-box.correct { border-color: #059669; background: #D1FAE5; cursor: default; }
+.cat-box.wrong { border-color: #DC2626; background: #FEE2E2; cursor: default; }
+.cat-name { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700; color: var(--port-dark); margin-bottom: 6px; letter-spacing: .04em; }
+.cat-items { display: flex; flex-direction: column; gap: 4px; }
+.cat-chip { font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--port-bg); border: 1px solid var(--border); color: var(--port-dark); cursor: pointer; width: fit-content; transition: background .1s; }
+.cat-chip:hover { background: #EDE9FE; }
+.cat-chip.correct-chip { background: #D1FAE5; border-color: #059669; color: #064E3B; cursor: default; }
+.cat-chip.wrong-chip { background: #FEE2E2; border-color: #DC2626; color: #7F1D1D; cursor: default; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.check-btn { font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; cursor: pointer; }
+.check-btn:hover { opacity: .85; }
+.check-btn:disabled { opacity: .5; cursor: not-allowed; }
+.reset-btn { font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; background: #fff; color: var(--muted); border: 2px solid var(--border); border-radius: 14px; padding: 12px 22px; cursor: pointer; }
+.reset-btn:hover { border-color: var(--port-light); color: var(--port); }
+.result-panel { display: none; padding: 20px; border-radius: 16px; text-align: center; }
+.result-panel.show { display: block; }
+.result-icon { font-size: 52px; }
+.result-score { font-family: "Space Mono", monospace; font-size: 36px; font-weight: 700; color: var(--port); margin: 8px 0 4px; }
+.result-msg { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 16px; }
+.progress-area { margin-bottom: 12px; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: linear-gradient(90deg, #7C3AED, #A78BFA); transition: width .4s; }
+@media (max-width: 600px) {
+  .categories-grid { grid-template-columns: repeat(2, 1fr); }
+  .conj-chip { font-size: 14px; padding: 7px 16px; }
+}
+@media (max-width: 380px) {
+  .categories-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🗂️</div>
+      <div><h1>Classificador de Conjunções</h1><p>Conjunções · Português 5º ano</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Clique em uma conjunção no banco e depois clique na caixa da relação de sentido que ela expressa.
+      Para devolver uma conjunção ao banco, clique nela dentro da caixa.
+      Ao terminar de classificar todas, clique em <strong>Verificar</strong>.
+    </div>
+    <div class="body-area">
+      <div class="progress-area">
+        <div class="prog-label" id="prog-label">0 de 10 conjunções classificadas</div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="bank-title">BANCO DE CONJUNÇÕES</div>
+      <div class="bank" id="bank"></div>
+      <div class="categories-grid" id="categories-grid"></div>
+      <div class="actions">
+        <button class="check-btn" id="check-btn" onclick="verificar()" disabled>Verificar</button>
+        <button class="reset-btn" onclick="resetar()">↺ Reiniciar</button>
+      </div>
+      <div class="result-panel" id="result-panel">
+        <div class="result-icon" id="result-icon"></div>
+        <div class="result-score" id="result-score"></div>
+        <div class="result-msg" id="result-msg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var ITEMS = [
+  {id:'e',          label:'e',          cat:'adicao'},
+  {id:'mas',        label:'mas',        cat:'oposicao'},
+  {id:'porém',      label:'porém',      cat:'oposicao'},
+  {id:'entretanto', label:'entretanto', cat:'oposicao'},
+  {id:'enquanto',   label:'enquanto',   cat:'tempo'},
+  {id:'quando',     label:'quando',     cat:'tempo'},
+  {id:'se',         label:'se',         cat:'condicao'},
+  {id:'pois',       label:'pois',       cat:'explicacao'},
+  {id:'para',       label:'para',       cat:'finalidade'},
+  {id:'ou',         label:'ou',         cat:'alternancia'},
+];
+
+var CATEGORIES = [
+  {id:'adicao',     label:'Adição',      emoji:'➕'},
+  {id:'oposicao',   label:'Oposição',    emoji:'↔️'},
+  {id:'tempo',      label:'Tempo',       emoji:'⏱️'},
+  {id:'condicao',   label:'Condição',    emoji:'❓'},
+  {id:'explicacao', label:'Explicação',  emoji:'💬'},
+  {id:'finalidade', label:'Finalidade',  emoji:'🎯'},
+  {id:'alternancia',label:'Alternância', emoji:'🔀'},
+  {id:'comparacao', label:'Comparação',  emoji:'🔍'},
+];
+
+var EXPLANATIONS = {
+  adicao:     '"e" liga ações ou ideias, indicando soma de ações (adição).',
+  oposicao:   '"mas", "porém" e "entretanto" expressam oposição — a segunda ideia contraria a primeira.',
+  tempo:      '"enquanto" e "quando" estabelecem relação de tempo entre as ações.',
+  condicao:   '"se" indica condição — a ação só acontece se algo for cumprido.',
+  explicacao: '"pois" indica explicação — a segunda parte diz o motivo do que foi dito.',
+  finalidade: '"para" indica finalidade (objetivo) — o que se quer alcançar com a ação.',
+  alternancia:'"ou" indica alternância — apresenta opções para escolher.',
+  comparacao: '"como" indica comparação — estabelece semelhança entre duas coisas.',
+};
+
+var placements = {};   // itemId -> catId
+var selectedChip = null;
+var checked = false;
+
+function render() {
+  renderBank();
+  renderCategories();
+  updateProgress();
+}
+
+function renderBank() {
+  var bank = document.getElementById('bank');
+  bank.innerHTML = '';
+  ITEMS.forEach(function(item) {
+    if (placements[item.id]) return; // already placed
+    var chip = document.createElement('button');
+    chip.className = 'conj-chip' + (selectedChip === item.id ? ' selected' : '');
+    chip.textContent = item.label;
+    chip.dataset.id = item.id;
+    chip.addEventListener('click', function() { selectChip(item.id); });
+    bank.appendChild(chip);
+  });
+}
+
+function renderCategories() {
+  var grid = document.getElementById('categories-grid');
+  grid.innerHTML = '';
+  CATEGORIES.forEach(function(cat) {
+    var box = document.createElement('div');
+    box.className = 'cat-box' + (selectedChip ? ' highlight' : '');
+    box.dataset.cat = cat.id;
+
+    var nameEl = document.createElement('div');
+    nameEl.className = 'cat-name';
+    nameEl.textContent = cat.emoji + ' ' + cat.label.toUpperCase();
+    box.appendChild(nameEl);
+
+    var itemsEl = document.createElement('div');
+    itemsEl.className = 'cat-items';
+
+    ITEMS.forEach(function(item) {
+      if (placements[item.id] !== cat.id) return;
+      var chip = document.createElement('button');
+      var isChecked = checked;
+      if (isChecked) {
+        chip.className = 'cat-chip ' + (item.cat === cat.id ? 'correct-chip' : 'wrong-chip');
+        chip.disabled = true;
+      } else {
+        chip.className = 'cat-chip';
+        chip.addEventListener('click', function(e) { e.stopPropagation(); returnToBank(item.id); });
+      }
+      chip.textContent = item.label;
+      itemsEl.appendChild(chip);
+    });
+    box.appendChild(itemsEl);
+
+    if (!checked) {
+      box.addEventListener('click', function() { placeChip(cat.id); });
+    }
+    grid.appendChild(box);
+  });
+}
+
+function selectChip(id) {
+  if (checked) return;
+  selectedChip = (selectedChip === id) ? null : id;
+  render();
+}
+
+function placeChip(catId) {
+  if (!selectedChip || checked) return;
+  placements[selectedChip] = catId;
+  selectedChip = null;
+  render();
+  updateProgress();
+  document.getElementById('check-btn').disabled = (Object.keys(placements).length < ITEMS.length);
+}
+
+function returnToBank(itemId) {
+  if (checked) return;
+  delete placements[itemId];
+  render();
+  updateProgress();
+  document.getElementById('check-btn').disabled = true;
+}
+
+function updateProgress() {
+  var placed = Object.keys(placements).length;
+  var total = ITEMS.length;
+  document.getElementById('prog-label').textContent = placed + ' de ' + total + ' conjunções classificadas';
+  document.getElementById('prog-fill').style.width = Math.round(placed / total * 100) + '%';
+}
+
+function verificar() {
+  if (Object.keys(placements).length < ITEMS.length) return;
+  checked = true;
+  var hits = 0;
+  ITEMS.forEach(function(item) { if (placements[item.id] === item.cat) hits++; });
+  var pct = Math.round((hits / ITEMS.length) * 100);
+  window.sabendoScore = pct;
+
+  renderCategories();
+
+  var icons = ['😢','😐','😊','🌟','🏆'];
+  var msgs = [
+    'Continue praticando! Revise as relações de sentido de cada conjunção.',
+    'Quase lá! Preste atenção nas conjunções de oposição e de tempo.',
+    'Bom trabalho! Você já classifica bem a maioria das conjunções.',
+    'Muito bem! Você entende as relações de sentido das conjunções!',
+    'Perfeito! Você classificou todas as conjunções corretamente! 🔗'
+  ];
+  var idx = pct >= 90 ? 4 : pct >= 70 ? 3 : pct >= 50 ? 2 : pct >= 30 ? 1 : 0;
+
+  var panel = document.getElementById('result-panel');
+  document.getElementById('result-icon').textContent = icons[idx];
+  document.getElementById('result-score').textContent = hits + '/' + ITEMS.length + ' corretas (' + pct + '%)';
+  document.getElementById('result-msg').textContent = msgs[idx];
+  panel.className = 'result-panel show';
+  document.getElementById('check-btn').disabled = true;
+}
+
+function resetar() {
+  placements = {};
+  selectedChip = null;
+  checked = false;
+  document.getElementById('result-panel').className = 'result-panel';
+  document.getElementById('check-btn').disabled = true;
+  render();
+}
+
+render();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "conjuncoes";
+  var ACTIVITY_TYPE = "classificador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Elo",
+    characterEmoji: "🔗",
+    characterImg: "chars/conjuncoes-hd.png",
+    themeLabel: "Conjunções · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-conjuncoes",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100; showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: _capturedScore, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

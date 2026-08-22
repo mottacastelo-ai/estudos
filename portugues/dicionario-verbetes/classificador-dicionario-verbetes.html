@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador — Adjetivo ou Substantivo?</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED;
+  --port-light: #A78BFA;
+  --port-bg: #F3F0FF;
+  --port-dark: #4C1D95;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #DDD6FE;
+  --card: #fff;
+  --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 760px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; cursor: pointer; background: none; border: none; padding: 0; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 14px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.regra-box { margin: 14px 24px 0; padding: 12px 16px; background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; font-size: 13px; line-height: 1.6; }
+.regra-box .regra-titulo { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700; color: var(--port); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+.regra-box p { margin-bottom: 4px; }
+.regra-box strong { color: var(--port-dark); }
+.prog-wrap { padding: 12px 24px 0; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill  { height: 8px; border-radius: 999px; background: var(--port); transition: width .4s; }
+.frases-area { padding: 16px 24px 8px; }
+.frase-card { border: 2px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; background: var(--card); transition: border-color .2s; }
+.frase-card.acertou { border-color: #059669; background: #ECFDF5; }
+.frase-card.errou   { border-color: #DC2626; background: #FEF2F2; }
+.frase-num { font-size: 10px; font-weight: 800; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+.frase-texto { font-size: 15px; font-weight: 600; line-height: 1.5; margin-bottom: 12px; }
+.frase-texto .destaque { background: #ede9fe; border-radius: 6px; padding: 1px 6px; color: var(--port-dark); font-weight: 800; }
+.opcoes-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.opc-btn { flex: 1; min-width: 120px; padding: 9px 14px; border: 2px solid var(--border); border-radius: 50px; background: var(--card); font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 700; cursor: pointer; color: var(--text); transition: all .15s; }
+.opc-btn:hover { border-color: var(--port-light); background: var(--port-bg); }
+.opc-btn.selecionado-correto { border-color: #059669; background: #059669; color: #fff; }
+.opc-btn.selecionado-errado  { border-color: #DC2626; background: #DC2626; color: #fff; }
+.opc-btn.correto-mostrado    { border-color: #059669; background: #ECFDF5; color: #065F46; }
+.opc-btn:disabled { cursor: default; }
+.feedback-frase { font-size: 12px; font-weight: 600; margin-top: 10px; padding: 8px 12px; border-radius: 10px; display: none; }
+.feedback-frase.ok  { background: #ECFDF5; color: #065F46; display: block; }
+.feedback-frase.err { background: #FEF2F2; color: #991B1B; display: block; }
+.resultado-panel { display: none; padding: 32px 24px; text-align: center; }
+.res-icone { font-size: 56px; margin-bottom: 12px; }
+.res-titulo { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--port); margin-bottom: 8px; }
+.res-pontos { font-size: 46px; font-weight: 900; color: var(--port); }
+.res-sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.res-msg { font-size: 15px; font-weight: 600; color: var(--text); margin: 16px 0; line-height: 1.5; }
+.btn-refazer { background: var(--port); color: #fff; border: none; border-radius: 50px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.verificar-row { padding: 0 24px 20px; display: flex; justify-content: flex-end; }
+.btn-verificar { background: var(--port); color: #fff; border: none; border-radius: 50px; padding: 11px 26px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; display: none; }
+.btn-verificar:hover { opacity: .85; }
+@media (max-width: 480px) {
+  .frase-texto { font-size: 14px; }
+  .opc-btn { font-size: 12px; min-width: 100px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🔍</div>
+      <div><h1>Adjetivo ou Substantivo?</h1><p>Estudo do Dicionário · Português</p></div>
+      <div class="hbadge">8 frases</div>
+    </div>
+    <div class="instrucao">
+      <strong>O que fazer:</strong> Leia cada frase e classifique a palavra destacada: ela está funcionando como
+      <strong>adjetivo</strong> (caracteriza um substantivo) ou como <strong>substantivo</strong> (nomeia uma pessoa, coisa ou ser)?
+      A mesma palavra pode ter funções diferentes em frases diferentes — como o verbete de <em>ignóbil</em> mostra!
+    </div>
+    <div class="regra-box">
+      <div class="regra-titulo">Lembre-se</div>
+      <p><strong>Adjetivo:</strong> caracteriza ou qualifica um substantivo. <em>Ex.: "A ação ignóbil" — ignóbil qualifica "ação".</em></p>
+      <p><strong>Substantivo:</strong> nomeia uma pessoa, coisa ou ser — ocupa o lugar de sujeito ou objeto. <em>Ex.: "O ignóbil fugiu" — ignóbil nomeia a pessoa.</em></p>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label" id="prog-label">0 de 8 respondidas</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="frases-area" id="frases-area"></div>
+    <div class="verificar-row">
+      <button class="btn-verificar" id="btn-verificar" onclick="verificarTudo()">Verificar respostas</button>
+    </div>
+    <div class="resultado-panel" id="resultado-panel">
+      <div class="res-icone" id="res-icone"></div>
+      <div class="res-titulo">Resultado</div>
+      <div class="res-pontos" id="res-pontos"></div>
+      <div class="res-sub" id="res-sub"></div>
+      <div class="res-msg" id="res-msg"></div>
+      <button class="btn-refazer" onclick="refazer()">Refazer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var frases = [
+  {
+    texto: 'A ação <span class="destaque">ignóbil</span> terminou com dois feridos.',
+    destaque: 'ignóbil',
+    correta: 'adj',
+    feedback_ok: 'Correto! "Ignóbil" caracteriza o substantivo "ação" — função de adjetivo.',
+    feedback_err: 'Incorreto. "Ignóbil" qualifica o substantivo "ação" (que ação? a ignóbil). Função: adjetivo.'
+  },
+  {
+    texto: 'O <span class="destaque">ignóbil</span> não teve coragem de confessar seu ato.',
+    destaque: 'ignóbil',
+    correta: 'subst',
+    feedback_ok: 'Correto! "Ignóbil" é o sujeito da frase — nomeia a pessoa com comportamento baixo. Função: substantivo.',
+    feedback_err: 'Incorreto. "Ignóbil" é o sujeito da oração e nomeia uma pessoa. Função: substantivo.'
+  },
+  {
+    texto: 'O gato <span class="destaque">dorminhoco</span> bocejou na poltrona.',
+    destaque: 'dorminhoco',
+    correta: 'adj',
+    feedback_ok: 'Correto! "Dorminhoco" qualifica o substantivo "gato". Função: adjetivo.',
+    feedback_err: 'Incorreto. "Dorminhoco" descreve uma característica do gato. Função: adjetivo.'
+  },
+  {
+    texto: 'O <span class="destaque">dorminhoco</span> acordou tarde mais uma vez.',
+    destaque: 'dorminhoco',
+    correta: 'subst',
+    feedback_ok: 'Correto! "Dorminhoco" é o sujeito e nomeia a pessoa que dorme muito. Função: substantivo.',
+    feedback_err: 'Incorreto. "Dorminhoco" é o sujeito da frase e nomeia uma pessoa. Função: substantivo.'
+  },
+  {
+    texto: 'A aluna <span class="destaque">estudiosa</span> tirou nota dez.',
+    destaque: 'estudiosa',
+    correta: 'adj',
+    feedback_ok: 'Correto! "Estudiosa" é um adjetivo que caracteriza o substantivo "aluna".',
+    feedback_err: 'Incorreto. "Estudiosa" qualifica "aluna" — responde "que tipo de aluna?". Função: adjetivo.'
+  },
+  {
+    texto: 'A <span class="destaque">estudiosa</span> sempre chega cedo à biblioteca.',
+    destaque: 'estudiosa',
+    correta: 'subst',
+    feedback_ok: 'Correto! "Estudiosa" é o sujeito e nomeia a pessoa que estuda muito. Função: substantivo.',
+    feedback_err: 'Incorreto. "Estudiosa" é o sujeito e nomeia quem pratica a ação. Função: substantivo.'
+  },
+  {
+    texto: 'A menina <span class="destaque">corajosa</span> enfrentou o desafio.',
+    destaque: 'corajosa',
+    correta: 'adj',
+    feedback_ok: 'Correto! "Corajosa" qualifica o substantivo "menina". Função: adjetivo.',
+    feedback_err: 'Incorreto. "Corajosa" descreve a menina — responde "que tipo de menina?". Função: adjetivo.'
+  },
+  {
+    texto: 'A <span class="destaque">corajosa</span> recebeu o prêmio da turma.',
+    destaque: 'corajosa',
+    correta: 'subst',
+    feedback_ok: 'Correto! "Corajosa" é o sujeito e nomeia a pessoa corajosa. Função: substantivo.',
+    feedback_err: 'Incorreto. "Corajosa" é o sujeito e nomeia quem recebe o prêmio. Função: substantivo.'
+  }
+];
+
+var respostas = {};
+var verificado = false;
+
+function renderFrases() {
+  var area = document.getElementById('frases-area');
+  area.innerHTML = '';
+  frases.forEach(function(f, i) {
+    var card = document.createElement('div');
+    card.className = 'frase-card';
+    card.id = 'card-' + i;
+    card.innerHTML =
+      '<div class="frase-num">FRASE ' + (i+1) + '</div>' +
+      '<div class="frase-texto">' + f.texto + '</div>' +
+      '<div class="opcoes-row">' +
+        '<button class="opc-btn" id="btn-adj-'+i+'" onclick="selecionar('+i+',\'adj\')">Adjetivo</button>' +
+        '<button class="opc-btn" id="btn-subst-'+i+'" onclick="selecionar('+i+',\'subst\')">Substantivo</button>' +
+      '</div>' +
+      '<div class="feedback-frase" id="fb-'+i+'"></div>';
+    area.appendChild(card);
+  });
+}
+
+function selecionar(idx, classe) {
+  if (verificado) return;
+  respostas[idx] = classe;
+  var adjBtn   = document.getElementById('btn-adj-'+idx);
+  var substBtn = document.getElementById('btn-subst-'+idx);
+  adjBtn.className   = 'opc-btn' + (classe==='adj'   ? ' selecionado-correto' : '');
+  substBtn.className = 'opc-btn' + (classe==='subst' ? ' selecionado-correto' : '');
+  // reset color to port for selected
+  adjBtn.style.background   = '';
+  substBtn.style.background = '';
+  if (classe==='adj')   { adjBtn.style.background='var(--port)'; adjBtn.style.color='#fff'; adjBtn.style.borderColor='var(--port)'; substBtn.style.background=''; substBtn.style.color=''; substBtn.style.borderColor=''; }
+  else { substBtn.style.background='var(--port)'; substBtn.style.color='#fff'; substBtn.style.borderColor='var(--port)'; adjBtn.style.background=''; adjBtn.style.color=''; adjBtn.style.borderColor=''; }
+  atualizarProgresso();
+}
+
+function atualizarProgresso() {
+  var respondidas = Object.keys(respostas).length;
+  document.getElementById('prog-label').textContent = respondidas + ' de 8 respondidas';
+  document.getElementById('prog-fill').style.width = Math.round((respondidas/8)*100) + '%';
+  document.getElementById('btn-verificar').style.display = respondidas === 8 ? 'block' : 'none';
+}
+
+function verificarTudo() {
+  verificado = true;
+  var acertos = 0;
+  frases.forEach(function(f, i) {
+    var resp = respostas[i];
+    var correto = resp === f.correta;
+    if (correto) acertos++;
+    var card = document.getElementById('card-'+i);
+    card.classList.add(correto ? 'acertou' : 'errou');
+    var adjBtn   = document.getElementById('btn-adj-'+i);
+    var substBtn = document.getElementById('btn-subst-'+i);
+    adjBtn.disabled   = true;
+    substBtn.disabled = true;
+    // reset button styles
+    adjBtn.style.cssText   = '';
+    substBtn.style.cssText = '';
+    adjBtn.className   = 'opc-btn';
+    substBtn.className = 'opc-btn';
+    if (f.correta === 'adj') {
+      adjBtn.className += ' selecionado-correto';
+      if (resp === 'subst') substBtn.className += ' selecionado-errado';
+    } else {
+      substBtn.className += ' selecionado-correto';
+      if (resp === 'adj') adjBtn.className += ' selecionado-errado';
+    }
+    var fb = document.getElementById('fb-'+i);
+    fb.className = 'feedback-frase ' + (correto ? 'ok' : 'err');
+    fb.textContent = correto ? f.feedback_ok : f.feedback_err;
+  });
+
+  var pct = Math.round((acertos / frases.length) * 100);
+  window.sabendoScore = pct;
+
+  document.getElementById('frases-area').style.display = 'none';
+  document.getElementById('btn-verificar').style.display = 'none';
+
+  var panel = document.getElementById('resultado-panel');
+  panel.style.display = 'block';
+  document.getElementById('res-pontos').textContent = acertos + '/8';
+  document.getElementById('res-sub').textContent = pct + '% de acertos';
+
+  var icone, msg;
+  if (pct >= 90) { icone = '🏆'; msg = 'Excelente! Você entendeu que a mesma palavra pode ter classes gramaticais diferentes!'; }
+  else if (pct >= 70) { icone = '⭐'; msg = 'Muito bem! Você domina a diferença entre adjetivo e substantivo.'; }
+  else if (pct >= 50) { icone = '📖'; msg = 'Bom trabalho! Lembre: adjetivo caracteriza, substantivo nomeia.'; }
+  else { icone = '💪'; msg = 'Continue tentando! A dica: se a palavra caracteriza outra, é adjetivo; se nomeia sozinha, é substantivo.'; }
+  document.getElementById('res-icone').textContent = icone;
+  document.getElementById('res-msg').textContent = msg;
+}
+
+function refazer() {
+  respostas = {};
+  verificado = false;
+  document.getElementById('resultado-panel').style.display = 'none';
+  document.getElementById('frases-area').style.display = 'block';
+  renderFrases();
+  atualizarProgresso();
+}
+
+renderFrases();
+atualizarProgresso();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "dicionario-verbetes";
+  var ACTIVITY_TYPE = "classificador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Dicio",
+    characterEmoji: "📖",
+    characterImg:   "chars/dicionario-verbetes-hd.png",
+    themeLabel:     "Estudo do Dicionário · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-dicionario-verbetes",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
