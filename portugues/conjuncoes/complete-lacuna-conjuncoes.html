@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete a Lacuna — Conjunções</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; cursor: pointer; background: none; border: none; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+.instrucao { padding: 14px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.progress-area { padding: 14px 24px 0; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: linear-gradient(90deg, #7C3AED, #A78BFA); transition: width .4s; }
+.questions-area { padding: 20px 24px; display: flex; flex-direction: column; gap: 18px; }
+.q-card { background: #faf9ff; border: 2px solid var(--border); border-radius: 16px; padding: 16px 18px; transition: border-color .15s; }
+.q-card.answered-ok { border-color: #059669; background: #F0FDF4; }
+.q-card.answered-err { border-color: #DC2626; background: #FEF2F2; }
+.q-meta { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700; color: var(--port); letter-spacing: .06em; margin-bottom: 8px; }
+.q-sentence { font-size: 16px; font-weight: 700; line-height: 1.6; margin-bottom: 12px; color: var(--text); }
+.q-sentence .blank { display: inline-block; min-width: 70px; text-align: center; border-bottom: 3px solid var(--port); color: var(--port); font-weight: 800; padding: 0 6px; transition: color .2s; }
+.q-sentence .blank.ok  { border-color: #059669; color: #059669; }
+.q-sentence .blank.err { border-color: #DC2626; color: #DC2626; }
+.q-hint { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 10px; font-style: italic; }
+.q-hint strong { color: var(--port-dark); font-style: normal; }
+.q-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.opt-btn { font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; padding: 7px 18px; border-radius: 999px; border: 2px solid var(--border); background: #fff; color: var(--port-dark); cursor: pointer; transition: all .15s; }
+.opt-btn:hover:not(:disabled) { border-color: var(--port); background: var(--port-bg); color: var(--port); }
+.opt-btn.correct { border-color: #059669; background: #D1FAE5; color: #064E3B; }
+.opt-btn.wrong { border-color: #DC2626; background: #FEE2E2; color: #7F1D1D; }
+.q-feedback { font-size: 12px; font-weight: 600; margin-top: 10px; padding: 8px 12px; border-radius: 10px; display: none; line-height: 1.5; }
+.q-feedback.ok  { background: #D1FAE5; color: #064E3B; display: block; }
+.q-feedback.err { background: #FEE2E2; color: #7F1D1D; display: block; }
+.check-all-btn { font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 14px 32px; cursor: pointer; display: block; margin: 0 24px 24px; }
+.check-all-btn:hover { opacity: .85; }
+.check-all-btn:disabled { opacity: .5; cursor: not-allowed; }
+.result-panel { display: none; margin: 0 24px 24px; padding: 24px; border-radius: 18px; border: 2px solid var(--border); text-align: center; background: var(--port-bg); }
+.result-panel.show { display: block; }
+.result-icon { font-size: 52px; }
+.result-score { font-family: "Space Mono", monospace; font-size: 36px; font-weight: 700; color: var(--port); margin: 8px 0 4px; }
+.result-msg { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 16px; }
+.retry-btn { font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; cursor: pointer; }
+.retry-btn:hover { opacity: .85; }
+@media (max-width: 480px) {
+  .q-sentence { font-size: 15px; }
+  .opt-btn { font-size: 13px; padding: 6px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">✍️</div>
+      <div><h1>Complete a Lacuna</h1><p>Conjunções · Português 5º ano</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Leia cada frase com atenção e escolha a conjunção que completa corretamente a lacuna, de acordo com a relação de sentido indicada.
+    </div>
+    <div class="progress-area">
+      <div class="prog-label" id="prog-label">0 de 8 respondidas</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="questions-area" id="questions-area"></div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-icon" id="res-icon"></div>
+      <div class="result-score" id="res-score"></div>
+      <div class="result-msg" id="res-msg"></div>
+      <button class="retry-btn" onclick="reiniciar()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var FRASES = [
+  {
+    before: 'Prepo estudou muito',
+    after: 'passar na prova.',
+    hint: 'Qual relação de sentido está expressa? <strong>Finalidade</strong> — o objetivo de estudar.',
+    options: ['para', 'mas', 'quando'],
+    correct: 0,
+    explanation: 'PARA indica finalidade: estudou com o objetivo de passar na prova.'
+  },
+  {
+    before: 'Ela é corajosa,',
+    after: 'é bem pequenininha.',
+    hint: 'Qual relação de sentido está expressa? <strong>Oposição</strong> — as duas ideias se contradizem.',
+    options: ['e', 'mas', 'pois'],
+    correct: 1,
+    explanation: 'MAS indica oposição: ser corajosa e ser pequenininha são ideias que se contradizem.'
+  },
+  {
+    before: 'Vou brincar lá fora',
+    after: 'minha mãe deixar.',
+    hint: 'Qual relação de sentido está expressa? <strong>Condição</strong> — a ação depende de algo.',
+    options: ['ou', 'se', 'enquanto'],
+    correct: 1,
+    explanation: 'SE indica condição: só vai brincar se a mãe permitir.'
+  },
+  {
+    before: 'Comi uma maçã',
+    after: 'uma banana no café da manhã.',
+    hint: 'Qual relação de sentido está expressa? <strong>Adição</strong> — soma de dois elementos.',
+    options: ['e', 'porém', 'como'],
+    correct: 0,
+    explanation: 'E indica adição (soma de ações ou elementos): comeu os dois alimentos juntos.'
+  },
+  {
+    before: 'Não fui à festa,',
+    after: 'estava com febre.',
+    hint: 'Qual relação de sentido está expressa? <strong>Explicação</strong> — o motivo de não ir.',
+    options: ['enquanto', 'pois', 'ou'],
+    correct: 1,
+    explanation: 'POIS indica explicação: a segunda parte diz o motivo (estava com febre).'
+  },
+  {
+    before: 'Bia lia um livro',
+    after: 'esperava o ônibus.',
+    hint: 'Qual relação de sentido está expressa? <strong>Tempo</strong> — ações simultâneas.',
+    options: ['para', 'enquanto', 'contudo'],
+    correct: 1,
+    explanation: 'ENQUANTO indica tempo: as duas ações aconteciam ao mesmo tempo.'
+  },
+  {
+    before: 'Você quer brincar de futebol',
+    after: 'prefere nadar?',
+    hint: 'Qual relação de sentido está expressa? <strong>Alternância</strong> — uma opção entre duas.',
+    options: ['ou', 'e', 'se'],
+    correct: 0,
+    explanation: 'OU indica alternância: apresenta duas opções para escolher.'
+  },
+  {
+    before: 'O Elo brilha',
+    after: 'um elo de ouro quando a conexão está correta.',
+    hint: 'Qual relação de sentido está expressa? <strong>Comparação</strong> — semelhança entre duas coisas.',
+    options: ['como', 'mas', 'quando'],
+    correct: 0,
+    explanation: 'COMO indica comparação: o brilho do Elo é comparado ao de um elo de ouro.'
+  }
+];
+
+var answers = new Array(FRASES.length).fill(null);
+var answered = 0;
+
+function buildQuestions() {
+  var area = document.getElementById('questions-area');
+  area.innerHTML = '';
+  FRASES.forEach(function(fr, idx) {
+    var card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qcard-' + idx;
+
+    var meta = document.createElement('div');
+    meta.className = 'q-meta';
+    meta.textContent = 'FRASE ' + (idx + 1) + ' DE ' + FRASES.length;
+    card.appendChild(meta);
+
+    var sentence = document.createElement('div');
+    sentence.className = 'q-sentence';
+    sentence.innerHTML = fr.before + ' <span class="blank" id="blank-' + idx + '">___</span> ' + fr.after;
+    card.appendChild(sentence);
+
+    var hint = document.createElement('div');
+    hint.className = 'q-hint';
+    hint.innerHTML = fr.hint;
+    card.appendChild(hint);
+
+    var opts = document.createElement('div');
+    opts.className = 'q-options';
+    fr.options.forEach(function(opt, oi) {
+      var btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt;
+      btn.id = 'opt-' + idx + '-' + oi;
+      btn.addEventListener('click', function() { chooseOption(idx, oi); });
+      opts.appendChild(btn);
+    });
+    card.appendChild(opts);
+
+    var fb = document.createElement('div');
+    fb.className = 'q-feedback';
+    fb.id = 'fb-' + idx;
+    card.appendChild(fb);
+
+    area.appendChild(card);
+  });
+}
+
+function chooseOption(fIdx, oIdx) {
+  if (answers[fIdx] !== null) return;
+  answers[fIdx] = oIdx;
+  answered++;
+
+  var fr = FRASES[fIdx];
+  var isOk = oIdx === fr.correct;
+  var card = document.getElementById('qcard-' + fIdx);
+  card.className = 'q-card ' + (isOk ? 'answered-ok' : 'answered-err');
+
+  var blank = document.getElementById('blank-' + fIdx);
+  blank.textContent = fr.options[oIdx];
+  blank.className = 'blank ' + (isOk ? 'ok' : 'err');
+
+  var opts = card.querySelectorAll('.opt-btn');
+  opts.forEach(function(btn, i) {
+    btn.disabled = true;
+    if (i === fr.correct) btn.classList.add('correct');
+    if (i === oIdx && !isOk) btn.classList.add('wrong');
+  });
+
+  var fb = document.getElementById('fb-' + fIdx);
+  fb.className = 'q-feedback ' + (isOk ? 'ok' : 'err');
+  fb.textContent = (isOk ? '✓ ' : '✗ Resposta correta: "' + fr.options[fr.correct] + '". ') + fr.explanation;
+
+  updateProgress();
+
+  if (answered === FRASES.length) {
+    setTimeout(showResult, 800);
+  }
+}
+
+function updateProgress() {
+  document.getElementById('prog-label').textContent = answered + ' de ' + FRASES.length + ' respondidas';
+  document.getElementById('prog-fill').style.width = Math.round(answered / FRASES.length * 100) + '%';
+}
+
+function showResult() {
+  var hits = FRASES.filter(function(_, i) { return answers[i] === FRASES[i].correct; }).length;
+  var pct = Math.round(hits / FRASES.length * 100);
+  window.sabendoScore = pct;
+
+  var icons = ['😢','😐','😊','🌟','🏆'];
+  var msgs = [
+    'Continue praticando! Preste atenção na dica de relação de sentido de cada frase.',
+    'Quase lá! Revise as conjunções de oposição, condição e finalidade.',
+    'Bom trabalho! Você já escolhe bem a maioria das conjunções.',
+    'Muito bem! Você entende como as conjunções expressam diferentes relações.',
+    'Perfeito! Você completou todas as lacunas corretamente! 🔗'
+  ];
+  var idx = pct >= 90 ? 4 : pct >= 70 ? 3 : pct >= 50 ? 2 : pct >= 30 ? 1 : 0;
+
+  document.getElementById('res-icon').textContent = icons[idx];
+  document.getElementById('res-score').textContent = hits + '/' + FRASES.length + ' corretas';
+  document.getElementById('res-msg').textContent = msgs[idx];
+  document.getElementById('result-panel').className = 'result-panel show';
+}
+
+function reiniciar() {
+  answers = new Array(FRASES.length).fill(null);
+  answered = 0;
+  document.getElementById('result-panel').className = 'result-panel';
+  updateProgress();
+  buildQuestions();
+}
+
+buildQuestions();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "conjuncoes";
+  var ACTIVITY_TYPE = "complete-lacuna";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Elo",
+    characterEmoji: "🔗",
+    characterImg: "chars/conjuncoes-hd.png",
+    themeLabel: "Conjunções · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-conjuncoes",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100; showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: _capturedScore, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

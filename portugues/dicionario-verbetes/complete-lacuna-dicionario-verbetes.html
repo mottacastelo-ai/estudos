@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete o Verbete — Estudo do Dicionário</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED;
+  --port-light: #A78BFA;
+  --port-bg: #F3F0FF;
+  --port-dark: #4C1D95;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #DDD6FE;
+  --card: #fff;
+  --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 760px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; cursor: pointer; background: none; border: none; padding: 0; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.instrucao { padding: 14px 24px; font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.6; border-bottom: 2px solid var(--border); background: var(--port-bg); }
+.instrucao strong { color: var(--text); }
+.banco-wrap { padding: 14px 24px 0; }
+.banco-titulo { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 800; color: var(--port); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.banco-palavras { display: flex; flex-wrap: wrap; gap: 8px; }
+.banco-word { background: var(--port-bg); border: 2px solid var(--border); border-radius: 50px; padding: 5px 14px; font-size: 13px; font-weight: 700; color: var(--port-dark); cursor: default; transition: opacity .2s; }
+.banco-word.usada { opacity: .35; text-decoration: line-through; }
+.conteudo { padding: 16px 24px; }
+.secao-titulo { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--port); letter-spacing: .06em; text-transform: uppercase; margin: 16px 0 8px; }
+.secao-titulo:first-child { margin-top: 0; }
+.verbete-display { background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 14px 18px; font-size: 14px; line-height: 2; margin-bottom: 12px; }
+.verbete-display .palavra-entrada { font-size: 16px; font-weight: 900; color: var(--port-dark); }
+.lacuna { display: inline-block; min-width: 90px; border-bottom: 2px solid var(--port); padding: 0 6px; margin: 0 2px; vertical-align: bottom; }
+select.lacuna-select { display: inline-block; min-width: 90px; padding: 2px 6px; border: 2px solid var(--port); border-radius: 8px; background: #fff; font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 700; color: var(--port-dark); cursor: pointer; vertical-align: middle; appearance: none; -webkit-appearance: none; text-align: center; }
+select.lacuna-select.correta { border-color: #059669; background: #ECFDF5; color: #065F46; }
+select.lacuna-select.errada  { border-color: #DC2626; background: #FEF2F2; color: #991B1B; }
+select.lacuna-select:disabled { cursor: default; }
+.perguntas-lista { display: flex; flex-direction: column; gap: 14px; }
+.pergunta-item { border: 2px solid var(--border); border-radius: 14px; padding: 14px 16px; background: var(--card); }
+.pergunta-item.correto { border-color: #059669; background: #ECFDF5; }
+.pergunta-item.errado  { border-color: #DC2626; background: #FEF2F2; }
+.pergunta-num { font-size: 10px; font-weight: 800; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+.pergunta-texto { font-size: 14px; font-weight: 600; line-height: 1.6; }
+.pergunta-texto .trecho { background: #ede9fe; border-radius: 6px; padding: 1px 6px; font-weight: 800; color: var(--port-dark); }
+.feedback-q { font-size: 12px; font-weight: 600; margin-top: 8px; display: none; }
+.feedback-q.ok  { color: #065F46; display: block; }
+.feedback-q.err { color: #991B1B; display: block; }
+.btn-row { padding: 0 24px 20px; display: flex; justify-content: flex-end; }
+.btn-verificar { background: var(--port); color: #fff; border: none; border-radius: 50px; padding: 11px 26px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; }
+.btn-verificar:hover { opacity: .85; }
+.resultado-panel { display: none; padding: 32px 24px; text-align: center; }
+.res-icone { font-size: 56px; margin-bottom: 12px; }
+.res-titulo { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--port); margin-bottom: 8px; }
+.res-pontos { font-size: 46px; font-weight: 900; color: var(--port); }
+.res-sub  { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.res-msg  { font-size: 15px; font-weight: 600; color: var(--text); margin: 16px 0; line-height: 1.5; }
+.btn-refazer { background: var(--port); color: #fff; border: none; border-radius: 50px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+@media (max-width: 480px) {
+  .verbete-display { font-size: 13px; }
+  select.lacuna-select { min-width: 70px; font-size: 12px; }
+  .pergunta-texto { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">✏️</div>
+      <div><h1>Complete o Verbete</h1><p>Estudo do Dicionário · Português</p></div>
+      <div class="hbadge">7 lacunas</div>
+    </div>
+    <div class="instrucao">
+      <strong>O que fazer:</strong> O verbete de <em>ignóbil</em> está com lacunas. Escolha, no banco de palavras, o termo correto para cada espaço. Depois, responda às perguntas sobre as partes do verbete.
+    </div>
+
+    <div class="banco-wrap">
+      <div class="banco-titulo">Banco de termos</div>
+      <div class="banco-palavras" id="banco-palavras">
+        <span class="banco-word" id="bw-verbete">verbete</span>
+        <span class="banco-word" id="bw-divisao">divisão silábica</span>
+        <span class="banco-word" id="bw-adj">adj.</span>
+        <span class="banco-word" id="bw-2g">2g.</span>
+        <span class="banco-word" id="bw-plural">plural</span>
+        <span class="banco-word" id="bw-definicao">definição</span>
+        <span class="banco-word" id="bw-siltonica">sílaba tônica</span>
+      </div>
+    </div>
+
+    <div class="conteudo" id="conteudo-area">
+      <div class="secao-titulo">Verbete de "ignóbil" — complete as indicações</div>
+      <div class="verbete-display">
+        <span class="palavra-entrada">ignóbil</span><br>
+        &lt;ig.nó.bil&gt;&nbsp;
+        <small style="color:var(--muted)">[esta notação é a</small>&nbsp;
+        <select class="lacuna-select" id="lac-1">
+          <option value="">escolha...</option>
+          <option value="divisao">divisão silábica</option>
+          <option value="adj">adj.</option>
+          <option value="definicao">definição</option>
+          <option value="plural">plural</option>
+        </select>
+        <small style="color:var(--muted)">, mostrando a</small>&nbsp;
+        <select class="lacuna-select" id="lac-2">
+          <option value="">escolha...</option>
+          <option value="siltonica">sílaba tônica</option>
+          <option value="2g">2g.</option>
+          <option value="verbete">verbete</option>
+          <option value="plural">plural</option>
+        </select>
+        <small style="color:var(--muted)">]</small><br>
+        (pl. ignóbeis)&nbsp;
+        <small style="color:var(--muted)">[esta informação indica o</small>&nbsp;
+        <select class="lacuna-select" id="lac-3">
+          <option value="">escolha...</option>
+          <option value="plural">plural</option>
+          <option value="adj">adj.</option>
+          <option value="definicao">definição</option>
+          <option value="divisao">divisão silábica</option>
+        </select>
+        <small style="color:var(--muted)">]</small><br>
+        <select class="lacuna-select" id="lac-4">
+          <option value="">escolha...</option>
+          <option value="adj">adj.</option>
+          <option value="2g">2g.</option>
+          <option value="verbete">verbete</option>
+          <option value="plural">plural</option>
+        </select>
+        <select class="lacuna-select" id="lac-5">
+          <option value="">escolha...</option>
+          <option value="2g">2g.</option>
+          <option value="siltonica">sílaba tônica</option>
+          <option value="divisao">divisão silábica</option>
+          <option value="definicao">definição</option>
+        </select>
+        &nbsp;<small style="color:var(--muted)">[classe gramatical e gênero]</small><br>
+        <small style="color:var(--muted)">1 Que causa repugnância... [esta parte é a</small>&nbsp;
+        <select class="lacuna-select" id="lac-6">
+          <option value="">escolha...</option>
+          <option value="definicao">definição</option>
+          <option value="plural">plural</option>
+          <option value="adj">adj.</option>
+          <option value="divisao">divisão silábica</option>
+        </select>
+        <small style="color:var(--muted)">]</small>
+      </div>
+
+      <div class="secao-titulo">Pergunta bônus</div>
+      <div class="perguntas-lista">
+        <div class="pergunta-item" id="q-bonus">
+          <div class="pergunta-num">QUESTÃO BÔNUS</div>
+          <div class="pergunta-texto">
+            A entrada completa do dicionário que apresenta a palavra, sua divisão silábica, classe gramatical e definição chama-se:
+            <br><br>
+            <select class="lacuna-select" id="lac-7" style="min-width:130px;">
+              <option value="">escolha...</option>
+              <option value="verbete">verbete</option>
+              <option value="glossario">glossário</option>
+              <option value="sinonimo">sinônimo</option>
+              <option value="radical">radical</option>
+            </select>
+          </div>
+          <div class="feedback-q" id="fb-bonus"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-verificar" id="btn-verificar" onclick="verificar()">Verificar respostas</button>
+    </div>
+    <div class="resultado-panel" id="resultado-panel">
+      <div class="res-icone" id="res-icone"></div>
+      <div class="res-titulo">Resultado</div>
+      <div class="res-pontos" id="res-pontos"></div>
+      <div class="res-sub" id="res-sub"></div>
+      <div class="res-msg" id="res-msg"></div>
+      <button class="btn-refazer" onclick="refazer()">Refazer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var gabarito = {
+  'lac-1': 'divisao',
+  'lac-2': 'siltonica',
+  'lac-3': 'plural',
+  'lac-4': 'adj',
+  'lac-5': '2g',
+  'lac-6': 'definicao',
+  'lac-7': 'verbete'
+};
+
+var feedbacks = {
+  'lac-1': { ok: 'Correto! <ig.nó.bil> é a divisão silábica da palavra.', err: 'Incorreto. A notação entre < > indica a divisão silábica da palavra.' },
+  'lac-2': { ok: 'Correto! Dentro da divisão silábica, a sílaba com acento é a sílaba tônica.', err: 'Incorreto. A sílaba tônica é a pronunciada com maior força — aqui, "nó" em ig.nó.bil.' },
+  'lac-3': { ok: 'Correto! "(pl. ignóbeis)" indica a forma plural da palavra.', err: 'Incorreto. A informação entre parênteses com "pl." indica o plural.' },
+  'lac-4': { ok: 'Correto! "adj." é a abreviação de adjetivo — a classe gramatical da palavra.', err: 'Incorreto. "adj." é a abreviação de adjetivo.' },
+  'lac-5': { ok: 'Correto! "2g." indica que a palavra tem a mesma forma no masculino e no feminino.', err: 'Incorreto. "2g." significa dois gêneros — mesma forma para masc. e fem.' },
+  'lac-6': { ok: 'Correto! A parte com o significado da palavra é a definição.', err: 'Incorreto. O trecho que explica o significado da palavra é chamado de definição.' },
+  'lac-7': { ok: 'Correto! A entrada completa do dicionário com todas essas informações é o verbete.', err: 'Incorreto. Essa entrada completa do dicionário chama-se verbete.' }
+};
+
+function verificar() {
+  var acertos = 0;
+  var total = Object.keys(gabarito).length;
+
+  Object.keys(gabarito).forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    sel.disabled = true;
+    var correto = sel.value === gabarito[id];
+    if (correto) { acertos++; sel.className = 'lacuna-select correta'; }
+    else { sel.className = 'lacuna-select errada'; }
+  });
+
+  // Feedback da questão bônus
+  var fbBonus = document.getElementById('fb-bonus');
+  var lac7 = document.getElementById('lac-7');
+  var correto7 = lac7.value === gabarito['lac-7'];
+  fbBonus.className = 'feedback-q ' + (correto7 ? 'ok' : 'err');
+  fbBonus.textContent = correto7 ? feedbacks['lac-7'].ok : feedbacks['lac-7'].err;
+  document.getElementById('q-bonus').classList.add(correto7 ? 'correto' : 'errado');
+
+  var pct = Math.round((acertos / total) * 100);
+  window.sabendoScore = pct;
+
+  document.getElementById('btn-verificar').style.display = 'none';
+  document.getElementById('conteudo-area').style.opacity = '1';
+
+  var panel = document.getElementById('resultado-panel');
+  panel.style.display = 'block';
+  document.getElementById('res-pontos').textContent = acertos + '/' + total;
+  document.getElementById('res-sub').textContent = pct + '% de acertos';
+
+  var icone, msg;
+  if (pct >= 90) { icone = '🏆'; msg = 'Excelente! Você domina todas as partes do verbete!'; }
+  else if (pct >= 70) { icone = '⭐'; msg = 'Muito bem! Você entende a estrutura do verbete.'; }
+  else if (pct >= 50) { icone = '📖'; msg = 'Bom esforço! Revise as abreviações do verbete.'; }
+  else { icone = '💪'; msg = 'Continue praticando! Releia o verbete de "ignóbil" com atenção.'; }
+
+  document.getElementById('res-icone').textContent = icone;
+  document.getElementById('res-msg').textContent = msg;
+}
+
+function refazer() {
+  var sels = document.querySelectorAll('select.lacuna-select');
+  sels.forEach(function(s) {
+    s.value = '';
+    s.disabled = false;
+    s.className = 'lacuna-select';
+  });
+  document.getElementById('resultado-panel').style.display = 'none';
+  document.getElementById('btn-verificar').style.display = 'block';
+  document.getElementById('fb-bonus').className = 'feedback-q';
+  document.getElementById('fb-bonus').textContent = '';
+  document.getElementById('q-bonus').className = 'pergunta-item';
+}
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "dicionario-verbetes";
+  var ACTIVITY_TYPE = "complete-lacuna";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Dicio",
+    characterEmoji: "📖",
+    characterImg:   "chars/dicionario-verbetes-hd.png",
+    themeLabel:     "Estudo do Dicionário · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-dicionario-verbetes",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
