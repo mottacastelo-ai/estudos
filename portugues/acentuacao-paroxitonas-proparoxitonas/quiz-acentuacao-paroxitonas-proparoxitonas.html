@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Acentuação: Paroxítonas e Proparoxítonas</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;
+  --port-dark:#4C1D95;--border:#DDD6FE;
+  --card:#fff;--text:#1A1A2E;--muted:#6B7280;--radius:18px;
+  --green:#059669;--red:#DC2626;--green-bg:#ECFDF5;--red-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:680px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);text-decoration:none;margin-bottom:14px;cursor:pointer;background:none;border:none;padding:0;}
+.back-link:hover{opacity:.7;}
+.card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.08);}
+.card-header{background:linear-gradient(135deg,#2D1B69,#7C3AED 60%,#A78BFA);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:32px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+
+.prog-wrap{padding:14px 24px 0;}
+.prog-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+.prog-track{height:8px;border-radius:999px;background:var(--border);}
+.prog-fill{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--port),var(--port-light));transition:width .4s;}
+
+.score-row{display:flex;justify-content:space-between;padding:8px 24px 0;font-size:13px;font-weight:700;color:var(--muted);}
+.score-row span{color:var(--port);}
+
+.q-area{padding:20px 24px 16px;}
+.q-num{font-size:11px;font-weight:800;color:var(--port-light);letter-spacing:.06em;margin-bottom:6px;}
+.q-text{font-size:16px;font-weight:700;line-height:1.5;color:var(--text);margin-bottom:16px;}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid var(--border);border-radius:12px;cursor:pointer;background:var(--card);font-size:14px;font-weight:600;color:var(--text);transition:all .15s;text-align:left;}
+.opt:hover{border-color:var(--port-light);background:var(--port-bg);}
+.opt .opt-letter{width:28px;height:28px;border-radius:50%;background:var(--port-bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--port);flex-shrink:0;}
+.opt.correct{border-color:var(--green);background:var(--green-bg);}
+.opt.correct .opt-letter{background:var(--green);border-color:var(--green);color:#fff;}
+.opt.wrong{border-color:var(--red);background:var(--red-bg);}
+.opt.wrong .opt-letter{background:var(--red);border-color:var(--red);color:#fff;}
+.opt.disabled{pointer-events:none;opacity:.6;}
+.opt.reveal-correct{border-color:var(--green);background:var(--green-bg);}
+.opt.reveal-correct .opt-letter{background:var(--green);border-color:var(--green);color:#fff;}
+
+.feedback-box{margin:12px 0 0;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;line-height:1.5;display:none;}
+.feedback-box.correct{background:var(--green-bg);border:2px solid #86efac;color:#065F46;}
+.feedback-box.wrong{background:var(--red-bg);border:2px solid #fca5a5;color:#991B1B;}
+.feedback-box .fb-icon{font-size:16px;margin-right:6px;}
+
+.nav-row{display:flex;justify-content:flex-end;padding:0 24px 20px;}
+.btn-next{font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;padding:10px 28px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--port),var(--port-light));color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.3);transition:opacity .15s;display:none;}
+.btn-next:hover{opacity:.85;}
+
+.result-panel{display:none;padding:32px 24px;text-align:center;}
+.result-emoji{font-size:56px;margin-bottom:12px;}
+.result-title{font-family:"Space Mono",monospace;font-size:20px;font-weight:700;color:var(--port);margin-bottom:8px;}
+.result-sub{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+.result-bar-wrap{background:var(--border);border-radius:999px;height:12px;margin-bottom:8px;overflow:hidden;}
+.result-bar{height:12px;border-radius:999px;background:linear-gradient(90deg,var(--port),var(--port-light));transition:width .6s;}
+.result-pct{font-size:32px;font-weight:900;color:var(--port);margin-bottom:4px;}
+.result-msg{font-size:14px;font-weight:600;color:var(--muted);}
+.btn-retry{font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;padding:12px 32px;border-radius:999px;border:none;cursor:pointer;background:var(--port-bg);color:var(--port);border:2px solid var(--border);margin-top:20px;}
+.btn-retry:hover{border-color:var(--port);}
+
+@media(max-width:480px){
+  .card-header h1{font-size:13px;}
+  .q-text{font-size:14px;}
+  .opt{font-size:13px;padding:10px 12px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">❓</div>
+      <div><h1>Quiz Interativo</h1><p>Acentuação: Paroxítonas e Proparoxítonas</p></div>
+      <div class="hbadge">📖 10 questões</div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="score-row">Acertos: <span id="acerto-count">0</span></div>
+
+    <div class="q-area" id="q-area">
+      <div class="q-num" id="q-num">QUESTÃO 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback-box" id="feedback-box"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima →</button>
+    </div>
+
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <div class="result-pct" id="result-pct">0%</div>
+      <div class="result-bar-wrap"><div class="result-bar" id="result-bar" style="width:0%"></div></div>
+      <div class="result-title" id="result-title">Resultado</div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="btn-retry" onclick="restartQuiz()">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QUESTIONS = [
+  {
+    q: "Qual é a sílaba tônica (pronunciada com mais força) de uma palavra paroxítona?",
+    opts: ["A última sílaba","A penúltima sílaba","A primeira sílaba","A antepenúltima sílaba"],
+    ans: 1,
+    fb_correct: "Correto! Paroxítona vem do grego e significa justamente que a força está na penúltima sílaba. Ex: ca-SA, me-SA, ní-VEL.",
+    fb_wrong: "Não. Em uma palavra paroxítona, a sílaba tônica é sempre a penúltima — a segunda contando do final."
+  },
+  {
+    q: "Qual é a sílaba tônica de uma palavra proparoxítona?",
+    opts: ["A última sílaba","A penúltima sílaba","A antepenúltima sílaba","A segunda sílaba"],
+    ans: 2,
+    fb_correct: "Exato! Proparoxítona tem a sílaba tônica na antepenúltima — a terceira contando do final. Ex: MÉ-di-co, PÁS-sa-ro.",
+    fb_wrong: "Não. Em uma palavra proparoxítona, a força está na antepenúltima sílaba — a terceira contando do final."
+  },
+  {
+    q: "A palavra 'nível' é paroxítona e carrega acento gráfico. Por que ela é acentuada?",
+    opts: ["Porque todas as paroxítonas são acentuadas","Porque tem duas sílabas","Porque termina em L","Porque é uma palavra difícil de pronunciar"],
+    ans: 2,
+    fb_correct: "Correto! A regra diz: paroxítonas terminadas em L são acentuadas. Outros exemplos: tú-nel, fá-cil, ado-rá-vel.",
+    fb_wrong: "Não. As paroxítonas só são acentuadas quando terminam em certas consoantes ou grupos vocálicos. 'Nível' termina em L — essa é a terminação que exige o acento."
+  },
+  {
+    q: "Sobre as palavras proparoxítonas, qual afirmação está correta segundo a regra de acentuação?",
+    opts: ["Apenas as terminadas em vogal são acentuadas","Nenhuma proparoxítona é acentuada","Somente as de origem grega são acentuadas","Todas as palavras proparoxítonas são acentuadas"],
+    ans: 3,
+    fb_correct: "Exato! A regra é clara: todas as palavras proparoxítonas são acentuadas, sem exceção. Médico, pássaro, lágrima — todas levam acento.",
+    fb_wrong: "Não. A regra é: todas as palavras proparoxítonas são acentuadas. Não importa a terminação nem a origem — se for proparoxítona, leva acento."
+  },
+  {
+    q: "A palavra 'médico' é dividida em sílabas assim: mé-di-co. Qual é a sílaba tônica?",
+    opts: ["co","di","mé","Todas as sílabas têm a mesma força"],
+    ans: 2,
+    fb_correct: "Correto! 'Mé' é a sílaba tônica de 'médico'. Ela está na antepenúltima posição, por isso a palavra é proparoxítona e leva acento.",
+    fb_wrong: "Não. Fale 'médico' em voz alta: MÉ-di-co. A sílaba 'mé' é pronunciada com mais força — ela é a sílaba tônica, na posição antepenúltima."
+  },
+  {
+    q: "A palavra 'bônus' é paroxítona e recebe acento circunflexo. Qual regra explica esse acento?",
+    opts: ["Paroxítonas terminadas em vogal são acentuadas","Paroxítonas terminadas em US são acentuadas","Paroxítonas com duas sílabas são sempre acentuadas","Paroxítonas de língua estrangeira são sempre acentuadas"],
+    ans: 1,
+    fb_correct: "Correto! A regra inclui: paroxítonas terminadas em US são acentuadas. Outro exemplo: ví-rus. Ambas terminam em 'us' e levam acento.",
+    fb_wrong: "Não. A regra específica é: paroxítonas terminadas em US são acentuadas. 'Bônus' (bô-nus) e 'vírus' (ví-rus) seguem essa regra."
+  },
+  {
+    q: "Qual das palavras abaixo é proparoxítona (sílaba tônica na antepenúltima)?",
+    opts: ["nível (ní-vel)","revólver (re-vól-ver)","lágrima (lá-gri-ma)","fórceps (fór-ceps)"],
+    ans: 2,
+    fb_correct: "Correto! Em 'lágrima' (lá-gri-ma), a sílaba tônica 'lá' está na antepenúltima posição — é proparoxítona. As outras são paroxítonas (força na penúltima).",
+    fb_wrong: "Não. Em 'lágrima' (lá-gri-ma), a sílaba tônica 'lá' está na antepenúltima — essa é a proparoxítona. As outras têm força na penúltima, ou seja, são paroxítonas."
+  },
+  {
+    q: "A palavra 'pássaro' é dividida assim: pás-sa-ro. Qual é a sílaba tônica?",
+    opts: ["ro","sa","pás","Nenhuma — 'pássaro' não tem sílaba tônica"],
+    ans: 2,
+    fb_correct: "Certo! 'Pás' é a sílaba tônica. Ela está na antepenúltima posição — por isso 'pássaro' é proparoxítona e leva acento.",
+    fb_wrong: "Não. Fale 'pássaro' em voz alta: PÁS-sa-ro. A primeira sílaba, 'pás', é pronunciada com mais força. Toda palavra tem uma sílaba tônica."
+  },
+  {
+    q: "Qual terminação NÃO exige acento gráfico em palavras paroxítonas?",
+    opts: ["l — como em 'fácil'","r — como em 'revólver'","a — como em 'mesa'","n — como em 'pólen'"],
+    ans: 2,
+    fb_correct: "Correto! Paroxítonas terminadas em vogal simples como 'a', 'e', 'o' (amigo, mesa, quente) NÃO levam acento. O acento só é obrigatório nas terminações especiais: l, r, n, x, ps, ã, ão, um, us, i, is e ditongo oral.",
+    fb_wrong: "Não. As terminações l, r e n exigem acento em paroxítonas (fácil, revólver, pólen). Paroxítonas terminadas em vogal simples como 'a' (mesa) não levam acento."
+  },
+  {
+    q: "A palavra 'hífen' é paroxítona. Ela recebe acento agudo porque:",
+    opts: ["É uma palavra de origem grega","Termina em N","Termina em vogal","É difícil de pronunciar corretamente"],
+    ans: 1,
+    fb_correct: "Correto! A regra diz: paroxítonas terminadas em N são acentuadas. Outros exemplos: pó-len, é-den. Todas terminam em N e levam acento.",
+    fb_wrong: "Não. A regra é: paroxítonas terminadas em N são acentuadas. 'Hífen' (hí-fen) termina em N — é por isso que leva acento, não pela origem da palavra."
+  }
+];
+
+var curQ = 0, acertos = 0, answered = false;
+
+function renderQuestion() {
+  var q = QUESTIONS[curQ];
+  document.getElementById('prog-label').textContent = 'Questão '+(curQ+1)+' de '+QUESTIONS.length;
+  document.getElementById('prog-fill').style.width = (curQ/QUESTIONS.length*100)+'%';
+  document.getElementById('q-num').textContent = 'QUESTÃO '+(curQ+1);
+  document.getElementById('q-text').textContent = q.q;
+  var fb = document.getElementById('feedback-box');
+  fb.style.display = 'none'; fb.className = 'feedback-box'; fb.innerHTML = '';
+  document.getElementById('btn-next').style.display = 'none';
+  answered = false;
+
+  var optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+  var letters = ['A','B','C','D'];
+  q.opts.forEach(function(txt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span><span>'+txt+'</span>';
+    btn.addEventListener('click', function() { checkAnswer(i, btn); });
+    optsEl.appendChild(btn);
+  });
+}
+
+function checkAnswer(idx, clickedBtn) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[curQ];
+  var allOpts = document.querySelectorAll('.opt');
+  allOpts.forEach(function(o) { o.classList.add('disabled'); });
+
+  var fb = document.getElementById('feedback-box');
+  if (idx === q.ans) {
+    acertos++;
+    clickedBtn.classList.add('correct');
+    fb.className = 'feedback-box correct';
+    fb.innerHTML = '<span class="fb-icon">✓</span>' + q.fb_correct;
+  } else {
+    clickedBtn.classList.add('wrong');
+    allOpts[q.ans].classList.add('reveal-correct');
+    fb.className = 'feedback-box wrong';
+    fb.innerHTML = '<span class="fb-icon">✗</span>' + q.fb_wrong;
+  }
+  fb.style.display = 'block';
+  document.getElementById('acerto-count').textContent = acertos;
+  document.getElementById('btn-next').style.display = 'block';
+}
+
+function nextQuestion() {
+  curQ++;
+  if (curQ >= QUESTIONS.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('q-area').style.display = 'none';
+  document.querySelector('.nav-row').style.display = 'none';
+  document.querySelector('.score-row').style.display = 'none';
+  document.querySelector('.prog-wrap').style.display = 'none';
+  var pct = Math.round((acertos / QUESTIONS.length) * 100);
+  window.sabendoScore = pct;
+
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  document.getElementById('result-pct').textContent = pct + '%';
+  document.getElementById('result-bar').style.width = pct + '%';
+
+  var emoji, title, sub;
+  if (pct >= 90) { emoji='🏆'; title='Excelente!'; sub='Você domina paroxítonas e proparoxítonas!'; }
+  else if (pct >= 70) { emoji='🎉'; title='Muito bem!'; sub='Você entendeu as regras principais de acentuação!'; }
+  else if (pct >= 50) { emoji='💪'; title='Continue praticando!'; sub='Revise as terminações que exigem acento em paroxítonas.'; }
+  else { emoji='📚'; title='Vamos revisar!'; sub='Releia a regra: penúltima sílaba = paroxítona; antepenúltima = proparoxítona.'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = acertos + ' de ' + QUESTIONS.length + ' questões corretas';
+  document.getElementById('result-msg').textContent = sub;
+}
+
+function restartQuiz() {
+  curQ = 0; acertos = 0;
+  document.getElementById('acerto-count').textContent = '0';
+  document.getElementById('result-panel').style.display = 'none';
+  document.getElementById('q-area').style.display = 'block';
+  document.querySelector('.nav-row').style.display = 'flex';
+  document.querySelector('.score-row').style.display = 'flex';
+  document.querySelector('.prog-wrap').style.display = 'block';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "acentuacao-paroxitonas-proparoxitonas";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Acentin",
+    characterEmoji: "´",
+    characterImg:   "chars/acentuacao-paroxitonas-proparoxitonas-hd.png",
+    themeLabel:     "Acentuação: Paroxítonas e Proparoxítonas · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-acentuacao-paroxitonas-proparoxitonas",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var quizScore = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: quizScore, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

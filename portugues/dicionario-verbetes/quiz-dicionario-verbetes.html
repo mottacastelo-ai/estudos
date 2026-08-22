@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Estudo do Dicionário: Verbetes</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED;
+  --port-light: #A78BFA;
+  --port-bg: #F3F0FF;
+  --port-dark: #4C1D95;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #DDD6FE;
+  --card: #fff;
+  --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; cursor: pointer; background: none; border: none; padding: 0; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.progress-wrap { padding: 14px 24px 0; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: var(--port); transition: width .4s; }
+.question-area { padding: 20px 24px 8px; }
+.question-num { font-size: 11px; font-weight: 800; color: var(--port); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.question-text { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 4px; }
+.verbete-box { background: var(--port-bg); border: 2px solid var(--border); border-radius: 12px; padding: 12px 16px; margin: 10px 0 16px; font-size: 13px; line-height: 1.7; }
+.verbete-box strong { font-weight: 800; font-size: 14px; }
+.options { display: flex; flex-direction: column; gap: 10px; padding: 0 24px 16px; }
+.opt-btn { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border: 2px solid var(--border); border-radius: 14px; background: var(--card); cursor: pointer; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; color: var(--text); text-align: left; transition: border-color .15s, background .15s; line-height: 1.4; }
+.opt-btn:hover { border-color: var(--port-light); background: var(--port-bg); }
+.opt-btn .opt-letter { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; min-width: 28px; border-radius: 50%; background: var(--border); font-size: 12px; font-weight: 800; color: var(--port); }
+.opt-btn.selected { border-color: var(--port); background: var(--port-bg); }
+.opt-btn.correct { border-color: #059669; background: #ECFDF5; }
+.opt-btn.correct .opt-letter { background: #059669; color: #fff; }
+.opt-btn.wrong { border-color: #DC2626; background: #FEF2F2; }
+.opt-btn.wrong .opt-letter { background: #DC2626; color: #fff; }
+.feedback { display: none; margin: 0 24px 16px; padding: 12px 16px; border-radius: 14px; font-size: 13px; font-weight: 600; line-height: 1.5; }
+.feedback.correct { background: #ECFDF5; border: 2px solid #6EE7B7; color: #065F46; display: flex; gap: 10px; align-items: flex-start; }
+.feedback.wrong { background: #FEF2F2; border: 2px solid #FCA5A5; color: #991B1B; display: flex; gap: 10px; align-items: flex-start; }
+.feedback-icon { font-size: 18px; line-height: 1; flex-shrink: 0; }
+.nav-row { display: flex; justify-content: flex-end; padding: 0 24px 20px; }
+.next-btn { background: var(--port); color: #fff; border: none; border-radius: 50px; padding: 10px 24px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; transition: opacity .2s; }
+.next-btn:hover { opacity: .85; }
+.result-panel { display: none; padding: 32px 24px; text-align: center; }
+.result-icon { font-size: 56px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; color: var(--port); margin-bottom: 8px; }
+.result-score { font-size: 48px; font-weight: 900; color: var(--port); }
+.result-sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.result-msg { font-size: 15px; font-weight: 600; color: var(--text); margin: 16px 0; line-height: 1.5; }
+.restart-btn { background: var(--port); color: #fff; border: none; border-radius: 50px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 8px; }
+@media (max-width: 480px) {
+  .question-text { font-size: 15px; }
+  .opt-btn { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">📖</div>
+      <div><h1>Quiz do Verbete</h1><p>Estudo do Dicionário · Português</p></div>
+      <div class="hbadge">10 questões</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="prog-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="question-area" id="question-area">
+      <div class="question-num" id="question-num">QUESTÃO 1</div>
+      <div class="question-text" id="question-text"></div>
+      <div class="verbete-box" id="verbete-box" style="display:none"></div>
+    </div>
+    <div class="options" id="options-area"></div>
+    <div class="feedback" id="feedback">
+      <span class="feedback-icon" id="feedback-icon"></span>
+      <div class="feedback-text" id="feedback-text"></div>
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next-btn" style="display:none" onclick="nextQuestion()">Próxima →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-icon" id="result-icon"></div>
+      <div class="result-title">Resultado</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="restart-btn" onclick="restartQuiz()">Refazer Quiz</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var quizData = [
+  {
+    pergunta: "O que é um verbete?",
+    verbete: null,
+    opcoes: [
+      "Uma lista de todas as palavras de uma língua em ordem alfabética",
+      "A entrada do dicionário que apresenta a definição e informações gramaticais de uma palavra",
+      "O plural de uma palavra registrado no dicionário",
+      "A divisão das sílabas de uma palavra"
+    ],
+    correta: 1,
+    feedback: "Correto! O verbete é a entrada do dicionário. Ele reúne a palavra, sua divisão silábica, classe gramatical, plural, gênero e definição."
+  },
+  {
+    pergunta: "No verbete de 'ignóbil', aparece a notação <ig.nó.bil>. O que essa notação entre < > indica?",
+    verbete: "ignóbil\n<ig.nó.bil> (pl. ignóbeis)\nadj.2g. 1 Que causa repugnância, especialmente se for estética.",
+    opcoes: [
+      "Os sinônimos da palavra ignóbil",
+      "A origem histórica da palavra",
+      "A divisão silábica com a sílaba tônica em destaque",
+      "O gênero gramatical da palavra"
+    ],
+    correta: 2,
+    feedback: "Correto! Os símbolos < > indicam a pronúncia e a divisão silábica da palavra, destacando a sílaba tônica — no caso, 'nó' em ig.nó.bil."
+  },
+  {
+    pergunta: "No verbete, aparece a abreviação 'adj.'. O que ela indica sobre a palavra?",
+    verbete: null,
+    opcoes: [
+      "A palavra é um advérbio",
+      "A palavra é um adjetivo",
+      "A palavra é um substantivo",
+      "A palavra tem apenas uma definição no dicionário"
+    ],
+    correta: 1,
+    feedback: "Correto! A abreviação 'adj.' indica que a palavra pertence à classe gramatical do adjetivo — ou seja, ela caracteriza ou qualifica um substantivo."
+  },
+  {
+    pergunta: "O verbete de 'ignóbil' traz a marcação 'adj.2g.'. O que '2g.' significa?",
+    verbete: null,
+    opcoes: [
+      "A palavra possui duas formas diferentes: uma para o masculino e outra para o feminino",
+      "A palavra tem a mesma forma tanto para o masculino quanto para o feminino",
+      "A palavra tem dois plurais possíveis registrados no dicionário",
+      "A palavra pertence a dois grupos gramaticais em todas as frases"
+    ],
+    correta: 1,
+    feedback: "Correto! '2g.' é a abreviação de 'dois gêneros' e indica que a palavra tem a mesma forma para masculino e feminino. Por exemplo: 'o ignóbil' e 'a ignóbil' — mesma grafia."
+  },
+  {
+    pergunta: "Leia a frase abaixo e identifique a função gramatical da palavra 'ignóbil':\n\n\"A ação ignóbil terminou com dois feridos.\"",
+    verbete: null,
+    opcoes: [
+      "Substantivo, pois é o sujeito da oração",
+      "Advérbio, pois indica como a ação aconteceu",
+      "Adjetivo, pois caracteriza o substantivo 'ação'",
+      "Pronome, pois substitui o nome da ação"
+    ],
+    correta: 2,
+    feedback: "Correto! Na frase, 'ignóbil' qualifica o substantivo 'ação', descrevendo como ela é. Isso é exatamente a função do adjetivo: caracterizar um substantivo."
+  },
+  {
+    pergunta: "Agora leia esta outra frase com a mesma palavra:\n\n\"O ignóbil não teve coragem de confessar seu ato.\"",
+    verbete: null,
+    opcoes: [
+      "Adjetivo, pois está perto de um substantivo na frase",
+      "Substantivo, pois nomeia a pessoa com comportamento baixo",
+      "Advérbio, pois modifica o verbo 'confessar'",
+      "Adjetivo, pois descreve uma característica negativa"
+    ],
+    correta: 1,
+    feedback: "Correto! Aqui 'ignóbil' ocupa o lugar de sujeito da oração e nomeia uma pessoa com comportamento baixo. Quando a palavra assume essa função, ela age como substantivo."
+  },
+  {
+    pergunta: "No verbete de 'ignóbil', aparece a informação '(pl. ignóbeis)'. O que essa informação indica?",
+    verbete: "ignóbil\n<ig.nó.bil> (pl. ignóbeis)\nadj.2g. 1 Que causa repugnância...",
+    opcoes: [
+      "A pronúncia correta da palavra",
+      "A classe gramatical da palavra",
+      "A forma como a palavra é escrita no plural",
+      "O primeiro significado da palavra"
+    ],
+    correta: 2,
+    feedback: "Correto! '(pl. ignóbeis)' informa a forma plural da palavra. É uma das informações que o verbete traz além da definição: mostra como escrever a palavra no plural."
+  },
+  {
+    pergunta: "Qual das informações a seguir NÃO aparece em um verbete de dicionário?",
+    verbete: null,
+    opcoes: [
+      "A divisão silábica da palavra",
+      "A classe gramatical (adjetivo, substantivo etc.)",
+      "O nome do escritor que usou a palavra pela primeira vez",
+      "A definição do significado da palavra"
+    ],
+    correta: 2,
+    feedback: "Correto! O verbete traz divisão silábica, classe gramatical, plural, gênero e definição — mas não indica quem usou a palavra pela primeira vez. Isso é pesquisado em outros tipos de obras."
+  },
+  {
+    pergunta: "Em um verbete, a abreviação 's.' indica que a palavra é um:",
+    verbete: null,
+    opcoes: [
+      "Símbolo especial do idioma",
+      "Sufixo gramatical da palavra",
+      "Substantivo",
+      "Sinônimo da palavra-entrada"
+    ],
+    correta: 2,
+    feedback: "Correto! 's.' é a abreviação de 'substantivo'. Junto com 'adj.' (adjetivo), é uma das classes gramaticais mais comuns nos verbetes de dicionário."
+  },
+  {
+    pergunta: "O verbete usa os símbolos < > para indicar a sílaba tônica. O que é a sílaba tônica de uma palavra?",
+    verbete: null,
+    opcoes: [
+      "Sempre a primeira sílaba de qualquer palavra",
+      "A sílaba pronunciada com maior força e intensidade na voz",
+      "A sílaba que sempre recebe um acento escrito (´ ou `)",
+      "Sempre a última sílaba de qualquer palavra"
+    ],
+    correta: 1,
+    feedback: "Correto! A sílaba tônica é a pronunciada com maior força. Nem sempre ela recebe acento escrito — por isso o dicionário usa < > para marcá-la claramente na divisão silábica."
+  }
+];
+
+var quizIdx = 0;
+var acertos = 0;
+var respondida = false;
+
+function renderQuestion() {
+  var q = quizData[quizIdx];
+  var total = quizData.length;
+
+  document.getElementById('prog-label').textContent = 'Questão ' + (quizIdx+1) + ' de ' + total;
+  document.getElementById('prog-fill').style.width = Math.round((quizIdx/total)*100) + '%';
+  document.getElementById('question-num').textContent = 'QUESTÃO ' + (quizIdx+1);
+  document.getElementById('question-text').textContent = q.pergunta;
+
+  var vbox = document.getElementById('verbete-box');
+  if (q.verbete) {
+    vbox.style.display = 'block';
+    vbox.innerHTML = q.verbete.replace(/\n/g, '<br>');
+  } else {
+    vbox.style.display = 'none';
+  }
+
+  var area = document.getElementById('options-area');
+  area.innerHTML = '';
+  var letras = ['A', 'B', 'C', 'D'];
+  q.opcoes.forEach(function(op, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<span class="opt-letter">' + letras[i] + '</span><span>' + op + '</span>';
+    btn.addEventListener('click', function() { selectOption(i); });
+    area.appendChild(btn);
+  });
+
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  respondida = false;
+}
+
+function selectOption(idx) {
+  if (respondida) return;
+  respondida = true;
+
+  var q = quizData[quizIdx];
+  var btns = document.getElementById('options-area').querySelectorAll('.opt-btn');
+  btns.forEach(function(b, i) {
+    if (i === q.correta) b.classList.add('correct');
+    else if (i === idx) b.classList.add('wrong');
+  });
+
+  var fb = document.getElementById('feedback');
+  var acertou = idx === q.correta;
+  if (acertou) acertos++;
+
+  fb.className = 'feedback ' + (acertou ? 'correct' : 'wrong');
+  document.getElementById('feedback-icon').textContent = acertou ? '✓' : '✗';
+  document.getElementById('feedback-text').textContent = acertou
+    ? q.feedback
+    : 'A resposta correta é a opção ' + ['A','B','C','D'][q.correta] + '. ' + q.feedback;
+  fb.style.display = 'flex';
+
+  document.getElementById('next-btn').style.display = 'block';
+  document.getElementById('next-btn').textContent = quizIdx < quizData.length - 1 ? 'Próxima →' : 'Ver resultado';
+}
+
+function nextQuestion() {
+  quizIdx++;
+  if (quizIdx < quizData.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('question-area').style.display = 'none';
+  document.getElementById('options-area').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('progress-wrap');
+
+  var pct = Math.round((acertos / quizData.length) * 100);
+  window.sabendoScore = pct;
+
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  document.getElementById('result-score').textContent = acertos + '/' + quizData.length;
+  document.getElementById('result-sub').textContent = pct + '% de acertos';
+
+  var icon, msg;
+  if (pct >= 90) { icon = '🏆'; msg = 'Excelente! Você domina a estrutura dos verbetes!'; }
+  else if (pct >= 70) { icon = '⭐'; msg = 'Muito bem! Você entendeu as partes do verbete.'; }
+  else if (pct >= 50) { icon = '📖'; msg = 'Bom esforço! Revise as abreviações e tente novamente.'; }
+  else { icon = '💪'; msg = 'Continue praticando! Releia o verbete de "ignóbil" e tente de novo.'; }
+
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function restartQuiz() {
+  quizIdx = 0;
+  acertos = 0;
+  respondida = false;
+  document.getElementById('result-panel').style.display = 'none';
+  document.getElementById('question-area').style.display = 'block';
+  document.getElementById('options-area').style.display = 'flex';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "dicionario-verbetes";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Dicio",
+    characterEmoji: "📖",
+    characterImg:   "chars/dicionario-verbetes-hd.png",
+    themeLabel:     "Estudo do Dicionário · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-dicionario-verbetes",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

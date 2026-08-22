@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Conjunções</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; cursor: pointer; background: none; border: none; }
+.back-link:hover { opacity: .7; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+.scorebar { display: flex; gap: 16px; padding: 12px 24px; border-bottom: 2px solid var(--border); background: #faf9ff; }
+.scoreitem { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; }
+.scoreitem span { font-size: 18px; }
+.progress-area { padding: 14px 24px 0; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: linear-gradient(90deg, #7C3AED, #A78BFA); transition: width .4s; }
+.quiz-body { padding: 20px 24px 24px; }
+.question-num { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--port); letter-spacing: .08em; margin-bottom: 8px; }
+.question-text { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
+.question-text em { font-style: normal; font-weight: 800; color: var(--port); background: #EDE9FE; padding: 1px 6px; border-radius: 6px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option-btn { font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 600; padding: 13px 18px; border-radius: 14px; border: 2px solid var(--border); background: #fff; color: var(--text); cursor: pointer; text-align: left; transition: all .15s; line-height: 1.4; }
+.option-btn:hover:not(:disabled) { border-color: var(--port-light); background: var(--port-bg); }
+.option-btn.correct { border-color: #059669; background: #D1FAE5; color: #064E3B; }
+.option-btn.wrong { border-color: #DC2626; background: #FEE2E2; color: #7F1D1D; }
+.feedback-box { margin-top: 16px; padding: 13px 16px; border-radius: 14px; display: none; line-height: 1.5; }
+.feedback-box.correct { background: #D1FAE5; border: 2px solid #059669; color: #064E3B; }
+.feedback-box.wrong { background: #FEE2E2; border: 2px solid #DC2626; color: #7F1D1D; }
+.feedback-box .ficon { font-size: 16px; margin-right: 5px; }
+.feedback-box .ftext { font-size: 13px; font-weight: 600; }
+.next-btn { margin-top: 14px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 12px 28px; cursor: pointer; display: none; }
+.next-btn:hover { opacity: .85; }
+.result-panel { padding: 32px 24px; text-align: center; display: none; }
+.result-icon { font-size: 64px; margin-bottom: 12px; }
+.result-score { font-family: "Space Mono", monospace; font-size: 52px; font-weight: 700; color: var(--port); }
+.result-label { font-size: 14px; font-weight: 700; color: var(--muted); margin: 4px 0 12px; }
+.result-msg { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 24px; line-height: 1.5; }
+.restart-btn { font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; background: var(--port); color: #fff; border: none; border-radius: 14px; padding: 13px 32px; cursor: pointer; }
+.restart-btn:hover { opacity: .85; }
+.dots { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+.dot.done-ok { background: #059669; }
+.dot.done-err { background: #DC2626; }
+.dot.current { background: var(--port); }
+@media (max-width: 480px) {
+  .question-text { font-size: 15px; }
+  .option-btn { font-size: 14px; padding: 11px 14px; }
+  .result-score { font-size: 42px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">❓</div>
+      <div><h1>Quiz Interativo</h1><p>Conjunções · Português 5º ano</p></div>
+      <div class="hbadge">📖 Retrieval</div>
+    </div>
+    <div class="scorebar">
+      <div class="scoreitem"><span>⭐</span><span id="pts-display">0 pts</span></div>
+      <div class="scoreitem"><span>✅</span><span id="hits-display">0 acertos</span></div>
+    </div>
+    <div class="progress-area">
+      <div class="prog-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="quiz-body" id="quiz-body">
+      <div class="dots" id="dots"></div>
+      <div class="question-num" id="q-num">QUESTÃO 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+      <div class="feedback-box" id="feedback-box">
+        <span class="ficon" id="ficon"></span>
+        <span class="ftext" id="ftext"></span>
+      </div>
+      <button class="next-btn" id="next-btn">Próxima questão →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-icon" id="result-icon"></div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-label">de 10 questões corretas</div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="restart-btn" onclick="restartQuiz()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QUESTIONS = [
+  {
+    text: 'Leia: "Bia mergulhou em direção ao leão <em>e</em> mordeu o nariz dele." Qual relação de sentido a conjunção <em>E</em> expressa nessa frase?',
+    options: ['Oposição', 'Soma de ações', 'Condição', 'Finalidade'],
+    correct: 1,
+    explanation: 'A conjunção E indica soma de ações (adição): Bia fez as duas ações — mergulhou E mordeu.'
+  },
+  {
+    text: 'Leia: "Prepo tentou acertar o alvo, <em>mas</em> errou o ponto." Qual relação a conjunção <em>MAS</em> expressa?',
+    options: ['Adição', 'Comparação', 'Oposição', 'Explicação'],
+    correct: 2,
+    explanation: 'MAS indica oposição: a segunda parte contraria a expectativa criada pela primeira.'
+  },
+  {
+    text: 'Leia: "Vou brincar lá fora <em>se</em> parar de chover." Qual relação a conjunção <em>SE</em> expressa nessa frase?',
+    options: ['Tempo', 'Finalidade', 'Explicação', 'Condição'],
+    correct: 3,
+    explanation: 'SE indica condição: a ação de brincar só acontecerá se a condição (parar de chover) for cumprida.'
+  },
+  {
+    text: 'Leia: "Toni ficou em casa, <em>pois</em> estava doente." O que a conjunção <em>POIS</em> indica?',
+    options: ['Oposição', 'Explicação', 'Alternância', 'Comparação'],
+    correct: 1,
+    explanation: 'POIS indica explicação: a segunda parte diz o motivo do que aconteceu (ficou em casa porque estava doente).'
+  },
+  {
+    text: 'Leia: "<em>Enquanto</em> Bia estudava, Prepo desenhava." Qual relação a conjunção <em>ENQUANTO</em> expressa?',
+    options: ['Condição', 'Finalidade', 'Tempo', 'Adição'],
+    correct: 2,
+    explanation: 'ENQUANTO indica tempo: as duas ações aconteciam ao mesmo tempo, de forma simultânea.'
+  },
+  {
+    text: 'Leia: "Você quer suco <em>ou</em> água?" O que a conjunção <em>OU</em> indica nessa frase?',
+    options: ['Adição', 'Oposição', 'Comparação', 'Alternância'],
+    correct: 3,
+    explanation: 'OU indica alternância: apresenta opções entre as quais se deve escolher uma.'
+  },
+  {
+    text: 'Leia: "André estudou muito <em>para</em> tirar uma boa nota." O que a conjunção <em>PARA</em> indica?',
+    options: ['Condição', 'Finalidade', 'Tempo', 'Explicação'],
+    correct: 1,
+    explanation: 'PARA indica finalidade (objetivo): a segunda parte diz qual é o objetivo da ação.'
+  },
+  {
+    text: 'Leia: "Ela canta <em>como</em> um passarinho." Qual relação a conjunção <em>COMO</em> expressa?',
+    options: ['Explicação', 'Tempo', 'Comparação', 'Alternância'],
+    correct: 2,
+    explanation: 'COMO indica comparação: a forma de cantar é comparada com a de um passarinho.'
+  },
+  {
+    text: 'O livro diz que a conjunção <em>MAS</em> pode ser substituída por outras palavras mantendo o sentido de oposição. Qual das opções abaixo faz essa substituição corretamente?',
+    options: ['quando', 'pois', 'porém', 'para'],
+    correct: 2,
+    explanation: 'PORÉM (assim como ENTRETANTO e CONTUDO) também expressa oposição e pode substituir MAS sem alterar o sentido.'
+  },
+  {
+    text: 'Segundo o que estudamos, como se chamam os termos usados para ligar palavras ou frases, estabelecendo relações de sentido no texto?',
+    options: ['Substantivos', 'Conjunções', 'Preposições', 'Verbos'],
+    correct: 1,
+    explanation: 'CONJUNÇÕES são os termos que ligam palavras ou frases, auxiliando na organização e na construção de sentidos do texto.'
+  }
+];
+
+var quizCurrent = 0;
+var quizHits = 0;
+var quizPts = 0;
+var quizAnswered = false;
+
+function buildDots() {
+  var dots = document.getElementById('dots');
+  dots.innerHTML = '';
+  QUESTIONS.forEach(function(_, i) {
+    var d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' current' : '');
+    d.id = 'qdot-' + i;
+    dots.appendChild(d);
+  });
+}
+
+function updateDots() {
+  QUESTIONS.forEach(function(_, i) {
+    var d = document.getElementById('qdot-' + i);
+    if (!d) return;
+    d.className = 'dot';
+    if (i < quizCurrent) d.classList.add(/* noop — set on answer */ 'done-ok');
+    else if (i === quizCurrent) d.classList.add('current');
+  });
+}
+
+function markDot(idx, ok) {
+  var d = document.getElementById('qdot-' + idx);
+  if (d) d.className = 'dot ' + (ok ? 'done-ok' : 'done-err');
+}
+
+function showQuestion(idx) {
+  var q = QUESTIONS[idx];
+  document.getElementById('q-num').textContent = 'QUESTÃO ' + (idx + 1);
+  document.getElementById('q-text').innerHTML = q.text;
+  document.getElementById('prog-label').textContent = 'Questão ' + (idx + 1) + ' de 10';
+  document.getElementById('prog-fill').style.width = (idx / 10 * 100) + '%';
+
+  var optEl = document.getElementById('q-options');
+  optEl.innerHTML = '';
+  var letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = '<strong>' + letters[i] + ')</strong> ' + opt;
+    btn.addEventListener('click', function() { quizAnswer(i); });
+    optEl.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback-box');
+  fb.style.display = 'none';
+  fb.className = 'feedback-box';
+  document.getElementById('next-btn').style.display = 'none';
+  quizAnswered = false;
+  updateDots();
+}
+
+function quizAnswer(chosen) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  var q = QUESTIONS[quizCurrent];
+  var isCorrect = chosen === q.correct;
+  if (isCorrect) { quizHits++; quizPts += 10; }
+
+  markDot(quizCurrent, isCorrect);
+
+  var btns = document.querySelectorAll('.option-btn');
+  btns.forEach(function(btn, i) {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    if (i === chosen && !isCorrect) btn.classList.add('wrong');
+  });
+
+  var fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box ' + (isCorrect ? 'correct' : 'wrong');
+  document.getElementById('ficon').textContent = isCorrect ? '✓' : '✗';
+  document.getElementById('ftext').textContent = q.explanation;
+  fb.style.display = 'block';
+
+  document.getElementById('pts-display').textContent = quizPts + ' pts';
+  document.getElementById('hits-display').textContent = quizHits + ' acertos';
+
+  var nextBtn = document.getElementById('next-btn');
+  nextBtn.textContent = quizCurrent < 9 ? 'Próxima questão →' : 'Ver resultado';
+  nextBtn.style.display = 'block';
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  quizCurrent++;
+  if (quizCurrent < QUESTIONS.length) {
+    showQuestion(quizCurrent);
+  } else {
+    showResultPanel();
+  }
+});
+
+function showResultPanel() {
+  var pct = Math.round((quizHits / QUESTIONS.length) * 100);
+  window.sabendoScore = pct;
+
+  document.getElementById('quiz-body').style.display = 'none';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Concluído!';
+
+  var icons =   ['😢', '😐', '😊', '🌟', '🏆'];
+  var msgs  = [
+    'Continue praticando! Revise as relações de sentido das conjunções.',
+    'Quase lá! Leia novamente os exemplos do livro para fixar cada relação.',
+    'Bom trabalho! Você já conhece várias conjunções e seus sentidos.',
+    'Muito bem! Você domina as conjunções e as relações de sentido que elas expressam.',
+    'Incrível! Você é um expert em conjunções! 🔗'
+  ];
+  var idx = pct >= 90 ? 4 : pct >= 70 ? 3 : pct >= 50 ? 2 : pct >= 30 ? 1 : 0;
+
+  document.getElementById('result-icon').textContent = icons[idx];
+  document.getElementById('result-score').textContent = quizHits + '/10';
+  document.getElementById('result-msg').textContent = msgs[idx];
+  document.getElementById('result-panel').style.display = 'block';
+}
+
+function restartQuiz() {
+  quizCurrent = 0; quizHits = 0; quizPts = 0; quizAnswered = false;
+  document.getElementById('pts-display').textContent = '0 pts';
+  document.getElementById('hits-display').textContent = '0 acertos';
+  document.getElementById('quiz-body').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+  buildDots();
+  showQuestion(0);
+}
+
+buildDots();
+showQuestion(0);
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "conjuncoes";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Elo",
+    characterEmoji: "🔗",
+    characterImg: "chars/conjuncoes-hd.png",
+    themeLabel: "Conjunções · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-conjuncoes",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100; showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: _capturedScore, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+    "canonicas_path":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+    "slug":  "reconto-anedota",
+    "expected_outputs":  [
+                             "hq-reconto-anedota-pg1.png",
+                             "hq-reconto-anedota-pg2.png",
+                             "hq-reconto-anedota-pg3.png",
+                             "hq-reconto-anedota-pg4.png"
+                         ],
+    "prompt_path":  "portugues/reconto-anedota/hq-reconto-anedota-prompt.md",
+    "disciplina":  "portugues",
+    "raiz":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+    "output_dir":  "portugues/reconto-anedota",
+    "status":  "done",
+    "completed_at":  "2026-08-22T13:56:39Z",
+    "modo":  "mcp",
+    "chars_path":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano\\Virelivro.png"
+}

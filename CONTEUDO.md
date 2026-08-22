@@ -454,6 +454,7 @@
 | `Toni.png` |
 | `Travessao.png` |
 | `Verbão.png` |
+| `Virelivro.png` |
 | `Xis.png` |
 | `Ze e Das Gracas.png` |
 | `memo e timbre.png` |
