@@ -684,7 +684,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
     <span class="d-icon">📝</span>
     <span class="d-name">Português</span>
-    <span class="d-count">63</span>
+    <span class="d-count">76</span>
   </button>
   <div class="theme-sub" id="sub-port">
     <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
@@ -700,6 +700,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('port','sons-x-ch')">✖️ Sons do X e CH</button>
     <button class="theme-link" onclick="showTheme('port','infografico')">📊 Infográfico</button>
     <button class="theme-link" onclick="showTheme('port','fabulas-conflito-moral')">📜 Fábulas: Conflito e Moral</button>
+    <button class="theme-link" onclick="showTheme('port','reconto-anedota')">📖 Reconto e Anedota</button>
+    <button class="theme-link" onclick="showTheme('port','discurso-direto-indireto')">💬 Discurso Direto e Indireto</button>
+    <button class="theme-link" onclick="showTheme('port','girias-coesao')">🔗 Gírias e Coesão</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
@@ -841,7 +844,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Português</div>
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#FDF2F8;color:#9D174D">13 temas</span>
+            <span class="chip" style="background:#FDF2F8;color:#9D174D">16 temas</span>
             <span class="chip" style="background:#EFF6FF;color:#1E3A8A">63 atividades</span>
             <span class="chip" style="background:#FEF3C7;color:#92400E">13 HQs</span>
           </div>
@@ -919,6 +922,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn" onclick="showTheme('port','sons-x-ch')">✖️ Sons do X e CH</button>
         <button class="theme-tab-btn" onclick="showTheme('port','infografico')">📊 Infográfico</button>
         <button class="theme-tab-btn" onclick="showTheme('port','fabulas-conflito-moral')">📜 Fábulas: Conflito e Moral</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','reconto-anedota')">📖 Reconto e Anedota</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','discurso-direto-indireto')">💬 Discurso Direto e Indireto</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','girias-coesao')">🔗 Gírias e Coesão</button>
       </div>
 
       <!-- TEMA: TEXTO TEATRAL -->
@@ -1603,6 +1609,146 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">✏️ Complete a Lacuna</span><span class="sched-act port">🔎 Classificador de Falas</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: RECONTO E ANEDOTA -->
+      <div class="theme-content" id="theme-port-reconto-anedota">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/reconto-anedota/hq-reconto-anedota.png" alt="HQ Reconto e Anedota"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>O Contador de Histórias — 4 páginas · Personagens: Virelivro, Bia, Prepo · Tema: reconto e anedota · pp. 144–169</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/reconto-anedota/quiz-reconto-anedota.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre reconto, anedota, estrutura narrativa, humor e características de cada gênero.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/reconto-anedota/comparador-reconto-anedota.html" target="sabendo-atividade">
+            <div class="act-icon">⚖️</div><div class="act-title">Comparador de Versões</div>
+            <div class="act-desc">Compare versões de um mesmo conto e identifique as mudanças de narrador, tempo e linguagem no reconto.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Comparar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/reconto-anedota/construtor-reconto-reconto-anedota.html" target="sabendo-atividade">
+            <div class="act-icon">✍️</div><div class="act-title">Construtor de Reconto</div>
+            <div class="act-desc">Reconte uma história clássica adaptando narrador, tempo verbal e vocabulário — produza seu próprio reconto.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="portugues/reconto-anedota/montador-anedota-reconto-anedota.html" target="sabendo-atividade">
+            <div class="act-icon">😄</div><div class="act-title">Montador de Anedota</div>
+            <div class="act-desc">Monte uma anedota escolhendo personagem, situação e desfecho inesperado — o humor mora no final!</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card port" href="portugues/reconto-anedota/mapa-mental-reconto-anedota.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Monte o mapa do tema conectando reconto, anedota, estrutura narrativa, humor e linguagem.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">⚖️ Comparador de Versões</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">✍️ Construtor de Reconto</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 4</div><div class="sched-acts"><span class="sched-act port">😄 Montador de Anedota</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 5</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental — síntese final</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: DISCURSO DIRETO E INDIRETO -->
+      <div class="theme-content" id="theme-port-discurso-direto-indireto">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/discurso-direto-indireto/hq-discurso-direto-indireto.png" alt="HQ Discurso Direto e Indireto"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>A Voz do Travessão — 4 páginas · Personagens: Travessão, Bia, Prepo · Tema: discurso direto e indireto, verbos de elocução · pp. 151–171</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/discurso-direto-indireto/quiz-discurso-direto-indireto.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre discurso direto, discurso indireto, travessão e verbos de elocução.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/discurso-direto-indireto/conversor-discurso-direto-indireto.html" target="sabendo-atividade">
+            <div class="act-icon">🔄</div><div class="act-title">Conversor de Discurso</div>
+            <div class="act-desc">Transforme trechos do discurso direto para o indireto e vice-versa, ajustando pronomes e verbos.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Transformar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/discurso-direto-indireto/marcador-discurso-direto-indireto.html" target="sabendo-atividade">
+            <div class="act-icon">🖊️</div><div class="act-title">Marcador de Texto</div>
+            <div class="act-desc">Identifique o travessão e os verbos de elocução em trechos de texto — marque e classifique cada ocorrência.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Identificar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/discurso-direto-indireto/mapa-mental-discurso-direto-indireto.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Monte o mapa do discurso conectando tipos, marcas gráficas, verbos de elocução e exemplos.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🔄 Conversor de Discurso</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🖊️ Marcador de Texto</span><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: GÍRIAS E COESÃO -->
+      <div class="theme-content" id="theme-port-girias-coesao">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/girias-coesao/hq-girias-coesao.png" alt="HQ Gírias e Coesão"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>O Elo Perdido — 4 páginas · Personagens: Elástico, Bia, Prepo · Tema: gírias, pronomes e coesão textual · pp. 154–170</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/girias-coesao/quiz-girias-coesao.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre gírias, coesão textual, pronomes anafóricos e conectores de texto.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/girias-coesao/detetive-coesao-girias-coesao.html" target="sabendo-atividade">
+            <div class="act-icon">🔍</div><div class="act-title">Detetive da Coesão</div>
+            <div class="act-desc">Rastreie os pronomes e conectores num texto: descubra a qual elemento cada um se refere.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Investigar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/girias-coesao/viajante-tempo-girias-coesao.html" target="sabendo-atividade">
+            <div class="act-icon">⏳</div><div class="act-title">Viajante do Tempo</div>
+            <div class="act-desc">Explore gírias de diferentes épocas e descubra como a linguagem informal muda com o tempo.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Explorar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card port" href="portugues/girias-coesao/mapa-mental-girias-coesao.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Monte o mapa do tema conectando gírias, coesão, pronomes anafóricos e conectores textuais.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🔍 Detetive da Coesão</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">⏳ Viajante do Tempo</span><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
         </div>
       </div>
 
@@ -3172,7 +3318,10 @@ var THEME_CATALOG = [
   { disc:'port', slug:'prefixo-sufixo',       label:'Prefixo e Sufixo',     emoji:'🌿', pages:[122,142], charName:'Raizinha', charImg:'chars/prefixo-sufixo-hd.png' },
   { disc:'port', slug:'sons-x-ch',            label:'Sons do X e CH',       emoji:'✖️', pages:[126,143], charName:'Xis',      charImg:'chars/sons-x-ch-hd.png' },
   { disc:'port', slug:'infografico',          label:'Infográfico',           emoji:'📊', pages:[129,133], charName:'Grafo',    charImg:'chars/infografico-hd.png' },
-  { disc:'port', slug:'fabulas-conflito-moral', label:'Fábulas: Conflito e Moral', emoji:'📜', pages:[174,199], charName:'Morá', charImg:'chars/fabulas-conflito-moral-hd.png' },
+  { disc:'port', slug:'fabulas-conflito-moral',     label:'Fábulas: Conflito e Moral',   emoji:'📜', pages:[174,199], charName:'Morá',      charImg:'chars/fabulas-conflito-moral-hd.png' },
+  { disc:'port', slug:'reconto-anedota',            label:'Reconto e Anedota',           emoji:'📖', pages:[144,169], charName:'Virelivro', charImg:'chars/reconto-anedota-hd.png' },
+  { disc:'port', slug:'discurso-direto-indireto',   label:'Discurso Direto e Indireto',  emoji:'💬', pages:[151,171], charName:'Travessão', charImg:'chars/discurso-direto-indireto-hd.png' },
+  { disc:'port', slug:'girias-coesao',              label:'Gírias e Coesão',             emoji:'🔗', pages:[154,170], charName:'Elástico',  charImg:'chars/girias-coesao-hd.png' },
   // ── Matemática
   { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null, charName:'Prepo',    charImg:'prepo-hd.png' },
   { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null, charName:'Calco',    charImg:'chars/multiplicacao-divisao-hd.png' },
@@ -3317,7 +3466,11 @@ var THEME_META = {
   'marcos-memoria':              { label: 'Marcos de Memória',            navId: 'nav-hist', disc: 'hist' },
   'memoria-negra-imigrantes':    { label: 'Zumbi e Imigrantes',           navId: 'nav-hist', disc: 'hist' },
   'fontes-historicas-ambiente':  { label: 'Fontes Históricas e Impactos Ambientais', navId: 'nav-hist', disc: 'hist' },
-  'artesanato-industria':        { label: 'Do Artesanato à Indústria',    navId: 'nav-hist', disc: 'hist' }
+  'artesanato-industria':        { label: 'Do Artesanato à Indústria',    navId: 'nav-hist', disc: 'hist' },
+  'fabulas-conflito-moral':      { label: 'Fábulas: Conflito e Moral',    navId: 'nav-port', disc: 'port' },
+  'reconto-anedota':             { label: 'Reconto e Anedota',            navId: 'nav-port', disc: 'port' },
+  'discurso-direto-indireto':    { label: 'Discurso Direto e Indireto',   navId: 'nav-port', disc: 'port' },
+  'girias-coesao':               { label: 'Gírias e Coesão',              navId: 'nav-port', disc: 'port' }
 };
 var ACTIVITY_FILE_PATHS = {
   'preposicoes:quiz':                          'portugues/preposicoes/quiz-preposicoes.html',
@@ -3340,6 +3493,23 @@ var ACTIVITY_FILE_PATHS = {
   'infografico:mapa-mental':                   'portugues/infografico/mapa-mental-infografico.html',
   'infografico:ordenacao':                     'portugues/infografico/ordenacao-infografico.html',
   'infografico:quiz':                          'portugues/infografico/quiz-infografico.html',
+  'fabulas-conflito-moral:classificador':      'portugues/fabulas-conflito-moral/classificador-fabulas-conflito-moral.html',
+  'fabulas-conflito-moral:complete-lacuna':    'portugues/fabulas-conflito-moral/complete-lacuna-fabulas-conflito-moral.html',
+  'fabulas-conflito-moral:mapa-mental':        'portugues/fabulas-conflito-moral/mapa-mental-fabulas-conflito-moral.html',
+  'fabulas-conflito-moral:quiz':               'portugues/fabulas-conflito-moral/quiz-fabulas-conflito-moral.html',
+  'reconto-anedota:comparador':                'portugues/reconto-anedota/comparador-reconto-anedota.html',
+  'reconto-anedota:construtor':                'portugues/reconto-anedota/construtor-reconto-reconto-anedota.html',
+  'reconto-anedota:mapa-mental':               'portugues/reconto-anedota/mapa-mental-reconto-anedota.html',
+  'reconto-anedota:montador':                  'portugues/reconto-anedota/montador-anedota-reconto-anedota.html',
+  'reconto-anedota:quiz':                      'portugues/reconto-anedota/quiz-reconto-anedota.html',
+  'discurso-direto-indireto:conversor':        'portugues/discurso-direto-indireto/conversor-discurso-direto-indireto.html',
+  'discurso-direto-indireto:mapa-mental':      'portugues/discurso-direto-indireto/mapa-mental-discurso-direto-indireto.html',
+  'discurso-direto-indireto:marcador':         'portugues/discurso-direto-indireto/marcador-discurso-direto-indireto.html',
+  'discurso-direto-indireto:quiz':             'portugues/discurso-direto-indireto/quiz-discurso-direto-indireto.html',
+  'girias-coesao:detetive-coesao':             'portugues/girias-coesao/detetive-coesao-girias-coesao.html',
+  'girias-coesao:mapa-mental':                 'portugues/girias-coesao/mapa-mental-girias-coesao.html',
+  'girias-coesao:quiz':                        'portugues/girias-coesao/quiz-girias-coesao.html',
+  'girias-coesao:viajante-tempo':              'portugues/girias-coesao/viajante-tempo-girias-coesao.html',
   'letral:detetive':                           'portugues/letra-l/detetive-silaba-letra-l.html',
   'letral:fabrica':                            'portugues/letra-l/fabrica-letra-l.html',
   'letral:mapa-mental':                        'portugues/letra-l/mapa-mental-letra-l.html',
@@ -3475,7 +3645,9 @@ var ACTIVITY_TYPE_LABELS = {
   'organizador':'Organizador', 'caca-verbo':'Caça ao Verbo',
   'classificador-fontes':'Classificador de Fontes', 'analisador-fonte':'Analisador de Fonte',
   'juiz':'Juiz da História', 'antes-depois':'Antes e Depois',
-  'linha-tempo-teares':'Linha do Tempo dos Teares', 'diario-artesao':'Diário do Artesão'
+  'linha-tempo-teares':'Linha do Tempo dos Teares', 'diario-artesao':'Diário do Artesão',
+  'montador':'Montador', 'conversor':'Conversor', 'marcador':'Marcador',
+  'detetive-coesao':'Detetive da Coesão', 'viajante-tempo':'Viajante do Tempo'
 };
 
 async function loadReinforcement() {

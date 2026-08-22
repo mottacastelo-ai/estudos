@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 13 | 63 |
+| 📝 Português | 16 | 76 |
 | 🔢 Matemática | 7 | 33 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **32** | **144** |
+| **Total** | **35** | **157** |
 
 ---
 
@@ -185,6 +185,44 @@
 | Classificador de Falas | ✅ `classificador-fabulas-conflito-moral.html` |
 | Complete a Lacuna | ✅ `complete-lacuna-fabulas-conflito-moral.html` |
 | Mapa Mental | ✅ `mapa-mental-fabulas-conflito-moral.html` |
+
+---
+
+### Reconto Anedota
+**Personagem:** Virelivro (livro vivo brincalhão)
+**HQ:** ✅ `hq-reconto-anedota.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-reconto-anedota.html` |
+| Comparador de Versões | ✅ `comparador-reconto-anedota.html` |
+| Construtor de Reconto | ✅ `construtor-reconto-reconto-anedota.html` |
+| Montador de Anedota | ✅ `montador-anedota-reconto-anedota.html` |
+| Mapa Mental | ✅ `mapa-mental-reconto-anedota.html` |
+
+---
+
+### Discurso Direto Indireto
+**HQ:** ✅ `hq-discurso-direto-indireto.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-discurso-direto-indireto.html` |
+| Conversor de Discurso | ✅ `conversor-discurso-direto-indireto.html` |
+| Marcador de Texto | ✅ `marcador-discurso-direto-indireto.html` |
+| Mapa Mental | ✅ `mapa-mental-discurso-direto-indireto.html` |
+
+---
+
+### Girias Coesao
+**HQ:** ✅ `hq-girias-coesao.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-girias-coesao.html` |
+| Detetive da Coesão | ✅ `detetive-coesao-girias-coesao.html` |
+| Viajante do Tempo | ✅ `viajante-tempo-girias-coesao.html` |
+| Mapa Mental | ✅ `mapa-mental-girias-coesao.html` |
 
 ---
 
