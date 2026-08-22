@@ -1,0 +1,27 @@
+{
+  "type": "portraits-batch",
+  "version": "1.0",
+  "project_root": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+  "chars_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+  "portraits_dir": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos\\_landing\\chars",
+  "characters": [
+    {
+      "name": "Virelivro",
+      "char_sheet": "Virelivro.png",
+      "portrait_output": "_landing\\chars\\reconto-anedota-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\reconto-anedota-portrait-prompt.md"
+    },
+    {
+      "name": "Travessão",
+      "char_sheet": "Travessao.png",
+      "portrait_output": "_landing\\chars\\discurso-direto-indireto-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\discurso-direto-indireto-portrait-prompt.md"
+    },
+    {
+      "name": "Elástico",
+      "char_sheet": "Elastico.png",
+      "portrait_output": "_landing\\chars\\girias-coesao-hd.png",
+      "portrait_prompt_file": "_landing\\chars\\girias-coesao-portrait-prompt.md"
+    }
+  ]
+}

@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 12 | 59 |
+| 📝 Português | 13 | 63 |
 | 🔢 Matemática | 7 | 33 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **31** | **140** |
+| **Total** | **32** | **144** |
 
 ---
 
@@ -172,6 +172,19 @@
 | Monta o Infográfico | ✅ `ordenacao-infografico.html` |
 | Crie seu Infográfico! | ✅ `criador-infografico.html` |
 | Mapa Mental | ✅ `mapa-mental-infografico.html` |
+
+---
+
+### Fabulas Conflito Moral
+**Personagem:** Morá (pergaminho dourado animado com selo de cera)
+**HQ:** ✅ `hq-fabulas-conflito-moral.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-fabulas-conflito-moral.html` |
+| Classificador de Falas | ✅ `classificador-fabulas-conflito-moral.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-fabulas-conflito-moral.html` |
+| Mapa Mental | ✅ `mapa-mental-fabulas-conflito-moral.html` |
 
 ---
 
@@ -426,6 +439,7 @@
 
 | Arquivo |
 |---|
+| `Acentin.png` |
 | `Agro 4.0.png` |
 | `Bia com fundo.png` |
 | `Bia.png` |
