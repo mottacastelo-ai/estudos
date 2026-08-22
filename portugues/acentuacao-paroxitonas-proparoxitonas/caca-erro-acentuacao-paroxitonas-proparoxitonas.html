@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caça-Erro — Acentuação: Paroxítonas e Proparoxítonas</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;
+  --port-dark:#4C1D95;--border:#DDD6FE;
+  --card:#fff;--text:#1A1A2E;--muted:#6B7280;
+  --green:#059669;--red:#DC2626;--green-bg:#ECFDF5;--red-bg:#FEF2F2;
+  --yellow:#D97706;--yellow-bg:#FFFBEB;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:720px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);text-decoration:none;margin-bottom:14px;cursor:pointer;background:none;border:none;padding:0;}
+.back-link:hover{opacity:.7;}
+.card{background:var(--card);border:2px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.08);}
+.card-header{background:linear-gradient(135deg,#2D1B69,#7C3AED 60%,#A78BFA);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:32px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+
+.regra-box{margin:16px 20px 0;padding:12px 16px;background:var(--port-bg);border:2px solid var(--border);border-radius:14px;}
+.regra-box .regra-title{font-family:"Space Mono",monospace;font-size:10px;font-weight:700;color:var(--port);letter-spacing:.06em;margin-bottom:6px;}
+.regra-box p{font-size:13px;font-weight:600;color:var(--text);line-height:1.5;}
+.regra-box strong{color:var(--port);}
+
+.instrucao{padding:14px 24px 4px;font-size:14px;font-weight:600;color:var(--muted);line-height:1.5;}
+.instrucao strong{color:var(--text);}
+
+.prog-row{display:flex;justify-content:space-between;align-items:center;padding:10px 24px 0;font-size:13px;font-weight:700;color:var(--muted);}
+.prog-row span{color:var(--port);}
+
+.words-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:16px 20px 20px;}
+.word-card{border:2px solid var(--border);border-radius:14px;padding:14px 12px;background:var(--card);cursor:pointer;text-align:center;transition:all .18s;user-select:none;position:relative;}
+.word-card:hover{border-color:var(--port-light);background:var(--port-bg);transform:translateY(-2px);box-shadow:0 4px 12px rgba(124,58,237,.12);}
+.word-card .wc-word{font-family:"Space Mono",monospace;font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.word-card .wc-hint{font-size:10px;font-weight:600;color:var(--muted);}
+.word-card.correct-ok{border-color:#86efac;background:var(--green-bg);cursor:default;transform:none;}
+.word-card.correct-ok .wc-word{color:var(--green);}
+.word-card.correct-ok .wc-hint{color:var(--green);}
+.word-card.error-found{border-color:var(--port);background:var(--port-bg);cursor:default;}
+.word-card.error-found .wc-word{color:var(--port);text-decoration:line-through;}
+.word-card.error-found .wc-corrected{font-family:"Space Mono",monospace;font-size:14px;font-weight:800;color:var(--port);display:block;margin-top:2px;}
+.word-card.error-found .wc-hint{color:var(--port);}
+.word-card.false-alarm{border-color:var(--red);background:var(--red-bg);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}};
+.word-card.wrong-miss{border-color:var(--yellow);background:var(--yellow-bg);}
+.word-card.wrong-miss .wc-word{color:var(--yellow);}
+.word-card .badge{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.badge-ok{background:var(--green);color:#fff;}
+.badge-err{background:var(--port);color:#fff;}
+
+.result-panel{display:none;margin:0 20px 20px;padding:24px;border-radius:16px;text-align:center;border:2px solid var(--border);background:var(--port-bg);}
+.result-panel .r-emoji{font-size:48px;margin-bottom:8px;}
+.result-panel .r-pct{font-size:36px;font-weight:900;color:var(--port);margin-bottom:4px;}
+.result-panel .r-bar-wrap{background:var(--border);border-radius:999px;height:10px;margin:8px 0;overflow:hidden;}
+.result-panel .r-bar{height:10px;border-radius:999px;background:linear-gradient(90deg,var(--port),var(--port-light));transition:width .6s;}
+.result-panel .r-title{font-family:"Space Mono",monospace;font-size:16px;font-weight:700;color:var(--port);margin-bottom:4px;}
+.result-panel .r-sub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px;}
+.btn-verify{font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;padding:11px 32px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--port),var(--port-light));color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.3);margin:4px 20px 20px;display:block;width:calc(100% - 40px);transition:opacity .15s;}
+.btn-verify:hover{opacity:.85;}
+.btn-retry{font-family:"Baloo 2",cursive;font-size:13px;font-weight:700;padding:10px 24px;border-radius:999px;border:2px solid var(--border);background:var(--card);color:var(--port);cursor:pointer;margin-top:8px;}
+.btn-retry:hover{border-color:var(--port);}
+
+@media(max-width:480px){
+  .words-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;}
+  .word-card .wc-word{font-size:13px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">🔍</div>
+      <div><h1>Caça-Erro</h1><p>Acentuação: Paroxítonas e Proparoxítonas</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+
+    <div class="regra-box" style="margin:16px 20px 0;">
+      <div class="regra-title">LEMBRE-SE DA REGRA</div>
+      <p>
+        <strong>Paroxítonas</strong> (tônica na penúltima sílaba) terminadas em <strong>l, r, n, x, ps, ã, ão, um, uns, us, i, is</strong> e <strong>ditongo oral</strong> são acentuadas.<br>
+        <strong>Proparoxítonas</strong> (tônica na antepenúltima) são <strong>SEMPRE</strong> acentuadas.
+      </p>
+    </div>
+
+    <div class="instrucao">
+      <strong>Como fazer:</strong> As palavras abaixo foram retiradas do conteúdo do livro, mas o professor apagou os acentos de algumas.
+      <strong>Clique nas palavras com erro</strong> (que precisam de acento e estão sem).
+      Não clique nas que já estão corretas! Quando terminar, clique em <strong>Verificar</strong>.
+    </div>
+
+    <div class="prog-row">
+      Erros encontrados: <span id="found-count">0</span> / <span id="total-errors">8</span>
+    </div>
+
+    <div class="words-grid" id="words-grid"></div>
+
+    <button class="btn-verify" id="btn-verify" onclick="verificar()">Verificar respostas</button>
+
+    <div class="result-panel" id="result-panel">
+      <div class="r-emoji" id="r-emoji">🎉</div>
+      <div class="r-pct" id="r-pct">0%</div>
+      <div class="r-bar-wrap"><div class="r-bar" id="r-bar" style="width:0%"></div></div>
+      <div class="r-title" id="r-title">Resultado</div>
+      <div class="r-sub" id="r-sub"></div>
+      <button class="btn-retry" onclick="reiniciar()">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+// WORDS: erro=true → palavra que PRECISA de acento (mostrada SEM acento como erro)
+//         erro=false → palavra correta (não precisa de acento ou já está correta)
+var WORDS = [
+  // Com erro (devem ter acento, estão sem)
+  {shown:'tenis',    corrected:'tênis',    hint:'paroxítona, termina em IS', erro:true},
+  {shown:'lagrima',  corrected:'lágrima',  hint:'proparoxítona',             erro:true},
+  {shown:'tunel',    corrected:'túnel',    hint:'paroxítona, termina em L',  erro:true},
+  {shown:'medico',   corrected:'médico',   hint:'proparoxítona',             erro:true},
+  {shown:'passaro',  corrected:'pássaro',  hint:'proparoxítona',             erro:true},
+  {shown:'arvore',   corrected:'árvore',   hint:'proparoxítona',             erro:true},
+  {shown:'hifen',    corrected:'hífen',    hint:'paroxítona, termina em N',  erro:true},
+  {shown:'facil',    corrected:'fácil',    hint:'paroxítona, termina em L',  erro:true},
+  // Sem erro (palavras paroxítonas que NÃO precisam de acento)
+  {shown:'amigo',    corrected:'amigo',    hint:'paroxítona — sem acento',   erro:false},
+  {shown:'mesa',     corrected:'mesa',     hint:'paroxítona — sem acento',   erro:false},
+  {shown:'quente',   corrected:'quente',   hint:'paroxítona — sem acento',   erro:false},
+  {shown:'escola',   corrected:'escola',   hint:'paroxítona — sem acento',   erro:false},
+];
+
+var clicked = {}; // id → true se clicado como "erro"
+var finished = false;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+
+var wordOrder = shuffle(WORDS.map(function(_,i){return i;}));
+
+function renderGrid() {
+  var grid = document.getElementById('words-grid');
+  grid.innerHTML = '';
+  wordOrder.forEach(function(idx) {
+    var w = WORDS[idx];
+    var card = document.createElement('div');
+    card.className = 'word-card';
+    card.id = 'wcard-'+idx;
+    card.innerHTML = '<div class="wc-word">'+w.shown+'</div><div class="wc-hint">&nbsp;</div>';
+    card.addEventListener('click', function() { toggleClick(idx, card); });
+    grid.appendChild(card);
+  });
+  document.getElementById('found-count').textContent = '0';
+}
+
+function toggleClick(idx, card) {
+  if (finished) return;
+  var w = WORDS[idx];
+  if (clicked[idx]) {
+    // deselect
+    delete clicked[idx];
+    card.className = 'word-card';
+    card.innerHTML = '<div class="wc-word">'+w.shown+'</div><div class="wc-hint">&nbsp;</div>';
+  } else {
+    clicked[idx] = true;
+    card.className = 'word-card error-found';
+    card.innerHTML = '<div class="wc-word">'+w.shown+'</div><span class="wc-corrected">→ '+w.corrected+'</span><div class="wc-hint">'+w.hint+'</div>';
+  }
+  var cnt = Object.keys(clicked).length;
+  document.getElementById('found-count').textContent = cnt;
+}
+
+function verificar() {
+  if (finished) return;
+  finished = true;
+  document.getElementById('btn-verify').style.display = 'none';
+
+  var trueErrors = 0, hits = 0, falseAlarms = 0, missed = 0;
+  WORDS.forEach(function(w, idx) { if (w.erro) trueErrors++; });
+
+  WORDS.forEach(function(w, idx) {
+    var card = document.getElementById('wcard-'+idx);
+    var wasClicked = !!clicked[idx];
+    if (w.erro && wasClicked) {
+      hits++;
+      card.className = 'word-card correct-ok';
+      card.innerHTML = '<div class="wc-word">'+w.corrected+'</div><div class="wc-hint">'+w.hint+' ✓</div><span class="badge badge-ok">✓</span>';
+    } else if (!w.erro && wasClicked) {
+      falseAlarms++;
+      card.className = 'word-card false-alarm';
+      card.innerHTML = '<div class="wc-word">'+w.shown+'</div><div class="wc-hint">Esta estava correta!</div><span class="badge" style="background:#DC2626;color:#fff">✗</span>';
+    } else if (w.erro && !wasClicked) {
+      missed++;
+      card.className = 'word-card wrong-miss';
+      card.innerHTML = '<div class="wc-word">'+w.shown+'</div><span class="wc-corrected" style="font-family:Space Mono,monospace;font-size:13px;font-weight:800;color:#D97706;display:block;margin-top:2px;">→ '+w.corrected+'</span><div class="wc-hint">Você não encontrou este</div>';
+    } else {
+      // Correto não clicado
+      card.className = 'word-card correct-ok';
+      card.innerHTML = '<div class="wc-word">'+w.shown+'</div><div class="wc-hint">sem acento — correto ✓</div><span class="badge badge-ok">✓</span>';
+    }
+  });
+
+  var pct = Math.round((hits / trueErrors) * 100);
+  window.sabendoScore = pct;
+
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  document.getElementById('r-pct').textContent = pct + '%';
+  document.getElementById('r-bar').style.width = pct + '%';
+
+  var emoji, title, sub;
+  if (pct === 100 && falseAlarms === 0) { emoji='🏆'; title='Perfeito!'; sub='Você encontrou todos os '+hits+' erros sem nenhum falso alarme!'; }
+  else if (pct >= 75) { emoji='🎉'; title='Muito bem!'; sub='Você encontrou '+hits+' de '+trueErrors+' erros. '+(falseAlarms>0?falseAlarms+' falso(s) alarme(s).':''); }
+  else if (pct >= 50) { emoji='💪'; title='Continue!'; sub='Encontrou '+hits+' de '+trueErrors+'. Revise as terminações que exigem acento em paroxítonas.'; }
+  else { emoji='📚'; title='Revise a regra!'; sub='Encontrou só '+hits+' de '+trueErrors+'. Releia a regra das terminações paroxítonas e das proparoxítonas.'; }
+
+  document.getElementById('r-emoji').textContent = emoji;
+  document.getElementById('r-title').textContent = title;
+  document.getElementById('r-sub').textContent = sub;
+}
+
+function reiniciar() {
+  clicked = {};
+  finished = false;
+  wordOrder = shuffle(WORDS.map(function(_,i){return i;}));
+  document.getElementById('result-panel').style.display = 'none';
+  document.getElementById('btn-verify').style.display = 'block';
+  renderGrid();
+}
+
+renderGrid();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "acentuacao-paroxitonas-proparoxitonas";
+  var ACTIVITY_TYPE = "caca-erro";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Acentin",
+    characterEmoji: "´",
+    characterImg:   "chars/acentuacao-paroxitonas-proparoxitonas-hd.png",
+    themeLabel:     "Acentuação: Paroxítonas e Proparoxítonas · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-acentuacao-paroxitonas-proparoxitonas",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var errScore = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: errScore, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
