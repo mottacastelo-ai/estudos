@@ -1,0 +1,14 @@
+{
+    "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+    "slug": "girias-coesao",
+    "expected_outputs": [
+        "hq-girias-coesao-pg1.png",
+        "hq-girias-coesao-pg2.png",
+        "hq-girias-coesao-pg3.png",
+        "hq-girias-coesao-pg4.png"
+    ],
+    "prompt_path": "portugues/girias-coesao/hq-girias-coesao-prompt.md",
+    "disciplina": "portugues",
+    "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+    "output_dir": "portugues/girias-coesao"
+}
