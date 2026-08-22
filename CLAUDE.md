@@ -138,6 +138,9 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 | Timbre (selo postal laranja) | Zumbi e Imigrantes | `chars/memoria-negra-imigrantes-hd.png` |
 | Lupa (lupa detetive dourada, boné de detetive marrom) | Fontes Históricas e Impactos Ambientais | `chars/fontes-historicas-ambiente-hd.png` |
 | Fio (novelo de linha âmbar/marrom animado) | Do Artesanato à Indústria | `chars/artesanato-industria-hd.png` |
+| Virelivro (livro vivo, capa terracota/vinho, chapéu de bobo da corte com guizos) | Reconto e Anedota | `chars/reconto-anedota-hd.png` |
+| Travessão (travessão vivo roxo, dois modos: direto/indireto) | Discurso Direto e Indireto | `chars/discurso-direto-indireto-hd.png` |
+| Elástico (elo/elástico roxo que conecta palavras, muda de figurino por década) | Gírias e Coesão | `chars/girias-coesao-hd.png` |
 
 > Caminhos de portrait são relativos a `_landing/`. Folhas de personagens em `Personagens\5o ano\`.
 > Novos personagens devem ser **metáforas visuais do conceito central** do tema.
