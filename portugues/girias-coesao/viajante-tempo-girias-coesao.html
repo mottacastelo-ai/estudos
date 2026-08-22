@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viajante do Tempo — Gírias e Coesão</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;
+  --text:#1A1A2E;--muted:#6B7280;--border:#DDD6FE;--card:#fff;
+  --green:#059669;--green-bg:#ECFDF5;--red:#DC2626;--red-bg:#FEF2F2;
+  --amber:#D97706;--amber-bg:#FFFBEB;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:700px;margin:0 auto;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);background:none;border:none;cursor:pointer;padding:0;margin-bottom:16px;font-family:"Baloo 2",cursive;}
+.back-btn:hover{opacity:.7;}
+.activity-card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.1);}
+.card-header{background:linear-gradient(135deg,#2D1B69,#7C3AED 60%,#A78BFA);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:36px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:17px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+.instrucao{padding:14px 24px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border);background:var(--port-bg);line-height:1.6;}
+.instrucao strong{color:var(--text);}
+.score-bar{display:flex;align-items:center;gap:10px;padding:10px 24px;border-bottom:2px solid var(--border);background:#faf9ff;}
+.score-label{font-family:"Space Mono",monospace;font-size:12px;font-weight:700;color:var(--port);}
+.progress-wrap{flex:1;}
+.prog-track{height:7px;border-radius:999px;background:var(--border);}
+.prog-fill{height:7px;border-radius:999px;background:linear-gradient(90deg,var(--port),var(--port-light));transition:width .4s;}
+.round-area{padding:24px;}
+.machine-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.machine-title{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;}
+.round-badge{background:var(--port-bg);border:2px solid var(--border);border-radius:999px;padding:4px 14px;font-size:12px;font-weight:800;color:var(--port);}
+.time-bubble{background:linear-gradient(135deg,#2D1B69 0%,#7C3AED 100%);border-radius:20px;padding:20px 24px;margin-bottom:18px;position:relative;}
+.time-bubble::after{content:'';position:absolute;bottom:-10px;left:32px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:10px solid #7C3AED;}
+.era-tag{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:3px 12px;font-size:10px;font-weight:800;color:#fff;letter-spacing:.06em;margin-bottom:8px;}
+.old-phrase{font-size:20px;font-weight:800;color:#fff;line-height:1.4;}
+.old-phrase em{font-style:normal;background:rgba(255,255,255,.2);border-radius:6px;padding:2px 8px;}
+.context-text{font-size:13px;color:rgba(255,255,255,.8);margin-top:6px;font-weight:600;}
+.q-label{font-size:14px;font-weight:800;color:var(--text);margin-bottom:12px;margin-top:8px;}
+.options-grid{display:flex;flex-direction:column;gap:10px;}
+.opt-card{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--card);cursor:pointer;font-size:15px;font-weight:700;color:var(--text);transition:border-color .15s,background .15s;font-family:"Baloo 2",cursive;text-align:left;}
+.opt-card:hover:not(:disabled){border-color:var(--port-light);background:var(--port-bg);}
+.opt-card .opt-icon{font-size:22px;flex-shrink:0;}
+.opt-card.correct{border-color:var(--green);background:var(--green-bg);color:#065F46;}
+.opt-card.wrong{border-color:var(--red);background:var(--red-bg);color:#7F1D1D;}
+.opt-card:disabled{cursor:default;}
+.feedback-box{margin-top:14px;padding:14px 18px;border-radius:14px;border:2px solid;font-size:14px;font-weight:700;display:none;animation:popIn .25s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.feedback-box.show{display:flex;gap:10px;align-items:flex-start;}
+.feedback-box.ok{background:var(--green-bg);border-color:var(--green);color:#065F46;}
+.feedback-box.err{background:var(--red-bg);border-color:var(--red);color:#7F1D1D;}
+.feedback-box .fb-icon{font-size:20px;flex-shrink:0;}
+.btn-next{width:100%;background:var(--port);color:#fff;border:none;border-radius:14px;padding:15px;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px;display:none;transition:all .18s;}
+.btn-next:hover{background:#6D28D9;transform:translateY(-2px);}
+.btn-next.show{display:block;}
+.result-screen{padding:36px 28px;text-align:center;display:none;}
+.result-screen.show{display:block;}
+.result-emoji{font-size:64px;margin-bottom:12px;}
+.result-screen h2{font-family:"Space Mono",monospace;font-size:20px;color:var(--port);margin-bottom:8px;}
+.result-score{font-size:48px;font-weight:900;color:var(--text);margin:10px 0 4px;}
+.result-score span{color:var(--port);}
+.result-msg{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+.btn-restart{background:var(--port);color:#fff;border:none;border-radius:14px;padding:14px 32px;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;transition:all .18s;}
+.btn-restart:hover{background:#6D28D9;transform:translateY(-2px);}
+@media(max-width:480px){.old-phrase{font-size:17px;}.opt-card{font-size:14px;}.card-header h1{font-size:15px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">⏳</div>
+      <div>
+        <h1>Viajante do Tempo</h1>
+        <p>Gírias e Coesão · Português 5º ano</p>
+      </div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como jogar:</strong> O Elástico viajou no tempo e trouxe expressões antigas! Leia cada expressão da época e escolha o significado correto para hoje. Você tem <strong>7 rodadas</strong>.
+    </div>
+    <div class="score-bar">
+      <span class="score-label" id="score-lbl">0 / 7</span>
+      <div class="progress-wrap"><div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div></div>
+    </div>
+    <div class="round-area" id="round-area">
+      <div class="machine-header">
+        <span class="machine-title">EXPRESSÃO DA ÉPOCA</span>
+        <span class="round-badge" id="round-badge">Rodada 1 de 7</span>
+      </div>
+      <div class="time-bubble">
+        <div class="era-tag" id="era-tag">ÉPOCA</div>
+        <div class="old-phrase" id="old-phrase"></div>
+        <div class="context-text" id="context-text"></div>
+      </div>
+      <div class="q-label">Qual é o significado moderno dessa expressão?</div>
+      <div class="options-grid" id="options-grid"></div>
+      <div class="feedback-box" id="feedback-box"><span class="fb-icon" id="fb-icon"></span><span id="fb-text"></span></div>
+      <button class="btn-next" id="btn-next" onclick="nextRound()">Próxima →</button>
+    </div>
+    <div class="result-screen" id="result-screen">
+      <div class="result-emoji" id="result-emoji"></div>
+      <h2>Missão cumprida!</h2>
+      <div class="result-score"><span id="result-score">0</span>/7</div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="btn-restart" onclick="restart()">↺ Viajar de novo</button>
+    </div>
+  </div>
+</div>
+<script>
+var ROUNDS = [
+  {
+    era:"CRÔNICA 'ANTIGAMENTE' · Carlos Drummond de Andrade",
+    phrase:'As <em>mademoiselles</em> da cidade foram ao baile.',
+    context:'Expressão usada antigamente para se referir a jovens mulheres.',
+    opts:['Professoras da escola','Moças','Músicas animadas','Famílias nobres'],
+    ans:1,
+    fb:"Correto! 'Mademoiselles' era a forma elegante de dizer 'moças'. Hoje essa expressão caiu em desuso — é uma gíria que saiu de moda."
+  },
+  {
+    era:"CRÔNICA 'ANTIGAMENTE' · Carlos Drummond de Andrade",
+    phrase:'Meu avô vai <em>completar primaveras</em> amanhã.',
+    context:'Expressão poética usada para falar sobre a passagem dos anos.',
+    opts:['Plantar flores no jardim','Terminar uma viagem longa','Fazer aniversário','Começar uma nova temporada'],
+    ans:2,
+    fb:"Correto! 'Completar primaveras' era uma expressão usada para dizer 'fazer aniversário'. Cada primavera = um ano de vida. Hoje caiu em desuso."
+  },
+  {
+    era:"GÍRIA DOS ANOS 1970–1990",
+    phrase:'Cinderela estava <em>um pitéu</em> no baile.',
+    context:'Usada para descrever alguém ou algo que causava admiração.',
+    opts:['Com muita fome','Triste e abatida','Algo incrível / espetacular','Com um vestido vermelho'],
+    ans:2,
+    fb:"Correto! 'Um pitéu' era uma gíria usada para dizer que alguém estava espetacular ou incrível. Hoje os jovens não usam mais essa expressão — ela caiu em desuso."
+  },
+  {
+    era:"GÍRIA DOS ANOS 1970–1990",
+    phrase:'Que <em>teteia</em> aquela roupa nova!',
+    context:'Expressão de admiração usada para descrever algo ou alguém.',
+    opts:['Que estranha!','Que espetacular / perfeita!','Que barata!','Que velha!'],
+    ans:1,
+    fb:"Correto! 'Teteia' era uma gíria de admiração — significava algo ou alguém perfeito, espetacular. Assim como 'pitéu', caiu em desuso entre os jovens de hoje."
+  },
+  {
+    era:"GÍRIA ATUAL · Ainda em uso",
+    phrase:'A apresentação da turma foi <em>um arraso</em>!',
+    context:'Expressão usada para dizer que algo foi muito bem ou impressionou.',
+    opts:['Uma bagunça total','Uma coisa destruída','Algo espetacular, que arrasou','Uma brincadeira engraçada'],
+    ans:2,
+    fb:"Correto! 'Um arraso' é uma gíria que ainda é usada atualmente para dizer que algo foi incrível. Diferente de 'pitéu' e 'teteia', essa expressão não caiu em desuso."
+  },
+  {
+    era:"GÍRIA ATUAL · Ainda em uso",
+    phrase:'A festa do fim de ano foi <em>um show</em>!',
+    context:'Expressão usada para elogiar algo que impressionou positivamente.',
+    opts:['Uma apresentação musical com palco','Algo espetacular e impressionante','Um programa de televisão','Uma bagunça enorme'],
+    ans:1,
+    fb:"Correto! 'Um show' como gíria significa que algo foi espetacular. Nesse caso não é uma apresentação musical — é uma gíria de elogio, ainda muito usada hoje."
+  },
+  {
+    era:"COMPARANDO ÉPOCAS · Dinamismo da língua",
+    phrase:'Por que a língua tem gírias que mudam com o tempo?',
+    context:'Pense no que você aprendeu sobre gírias e dinamismo da língua.',
+    opts:['Porque os dicionários trocam as palavras a cada dez anos','Porque os falantes fazem expressões entrarem e saírem de uso','Porque o governo decide quais palavras são permitidas','Porque as escolas ensinam somente palavras novas'],
+    ans:1,
+    fb:"Correto! A língua muda porque os próprios falantes — as pessoas que a usam — fazem expressões entrarem ou saírem de uso. Nenhuma autoridade decide isso!"
+  }
+];
+
+var cur = 0, roundScore = 0;
+
+function renderRound() {
+  var r = ROUNDS[cur];
+  document.getElementById('round-badge').textContent = 'Rodada '+(cur+1)+' de '+ROUNDS.length;
+  document.getElementById('era-tag').textContent = r.era;
+  document.getElementById('old-phrase').innerHTML = r.phrase;
+  document.getElementById('context-text').textContent = r.context;
+  var grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  r.opts.forEach(function(opt,i){
+    var btn = document.createElement('button');
+    btn.className = 'opt-card';
+    var icons = ['🔵','🟢','🟡','🔴'];
+    btn.innerHTML = '<span class="opt-icon">'+icons[i]+'</span>'+opt;
+    btn.addEventListener('click', function(){ pick(i); });
+    grid.appendChild(btn);
+  });
+  var fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  document.getElementById('btn-next').className = 'btn-next';
+}
+
+function pick(idx) {
+  var r = ROUNDS[cur];
+  var correct = idx === r.ans;
+  if(correct) roundScore++;
+  var cards = document.getElementById('options-grid').querySelectorAll('.opt-card');
+  cards.forEach(function(c,i){
+    c.disabled = true;
+    if(i===r.ans) c.classList.add('correct');
+    else if(i===idx && !correct) c.classList.add('wrong');
+  });
+  var fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box '+(correct?'ok':'err')+' show';
+  document.getElementById('fb-icon').textContent = correct?'✓':'✗';
+  document.getElementById('fb-text').textContent = r.fb;
+  document.getElementById('score-lbl').textContent = roundScore+' / '+ROUNDS.length;
+  document.getElementById('prog-fill').style.width = ((cur+1)/ROUNDS.length*100)+'%';
+  var btnNext = document.getElementById('btn-next');
+  btnNext.textContent = cur < ROUNDS.length-1 ? 'Próxima rodada →' : 'Ver resultado';
+  btnNext.className = 'btn-next show';
+}
+
+function nextRound() {
+  cur++;
+  if(cur < ROUNDS.length) {
+    renderRound();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('round-area').style.display = 'none';
+  var pct = Math.round((roundScore/ROUNDS.length)*100);
+  window.sabendoScore = pct;
+  var rs = document.getElementById('result-screen');
+  rs.className = 'result-screen show';
+  var emoji = pct>=90?'🏆':pct>=70?'⭐':pct>=50?'💪':'📚';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-score').textContent = roundScore;
+  var msg = pct>=90?'Você é um verdadeiro viajante do tempo das gírias!':pct>=70?'Muito bem! A língua não tem segredos para você.':pct>=50?'Boa! Revise as gírias antigas e tente novamente.':'Volte no tempo e estude mais as expressões!';
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function restart() {
+  cur = 0; roundScore = 0;
+  document.getElementById('round-area').style.display = 'block';
+  document.getElementById('result-screen').className = 'result-screen';
+  document.getElementById('score-lbl').textContent = '0 / '+ROUNDS.length;
+  document.getElementById('prog-fill').style.width = '0%';
+  renderRound();
+}
+
+renderRound();
+</script>
+<script src="../../shared/portal-back.js"></script>
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "girias-coesao";
+  var ACTIVITY_TYPE = "viajante-tempo";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Elástico",
+    characterEmoji: "🔗",
+    characterImg:   "chars/girias-coesao-hd.png",
+    themeLabel:     "Gírias e Coesão · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-girias-coesao",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") { _capturedScore = Math.round(window._sabendoScoreInternal); btn.style.display = "block"; }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id||"")+" "+(el.className||"");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id||"")+" "+(el.className||"");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444";
+      setTimeout(function(){ btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id, scoreVal = _capturedScore, today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({user_id:uid,discipline:DISCIPLINE,theme_slug:THEME_SLUG,activity_type:ACTIVITY_TYPE,score:scoreVal,is_first_attempt:isFirst});
+    var sr = await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if (sr.data) {
+      var s = sr.data, yest = new Date(); yest.setDate(yest.getDate()-1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;
+      await supa.from("streaks").update({current_streak:ns,longest_streak:Math.max(ns,s.longest_streak),last_activity_date:today,total_activities:s.total_activities+1,updated_at:new Date().toISOString()}).eq("user_id",uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa,uid,THEME_SLUG,DISCIPLINE,GAMI_CONFIG);
+  });
+})();
+</script>
+</body>
+</html>

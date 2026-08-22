@@ -450,6 +450,7 @@
 | `Publinho.png` |
 | `Raizinha.png` |
 | `Toni.png` |
+| `Travessao.png` |
 | `Verbão.png` |
 | `Xis.png` |
 | `Ze e Das Gracas.png` |

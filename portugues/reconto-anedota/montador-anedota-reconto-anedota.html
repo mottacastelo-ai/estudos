@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Montador de Anedota — Reconto e Anedota</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .75; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.card-header { background: linear-gradient(135deg, #2D1B69, #7C3AED 60%, #A78BFA); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+/* Steps indicator */
+.steps-bar { display: flex; align-items: center; padding: 14px 24px; gap: 0; border-bottom: 2px solid var(--border); background: var(--port-bg); overflow-x: auto; }
+.step-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--muted); flex-shrink: 0; transition: all .2s; }
+.step-dot.active { background: var(--port); border-color: var(--port); color: #fff; }
+.step-dot.done   { background: #059669; border-color: #059669; color: #fff; }
+.step-line { flex: 1; height: 2px; background: var(--border); min-width: 16px; }
+.step-line.done { background: #059669; }
+
+/* Panels */
+.panel { display: none; padding: 22px 24px; }
+.panel.active { display: block; }
+.panel h2 { font-family: "Space Mono", monospace; font-size: 15px; color: var(--port); margin-bottom: 6px; }
+.panel .hint { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 16px; line-height: 1.5; }
+
+/* Choice grid */
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choice-btn { border: 2px solid var(--border); border-radius: 14px; padding: 14px 12px; font-size: 13px; font-weight: 700; cursor: pointer; background: var(--card); color: var(--text); text-align: center; font-family: "Baloo 2", cursive; transition: border-color .15s, background .15s; line-height: 1.4; }
+.choice-btn:hover { border-color: var(--port-light); background: var(--port-bg); }
+.choice-btn.selected { border-color: var(--port); background: var(--port-bg); color: var(--dark); }
+
+/* Textarea */
+.input-area { width: 100%; min-height: 90px; border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; font-size: 14px; font-family: "Baloo 2", cursive; color: var(--text); resize: vertical; outline: none; }
+.input-area:focus { border-color: var(--port-light); }
+.char-count { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 4px; text-align: right; }
+
+/* Nav buttons */
+.nav-btns { display: flex; gap: 10px; margin-top: 18px; }
+.btn-back-step { background: var(--card); color: var(--port); border: 2px solid var(--port-light); border-radius: 12px; padding: 11px 20px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: "Baloo 2", cursive; }
+.btn-back-step:hover { background: var(--port-bg); }
+.btn-next-step { background: var(--port); color: #fff; border: none; border-radius: 12px; padding: 11px 24px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: "Baloo 2", cursive; flex: 1; }
+.btn-next-step:disabled { opacity: .5; cursor: default; }
+.btn-next-step:hover:not(:disabled) { background: var(--dark); }
+
+/* Preview card */
+.anedota-preview { background: linear-gradient(135deg, var(--port-bg), #ede9ff); border: 2px solid var(--port-light); border-radius: 18px; padding: 20px; margin-top: 4px; }
+.anedota-preview .atitle { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; color: var(--port); margin-bottom: 10px; letter-spacing: .07em; }
+.anedota-body { font-size: 14px; font-weight: 600; line-height: 1.7; color: var(--text); }
+.anedota-body .highlight { color: var(--dark); font-weight: 800; }
+.anedota-body .punchline { color: #059669; font-style: italic; font-weight: 700; }
+
+/* Done panel */
+.done-panel { display: none; padding: 28px 24px; text-align: center; }
+.done-panel .big-emoji { font-size: 52px; margin-bottom: 10px; }
+.done-panel h2 { font-family: "Space Mono", monospace; font-size: 20px; color: var(--port); margin-bottom: 8px; }
+.done-panel p { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 20px; }
+.done-panel .anedota-preview { text-align: left; margin-bottom: 20px; }
+.btn-restart { background: var(--port); color: #fff; border: none; border-radius: 12px; padding: 12px 28px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: "Baloo 2", cursive; }
+.btn-restart:hover { background: var(--dark); }
+
+@media (max-width: 480px) {
+  .choice-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal();return false;">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">😄</div>
+      <div><h1>Montador de Anedota</h1><p>Reconto e Anedota · Virelivro</p></div>
+      <div class="hbadge">🏆 Criar</div>
+    </div>
+
+    <div class="steps-bar" id="steps-bar">
+      <div class="step-dot active" id="sdot-0">1</div>
+      <div class="step-line" id="sline-0"></div>
+      <div class="step-dot" id="sdot-1">2</div>
+      <div class="step-line" id="sline-1"></div>
+      <div class="step-dot" id="sdot-2">3</div>
+      <div class="step-line" id="sline-2"></div>
+      <div class="step-dot" id="sdot-3">4</div>
+    </div>
+
+    <!-- Etapa 1: Personagem -->
+    <div class="panel active" id="panel-0">
+      <h2>Passo 1 — Escolha o personagem</h2>
+      <p class="hint">Escolha um personagem de um <strong>conto de encantamento</strong> conhecido para colocar em uma situação inusitada na sua anedota.</p>
+      <div class="choice-grid" id="chars-grid"></div>
+      <div class="nav-btns">
+        <button class="btn-next-step" id="next-0" onclick="avancar(0)" disabled>Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Etapa 2: Situação -->
+    <div class="panel" id="panel-1">
+      <h2>Passo 2 — Escolha a situação inusitada</h2>
+      <p class="hint">A <strong>anedota</strong> tem um personagem em uma situação inesperada. Onde está o seu personagem?</p>
+      <div class="choice-grid" id="sit-grid"></div>
+      <div class="nav-btns">
+        <button class="btn-back-step" onclick="voltar(1)">← Voltar</button>
+        <button class="btn-next-step" id="next-1" onclick="avancar(1)" disabled>Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Etapa 3: Fala com quebra de expectativa -->
+    <div class="panel" id="panel-2">
+      <h2>Passo 3 — Escreva a quebra de expectativa</h2>
+      <p class="hint">
+        O humor da <strong>anedota</strong> vem de uma <strong>quebra de expectativa</strong> — o personagem faz ou diz algo bem diferente do esperado.
+        Escreva a fala final do personagem usando <strong>discurso direto</strong> (entre travessão ou aspas).
+      </p>
+      <div class="anedota-preview" id="preview-2">
+        <div class="atitle">RASCUNHO DA SUA ANEDOTA</div>
+        <div class="anedota-body" id="preview-body-2"></div>
+      </div>
+      <div style="margin-top:14px;">
+        <label style="font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;">Fala final do personagem (discurso direto):</label>
+        <textarea class="input-area" id="fala-input" placeholder='Exemplo: — Genio, o que eu mais quero é encontrar um bom restaurante aqui perto!' oninput="onFalaInput()" maxlength="300"></textarea>
+        <div class="char-count" id="char-count">0 / 300</div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-back-step" onclick="voltar(2)">← Voltar</button>
+        <button class="btn-next-step" id="next-2" onclick="avancar(2)" disabled>Ver minha anedota →</button>
+      </div>
+    </div>
+
+    <!-- Etapa 4: Revisão -->
+    <div class="panel" id="panel-3">
+      <h2>Passo 4 — Revise e conclua</h2>
+      <p class="hint">Sua anedota está pronta! Leia e veja se a <strong>quebra de expectativa</strong> está engraçada e clara.</p>
+      <div class="anedota-preview" id="anedota-final">
+        <div class="atitle">SUA ANEDOTA</div>
+        <div class="anedota-body" id="anedota-final-body"></div>
+      </div>
+      <div class="nav-btns" style="margin-top:18px;">
+        <button class="btn-back-step" onclick="voltar(3)">← Editar fala</button>
+        <button class="btn-next-step" onclick="concluirMontagem()">Concluir minha anedota ✓</button>
+      </div>
+    </div>
+
+    <div class="done-panel" id="done-panel">
+      <div class="big-emoji">🎉</div>
+      <h2>Anedota criada!</h2>
+      <p>Você usou os elementos do gênero <strong>anedota</strong>: personagem de conto, situação inusitada e quebra de expectativa!</p>
+      <div class="anedota-preview done-panel-anedota" id="done-anedota">
+        <div class="atitle">SUA ANEDOTA</div>
+        <div class="anedota-body" id="done-anedota-body"></div>
+      </div>
+      <button class="btn-restart" onclick="reiniciar()">Criar nova anedota</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var CHARS = [
+  { emoji: '👱‍♀️', label: 'Cinderela', context: 'Conto da Cinderela' },
+  { emoji: '🐺', label: 'Chapeuzinho Vermelho', context: 'Conto de Chapeuzinho' },
+  { emoji: '🏔️', label: 'Branca de Neve', context: 'Conto de Branca de Neve' },
+  { emoji: '🦁', label: 'Pinóquio', context: 'Conto de Pinóquio' },
+  { emoji: '🪔', label: 'Aladim', context: 'Conto de Aladim' },
+  { emoji: '🐸', label: 'O Príncipe Sapo', context: 'Conto do Príncipe Sapo' }
+];
+
+var SITS = [
+  { emoji: '🏪', label: 'num supermercado movimentado' },
+  { emoji: '🏥', label: 'numa fila de espera do hospital' },
+  { emoji: '🚌', label: 'preso no trânsito dentro de um ônibus' },
+  { emoji: '🎓', label: 'numa sala de aula com uma prova difícil' },
+  { emoji: '📱', label: 'sem sinal de celular numa emergência' },
+  { emoji: '☕', label: 'esperando o pedido numa cafeteria' }
+];
+
+var escolha = { charIdx: -1, sitIdx: -1, fala: '' };
+
+function buildChoices() {
+  var cg = document.getElementById('chars-grid');
+  CHARS.forEach(function(c, i) {
+    var btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.id = 'cb-c-' + i;
+    btn.innerHTML = '<div style="font-size:22px;margin-bottom:4px;">' + c.emoji + '</div>' + c.label;
+    btn.onclick = function() { selecionarChar(i); };
+    cg.appendChild(btn);
+  });
+
+  var sg = document.getElementById('sit-grid');
+  SITS.forEach(function(s, i) {
+    var btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.id = 'cb-s-' + i;
+    btn.innerHTML = '<div style="font-size:22px;margin-bottom:4px;">' + s.emoji + '</div>' + s.label;
+    btn.onclick = function() { selecionarSit(i); };
+    sg.appendChild(btn);
+  });
+}
+
+function selecionarChar(i) {
+  escolha.charIdx = i;
+  document.querySelectorAll('#chars-grid .choice-btn').forEach(function(b, idx) {
+    b.classList.toggle('selected', idx === i);
+  });
+  document.getElementById('next-0').disabled = false;
+}
+
+function selecionarSit(i) {
+  escolha.sitIdx = i;
+  document.querySelectorAll('#sit-grid .choice-btn').forEach(function(b, idx) {
+    b.classList.toggle('selected', idx === i);
+  });
+  document.getElementById('next-1').disabled = false;
+  atualizarPreview2();
+}
+
+function onFalaInput() {
+  var val = document.getElementById('fala-input').value.trim();
+  escolha.fala = val;
+  document.getElementById('char-count').textContent = val.length + ' / 300';
+  document.getElementById('next-2').disabled = val.length < 5;
+  atualizarPreview2();
+}
+
+function atualizarPreview2() {
+  if (escolha.charIdx < 0 || escolha.sitIdx < 0) return;
+  var ch = CHARS[escolha.charIdx];
+  var st = SITS[escolha.sitIdx];
+  var fala = escolha.fala || '<em style="color:var(--muted)">[sua fala virá aqui]</em>';
+  var html = '<span class="highlight">' + ch.label + '</span> estava <span class="highlight">' + st.label + '</span>. ';
+  html += 'De repente, uma situação inusitada apareceu. Todo mundo esperava uma reação grandiosa do(a) ' + ch.label.toLowerCase() + '... mas então ele(a) disse:<br><br>';
+  html += '<span class="punchline">' + fala + '</span>';
+  document.getElementById('preview-body-2').innerHTML = html;
+}
+
+function montarTextoFinal() {
+  var ch = CHARS[escolha.charIdx];
+  var st = SITS[escolha.sitIdx];
+  var fala = escolha.fala;
+  var html = '<span class="highlight">' + ch.label + '</span> estava <span class="highlight">' + st.label + '</span>. ';
+  html += 'De repente, uma situação inusitada aconteceu. Todo mundo esperava uma reação grandiosa do(a) famoso(a) personagem... mas então ele(a) disse:<br><br>';
+  html += '<span class="punchline">' + fala + '</span>';
+  return html;
+}
+
+function avancar(step) {
+  document.getElementById('panel-' + step).classList.remove('active');
+  document.getElementById('sdot-' + step).classList.remove('active');
+  document.getElementById('sdot-' + step).classList.add('done');
+  document.getElementById('sdot-' + step).textContent = '✓';
+  if (step < 3) document.getElementById('sline-' + step).classList.add('done');
+  var next = step + 1;
+  document.getElementById('panel-' + next).classList.add('active');
+  document.getElementById('sdot-' + next).classList.add('active');
+  if (step === 2) {
+    document.getElementById('anedota-final-body').innerHTML = montarTextoFinal();
+  }
+}
+
+function voltar(step) {
+  document.getElementById('panel-' + step).classList.remove('active');
+  document.getElementById('sdot-' + step).classList.remove('active');
+  var prev = step - 1;
+  document.getElementById('panel-' + prev).classList.add('active');
+  document.getElementById('sdot-' + prev).classList.remove('done');
+  document.getElementById('sdot-' + prev).textContent = prev + 1;
+  document.getElementById('sdot-' + prev).classList.add('active');
+  if (prev < 3) document.getElementById('sline-' + prev).classList.remove('done');
+}
+
+function concluirMontagem() {
+  document.getElementById('panel-3').classList.remove('active');
+  document.getElementById('sdot-3').classList.remove('active');
+  document.getElementById('sdot-3').classList.add('done');
+  document.getElementById('sdot-3').textContent = '✓';
+  document.getElementById('done-anedota-body').innerHTML = montarTextoFinal();
+  document.getElementById('done-panel').style.display = 'block';
+  window.sabendoScore = 100;
+  document.dispatchEvent(new Event('sabendo:criador-done'));
+}
+
+function reiniciar() {
+  escolha = { charIdx: -1, sitIdx: -1, fala: '' };
+  document.getElementById('done-panel').style.display = 'none';
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('panel-0').classList.add('active');
+  for (var i = 0; i < 4; i++) {
+    var dot = document.getElementById('sdot-' + i);
+    dot.classList.remove('active', 'done');
+    dot.textContent = i + 1;
+    if (i < 3) document.getElementById('sline-' + i).classList.remove('done');
+  }
+  document.getElementById('sdot-0').classList.add('active');
+  document.querySelectorAll('.choice-btn').forEach(function(b) { b.classList.remove('selected'); });
+  document.getElementById('next-0').disabled = true;
+  document.getElementById('next-1').disabled = true;
+  document.getElementById('next-2').disabled = true;
+  document.getElementById('fala-input').value = '';
+  document.getElementById('char-count').textContent = '0 / 300';
+  document.getElementById('preview-body-2').innerHTML = '';
+}
+
+buildChoices();
+</script>
+
+<script src="../../shared/portal-back.js"></script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "reconto-anedota";
+  var ACTIVITY_TYPE = "montador-anedota";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Virelivro",
+    characterEmoji: "📚",
+    characterImg:   "chars/reconto-anedota-hd.png",
+    themeLabel:     "Reconto e Anedota · Português",
+    totalActivities: 5,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-reconto-anedota",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+</body>
+</html>
