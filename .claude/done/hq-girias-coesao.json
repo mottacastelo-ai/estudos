@@ -1,0 +1,22 @@
+{
+    "prompt_path":  "portugues/girias-coesao/hq-girias-coesao-prompt.md",
+    "slug":  "girias-coesao",
+    "raiz":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+    "disciplina":  "portugues",
+    "output_dir":  "portugues/girias-coesao",
+    "modo":  "mcp",
+    "status":  "done",
+    "canonicas_path":  "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+    "expected_outputs":  [
+                             "hq-girias-coesao-pg1.png",
+                             "hq-girias-coesao-pg2.png",
+                             "hq-girias-coesao-pg3.png",
+                             "hq-girias-coesao-pg4.png"
+                         ],
+    "paginas_confirmadas":  [
+                                "portugues/girias-coesao/hq-girias-coesao-pg1.png",
+                                "portugues/girias-coesao/hq-girias-coesao-pg2.png",
+                                "portugues/girias-coesao/hq-girias-coesao-pg3.png",
+                                "portugues/girias-coesao/hq-girias-coesao-pg4.png"
+                            ]
+}
