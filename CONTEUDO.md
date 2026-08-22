@@ -433,6 +433,7 @@
 | `Calê.png` |
 | `Ciclao.png` |
 | `Divi.png` |
+| `Elastico.png` |
 | `Elinho.png` |
 | `Esfer.png` |
 | `Faca.png` |
@@ -440,6 +441,7 @@
 | `Grafo.png` |
 | `Lixinho.png` |
 | `Max-Min.png` |
+| `Morá.png` |
 | `Poli.png` |
 | `Pontuacao.png` |
 | `Prepo musculoso.png` |

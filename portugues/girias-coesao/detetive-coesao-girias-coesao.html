@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detetive da Coesão — Gírias e Coesão</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;
+  --text:#1A1A2E;--muted:#6B7280;--border:#DDD6FE;--card:#fff;
+  --green:#059669;--green-bg:#ECFDF5;--red:#DC2626;--red-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:700px;margin:0 auto;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);background:none;border:none;cursor:pointer;padding:0;margin-bottom:16px;font-family:"Baloo 2",cursive;}
+.back-btn:hover{opacity:.7;}
+.activity-card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.1);}
+.card-header{background:linear-gradient(135deg,#2D1B69,#7C3AED 60%,#A78BFA);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:36px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:17px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+.instrucao{padding:14px 24px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border);background:var(--port-bg);line-height:1.7;}
+.instrucao strong{color:var(--text);}
+.score-bar{display:flex;align-items:center;gap:10px;padding:10px 24px;border-bottom:2px solid var(--border);background:#faf9ff;}
+.score-lbl{font-family:"Space Mono",monospace;font-size:12px;font-weight:700;color:var(--port);}
+.prog-track{flex:1;height:7px;border-radius:999px;background:var(--border);}
+.prog-fill{height:7px;border-radius:999px;background:linear-gradient(90deg,var(--port),var(--port-light));transition:width .4s;}
+.case-area{padding:24px;}
+.case-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.case-title{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;}
+.case-badge{background:var(--port-bg);border:2px solid var(--border);border-radius:999px;padding:4px 14px;font-size:12px;font-weight:800;color:var(--port);}
+.step-indicator{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.step-pill{padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;border:2px solid var(--border);color:var(--muted);background:var(--card);}
+.step-pill.active{border-color:var(--port);color:var(--port);background:var(--port-bg);}
+.step-pill.done{border-color:var(--green);color:var(--green);background:var(--green-bg);}
+.text-box{background:#faf9ff;border:2px solid var(--border);border-radius:16px;padding:20px 22px;line-height:2.2;font-size:16px;font-weight:600;margin-bottom:16px;}
+.text-box p{margin-bottom:8px;}
+.text-box p:last-child{margin-bottom:0;}
+.pronome-word{display:inline-block;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:#fff;border-radius:8px;padding:2px 10px;font-weight:800;cursor:default;position:relative;}
+.referent-btn{display:inline-block;padding:2px 8px;border-radius:8px;border:2px dashed var(--border);cursor:pointer;font-weight:800;transition:background .15s,border-color .15s;position:relative;}
+.referent-btn:hover{background:var(--port-bg);border-color:var(--port-light);}
+.referent-btn.selected{background:var(--port-bg);border-color:var(--port);border-style:solid;}
+.referent-btn.correct{background:var(--green-bg);border-color:var(--green);border-style:solid;color:#065F46;}
+.referent-btn.wrong{background:var(--red-bg);border-color:var(--red);border-style:solid;color:#7F1D1D;}
+.question-label{font-size:14px;font-weight:800;color:var(--text);margin-bottom:10px;}
+.question-label .pronome-inline{background:linear-gradient(135deg,#7C3AED,#A78BFA);color:#fff;border-radius:6px;padding:1px 8px;font-size:13px;}
+.feedback-box{margin-top:14px;padding:14px 18px;border-radius:14px;border:2px solid;font-size:14px;font-weight:700;display:none;animation:popIn .25s ease;line-height:1.6;}
+@keyframes popIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.feedback-box.show{display:flex;gap:10px;align-items:flex-start;}
+.feedback-box.ok{background:var(--green-bg);border-color:var(--green);color:#065F46;}
+.feedback-box.err{background:var(--red-bg);border-color:var(--red);color:#7F1D1D;}
+.feedback-box .fb-icon{font-size:20px;flex-shrink:0;}
+.btn-next{width:100%;background:var(--port);color:#fff;border:none;border-radius:14px;padding:15px;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px;display:none;transition:all .18s;}
+.btn-next:hover{background:#6D28D9;transform:translateY(-2px);}
+.btn-next.show{display:block;}
+.result-screen{padding:36px 28px;text-align:center;display:none;}
+.result-screen.show{display:block;}
+.result-emoji{font-size:64px;margin-bottom:12px;}
+.result-screen h2{font-family:"Space Mono",monospace;font-size:20px;color:var(--port);margin-bottom:8px;}
+.result-score{font-size:48px;font-weight:900;color:var(--text);margin:10px 0 4px;}
+.result-score span{color:var(--port);}
+.result-msg{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+.btn-restart{background:var(--port);color:#fff;border:none;border-radius:14px;padding:14px 32px;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;transition:all .18s;}
+.btn-restart:hover{background:#6D28D9;transform:translateY(-2px);}
+@media(max-width:480px){.text-box{font-size:15px;line-height:2;}.card-header h1{font-size:15px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao Portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🔍</div>
+      <div>
+        <h1>Detetive da Coesão</h1>
+        <p>Gírias e Coesão · Português 5º ano</p>
+      </div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como jogar:</strong> Cada caso mostra um texto com uma palavra de <strong style="color:var(--port)">coesão</strong> em roxo (pronome ou sinônimo). Sua missão é clicar na palavra ou trecho que ela <strong>retoma</strong> (já foi dito antes) ou <strong>antecipa</strong> (vai ser explicado a seguir). As palavras sublinhadas são as opções para clicar.
+    </div>
+    <div class="score-bar">
+      <span class="score-lbl" id="score-lbl">0 / 6</span>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="case-area" id="case-area">
+      <div class="case-header">
+        <span class="case-title">CASO DE COESÃO</span>
+        <span class="case-badge" id="case-badge">Caso 1 de 6</span>
+      </div>
+      <div class="step-indicator" id="step-indicator"></div>
+      <div class="text-box" id="text-box"></div>
+      <div class="question-label" id="q-label"></div>
+      <div class="feedback-box" id="feedback-box"><span class="fb-icon" id="fb-icon"></span><span id="fb-text"></span></div>
+      <button class="btn-next" id="btn-next" onclick="nextCase()">Próximo caso →</button>
+    </div>
+    <div class="result-screen" id="result-screen">
+      <div class="result-emoji" id="result-emoji"></div>
+      <h2>Investigação encerrada!</h2>
+      <div class="result-score"><span id="result-score">0</span>/6</div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="btn-restart" onclick="restart()">↺ Investigar de novo</button>
+    </div>
+  </div>
+</div>
+<script>
+// Each case: text with HTML, the pronome label, clickable spans by data-id, correct id, and feedback
+var CASES = [
+  {
+    title:"Pronome de retomada: ISSO",
+    textHtml:'<p>Cinderela chegou ao baile deslumbrante, com um vestido encantador e um sorriso que iluminava a festa. <span class="pronome-word">Isso</span> deixou todos os presentes sem fala.</p><p>Clique na parte do texto que o pronome <strong>ISSO</strong> retoma (já foi dito antes).</p>',
+    qLabel:'O pronome <span class="pronome-inline">isso</span> retoma qual informação do texto?',
+    options:[
+      {id:'a', text:'Cinderela chegou ao baile deslumbrante, com um vestido encantador e um sorriso que iluminava a festa'},
+      {id:'b', text:'a festa'},
+      {id:'c', text:'todos os presentes'}
+    ],
+    correct:'a',
+    fb:'Correto! O pronome "isso" retoma toda a informação anterior: que Cinderela chegou deslumbrante, com vestido encantador e sorriso iluminado — essa é a coesão textual por retomada.',
+    fbErr:'Não foi dessa vez. O pronome "isso" retoma toda a frase anterior (Cinderela chegou ao baile deslumbrante...). É um recurso de coesão textual que evita repetição.'
+  },
+  {
+    title:"Pronome de retomada: ISSO",
+    textHtml:'<p>A raposa foi flagrada com os sapatos na boca nas câmeras de segurança da loja.</p><p><span class="pronome-word">Isso</span> surpreendeu os donos do estabelecimento, que não esperavam por tal comportamento.</p><p>Clique no trecho que o pronome <strong>ISSO</strong> retoma.</p>',
+    qLabel:'O pronome <span class="pronome-inline">isso</span> retoma qual informação?',
+    options:[
+      {id:'a', text:'A raposa foi flagrada com os sapatos na boca nas câmeras de segurança da loja'},
+      {id:'b', text:'os donos do estabelecimento'},
+      {id:'c', text:'tal comportamento'}
+    ],
+    correct:'a',
+    fb:'Correto! O pronome "isso" retoma a informação da frase anterior: que a raposa foi flagrada com os sapatos. Isso = aquela situação toda que foi mencionada antes.',
+    fbErr:'Quase! O pronome "isso" retoma a frase anterior inteira: "A raposa foi flagrada com os sapatos nas câmeras". "Isso" = aquela situação toda.'
+  },
+  {
+    title:"Pronome de antecipação: ISTO",
+    textHtml:'<p><span class="pronome-word">Isto</span> é o que acontece com as gírias: elas surgem, ficam populares por um tempo e depois caem em desuso.</p><p>Clique na parte que o pronome <strong>ISTO</strong> antecipa (que vem depois dele).</p>',
+    qLabel:'O pronome <span class="pronome-inline">isto</span> antecipa qual informação?',
+    options:[
+      {id:'a', text:'Isto'},
+      {id:'b', text:'elas surgem, ficam populares por um tempo e depois caem em desuso'},
+      {id:'c', text:'as gírias'}
+    ],
+    correct:'b',
+    fb:'Correto! O pronome "isto" antecipa a explicação que vem depois: "elas surgem, ficam populares por um tempo e depois caem em desuso". Diferente de "isso" (que retoma), "isto" aponta para frente no texto.',
+    fbErr:'Não exatamente. O pronome "isto" antecipa a explicação que vem depois dele: "elas surgem, ficam populares por um tempo e depois caem em desuso". "Isto" = o que vou explicar agora.'
+  },
+  {
+    title:"Sinônimo como coesão: O ANIMAL / O BICHO",
+    textHtml:'<p>Uma raposa foi filmada furtando sapatos de moradores de um bairro na Alemanha. <span class="pronome-word">O animal</span> levava os calçados para seu território na floresta próxima.</p><p>Clique na palavra que <strong>o animal</strong> substitui para evitar repetição.</p>',
+    qLabel:'A expressão <span class="pronome-inline">o animal</span> substitui (retoma) qual palavra do texto?',
+    options:[
+      {id:'a', text:'sapatos'},
+      {id:'b', text:'raposa'},
+      {id:'c', text:'moradores'}
+    ],
+    correct:'b',
+    fb:'Correto! "O animal" é um sinônimo de "raposa" usado para evitar a repetição da mesma palavra — isso é coesão textual. O texto continua coeso (conectado) sem ficar repetitivo.',
+    fbErr:'Não dessa vez. "O animal" é um sinônimo que substitui "raposa" — o texto usa essa troca para evitar repetição, que é um recurso de coesão textual.'
+  },
+  {
+    title:"Sinônimo como coesão: OS CALÇADOS",
+    textHtml:'<p>Uma raposa foi filmada furtando sapatos de moradores de um bairro na Alemanha. O animal levava <span class="pronome-word">os calçados</span> para seu território na floresta próxima.</p><p>Clique na palavra que <strong>os calçados</strong> substitui para evitar repetição.</p>',
+    qLabel:'A expressão <span class="pronome-inline">os calçados</span> substitui qual palavra do texto?',
+    options:[
+      {id:'a', text:'raposa'},
+      {id:'b', text:'moradores'},
+      {id:'c', text:'sapatos'}
+    ],
+    correct:'c',
+    fb:'Correto! "Os calçados" é um sinônimo de "sapatos". Usar sinônimos é um recurso de coesão textual que evita repetição e deixa o texto mais fluido e harmônico.',
+    fbErr:'Quase! "Os calçados" substitui "sapatos" — são sinônimos. Usar sinônimos para evitar repetição é um recurso de coesão textual.'
+  },
+  {
+    title:"Pronome de retomada: ISSO",
+    textHtml:'<p>"Mademoiselles" e "completar primaveras" eram expressões comuns no Brasil do século passado. <span class="pronome-word">Isso</span> mostra que a língua muda com o tempo, pois os falantes fazem palavras e expressões saírem de uso.</p><p>Clique no trecho que o pronome <strong>ISSO</strong> retoma.</p>',
+    qLabel:'O pronome <span class="pronome-inline">isso</span> retoma qual informação?',
+    options:[
+      {id:'a', text:'a língua muda com o tempo'},
+      {id:'b', text:'"Mademoiselles" e "completar primaveras" eram expressões comuns no Brasil do século passado'},
+      {id:'c', text:'os falantes'}
+    ],
+    correct:'b',
+    fb:'Correto! O pronome "isso" retoma a informação anterior: que "mademoiselles" e "completar primaveras" eram expressões comuns no século passado. É a coesão textual por retomada em ação!',
+    fbErr:'Não foi desta vez. O pronome "isso" retoma a frase anterior inteira: que aquelas expressões eram comuns no século passado. Isso = essa situação mencionada antes.'
+  }
+];
+
+var cur = 0, caseScore = 0, answered = false;
+
+function renderCase() {
+  var c = CASES[cur];
+  document.getElementById('case-badge').textContent = 'Caso '+(cur+1)+' de '+CASES.length;
+  // Steps
+  var si = document.getElementById('step-indicator');
+  si.innerHTML = '';
+  CASES.forEach(function(cs,i){
+    var sp = document.createElement('span');
+    sp.className = 'step-pill'+(i===cur?' active':i<cur?' done':'');
+    sp.textContent = 'Caso '+(i+1);
+    si.appendChild(sp);
+  });
+  // Text
+  document.getElementById('text-box').innerHTML = c.textHtml;
+  // Question label
+  document.getElementById('q-label').innerHTML = c.qLabel;
+  // Render clickable options below
+  var textBox = document.getElementById('text-box');
+  // Add options as clickable chips below text
+  var optsDiv = document.createElement('div');
+  optsDiv.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-top:14px;border-top:2px dashed var(--border);padding-top:12px;';
+  c.options.forEach(function(opt){
+    var span = document.createElement('button');
+    span.className = 'referent-btn';
+    span.dataset.optId = opt.id;
+    span.style.cssText = 'display:block;width:100%;text-align:left;padding:10px 14px;border-radius:12px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:700;color:var(--text);background:var(--card);border:2px dashed var(--border);cursor:pointer;transition:all .15s;';
+    span.textContent = '"'+opt.text+'"';
+    span.addEventListener('click', function(){ if(!answered) pickOption(opt.id); });
+    optsDiv.appendChild(span);
+  });
+  textBox.appendChild(optsDiv);
+  // Reset feedback
+  var fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  document.getElementById('btn-next').className = 'btn-next';
+  answered = false;
+}
+
+function pickOption(id) {
+  if(answered) return;
+  answered = true;
+  var c = CASES[cur];
+  var correct = id === c.correct;
+  if(correct) caseScore++;
+  // Highlight options
+  var textBox = document.getElementById('text-box');
+  textBox.querySelectorAll('.referent-btn').forEach(function(btn){
+    btn.disabled = true;
+    if(btn.dataset.optId === c.correct) {
+      btn.style.background = 'var(--green-bg)';
+      btn.style.borderColor = 'var(--green)';
+      btn.style.borderStyle = 'solid';
+      btn.style.color = '#065F46';
+    } else if(btn.dataset.optId === id && !correct) {
+      btn.style.background = 'var(--red-bg)';
+      btn.style.borderColor = 'var(--red)';
+      btn.style.borderStyle = 'solid';
+      btn.style.color = '#7F1D1D';
+    }
+  });
+  var fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box '+(correct?'ok':'err')+' show';
+  document.getElementById('fb-icon').textContent = correct?'✓':'✗';
+  document.getElementById('fb-text').textContent = correct?c.fb:c.fbErr;
+  document.getElementById('score-lbl').textContent = caseScore+' / '+CASES.length;
+  document.getElementById('prog-fill').style.width = ((cur+1)/CASES.length*100)+'%';
+  var btnNext = document.getElementById('btn-next');
+  btnNext.textContent = cur < CASES.length-1 ? 'Próximo caso →' : 'Ver resultado';
+  btnNext.className = 'btn-next show';
+}
+
+function nextCase() {
+  cur++;
+  if(cur < CASES.length) {
+    renderCase();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('case-area').style.display = 'none';
+  var pct = Math.round((caseScore/CASES.length)*100);
+  window.sabendoScore = pct;
+  var rs = document.getElementById('result-screen');
+  rs.className = 'result-screen show';
+  var emoji = pct>=90?'🏆':pct>=70?'⭐':pct>=50?'💪':'📚';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-score').textContent = caseScore;
+  var msg = pct>=90?'Detetive expert! Você domina a coesão textual.':pct>=70?'Ótimo trabalho! Você entende pronomes e sinônimos.':pct>=50?'Boa investigação! Revise a coesão e tente de novo.':'Continue investigando! Releia os casos e pratique mais.';
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function restart() {
+  cur = 0; caseScore = 0; answered = false;
+  document.getElementById('case-area').style.display = 'block';
+  document.getElementById('result-screen').className = 'result-screen';
+  document.getElementById('score-lbl').textContent = '0 / '+CASES.length;
+  document.getElementById('prog-fill').style.width = '0%';
+  renderCase();
+}
+
+renderCase();
+</script>
+<script src="../../shared/portal-back.js"></script>
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "girias-coesao";
+  var ACTIVITY_TYPE = "detetive-coesao";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Elástico",
+    characterEmoji: "🔗",
+    characterImg:   "chars/girias-coesao-hd.png",
+    themeLabel:     "Gírias e Coesão · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-girias-coesao",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") { _capturedScore = Math.round(window._sabendoScoreInternal); btn.style.display = "block"; }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id||"")+" "+(el.className||"");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id||"")+" "+(el.className||"");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444";
+      setTimeout(function(){ btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id, scoreVal = _capturedScore, today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({user_id:uid,discipline:DISCIPLINE,theme_slug:THEME_SLUG,activity_type:ACTIVITY_TYPE,score:scoreVal,is_first_attempt:isFirst});
+    var sr = await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if (sr.data) {
+      var s = sr.data, yest = new Date(); yest.setDate(yest.getDate()-1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;
+      await supa.from("streaks").update({current_streak:ns,longest_streak:Math.max(ns,s.longest_streak),last_activity_date:today,total_activities:s.total_activities+1,updated_at:new Date().toISOString()}).eq("user_id",uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa,uid,THEME_SLUG,DISCIPLINE,GAMI_CONFIG);
+  });
+})();
+</script>
+</body>
+</html>

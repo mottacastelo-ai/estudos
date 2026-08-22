@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversor de Discurso — Direto e Indireto</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;--port-dark:#4C1D95;--border:#DDD6FE;
+  --text:#1A1A2E;--muted:#6B7280;--card:#fff;--radius:18px;
+  --correct:#059669;--correct-bg:#ECFDF5;--wrong:#DC2626;--wrong-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:24px 16px 80px}
+.wrap{max-width:700px;margin:0 auto}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);text-decoration:none;margin-bottom:16px;cursor:pointer;background:none;border:none;padding:0}
+.back-link:hover{opacity:.7}
+.activity-card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.1)}
+.card-header{background:linear-gradient(135deg,var(--port-dark),var(--port) 60%,var(--port-light));padding:20px 24px 18px;display:flex;align-items:center;gap:14px}
+.hicon{font-size:32px;line-height:1}
+.card-header h1{font-family:"Space Mono",monospace;font-size:17px;color:#fff;line-height:1.2}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap}
+.instrucao{padding:12px 24px;font-size:13px;font-weight:600;color:var(--muted);line-height:1.6;border-bottom:2px solid var(--border);background:var(--port-bg)}
+.instrucao strong{color:var(--text)}
+.prog-area{padding:14px 24px 10px;border-bottom:2px solid var(--border)}
+.prog-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.prog-track{height:8px;border-radius:999px;background:#EDE9FE}
+.prog-fill{height:8px;border-radius:999px;background:var(--port);transition:width .4s}
+.score-bar{display:flex;gap:20px;padding:10px 24px;background:var(--port-bg);border-bottom:2px solid var(--border);font-size:13px;font-weight:700}
+.score-bar span{color:var(--muted)}
+.score-bar strong{color:var(--port)}
+.round-area{padding:24px}
+.direction-badge{display:inline-block;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.06em;margin-bottom:14px}
+.dir-to-indir{background:#EDE9FE;color:var(--port-dark)}
+.indir-to-dir{background:#FFF7ED;color:#92400E}
+.source-box{background:var(--port-bg);border:2px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:20px;font-size:15px;font-weight:700;line-height:1.6}
+.source-label{font-family:"Space Mono",monospace;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}
+.source-text{font-style:italic;color:var(--port-dark)}
+.escolha-label{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt-btn{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border:2px solid var(--border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-weight:600;text-align:left;transition:all .15s;width:100%;line-height:1.5}
+.opt-btn:hover:not(:disabled){border-color:var(--port-light);background:var(--port-bg)}
+.opt-btn:disabled{cursor:default}
+.opt-letter{display:flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:50%;background:var(--port-bg);color:var(--port);font-family:"Space Mono",monospace;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.opt-btn.correct{border-color:var(--correct);background:var(--correct-bg)}
+.opt-btn.correct .opt-letter{background:#D1FAE5;color:var(--correct)}
+.opt-btn.wrong{border-color:var(--wrong);background:var(--wrong-bg)}
+.opt-btn.wrong .opt-letter{background:#FEE2E2;color:var(--wrong)}
+.feedback-box{margin-top:16px;padding:14px 16px;border-radius:14px;font-size:13px;font-weight:600;line-height:1.6;display:none}
+.feedback-box.show{display:flex;gap:10px;align-items:flex-start}
+.feedback-box.ok{background:var(--correct-bg);border:2px solid #6EE7B7;color:#065F46}
+.feedback-box.err{background:var(--wrong-bg);border:2px solid #FCA5A5;color:#991B1B}
+.btn-next{display:none;margin-top:20px;padding:12px 28px;border-radius:999px;background:var(--port);color:#fff;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;border:none;cursor:pointer;transition:opacity .2s}
+.btn-next.show{display:inline-flex}
+.btn-next:hover{opacity:.85}
+.result-panel{display:none;padding:32px 24px;text-align:center}
+.result-panel.show{display:block}
+.result-emoji{font-size:52px;margin-bottom:12px}
+.result-title{font-family:"Space Mono",monospace;font-size:20px;font-weight:700;color:var(--port-dark);margin-bottom:8px}
+.result-pct{font-size:44px;font-weight:900;color:var(--port);margin-bottom:4px}
+.result-sub{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:28px}
+.btn-restart{padding:14px 32px;border-radius:999px;background:var(--port);color:#fff;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;border:none;cursor:pointer}
+.btn-restart:hover{opacity:.85}
+@media(max-width:480px){
+  .source-text{font-size:14px}
+  .opt-btn{font-size:13px;padding:12px 14px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🔄</div>
+      <div><h1>Conversor de Discurso</h1><p>Discurso Direto e Indireto</p></div>
+      <div class="hbadge">⚙️ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Leia a frase destacada e escolha a opção que a converte corretamente para o outro tipo de discurso. Nas rodadas 1–4, você converte do direto para o indireto. Nas rodadas 5–8, do indireto para o direto.
+    </div>
+    <div class="prog-area">
+      <div class="prog-label" id="prog-label">Rodada 1 de 8</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="score-bar">
+      <span>Acertos: <strong id="hits-n">0</strong></span>
+      <span>Rodada: <strong id="round-n">1/8</strong></span>
+    </div>
+    <div class="round-area" id="round-area">
+      <div class="direction-badge" id="dir-badge"></div>
+      <div class="source-box">
+        <div class="source-label" id="source-label"></div>
+        <div class="source-text" id="source-text"></div>
+      </div>
+      <div class="escolha-label">Qual opção faz a conversão correta?</div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback-box" id="feedback-box"></div>
+      <button class="btn-next" id="btn-next" onclick="nextRound()">Próxima rodada →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="res-emoji"></div>
+      <div class="result-title">Resultado Final</div>
+      <div class="result-pct" id="res-pct"></div>
+      <div class="result-sub" id="res-sub"></div>
+      <button class="btn-restart" onclick="restart()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var ROUNDS = [
+  // Rounds 1–4: discurso direto → indireto
+  {
+    direcao: 'DIRETO → INDIRETO',
+    dirClass: 'dir-to-indir',
+    sourceLabel: 'DISCURSO DIRETO (original):',
+    source: '— Este par de sapatos é para Josefina! — disse a fada.',
+    opts: [
+      'A fada disse que aquele par de sapatos era para Josefina.',
+      '— A fada disse que aquele par de sapatos era para Josefina. —',
+      'A fada mandou o sapato chegar à Josefina.'
+    ],
+    correct: 0,
+    expl: 'No discurso indireto, retiramos o travessão, ajustamos o pronome ("este" → "aquele") e o tempo verbal ("é" → "era"). O verbo de elocução "disse" conecta narrador e fala.'
+  },
+  {
+    direcao: 'DIRETO → INDIRETO',
+    dirClass: 'dir-to-indir',
+    sourceLabel: 'DISCURSO DIRETO (original):',
+    source: '— Vou procurar o dono desse sapato! — prosseguiu Godofredo.',
+    opts: [
+      '— Godofredo prosseguiu procurando o sapato — disse a fada.',
+      'Godofredo prosseguiu dizendo que iria procurar o dono daquele sapato.',
+      'Godofredo — prosseguiu — que ia procurar o sapato.'
+    ],
+    correct: 1,
+    expl: 'No indireto, o verbo de elocução "prosseguiu" é mantido, o travessão é removido, e o verbo da fala ajusta o tempo ("vou" → "iria"). Sem travessão — quem conta é o narrador.'
+  },
+  {
+    direcao: 'DIRETO → INDIRETO',
+    dirClass: 'dir-to-indir',
+    sourceLabel: 'DISCURSO DIRETO (original):',
+    source: '— Este sapato pertence à Madalena! — continuou a fada.',
+    opts: [
+      'A fada continuou que aquele sapato pertencia à Madalena.',
+      'A fada continuou que este sapato pertence à Madalena.',
+      '— A fada continuou: aquele sapato pertencia à Madalena.'
+    ],
+    correct: 0,
+    expl: 'Ajustamos o pronome ("este" → "aquele") e o tempo verbal ("pertence" → "pertencia"). Sem travessão. A opção B erra ao manter "este" e "pertence" sem ajuste; a C mantém o travessão, que é marca do discurso direto.'
+  },
+  {
+    direcao: 'DIRETO → INDIRETO',
+    dirClass: 'dir-to-indir',
+    sourceLabel: 'DISCURSO DIRETO (original):',
+    source: '— Precisamos encontrar o pé certo! — disse ele.',
+    opts: [
+      'Ele disse — precisamos encontrar o pé certo.',
+      'Ele disse que precisamos encontrar o pé.',
+      'Ele disse que precisavam encontrar o pé certo.'
+    ],
+    correct: 2,
+    expl: 'No indireto, o verbo da fala ajusta a pessoa ("precisamos" → "precisavam") e remove o travessão. A opção A mantém o travessão; a B elimina "certo" do sentido original.'
+  },
+  // Rounds 5–8: discurso indireto → direto
+  {
+    direcao: 'INDIRETO → DIRETO',
+    dirClass: 'indir-to-dir',
+    sourceLabel: 'DISCURSO INDIRETO (original):',
+    source: 'A fada disse que aquele par de sapatos era para Madalena.',
+    opts: [
+      '— A fada disse que aquele par de sapatos era para Madalena. —',
+      '— Este par de sapatos é para Madalena! — disse a fada.',
+      '— Aquele par de sapatos é para Madalena! — disse a fada.'
+    ],
+    correct: 1,
+    expl: 'No discurso direto, adicionamos o travessão, voltamos o pronome para "este" (perto da personagem) e o verbo para o presente "é". A opção C mantém "aquele" — pronome do narrador, não da personagem.'
+  },
+  {
+    direcao: 'INDIRETO → DIRETO',
+    dirClass: 'indir-to-dir',
+    sourceLabel: 'DISCURSO INDIRETO (original):',
+    source: 'Godofredo mandou que levassem o sapato de casa em casa.',
+    opts: [
+      '— Levem o sapato de casa em casa! — mandou Godofredo.',
+      '— Godofredo mandou que levassem o sapato — disse ele.',
+      'Godofredo — levem o sapato — mandou.'
+    ],
+    correct: 0,
+    expl: 'O verbo de elocução "mandou" indica uma ordem. No direto, essa ordem vira fala literal com travessão e o verbo no imperativo: "Levem!". O verbo de elocução vem após a fala.'
+  },
+  {
+    direcao: 'INDIRETO → DIRETO',
+    dirClass: 'indir-to-dir',
+    sourceLabel: 'DISCURSO INDIRETO (original):',
+    source: 'A fada continuou dizendo que daria um sapato para Josefina.',
+    opts: [
+      '— A fada continuou dizendo que daria um sapato. —',
+      '— Darei um sapato para você, Josefina! — continuou a fada.',
+      '— Vou dar um sapato para Josefina! — continuou a fada.'
+    ],
+    correct: 2,
+    expl: 'No direto, a personagem fala na primeira pessoa do presente: "Vou dar". O travessão abre a fala e o verbo de elocução "continuou" aparece após o fechamento. A opção B usa "você" que não estava no original.'
+  },
+  {
+    direcao: 'INDIRETO → DIRETO',
+    dirClass: 'indir-to-dir',
+    sourceLabel: 'DISCURSO INDIRETO (original):',
+    source: 'Ele prosseguiu que a busca continuaria no dia seguinte.',
+    opts: [
+      '— Ele prosseguiu que continuaria amanhã — disse o narrador.',
+      '— Ele prosseguiu: a busca continuaria no dia seguinte.',
+      '— A busca continuará amanhã! — prosseguiu ele.'
+    ],
+    correct: 2,
+    expl: 'No direto, a fala da personagem usa o futuro direto ("continuará") e o advérbio "amanhã" substitui "no dia seguinte". O travessão abre a fala e o verbo de elocução "prosseguiu" vem no final.'
+  }
+];
+
+var current = 0, hits = 0, answered = false;
+
+function loadRound() {
+  answered = false;
+  var r = ROUNDS[current];
+  document.getElementById('prog-label').textContent = 'Rodada ' + (current+1) + ' de ' + ROUNDS.length;
+  document.getElementById('prog-fill').style.width = (current / ROUNDS.length * 100) + '%';
+  document.getElementById('round-n').textContent = (current+1) + '/' + ROUNDS.length;
+
+  var badge = document.getElementById('dir-badge');
+  badge.textContent = r.direcao;
+  badge.className = 'direction-badge ' + r.dirClass;
+
+  document.getElementById('source-label').textContent = r.sourceLabel;
+  document.getElementById('source-text').textContent = r.source;
+
+  var optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+  var letters = ['A','B','C'];
+  r.opts.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + opt;
+    btn.addEventListener('click', function() { selectOpt(i); });
+    optsEl.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.innerHTML = '';
+  var btnNext = document.getElementById('btn-next');
+  btnNext.className = 'btn-next';
+  btnNext.textContent = current < ROUNDS.length - 1 ? 'Próxima rodada →' : 'Ver resultado';
+}
+
+function selectOpt(idx) {
+  if (answered) return;
+  answered = true;
+  var r = ROUNDS[current];
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+
+  var fb = document.getElementById('feedback-box');
+  if (idx === r.correct) {
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback-box ok show';
+    fb.innerHTML = '<span style="font-size:18px;flex-shrink:0">✅</span><span>' + r.expl + '</span>';
+    hits++;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[r.correct].classList.add('correct');
+    fb.className = 'feedback-box err show';
+    fb.innerHTML = '<span style="font-size:18px;flex-shrink:0">❌</span><span>' + r.expl + '</span>';
+  }
+  document.getElementById('hits-n').textContent = hits;
+  document.getElementById('btn-next').className = 'btn-next show';
+}
+
+function nextRound() {
+  current++;
+  if (current < ROUNDS.length) {
+    loadRound();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  var pct = Math.round((hits / ROUNDS.length) * 100);
+  window.sabendoScore = pct;
+
+  document.getElementById('round-area').style.display = 'none';
+  var panel = document.getElementById('result-panel');
+  var emojis = ['😔','😅','🙂','😊','🎉'];
+  var msgs = ['Continue praticando!','Quase lá!','Bom trabalho!','Muito bem!','Conversão perfeita!'];
+  var tier = hits <= 2 ? 0 : hits <= 4 ? 1 : hits <= 5 ? 2 : hits <= 7 ? 3 : 4;
+  document.getElementById('res-emoji').textContent = emojis[tier];
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-sub').textContent = hits + ' de ' + ROUNDS.length + ' corretas — ' + msgs[tier];
+  panel.className = 'result-panel show';
+}
+
+function restart() {
+  current = 0; hits = 0; answered = false;
+  document.getElementById('round-area').style.display = '';
+  document.getElementById('result-panel').className = 'result-panel';
+  document.getElementById('hits-n').textContent = 0;
+  document.getElementById('round-n').textContent = '1/8';
+  loadRound();
+}
+
+loadRound();
+</script>
+
+<script src="../../shared/portal-back.js"></script>
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "discurso-direto-indireto";
+  var ACTIVITY_TYPE = "conversor";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Travessão",
+    characterEmoji: "—",
+    characterImg:   "chars/discurso-direto-indireto-hd.png",
+    themeLabel:     "Discurso Direto e Indireto · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-discurso-direto-indireto",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+</body>
+</html>

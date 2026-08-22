@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Fábulas: Conflito e Moral</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED;
+  --port-light: #A78BFA;
+  --port-bg: #F3F0FF;
+  --port-dark: #4C1D95;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #DDD6FE;
+  --card: #fff;
+  --radius: 18px;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+}
+body {
+  font-family: "Baloo 2", cursive;
+  background: var(--port-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px 16px 80px;
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--port);
+  text-decoration: none; margin-bottom: 16px; cursor: pointer;
+  background: none; border: none; padding: 0;
+}
+.back-link:hover { opacity: .7; }
+.activity-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(124,58,237,.1);
+}
+.card-header {
+  background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA);
+  padding: 20px 24px 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge {
+  margin-left: auto;
+  background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3);
+  color: #fff; font-size: 11px; font-weight: 800;
+  padding: 4px 12px; border-radius: 999px; white-space: nowrap;
+}
+.progress-area {
+  padding: 14px 24px 0;
+  border-bottom: 2px solid var(--border);
+  background: var(--port-bg);
+}
+.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; background: var(--border); border-radius: 999px; margin-bottom: 14px; }
+.prog-fill  { height: 8px; border-radius: 999px; background: linear-gradient(90deg,var(--port),var(--port-light)); transition: width .4s; }
+
+.quiz-body { padding: 24px; }
+.question-num {
+  font-family: "Space Mono", monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: var(--port); margin-bottom: 10px;
+}
+.question-text {
+  font-size: 16px; font-weight: 700; line-height: 1.55;
+  color: var(--text); margin-bottom: 18px;
+}
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option-btn {
+  width: 100%; text-align: left; padding: 13px 16px;
+  background: var(--port-bg); border: 2px solid var(--border);
+  border-radius: var(--radius); font-family: "Baloo 2", cursive;
+  font-size: 14px; font-weight: 600; color: var(--text);
+  cursor: pointer; transition: all .15s; line-height: 1.4;
+}
+.option-btn:hover:not(:disabled) { border-color: var(--port-light); background: #EDE9FE; }
+.option-btn.correct { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+.option-btn.wrong   { background: var(--red-bg);   border-color: var(--red);   color: var(--red); }
+.option-btn:disabled { cursor: default; }
+
+.feedback {
+  display: none; margin-top: 16px; padding: 12px 16px;
+  border-radius: var(--radius); font-size: 13px; font-weight: 600;
+  line-height: 1.5; gap: 10px; align-items: flex-start;
+}
+.feedback.show { display: flex; }
+.feedback.correct { background: var(--green-bg); color: var(--green); border: 2px solid var(--green); }
+.feedback.wrong   { background: var(--red-bg);   color: var(--red);   border: 2px solid var(--red);   }
+.feedback-icon { font-size: 18px; flex-shrink: 0; }
+.feedback-text { flex: 1; }
+
+.nav-row { display: flex; justify-content: flex-end; margin-top: 20px; }
+.nav-btn {
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800;
+  padding: 10px 28px; border-radius: 999px; border: none; cursor: pointer;
+  background: linear-gradient(135deg,var(--port),var(--port-light));
+  color: white; box-shadow: 0 4px 14px rgba(124,58,237,.35);
+  display: none; transition: opacity .15s;
+}
+.nav-btn:hover { opacity: .9; }
+
+.result-panel {
+  display: none; padding: 32px 24px; text-align: center;
+}
+.result-panel.show { display: block; }
+.result-emoji { font-size: 56px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; color: var(--port-dark); margin-bottom: 8px; }
+.result-score { font-size: 42px; font-weight: 900; color: var(--port); margin-bottom: 6px; }
+.result-sub   { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 24px; }
+.result-stars { font-size: 28px; margin-bottom: 20px; letter-spacing: 4px; }
+.retry-btn {
+  font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800;
+  padding: 12px 32px; border-radius: 999px; border: 2px solid var(--port);
+  background: var(--port-bg); color: var(--port); cursor: pointer;
+  transition: all .15s;
+}
+.retry-btn:hover { background: var(--port); color: white; }
+
+@media (max-width: 480px) {
+  .quiz-body { padding: 16px; }
+  .question-text { font-size: 15px; }
+  .option-btn { font-size: 13px; padding: 11px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">📜</div>
+      <div><h1>Quiz</h1><p>Fábulas: Conflito e Moral</p></div>
+      <div class="hbadge">10 questões</div>
+    </div>
+    <div class="progress-area">
+      <div class="progress-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+    </div>
+    <div class="quiz-body" id="quiz-body">
+      <div class="question-num" id="q-num">QUESTÃO 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+      <div class="feedback" id="q-feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div class="feedback-text" id="fb-text"></div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" id="btn-next">Próxima →</button>
+      </div>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="res-emoji"></div>
+      <div class="result-title">Quiz concluído!</div>
+      <div class="result-score" id="res-score"></div>
+      <div class="result-sub" id="res-sub"></div>
+      <div class="result-stars" id="res-stars"></div>
+      <button class="retry-btn" onclick="reiniciar()">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var QUIZ = [
+  {
+    text: "O que define uma <strong>fábula</strong>?",
+    opts: [
+      "Poema com rima obrigatória escrito em versos",
+      "História curta com animais que agem como humanos e traz um ensinamento",
+      "Conto de aventuras com heróis e vilões humanos",
+      "Texto jornalístico sobre o comportamento de animais"
+    ],
+    correta: 1,
+    feedback: "A <strong>fábula</strong> é uma história curta em que animais se comportam como seres humanos e sempre traz um ensinamento — a <strong>moral da história</strong>."
+  },
+  {
+    text: "Como se chama o ensinamento apresentado ao final de uma fábula?",
+    opts: [
+      "Narração",
+      "Clímax",
+      "Moral da história",
+      "Desfecho"
+    ],
+    correta: 2,
+    feedback: "A <strong>moral da história</strong> é o ensinamento explicitado ao final da fábula. Por exemplo: \"O orgulho precede a ruína.\""
+  },
+  {
+    text: "Na fábula \"O mosquito e o leão\", o que o mosquito fez no início do conflito?",
+    opts: [
+      "Pediu ajuda ao leão para atravessar o rio",
+      "Fez amizade com o leão durante a noite",
+      "Fugiu apavorado ao ver o tamanho do leão",
+      "Zombou do leão adormecido, desafiando-o para um combate"
+    ],
+    correta: 3,
+    feedback: "O mosquito <strong>zombou</strong> do leão adormecido. O verbo \"zombou\" é um <strong>verbo de elocução</strong> que revela a atitude do mosquito — a arrogância."
+  },
+  {
+    text: "Os <strong>verbos de elocução</strong> são importantes nas fábulas porque:",
+    opts: [
+      "Indicam o tempo exato em que a ação aconteceu",
+      "Substituem o ponto final ao término de cada parágrafo",
+      "Expressam a atitude de quem fala, revelando como a personagem age",
+      "Conectam duas orações independentes na mesma frase"
+    ],
+    correta: 2,
+    feedback: "Os <strong>verbos de elocução</strong> (ex.: \"zombou\", \"exclamou\", \"resmungou\") expressam a atitude de quem fala e dão expressividade ao texto, revelando como cada personagem age."
+  },
+  {
+    text: "Como o <strong>discurso direto</strong> de uma personagem é marcado no texto das fábulas?",
+    opts: [
+      "Por aspas duplas no início e no final da frase",
+      "Por parênteses ao redor da fala",
+      "Por um travessão (—) indicando que uma personagem está falando",
+      "Por letras maiúsculas em todas as palavras da frase"
+    ],
+    correta: 2,
+    feedback: "O <strong>travessão (—)</strong> indica o <strong>discurso direto</strong> — a fala das personagens reproduzida exatamente como foi dita."
+  },
+  {
+    text: "Na fábula \"A raposa e as uvas\", qual foi o desfecho?",
+    opts: [
+      "A raposa conseguiu alcançar as uvas após muito esforço",
+      "Outra raposa mais alta ajudou a pegar o cacho",
+      "A raposa desistiu e declarou que as uvas deviam estar verdes",
+      "A raposa derrubou a videira com um galho"
+    ],
+    correta: 2,
+    feedback: "No desfecho, a raposa desistiu e <strong>resmungou</strong> que as uvas deviam estar verdes — agindo com astúcia (era <strong>matreira</strong>) para não admitir a derrota."
+  },
+  {
+    text: "Qual é a <strong>moral da história</strong> da fábula \"O mosquito e o leão\"?",
+    opts: [
+      "Quem desdenha quer comprar",
+      "Devagar se vai ao longe",
+      "A união faz a força",
+      "O orgulho precede a ruína"
+    ],
+    correta: 3,
+    feedback: "\"<strong>O orgulho precede a ruína</strong>\" é a moral de \"O mosquito e o leão\". O mosquito venceu o leão, mas morreu de forma boba — preso numa teia de aranha — por se vangloriar demais da vitória."
+  },
+  {
+    text: "A expressão \"as uvas já estão no papo\" é um exemplo de:",
+    opts: [
+      "Discurso direto marcado por travessão",
+      "Verbo de elocução indicando a atitude da personagem",
+      "Sentido figurado, pois as uvas não estão literalmente no papo de ninguém",
+      "Moral da história apresentada ao final da fábula"
+    ],
+    correta: 2,
+    feedback: "\"As uvas já estão no papo\" usa <strong>sentido figurado</strong>: a expressão não significa que alguém comeu literalmente as uvas, mas sim que algo já está garantido ou conquistado."
+  },
+  {
+    text: "Qual é a sequência correta do <strong>conflito narrativo</strong> em uma fábula?",
+    opts: [
+      "Moral → desfecho → início do conflito",
+      "Desfecho → momento de maior tensão → início do conflito",
+      "Início do conflito → momento de maior tensão → desfecho",
+      "Momento de maior tensão → moral → início do conflito"
+    ],
+    correta: 2,
+    feedback: "O <strong>conflito narrativo</strong> segue: <strong>início do conflito</strong> (problema surge) → <strong>momento de maior tensão</strong> (clímax) → <strong>desfecho</strong> (resolução). A moral vem depois do desfecho."
+  },
+  {
+    text: "Por que a raposa é descrita como <strong>\"matreira\"</strong> na fábula?",
+    opts: [
+      "Porque ela tem pelos avermelhados que a disfarçam na floresta",
+      "Porque ela é mais veloz do que todos os outros animais",
+      "Porque ela agiu com astúcia ao fingir não querer as uvas que não conseguiu alcançar",
+      "Porque ela conhecia todos os caminhos secretos da selva"
+    ],
+    correta: 2,
+    feedback: "\"Matreira\" significa astuta, esperta. A raposa não admitiu a derrota e fingiu desdém pelas uvas — o que se relaciona com a <strong>moral</strong>: \"Quem desdenha quer comprar.\""
+  }
+];
+
+var quizIndex = 0;
+var quizAcertos = 0;
+var quizRespondido = false;
+
+function renderQuestao() {
+  var q = QUIZ[quizIndex];
+  quizRespondido = false;
+  document.getElementById('prog-label').textContent = 'Questão ' + (quizIndex+1) + ' de ' + QUIZ.length;
+  document.getElementById('prog-fill').style.width = ((quizIndex+1)/QUIZ.length*100) + '%';
+  document.getElementById('q-num').textContent = 'QUESTÃO ' + (quizIndex+1);
+  document.getElementById('q-text').innerHTML = q.text;
+
+  var container = document.getElementById('q-options');
+  container.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.addEventListener('click', function() { responder(i); });
+    container.appendChild(btn);
+  });
+
+  var fb = document.getElementById('q-feedback');
+  fb.className = 'feedback';
+  document.getElementById('fb-icon').textContent = '';
+  document.getElementById('fb-text').textContent = '';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function responder(idx) {
+  if (quizRespondido) return;
+  quizRespondido = true;
+  var q = QUIZ[quizIndex];
+  var btns = document.querySelectorAll('.option-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  var acertou = idx === q.correta;
+  if (acertou) quizAcertos++;
+  btns[q.correta].classList.add('correct');
+  if (!acertou) btns[idx].classList.add('wrong');
+
+  var fb = document.getElementById('q-feedback');
+  fb.className = 'feedback show ' + (acertou ? 'correct' : 'wrong');
+  document.getElementById('fb-icon').textContent = acertou ? '✓' : '✗';
+  document.getElementById('fb-text').innerHTML = q.feedback;
+
+  document.getElementById('btn-next').style.display = 'block';
+  document.getElementById('btn-next').textContent = quizIndex < QUIZ.length-1 ? 'Próxima →' : 'Ver resultado';
+}
+
+document.getElementById('btn-next').addEventListener('click', function() {
+  if (quizIndex < QUIZ.length-1) {
+    quizIndex++;
+    renderQuestao();
+  } else {
+    mostrarResultado();
+  }
+});
+
+function mostrarResultado() {
+  document.getElementById('quiz-body').style.display = 'none';
+  var pct = Math.round((quizAcertos / QUIZ.length) * 100);
+  window.sabendoScore = pct;
+
+  var panel = document.getElementById('result-panel');
+  panel.classList.add('show');
+
+  var emoji = pct >= 90 ? '🏆' : pct >= 70 ? '🌟' : pct >= 50 ? '😊' : '📚';
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-score').textContent = quizAcertos + ' / ' + QUIZ.length;
+  document.getElementById('res-sub').textContent = pct + '% de acerto — ' + (pct >= 70 ? 'Muito bem!' : 'Continue praticando!');
+  var estrelas = pct >= 90 ? '★★★' : pct >= 70 ? '★★☆' : pct >= 50 ? '★☆☆' : '☆☆☆';
+  document.getElementById('res-stars').textContent = estrelas;
+}
+
+function reiniciar() {
+  quizIndex = 0;
+  quizAcertos = 0;
+  quizRespondido = false;
+  document.getElementById('quiz-body').style.display = 'block';
+  document.getElementById('result-panel').classList.remove('show');
+  renderQuestao();
+}
+
+renderQuestao();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "fabulas-conflito-moral";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Morá",
+    characterEmoji: "📜",
+    characterImg:   "chars/fabulas-conflito-moral-hd.png",
+    themeLabel:     "Fábulas: Conflito e Moral · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-fabulas-conflito-moral",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

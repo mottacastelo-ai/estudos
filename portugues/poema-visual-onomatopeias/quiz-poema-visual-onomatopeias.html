@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Poema Visual e Onomatopeias</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED;
+  --port-light: #A78BFA;
+  --port-bg: #F3F0FF;
+  --port-dark: #4C1D95;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #DDD6FE;
+  --card: #fff;
+  --radius: 18px;
+  --green: #059669; --green-bg: #D1FAE5;
+  --red: #DC2626; --red-bg: #FEE2E2;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .75; }
+.card-header { background: linear-gradient(135deg, #4C1D95, #7C3AED 60%, #A78BFA); border-radius: var(--radius) var(--radius) 0 0; padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); font-weight: 600; margin-top: 2px; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.1); }
+.prog-area { padding: 14px 20px 0; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; background: var(--port-bg); border-radius: 999px; overflow: hidden; }
+.prog-fill { height: 8px; background: linear-gradient(90deg, var(--port), var(--port-light)); border-radius: 999px; transition: width .4s; }
+.question-area { padding: 20px 20px 10px; }
+.q-number { font-size: 11px; font-weight: 800; color: var(--port); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
+.q-text { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text); margin-bottom: 18px; }
+.options { display: flex; flex-direction: column; gap: 10px; padding: 0 20px 16px; }
+.opt-btn { display: block; width: 100%; text-align: left; padding: 13px 16px; border: 2px solid var(--border); border-radius: 14px; background: var(--card); font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; transition: all .15s; line-height: 1.4; }
+.opt-btn:hover:not(:disabled) { border-color: var(--port-light); background: var(--port-bg); }
+.opt-btn.correct { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+.opt-btn.wrong { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+.opt-btn:disabled { cursor: default; }
+.feedback { margin: 0 20px 16px; padding: 12px 16px; border-radius: 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; font-weight: 600; line-height: 1.5; display: none; }
+.feedback.correct { background: var(--green-bg); border: 2px solid var(--green); color: #065F46; }
+.feedback.wrong { background: var(--red-bg); border: 2px solid var(--red); color: #991B1B; }
+.feedback-icon { font-size: 18px; flex-shrink: 0; margin-top: -1px; }
+.next-btn { display: block; margin: 0 20px 20px; padding: 12px 24px; background: linear-gradient(135deg, var(--port), var(--port-light)); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; display: none; transition: opacity .15s; }
+.next-btn:hover { opacity: .9; }
+.result-panel { padding: 32px 24px; text-align: center; display: none; }
+.result-emoji { font-size: 56px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; color: var(--port); margin-bottom: 6px; }
+.result-sub { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 20px; }
+.score-big { font-size: 48px; font-weight: 900; color: var(--port); line-height: 1; margin-bottom: 8px; }
+.restart-btn { padding: 12px 32px; background: linear-gradient(135deg, var(--port), var(--port-light)); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 16px; }
+@media (max-width: 480px) {
+  .q-text { font-size: 15px; }
+  .opt-btn { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal(); return false;">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🔤</div>
+      <div><h1>Quiz</h1><p>Poema Visual e Onomatopeias</p></div>
+      <div class="hbadge">10 questões</div>
+    </div>
+    <div class="prog-area">
+      <div class="prog-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div id="quiz-area">
+      <div class="question-area">
+        <div class="q-number" id="q-number">Questão 1</div>
+        <div class="q-text" id="q-text"></div>
+      </div>
+      <div class="options" id="options-area"></div>
+      <div class="feedback" id="feedback-box">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div id="fb-text"></div>
+      </div>
+      <button class="next-btn" id="next-btn">Próxima questão →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="score-big" id="score-big"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <button class="restart-btn" onclick="restartQuiz()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QUESTIONS = [
+  {
+    q: 'De acordo com o livro didático, o que é um poema visual?',
+    opts: [
+      'Um poema onde o autor usa palavras e imagens e estabelece uma relação de sentido entre elas.',
+      'Um poema composto de versos e estrofes, igual ao poema tradicional, mas com ilustrações.',
+      'Um texto que só usa imagens, sem nenhuma palavra escrita.',
+      'Um poema que deve ser lido em voz alta para fazer sentido.'
+    ],
+    correct: 0,
+    feedback: 'Correto! O poema visual é diferente do poema tradicional: o autor usa palavras e imagens e estabelece uma relação de sentido entre elas.'
+  },
+  {
+    q: 'Em que o poema visual se diferencia do poema tradicional?',
+    opts: [
+      'O poema visual é sempre mais curto do que o poema tradicional.',
+      'O poema visual usa a disposição das palavras para formar imagens relacionadas ao sentido do texto.',
+      'O poema tradicional usa imagens, enquanto o poema visual usa apenas palavras.',
+      'O poema visual não pode ter rimas, ao contrário do poema tradicional.'
+    ],
+    correct: 1,
+    feedback: 'Exato! No poema visual, a disposição das palavras forma imagens que têm relação de sentido com o texto — isso o diferencia do poema tradicional, composto de versos e estrofes.'
+  },
+  {
+    q: 'O que é uma onomatopeia?',
+    opts: [
+      'Uma figura de linguagem que compara duas coisas usando "como" ou "tal qual".',
+      'Um tipo de rima que aparece no meio dos versos, e não no final.',
+      'Uma palavra que imita ou representa um som.',
+      'Um sinal de pontuação usado para indicar surpresa.'
+    ],
+    correct: 2,
+    feedback: 'Isso mesmo! A onomatopeia é uma palavra que imita ou representa um som, como "zzz" para o som de dormir.'
+  },
+  {
+    q: 'No poema "Canção para ninar gato com insônia", as palavras "ron ron ron" estão dispostas em espiral. Que imagem essa disposição forma?',
+    opts: [
+      'Um passarinho voando em círculos sobre uma árvore.',
+      'Ondas do mar girando em um redemoinho.',
+      'Um gato enrolado dormindo.',
+      'Uma cobra enroscada pronta para atacar.'
+    ],
+    correct: 2,
+    feedback: 'Correto! A espiral formada pelas palavras "ron ron ron" representa um gato enrolado dormindo — é a relação de sentido entre as palavras e a imagem no poema visual.'
+  },
+  {
+    q: 'Ainda no poema do gato, qual onomatopeia representa o som de dormir?',
+    opts: [
+      'miau miau',
+      'au au au',
+      'zzz',
+      'xiu xiu'
+    ],
+    correct: 2,
+    feedback: 'Certo! A onomatopeia "zzz" representa o som de dormir. Junto com "ron ron ron", ela está presente no poema do gato de Sérgio Capparelli.'
+  },
+  {
+    q: 'O poema "Canção para ninar gato com insônia" sugere movimento ou imobilidade? Por quê?',
+    opts: [
+      'Movimento, porque o gato está perseguindo borboletas.',
+      'Movimento, porque a onomatopeia "ron ron ron" se repete várias vezes.',
+      'Imobilidade, porque o poema retrata um gato enrolado dormindo.',
+      'Imobilidade, porque o poema foi escrito por um único autor.'
+    ],
+    correct: 2,
+    feedback: 'Correto! O poema sugere imobilidade: a espiral de palavras forma a imagem de um gato enrolado e quieto, com o som de sono — "zzz".'
+  },
+  {
+    q: 'No poema "zig e zag saíram...", quais palavras se repetem para formar a imagem de dois peixes?',
+    opts: [
+      'zum zum e bum bum',
+      'zig e zag',
+      'zip e zap',
+      'zig zig e zag zag zag'
+    ],
+    correct: 1,
+    feedback: 'Certo! As palavras "zig" e "zag" se repetem e, dispostas na página, formam a imagem de dois peixes — essa é a relação entre palavras e imagem no poema visual.'
+  },
+  {
+    q: 'O que os peixes "zig" e "zag" fazem ao final do poema?',
+    opts: [
+      'Voltam para a lagoa e nadam juntos em paz.',
+      'Encontram o caminho certo e chegam ao destino.',
+      'Decidem seguir em direções opostas para sempre.',
+      'Somem no horizonte sem chegar a uma conclusão.'
+    ],
+    correct: 3,
+    feedback: 'Exato! No poema, os peixes "sumiram no horizonte sem chegar à conclusão" — eles saíram "sem direção" e nunca chegaram a um acordo sobre o caminho.'
+  },
+  {
+    q: 'O poema "zig e zag saíram..." sugere principalmente:',
+    opts: [
+      'Imobilidade, porque os peixes ficam parados no mesmo lugar.',
+      'Movimento em linha reta, porque os peixes nadam sempre para frente.',
+      'Movimento em zigue-zague, porque as palavras "zig" e "zag" se alternam.',
+      'Imobilidade, porque os peixes não chegam a lugar nenhum.'
+    ],
+    correct: 2,
+    feedback: 'Correto! O poema sugere movimento em zigue-zague: as palavras "zig" e "zag" alternadas formam visualmente esse movimento ondulado dos peixes.'
+  },
+  {
+    q: 'Qual das frases abaixo é uma fala de um dos peixes no poema "zig e zag saíram..."?',
+    opts: [
+      '"é por aqui"',
+      '"vamos nadar juntos"',
+      '"o mar está longe"',
+      '"saímos sem destino"'
+    ],
+    correct: 0,
+    feedback: 'Certo! Uma fala dos peixes é "é por aqui" e a outra é "por aqui, não" — os dois peixes discordam sobre a direção, o que explica o zigue-zague sem conclusão.'
+  }
+];
+
+var currentQ = 0;
+var acertos = 0;
+var answered = false;
+
+function renderQuestion() {
+  var q = QUESTIONS[currentQ];
+  document.getElementById('prog-label').textContent = 'Questão ' + (currentQ+1) + ' de ' + QUESTIONS.length;
+  document.getElementById('prog-fill').style.width = ((currentQ / QUESTIONS.length) * 100) + '%';
+  document.getElementById('q-number').textContent = 'Questão ' + (currentQ+1);
+  document.getElementById('q-text').textContent = q.q;
+  var area = document.getElementById('options-area');
+  area.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.addEventListener('click', function() { selectAnswer(i); });
+    area.appendChild(btn);
+  });
+  var fb = document.getElementById('feedback-box');
+  fb.style.display = 'none';
+  fb.className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[currentQ];
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b, i) {
+    b.disabled = true;
+    if (i === q.correct) b.classList.add('correct');
+    else if (i === idx && idx !== q.correct) b.classList.add('wrong');
+  });
+  var isCorrect = idx === q.correct;
+  if (isCorrect) acertos++;
+  var fb = document.getElementById('feedback-box');
+  fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+  document.getElementById('fb-icon').textContent = isCorrect ? '✓' : '✗';
+  document.getElementById('fb-text').textContent = q.feedback;
+  fb.style.display = 'flex';
+  var nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = currentQ < QUESTIONS.length - 1 ? 'Próxima questão →' : 'Ver resultado';
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  currentQ++;
+  if (currentQ < QUESTIONS.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult() {
+  var pct = Math.round((acertos / QUESTIONS.length) * 100);
+  window.sabendoScore = pct;
+  document.getElementById('quiz-area').style.display = 'none';
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Concluído!';
+  document.getElementById('score-big').textContent = acertos + '/' + QUESTIONS.length;
+  var emoji, title, sub;
+  if (pct >= 90) { emoji = '🌟'; title = 'Parabéns, poeta visual!'; sub = 'Você dominou os poemas visuais e as onomatopeias!'; }
+  else if (pct >= 70) { emoji = '✨'; title = 'Muito bem!'; sub = 'Você entende bem a diferença entre poema visual e poema tradicional.'; }
+  else if (pct >= 50) { emoji = '📖'; title = 'Continue estudando!'; sub = 'Revise os conceitos de onomatopeia e poema visual e tente de novo.'; }
+  else { emoji = '💪'; title = 'Não desista!'; sub = 'Releia os dois poemas e tente novamente — você consegue!'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+}
+
+function restartQuiz() {
+  currentQ = 0; acertos = 0; answered = false;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "poema-visual-onomatopeias";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Ziguinho",
+    characterEmoji: "🔤",
+    characterImg:   "chars/poema-visual-onomatopeias-hd.png",
+    themeLabel:     "Poema Visual e Onomatopeias · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-poema-visual-onomatopeias",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

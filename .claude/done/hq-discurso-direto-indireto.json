@@ -1,0 +1,14 @@
+{
+    "canonicas_path": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\Personagens\\5o ano",
+    "slug": "discurso-direto-indireto",
+    "expected_outputs": [
+        "hq-discurso-direto-indireto-pg1.png",
+        "hq-discurso-direto-indireto-pg2.png",
+        "hq-discurso-direto-indireto-pg3.png",
+        "hq-discurso-direto-indireto-pg4.png"
+    ],
+    "prompt_path": "portugues/discurso-direto-indireto/hq-discurso-direto-indireto-prompt.md",
+    "disciplina": "portugues",
+    "raiz": "C:\\Users\\wizar\\OneDrive\\Documentos\\Projeto Estudos\\estudos",
+    "output_dir": "portugues/discurso-direto-indireto"
+}
