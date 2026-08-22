@@ -206,6 +206,116 @@ Regra de ouro: `window.sabendoScore` deve ser sempre um inteiro entre 0 e 100.
 
 ---
 
+## ERR-005 — Defeitos recorrentes na geração de HQ via Codex MCP
+
+**Arquivos afetados:** prompts de HQ (`.md`) e imagens geradas (`pg1–pg4.png`, portraits)
+**Data:** 2026-08-22
+**Tipo:** Qualidade visual + integridade de imagem — Codex MCP (geração de HQs educacionais)
+
+Quatro defeitos foram encontrados ao gerar 5 HQs novas em sessão única. Todos precisam de prevenção ativa no `gerador-hq-prompt` (ao escrever os prompts) e no `gerador-hq-imagens` (ao validar as saídas). Revisão manual pós-hoc não é solução aceitável.
+
+---
+
+### ERR-005a — Portrait com fundo chroma-key não removido
+
+**Ocorrência:** 4 de 5 portraits (Acentin, Elo, Ziguinho, Dicio). Só Morá saiu correto na primeira tentativa.
+
+**Causa raiz:** O Codex reporta verbalmente "fundo removido" mas a remoção efetiva não ocorreu — o pixel do canto do arquivo salvo mantém RGB(0,255,0) com Alpha=255 (opaco), provando que o canal alfa não foi processado. Aceitar a confirmação textual do Codex sem verificar o arquivo é a causa direta do defeito não ser detectado antes da publicação.
+
+**Correção aplicada:** Reprocessamento explícito de cada portrait afetado, pedindo remoção real do canal alfa com verificação pixel a pixel.
+
+**Regra para a squad:**
+- Após cada portrait gerado, verificar o pixel do canto superioresquerdo via PowerShell ou Python antes de considerar concluído.
+- Critério de aprovação: pixel do canto deve ter Alpha=0 (transparente). Alpha=255 com cor verde = falha silenciosa do Codex.
+- Nunca confiar apenas na resposta textual do Codex para validação de transparência.
+
+```powershell
+# Verificação rápida de transparência do portrait
+Add-Type -AssemblyName System.Drawing
+$img = [System.Drawing.Bitmap]::new("C:\caminho\portrait.png")
+$px = $img.GetPixel(0, 0)
+if ($px.A -ne 0) { Write-Host "FALHA: fundo não removido (A=$($px.A), R=$($px.R), G=$($px.G), B=$($px.B))" }
+else { Write-Host "OK: fundo transparente" }
+$img.Dispose()
+```
+
+---
+
+### ERR-005b — Painéis de HQ sem cenário (fundo branco/liso tipo flashcard)
+
+**Ocorrência:** 2 de 5 temas (Conjunções, Acentuação). Painéis saíram com fundo branco ou gradiente simples, sem nenhum elemento de cenário ilustrado.
+
+**Causa raiz:** O prompt de HQ usava instrução genérica de estilo no topo do arquivo ("adicione cenário à HQ") mas não especificava cenário no prompt individual de cada painel. O Codex ignora instruções genéricas quando não são reforçadas localmente — a instrução geral não é suficiente.
+
+**Correção aplicada:** Reprocessamento dos painéis afetados com descrição de cenário explícita e individualizada em cada um.
+
+**Regra para a squad:**
+- Todo prompt de painel individual DEVE conter pelo menos 3–4 elementos de cenário concretos descritos explicitamente (exemplos: estante de livros, janela com cortina, lousa com texto, plantas, cartazes coloridos na parede, cadeiras e mesas escolares, janela com vista de parque, etc.).
+- A instrução de cenário no cabeçalho do arquivo (`## ESTILO VISUAL`) é necessária mas não suficiente — ela não garante que o Codex aplique o cenário painel a painel.
+- Nunca deixar a descrição de cenário de um painel implícita ou remetendo ao painel anterior.
+
+---
+
+### ERR-005c — Texto de balão cortado ou embaralhado
+
+**Ocorrência:** 2 de 5 temas (Conjunções, Acentuação). Falas com palavras cortadas no meio ou fora de ordem, tornando o diálogo ilegível.
+
+**Causa raiz:** Balões com mais de ~15–18 palavras sobrecarregam o modelo de layout — lettering gerado com IA tem limite prático de legibilidade que não é o mesmo que o limite técnico do campo de texto.
+
+**Correção aplicada:** Reprocessamento dos painéis com falas longas divididas em 2 balões ou repartidas entre 2 painéis consecutivos.
+
+**Regra para a squad:**
+- Máximo de 12–15 palavras por balão. Contar explicitamente ao escrever o prompt.
+- Se o conceito pedagógico exige mais palavras, dividir em 2 balões no mesmo painel (ex: balão 1 — premissa, balão 2 — exemplo) ou em 2 painéis consecutivos (painel de setup + painel de resposta/confirmação).
+- Nunca redigir falas longas esperando que o Codex as "caiba" no balão automaticamente.
+
+---
+
+### ERR-005d — Personagens recorrentes (Prepo, Bia) desenhados fora do padrão canônico
+
+**Ocorrência:** Prepo com design errado em 3 de 5 temas. Caso mais grave (Dicionário): sem etiqueta "PREPO", com estrela na cabeça em vez de antenas com letras "D"/"E", olhos azuis ovais em vez de brancos redondos com pupila preta.
+
+**Causa raiz:** Os prompts de HQ descrevem em detalhe o personagem novo do tema, mas tratam Prepo e Bia apenas superficialmente (uma menção curta na seção "Personagens Fixos"), presumindo que o modelo "já sabe" o design deles de chamadas anteriores. O Codex não mantém memória visual entre chamadas — cada painel é gerado independentemente do contexto da sessão anterior.
+
+**Correção aplicada:** Reprocessamento com descrição visual completa e literal do Prepo repetida em cada prompt de painel onde ele aparece.
+
+**Regra para a squad:**
+
+Descrição canônica obrigatória do **Prepo** — copiar literalmente em cada painel que o contenha:
+
+> Prepo é um robô pequeno roxo com corpo cilíndrico, duas antenas na cabeça com as letras "D" e "E" nas pontas (maiúsculas, em amarelo), olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
+
+Descrição canônica obrigatória da **Bia** — copiar literalmente em cada painel que a contenha:
+
+> Bia é uma menina de 11 anos com cabelo cacheado e volumoso preto, pele morena clara, usando uniforme escolar azul (camiseta azul marinho com logo de escola no peito, calça azul escuro) e tênis brancos.
+
+- A seção "Personagens Fixos" no topo do arquivo `.md` é necessária mas não suficiente — a descrição deve ser repetida literalmente em cada prompt de painel individual onde o personagem aparece.
+- Nunca abreviar como "Prepo (mascote roxo)" ou "Bia (a menina)" no prompt de painel — usar sempre a descrição completa.
+
+---
+
+## Checklist anti-bug para geração de HQ (gerador-hq-prompt e gerador-hq-imagens)
+
+Verificação obrigatória antes de considerar qualquer HQ concluída:
+
+**Prompts (gerador-hq-prompt — ao escrever o arquivo .md):**
+
+- [ ] Cada painel individual tem descrição de cenário com pelo menos 3–4 elementos concretos especificados explicitamente? (não apenas uma instrução genérica no cabeçalho)
+- [ ] Todo balão de fala tem no máximo ~12–15 palavras? (conceitos mais longos divididos em 2 balões ou 2 painéis)
+- [ ] A descrição visual completa e literal do Prepo está repetida em cada prompt de painel onde ele aparece? (não apenas na seção "Personagens Fixos")
+- [ ] A descrição visual completa e literal da Bia está repetida em cada prompt de painel onde ela aparece?
+- [ ] Nenhum elemento visual está subentendido por reticências ou "continuação do painel anterior"?
+
+**Imagens (gerador-hq-imagens — ao validar os arquivos gerados):**
+
+- [ ] O pixel do canto superior esquerdo de cada portrait tem Alpha=0 (transparente)? (verificado via script, não apenas pela confirmação textual do Codex)
+- [ ] Cada painel das páginas pg1–pg4 tem cenário visível com elementos ilustrados (não fundo branco/liso)?
+- [ ] Os textos dos balões estão legíveis e completos (sem palavras cortadas ou embaralhadas)?
+- [ ] O Prepo, quando presente, tem: etiqueta "PREPO" no peito, antenas com letras "D"/"E", olhos brancos redondos com pupila preta?
+- [ ] Todos os 4 arquivos de página existem fisicamente no caminho absoluto correto?
+
+---
+
 ## Checklist anti-bug para `gerador-atividades`
 
 Antes de finalizar qualquer arquivo HTML de atividade, verificar:

@@ -208,6 +208,49 @@ print(f"[gerador-hq-imagens] Todos os arquivos confirmados: {expected_outputs}")
 
 ---
 
+## Regras de qualidade visual — ERR-005 (obrigatórias)
+
+### Validação de transparência de portrait (ERR-005a)
+
+Após a geração de cada portrait, verificar o pixel do canto superior esquerdo do arquivo PNG via PowerShell **antes de prosseguir**. Nunca confiar apenas na confirmação textual do Codex.
+
+Critério: Alpha=0 = aprovado. Alpha=255 com cor verde (R=0, G=255, B=0) = fundo chroma-key não removido — solicitar reprocessamento explícito.
+
+```powershell
+Add-Type -AssemblyName System.Drawing
+$img = [System.Drawing.Bitmap]::new("C:\caminho\completo\portrait.png")
+$px = $img.GetPixel(0, 0)
+if ($px.A -ne 0) {
+    Write-Host "FALHA: fundo nao removido (A=$($px.A) R=$($px.R) G=$($px.G) B=$($px.B))"
+} else {
+    Write-Host "OK: portrait com fundo transparente"
+}
+$img.Dispose()
+```
+
+### Descrição obrigatória de Prepo em cada painel (ERR-005d)
+
+Ao instruir o Codex (modo MCP) e ao inspecionar o prompt `.md` (modo legado), garantir que qualquer painel contendo o Prepo use a descrição canônica completa abaixo — nunca uma abreviação como "o robô roxo" ou "Prepo (mascote)":
+
+> Prepo é um robô pequeno roxo com corpo cilíndrico, duas antenas na cabeça com as letras "D" e "E" nas pontas (maiúsculas, em amarelo), olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
+
+### Descrição obrigatória de Bia em cada painel (ERR-005d)
+
+Para a Bia, usar sempre:
+
+> Bia é uma menina de 11 anos com cabelo cacheado e volumoso preto, pele morena clara, usando uniforme escolar azul (camiseta azul marinho com logo de escola no peito, calça azul escuro) e tênis brancos.
+
+### Verificação visual de cenário e texto (ERR-005b, ERR-005c)
+
+Após receber as páginas do Codex, verificar visualmente (ou instruir o Codex a auto-verificar) antes de declarar conclusão:
+
+- Cada painel tem elementos de cenário visíveis (não fundo branco/liso)? Se não, solicitar reprocessamento com cenário explícito por painel.
+- Os textos dos balões estão completos e legíveis (sem cortes ou embaralhamento)? Se não, solicitar reprocessamento com falas encurtadas para no máximo 12–15 palavras por balão.
+
+Consultar `ERROS.md` seção ERR-005 para detalhes completos e exemplos de reprocessamento.
+
+---
+
 ## Output JSON (retornar ao orquestrador)
 
 ```json
