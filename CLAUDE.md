@@ -27,9 +27,7 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 │  [gerador-hq-prompt]    → hq-[slug]-prompt.md      │  ← paralelo
 │  [gerador-atividades]   → *.html na pasta do tema  │  ← paralelo
 └────────────────────────────────────────────────────┘
-         ↓ (gerador-hq-prompt concluído — NÃO esperar o restante)
-[Orquestrador escreve .claude/pending/hq-[slug].json]  ← IMEDIATO, Codex já começa em paralelo
-         ↓ (em paralelo com Codex gerando imagens)
+         ↓
 [atualizador-index] → index.html atualizado
          ↓
    ┌─────┴──────────────────────────┐
@@ -41,8 +39,9 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
               ↓
    [Orquestrador consolida — bloqueia publicação se qualquer um reprovar]
          ↓
-[gerador-hq-imagens] → polling em .claude/done/ até Codex confirmar (JSON já foi escrito antes)
-                     → chars.png (em Personagens\5o ano\) + pg1–pg4 (na pasta do tema)
+[gerador-hq-imagens] → Codex via MCP direto, sem intervenção manual
+                     → folha de personagem (Personagens\5o ano\) + pg1–pg4 (na pasta do tema)
+                     → portrait HD (_landing/chars/) usando a folha como referência
          ↓
 [colador-hq] → hq-[slug].png pronto para o portal
          ↓
@@ -54,23 +53,11 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 > O fluxo é totalmente automático após a aprovação de Léo na Fase 0.
 > As imagens canônicas estão permanentemente em `Personagens\5o ano\` — o Codex as acessa diretamente.
 
-### Contrato Codex — pastas de controle
+### Geração de imagens — Codex via MCP (única via suportada)
 
-| Pasta | Papel |
-|---|---|
-| `.claude/pending/hq-[slug].json` | Pedido de HQ escrito pelo `gerador-hq-imagens`; Codex processa |
-| `.claude/done/hq-[slug].json` | Codex move aqui após sucesso; `gerador-hq-imagens` detecta e aciona `colador-hq` |
-| `.claude/error/hq-[slug].json` | Codex move aqui com `error_message` em caso de falha; orquestrador reporta a Léo |
-| `.claude/pending/portraits-batch.json` | Pedido de portrait escrito pela skill; Codex usa folha pronta para gerar `_landing/chars/[slug]-hd.png` |
-| `.claude/done/portraits-batch.json` | Codex move aqui após gerar todos os portraits do lote |
+Desde 2026-08-22, validado de ponta a ponta em produção (5 temas do Capítulo 6 de Português), a geração de imagens usa **exclusivamente** o servidor MCP `codex` registrado em `C:\Users\wizar\.claude.json` (`codex mcp-server` via `C:\Users\wizar\AppData\Roaming\npm\codex.cmd`). O `gerador-hq-imagens` chama o Codex diretamente como tool — sem Codex Desktop aberto, sem automações de pasta, sem `.claude/pending/`.
 
-> **Pré-requisito:** O Codex Desktop deve estar **aberto** com **duas automações ativas** antes de iniciar o pipeline:
-> - **"Gerar HQs pendentes"** — processa `hq-[slug].json`
-> - **"Gerar Portraits pendentes"** — processa `portraits-batch.json`
->
-> Sem isso, os JSONs ficarão em `pending/` sem ser processados.
-
-> **Alternativa via MCP (desde 2026-08-11):** existe um servidor MCP `codex` registrado em `C:\Users\wizar\.claude.json` para este projeto (`estudos`), rodando `codex mcp-server` via `C:\Users\wizar\AppData\Roaming\npm\codex.cmd` — mesma config já usada no projeto `Wizard`. Permite chamar o Codex diretamente como tool, sem depender do Codex Desktop aberto nem das automações de polling em pasta. Exige reiniciar a sessão do Claude Code após o registro para a tool aparecer. `gerador-hq-imagens` tenta esse modo primeiro e cai para o fluxo de arquivo acima como fallback — nenhuma das duas vias deve ser removida até o MCP estar validado de ponta a ponta em produção.
+O fluxo antigo (pasta `.claude/pending/`/`.claude/done/`/`.claude/error/` + Codex Desktop com automações) **foi removido**. Se o MCP `codex` não estiver disponível numa sessão, o agente deve parar e reportar o problema ao orquestrador/Léo — nunca cair para o fluxo de arquivo antigo, nem para renderização programática (Pillow/SVG/etc. — ver `ERROS.md` ERR-005f).
 
 ---
 
@@ -81,7 +68,7 @@ Você é o orquestrador do portal educacional do André (5º ano). Sua função 
 3. **Escopo restrito às fotos fornecidas** — nenhum conceito inventado.
 4. **Variedade de atividades** — sem repetição de tipos na mesma disciplina.
 5. **Orquestrador não escreve HTML, prompts ou código** — delega sempre.
-6. **JSON Codex IMEDIATO após gerador-hq-prompt** — o orquestrador escreve `.claude/pending/hq-[slug].json` assim que o `gerador-hq-prompt` confirmar o arquivo .md, sem esperar o restante do pipeline. O Codex processa em paralelo enquanto atividades e index são gerados. `gerador-hq-imagens` apenas faz polling em `.claude/done/`. Encoding: UTF-8 sem BOM via `[System.IO.File]::WriteAllText(path, json, [System.Text.UTF8Encoding]::new($false))`.
+6. **Acionar gerador-hq-imagens assim que o .md estiver pronto** — o orquestrador aciona o agente `gerador-hq-imagens` (Codex via MCP direto) assim que o `gerador-hq-prompt` confirmar o arquivo `.md`, sem esperar o restante do pipeline — pode rodar em paralelo com `gerador-atividades` e `atualizador-index` de outros temas. Não há JSON nem pasta de controle; a chamada é direta ao MCP `codex`.
 7. **RESET OBRIGATÓRIO nos prompts de HQ** — todo arquivo `hq-[slug]-prompt.md` deve começar com um bloco "⚠️ RESET OBRIGATÓRIO" que: (a) instrui o Codex a ignorar qualquer conversa anterior na sessão; (b) redefine explicitamente todos os personagens da HQ com descrição visual completa; (c) proíbe personagens de outros projetos (ex: "Bia", "André"). O Codex heartbeat acumula contexto entre sessões — sem esse reset, personagens de HQs anteriores vazam para as novas.
 8. **Documentação imediata** — toda mudança validada (novo recurso, nova regra, nova convenção) deve ser registrada nos docs do repositório na mesma sessão em que foi aprovada. Nenhuma melhoria fica apenas na memória do Claude.
 8. **Opções de quiz não podem entregar a resposta** — antes de finalizar qualquer questão, verificar se as opções permitem responder sem saber o conteúdo. Casos proibidos:
@@ -388,6 +375,6 @@ Consulte **`ERROS.md`** antes de gerar qualquer atividade. Contém bugs já diag
 | `atualizador-index` | Atualiza `index.html` para registrar o novo tema |
 | `revisor-qualidade` | Audita arquivos gerados — conformidade pedagógica + vazamento de resposta (seções 1–6 + 3c) |
 | `qa-simulador` | Valida runtime com Playwright mobile — 7 checks técnicos (console, assets, interação, sabendoScore, concluir-btn, gamificação, anti-conclusão-prematura) |
-| `gerador-hq-imagens` | Chama Codex via MCP (preferencial) ou escreve JSON em `.claude/pending/` + polling (fallback) |
+| `gerador-hq-imagens` | Chama Codex via MCP direto — única via suportada, sem fallback de pasta/polling |
 | `colador-hq` | Empilha pg1–pg4 em `hq-[slug].png` pronto para o index |
 | `atualizador-docs` | Regenera `CONTEUDO.md` e atualiza tabela de agentes do `SQUAD.md` |

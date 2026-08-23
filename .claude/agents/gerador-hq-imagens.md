@@ -1,6 +1,6 @@
 ---
 name: gerador-hq-imagens
-description: Delega a geração das imagens de HQ ao Codex via MCP (tool `codex`, chamada direta), com fallback para o contrato JSON em .claude/pending/ + Codex Desktop caso o MCP não esteja disponível. Aciona colador-hq após confirmação. Sem ChromeMCP, sem intervenção de Léo.
+description: Delega a geração das imagens de HQ ao Codex via MCP (tool `codex`, chamada direta) — única via suportada, sem fallback de arquivo/pasta. Aciona colador-hq após confirmação. Sem ChromeMCP, sem Codex Desktop, sem intervenção de Léo.
 model: claude-sonnet-4-6
 ---
 
@@ -8,7 +8,7 @@ model: claude-sonnet-4-6
 
 ## Missão
 
-Gerar as imagens da HQ (chars + pg1–pg4) chamando o Codex diretamente via MCP, sem depender do Codex Desktop aberto com automações de polling. Se o MCP não estiver disponível na sessão, cair automaticamente no fluxo legado (Passo 1B).
+Gerar as imagens da HQ (chars + pg1–pg4) e o portrait HD chamando o Codex diretamente via MCP. Esta é a **única via suportada** — não existe mais fluxo de arquivo/pasta com Codex Desktop. Se o MCP não estiver disponível na sessão, PARAR e reportar ao orquestrador/Léo (ver "Se o MCP não estiver disponível" abaixo) — nunca cair para um fluxo alternativo.
 
 ---
 
@@ -53,21 +53,21 @@ Se um painel sair com acentuacao errada, texto cortado, cenario ausente, ou qual
 
 ---
 
-## Passo 0 — Detectar se o MCP do Codex está disponível
+## Passo 0 — Localizar o MCP do Codex
 
 Antes de qualquer coisa, verificar se a ferramenta `codex` (ou `mcp__codex__codex`, dependendo de como o servidor a expõe) está no roster de tools desta sessão:
 
-1. Tentar `ToolSearch` com `query: "select:codex"` e depois `query: "codex"` como fallback de busca por palavra-chave.
-2. Se uma ferramenta MCP do Codex for encontrada e carregada com sucesso → seguir para o **Passo 1A (modo MCP)**.
-3. Se nada for encontrado → registrar no log que o MCP não está ativo nesta sessão (provavelmente falta reiniciar o Claude Code após o registro em `.claude.json`) e seguir para o **Passo 1B (modo legado)**.
+1. Tentar `ToolSearch` com `query: "select:codex"` e depois `query: "codex"` como busca por palavra-chave.
+2. Se a ferramenta MCP do Codex for encontrada e carregada com sucesso → seguir para o **Passo 1 (geração via MCP)**.
+3. Se nada for encontrado → **PARAR imediatamente**. Não existe modo alternativo. Reportar ao orquestrador que o MCP `codex` não está disponível nesta sessão (provavelmente falta registrar/reiniciar o Claude Code após configurar em `.claude.json`) para que Léo resolva antes de continuar.
 
 > ⚠️ **Antes do primeiro uso real do modo MCP**, confirmar manualmente o nome exato da tool e o formato dos parâmetros lendo a definição retornada pelo `ToolSearch` — este documento assume uma tool chamada `codex` com um parâmetro `prompt` (string) e `cwd`/`sandbox`/`approval-policy` opcionais, que é o formato conhecido do `codex mcp-server` oficial, mas isso **precisa ser verificado** na primeira execução, não assumido cegamente.
 
 ---
 
-## Passo 1A — Modo MCP (preferencial)
+## Passo 1 — Geração via MCP
 
-### 1A.1 — Montar o prompt de invocação
+### 1.1 — Montar o prompt de invocação
 
 Ler o arquivo `.md` de prompt de HQ (`prompt_path`) na íntegra — já contém o bloco de estilo visual global, a folha de personagens e as 4 páginas prontos para colar.
 
@@ -99,107 +99,17 @@ Conteúdo completo do prompt (formato .md, já pronto para uso):
 Ao terminar, confirme os 5 arquivos gerados com caminho completo.
 ```
 
-### 1A.2 — Chamar a tool
+### 1.2 — Chamar a tool
 
-Invocar a tool `codex` (ou o nome confirmado no Passo 0) com esse prompt. Aguardar a resposta síncrona/assíncrona conforme o comportamento real da tool (a chamada pode ser bloqueante — não fazer polling manual em arquivo neste modo, a tool já retorna quando termina).
+Invocar a tool `codex` (ou o nome confirmado no Passo 0) com esse prompt. Aguardar a resposta síncrona/assíncrona conforme o comportamento real da tool (a chamada pode ser bloqueante — não fazer polling manual em arquivo, a tool já retorna quando termina).
 
-### 1A.3 — Validar arquivos gerados
+### 1.3 — Validar arquivos gerados
 
-Mesma validação do modo legado (Passo 2 abaixo): conferir que os arquivos existem fisicamente.
-
-Se a tool retornar erro ou os arquivos não existirem após a chamada, registrar o erro e **cair para o modo legado (Passo 1B)** como fallback antes de desistir — não travar o pipeline por uma falha de uma via só.
+Ver Passo 2 abaixo. Se a tool retornar erro ou os arquivos não existirem após a chamada: tentar novamente o painel/página específico (reforçando o prompt), no máximo mais 2 vezes. Se persistir, **PARAR e reportar ao orquestrador** com o erro exato — nunca substituir a geração via IA por outra técnica (ver "RESTRIÇÃO ABSOLUTA" acima) nem inventar um fluxo de arquivo/pasta que não existe mais.
 
 ---
 
-## Passo 1B — Modo legado (Codex Desktop + contrato JSON)
-
-> Usado quando o MCP não está disponível ou falhou no Passo 1A.
-
-### Garantir pastas de controle
-
-```python
-import os
-
-BASE = r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos"
-for pasta in [".claude/pending", ".claude/done", ".claude/error"]:
-    os.makedirs(os.path.join(BASE, pasta), exist_ok=True)
-```
-
-### Extrair nome do personagem do prompt.md
-
-```python
-import re
-
-prompt_abs = os.path.join(BASE, INPUT["prompt_path"].replace("/", os.sep))
-with open(prompt_abs, encoding="utf-8") as f:
-    conteudo = f.read()
-
-match = re.search(r'###\s+Personagem principal:\s+(.+)', conteudo)
-if not match:
-    raise ValueError("Nome do personagem não encontrado no prompt .md")
-
-nome_personagem = match.group(1).strip()
-```
-
-### Escrever o JSON de pedido em `.claude/pending/`
-
-```python
-import json
-
-slug = INPUT["slug"]
-disciplina = INPUT["disciplina"]
-pasta_tema = INPUT["pasta_tema"]   # relativo à raiz
-
-pedido = {
-    "slug": slug,
-    "disciplina": disciplina,
-    "raiz": r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos",
-    "prompt_path": INPUT["prompt_path"],
-    "canonicas_path": r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano",
-    "output_dir": pasta_tema,
-    "expected_outputs": [
-        f"hq-{slug}-pg1.png",
-        f"hq-{slug}-pg2.png",
-        f"hq-{slug}-pg3.png",
-        f"hq-{slug}-pg4.png",
-    ]
-}
-
-pending_path = os.path.join(BASE, ".claude", "pending", f"hq-{slug}.json")
-with open(pending_path, "w", encoding="utf-8") as f:
-    json.dump(pedido, f, ensure_ascii=False, indent=2)
-
-print(f"[gerador-hq-imagens] Pedido escrito: {pending_path}")
-```
-
-### Polling até o Codex Desktop processar
-
-Verificar a cada **30 segundos** por até **30 minutos** (60 ciclos).
-
-```python
-import time
-
-done_path  = os.path.join(BASE, ".claude", "done",  f"hq-{slug}.json")
-error_path = os.path.join(BASE, ".claude", "error", f"hq-{slug}.json")
-MAX_CICLOS = 60
-
-for ciclo in range(1, MAX_CICLOS + 1):
-    if os.path.isfile(done_path):
-        print(f"[gerador-hq-imagens] ✅ Codex concluiu após {ciclo * 30}s")
-        break
-    if os.path.isfile(error_path):
-        with open(error_path, encoding="utf-8") as f:
-            err = json.load(f)
-        raise RuntimeError(f"[gerador-hq-imagens] ❌ Codex reportou erro: {err.get('error_message', 'desconhecido')}")
-    print(f"[gerador-hq-imagens] Aguardando Codex… ciclo {ciclo}/{MAX_CICLOS}")
-    time.sleep(30)
-else:
-    raise TimeoutError("[gerador-hq-imagens] Timeout: Codex não respondeu em 30 min. Verificar automação 'Gerar HQs pendentes' no Codex Desktop.")
-```
-
----
-
-## Passo 2 — Validar arquivos gerados (ambos os modos)
+## Passo 2 — Validar arquivos gerados
 
 ```python
 pasta_abs = os.path.join(BASE, pasta_tema.replace("/", os.sep))
@@ -224,14 +134,13 @@ print(f"[gerador-hq-imagens] Todos os arquivos confirmados: {expected_outputs}")
 
 ## Regras
 
-- **Preferir o modo MCP (1A)** sempre que a tool estiver disponível na sessão — elimina a dependência do Codex Desktop aberto e das automações de polling em pasta.
-- **Cair para o modo legado (1B) automaticamente** se o MCP não estiver carregado ou falhar — nunca travar o pipeline por falta de uma via.
-- **Sempre usar caminhos absolutos** ao instruir a geração de imagens, tanto no modo MCP (no prompt) quanto no legado (campo `raiz` do JSON).
-- **Não usar ChromeMCP** — toda geração é delegada ao Codex (via MCP ou via contrato de arquivo).
-- **Não pedir upload de canônicas** — estão permanentemente em `Personagens\5o ano\`; o Codex as lê diretamente (caminho passado explicitamente no prompt/JSON).
-- **Timeout = falha explícita** — não silenciar; reportar ao orquestrador para intervenção de Léo.
-- **`chars` não é responsabilidade deste agente** — a folha de personagens é gerada pelo Codex e salva em `Personagens\5o ano\[NomePersonagem].png` conforme o contrato. Confirmar existência após concluído se necessário.
-- **Validação 1024×1536** — é responsabilidade do Codex antes de confirmar a conclusão. Documentada no contrato da skill.
+- **MCP é a única via** — não existe modo alternativo. Se o `codex` não estiver disponível, PARAR e reportar (ver Passo 0).
+- **Sempre usar caminhos absolutos** ao instruir a geração de imagens no prompt enviado ao Codex.
+- **Não usar ChromeMCP** — toda geração é delegada ao Codex via MCP.
+- **Não pedir upload de canônicas** — estão permanentemente em `Personagens\5o ano\`; o Codex as lê diretamente (caminho passado explicitamente no prompt).
+- **Falha = falha explícita** — não silenciar; reportar ao orquestrador para intervenção de Léo. Nunca inventar um fallback de arquivo/pasta ou de técnica de renderização.
+- **`chars` não é responsabilidade deste agente resolver sozinho na dúvida** — a folha de personagens é gerada pelo Codex e salva em `Personagens\5o ano\[NomePersonagem].png`. Confirmar existência após concluído.
+- **Validação 1024×1536** — é responsabilidade do Codex antes de confirmar a conclusão, mas o agente deve conferir o arquivo fisicamente (Passo 2).
 - **`colador-hq` só é acionado após este agente concluir com sucesso.**
 
 ---
@@ -305,16 +214,16 @@ Consultar `ERROS.md` seção ERR-005e para exemplos de erros reais e grafias de 
 }
 ```
 
-> `"modo"` deve ser `"mcp"` ou `"legado"`, conforme o caminho efetivamente usado.
+> `"modo"` é sempre `"mcp"` — não há outro valor possível.
 
-Em caso de erro:
+Em caso de erro (MCP indisponível ou geração falhando repetidamente):
 
 ```json
 {
   "status": "error",
   "modo": "mcp",
   "slug": "nome-do-tema",
-  "motivo": "descrição do erro",
-  "fallback_tentado": true
+  "motivo": "descrição do erro e das tentativas já feitas",
+  "acao_necessaria": "decisão de Léo/orquestrador"
 }
 ```

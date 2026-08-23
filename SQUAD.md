@@ -62,26 +62,19 @@ estudos/
 | `skill-gerar-hq-prompt` | `gerador-hq-prompt` | Arco narrativo das 4 páginas, regra de sem reticências (descrever tudo explicitamente), formato de painel |
 | `skill-gerar-atividades-html` | `gerador-atividades` | Design system completo (fontes, CSS vars, responsividade), templates de código por tipo de atividade, mapa mental canônico |
 | `skill-atualizar-index` | `atualizador-index` | 4 regiões do index.html, tabela de cores por disciplina, padrões HTML de sidebar e bloco de conteúdo. **Obrigatório:** adicionar entradas no `HREF_MAP` de `loadActivityStatus()` para cada novo arquivo HTML gerado (mapeamento `href → "theme_slug\|activity_type"`). |
-| `skill-hq-imagens` | `gerador-hq-imagens` | Contrato Codex: campos do JSON de pedido, comportamento de polling (30s/30min), destinos de arquivo, responsabilidades do Codex (incluindo validação 1024×1536) |
+| `skill-hq-imagens` | `gerador-hq-imagens` | **OBSOLETA** — documentava o contrato de arquivo via Codex Desktop, removido em 2026-08-22. O fluxo atual (Codex via MCP direto) está documentado no próprio `.claude/agents/gerador-hq-imagens.md` |
 
 ---
 
-## Pré-requisito — Codex Desktop
+## Geração de imagens — Codex via MCP
 
-Antes de iniciar qualquer pipeline, Léo deve:
-1. Abrir o **Codex Desktop**
-2. Despausar (ativar) as **duas automações**:
-   - **Gerar HQs pendentes** — processa `.claude/pending/hq-[slug].json`
-   - **Gerar Portraits pendentes** — processa `.claude/pending/portraits-batch.json`
+Não há mais pré-requisito manual. A geração de HQ e portrait é feita pelo `gerador-hq-imagens` chamando o Codex diretamente via MCP (tool `codex`) — sem Codex Desktop, sem automações, sem pasta de controle. Validado de ponta a ponta em produção em 2026-08-22 (5 temas do Capítulo 6 de Português).
 
 ---
 
 ## Fluxo completo
 
 ```
-Léo ativa as 2 automações no Codex Desktop
-         │
-         ▼
 Léo fornece fotos + disciplina
          │
          ▼
@@ -122,12 +115,12 @@ Orquestrador apresenta proposta a Léo
                      │
                      ▼
              [gerador-hq-imagens]
-               • escreve .claude/pending/hq-[slug].json
-               • escreve .claude/pending/portraits-batch.json
+               • chama Codex via MCP direto (tool `codex`)
                • Codex (HQ): gera folha de personagem + pg1-pg4
                • Codex (Portrait): usa folha → gera [slug]-hd.png
-               • polling → detecta done/ → aciona colador-hq
-               • detecta error/ → reporta a Léo
+               • verifica pixel a pixel a transparência do portrait
+               • aciona colador-hq após confirmar arquivos
+               • se o MCP falhar: para e reporta a Léo (sem fallback)
                         │
                  ┌───────┴───────┐
                  ▼               ▼
