@@ -354,6 +354,22 @@ Nunca decidir sozinho por trocar de técnica de renderização. O resultado entr
 
 ---
 
+### ERR-005g — Remendo manual em imagem já gerada em vez de regeneração completa via Codex
+
+**Ocorrência:** HQ "Acentuação: Paroxítonas e Proparoxítonas", página 4 (pg4, painel "RESUMÃO DO ACENTIN"). A página apresentava dois defeitos visíveis a olho nu quando publicada: (1) um remendo/costura amadora visível dentro de um dos painéis (região com bordas e textura destoando do resto da ilustração, sinal de edição pontual sobre a imagem já gerada); (2) o Prepo desenhado em escala gigante, do tamanho de um adulto, quebrando a proporção estabelecida do personagem em relação à Bia e aos outros elementos do cenário. Rejeitado por Léo.
+
+**Causa raiz:** Em vez de regenerar a página inteira via Codex quando um defeito foi identificado, alguma etapa do pipeline (agente ou script auxiliar) editou/sobrepôs uma correção pontual diretamente sobre o PNG já gerado — a mesma classe de atalho do ERR-005f (resolver o sintoma sem preservar a integridade da arte), mas aplicada como remendo pós-geração em vez de substituição total da técnica de renderização.
+
+**Regra ABSOLUTA e não-negociável:**
+
+Correção de qualquer defeito em uma imagem de HQ (erro de acentuação, proporção de personagem, elemento faltando, etc.) DEVE SEMPRE ser feita gerando uma página nova do zero via Codex — nunca editando, recortando, colando ou sobrepondo qualquer coisa sobre o PNG já existente. Isso vale para qualquer ferramenta (Pillow, editor de imagem, script de patch, inpainting manual) e para qualquer parte da imagem, por menor que seja.
+
+Se o defeito for de proporção/escala de personagem, o prompt de regeneração deve reforçar explicitamente a escala relativa correta (ex: "Prepo tem a mesma altura aproximada da Bia, nunca maior — é um robô mascote, não um personagem adulto") citando a folha de personagem canônica como referência.
+
+Nunca remendar. Sempre regenerar a página inteira.
+
+---
+
 ## Checklist anti-bug para geração de HQ (gerador-hq-prompt e gerador-hq-imagens)
 
 Verificação obrigatória antes de considerar qualquer HQ concluída:
@@ -369,6 +385,8 @@ Verificação obrigatória antes de considerar qualquer HQ concluída:
 **Imagens (gerador-hq-imagens — ao validar os arquivos gerados):**
 
 - [ ] ⚠️ REGRA ABSOLUTA: As imagens foram geradas via Codex (IA)? Renderização programática (Pillow, matplotlib, SVG geométrico, HTML-to-image) é PROIBIDA — ver ERR-005f.
+- [ ] ⚠️ REGRA ABSOLUTA: Toda correção foi feita regenerando a página inteira via Codex? Nenhum remendo/patch/overlay manual sobre um PNG já gerado, em nenhuma hipótese — ver ERR-005g.
+- [ ] A proporção/escala dos personagens está consistente entre painéis e com a folha de personagem canônica? (ex: Prepo não pode aparecer do tamanho de um adulto — é um mascote robô, sempre menor ou do porte da criança/personagem humano da cena)
 - [ ] O pixel do canto superior esquerdo de cada portrait tem Alpha=0 (transparente)? (verificado via script, não apenas pela confirmação textual do Codex)
 - [ ] Cada painel das páginas pg1–pg4 tem cenário visível com elementos ilustrados (não fundo branco/liso)?
 - [ ] Os textos dos balões estão legíveis e completos (sem palavras cortadas ou embaralhadas)?

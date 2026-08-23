@@ -1,5 +1,5 @@
 # Conteúdo do Portal — Estado Atual
-**Última atualização:** 2026-08-22
+**Última atualização:** 2026-08-23
 
 ---
 
