@@ -48,7 +48,21 @@ Editar `index.html` para adicionar um novo tema: link na sidebar, conteúdo comp
    - Bloco de conteúdo: após o último `<div class="theme-content" id="theme-[disc]-[último-slug]">`
 4. **Inserir** o novo tema após o último da mesma disciplina em cada ponto.
 5. **Atualizar** o contador de temas da disciplina na seção home (chip `<span class="chip">N temas</span>`).
-6. **Não alterar nada** além das seções do novo tema e o contador.
+6. **⚠️ Adicionar entradas no `HREF_MAP` dentro de `loadActivityStatus()`** — ver seção dedicada abaixo. **Passo obrigatório e frequentemente esquecido:** sem isso, as atividades do tema nunca aparecem como concluídas para o aluno, mesmo que ele complete tudo (o `THEME_CATALOG`/`ACTIVITY_FILE_PATHS` NÃO substituem essa etapa — são estruturas diferentes, com propósitos diferentes).
+7. **Não alterar nada** além das seções do novo tema, o contador e o `HREF_MAP`.
+
+## ⚠️ HREF_MAP — obrigatório para toda atividade nova
+
+Dentro da função `loadActivityStatus()` (buscar `var HREF_MAP = {` no `index.html`), existe um objeto que mapeia o `href` exato de cada `act-card` para uma chave `slug|activity_type` usada para checar no Supabase (`activity_log`) se o aluno já concluiu aquela atividade. **Toda atividade HTML nova precisa de uma entrada aqui**, ou o badge de "concluído" nunca aparece para ela.
+
+Formato exato (adicionar antes do `};` que fecha o objeto):
+```js
+'[disciplina]/[slug]/[arquivo].html':'[slug]|[activity_type]',
+```
+
+`[activity_type]` é o valor exato da variável `ACTIVITY_TYPE` dentro do snippet `<!-- concluir-btn -->` daquele arquivo HTML (ex.: `"quiz"`, `"mapa-mental"`, `"classificador"`, `"complete-lacuna"`, `"caca-erro"`) — **conferir o arquivo real**, não assumir pelo nome do arquivo. Uma entrada com `activity_type` errado nunca vai bater com o que é gravado no banco.
+
+Adicionar uma linha por atividade do tema (tipicamente 4). Depois de editar, validar a sintaxe do objeto (nenhuma vírgula sobrando/faltando) antes de salvar.
 
 ## Cores concretas por disciplina (substituir nos padrões abaixo)
 
@@ -109,7 +123,7 @@ Os cards de disciplina na home (`disc-home-card`) devem ter fundo colorido com g
 {
   "status": "ok",
   "arquivo_editado": "C:\\...\\index.html",
-  "secoes_adicionadas": ["sidebar-link", "tab-btn", "theme-content"],
+  "secoes_adicionadas": ["sidebar-link", "tab-btn", "theme-content", "href-map"],
   "contador_atualizado": {
     "disciplina": "portugues",
     "total_anterior": 8,

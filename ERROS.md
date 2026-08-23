@@ -206,6 +206,30 @@ Regra de ouro: `window.sabendoScore` deve ser sempre um inteiro entre 0 e 100.
 
 ---
 
+## ERR-006 — Atividades de temas novos nunca marcam como "concluído"
+
+**Arquivos afetados:** `index.html` — todos os 5 temas do Capítulo 6 de Português (fabulas-conflito-moral, conjuncoes, dicionario-verbetes, poema-visual-onomatopeias, acentuacao-paroxitonas-proparoxitonas)
+**Data:** 2026-08-22
+**Tipo:** Checklist incompleto no `atualizador-index`
+
+### Causa raiz
+
+O `index.html` tem **duas estruturas diferentes** para registrar um tema: o `THEME_CATALOG`/`ACTIVITY_FILE_PATHS` (usados para navegação e gamificação de reforço) e o `HREF_MAP` dentro de `loadActivityStatus()` (usado exclusivamente para consultar o Supabase e desenhar o badge de "concluído" em cada `act-card`). O agente `atualizador-index` sempre atualizou a primeira estrutura, mas o arquivo de definição do agente nunca mencionava o `HREF_MAP` — então ele nunca era atualizado para temas novos. Resultado: o aluno completa a atividade normalmente (gravação no Supabase funciona), mas o portal nunca mostra o badge de concluído porque a busca `HREF_MAP[href]` retorna `undefined` para qualquer href de tema novo.
+
+Esse bug ficou 3 horas em produção sem detecção até Léo notar que os temas do André não ficavam marcados.
+
+### Correção aplicada (2026-08-22)
+
+Adicionadas manualmente 20 entradas ao `HREF_MAP` (4 atividades × 5 temas). `.claude/agents/atualizador-index.md` atualizado com uma seção dedicada e obrigatória sobre o `HREF_MAP`, incluindo o passo no procedimento numerado (não apenas uma menção solta).
+
+### Regra para a squad
+
+- **Todo tema novo exige uma entrada no `HREF_MAP` por atividade** — nunca presumir que atualizar `THEME_CATALOG`/`ACTIVITY_FILE_PATHS` é suficiente para a gamificação funcionar.
+- O `activity_type` na entrada do `HREF_MAP` deve ser conferido no arquivo HTML real (`var ACTIVITY_TYPE = "..."` dentro do snippet `concluir-btn`), nunca assumido pelo nome do arquivo.
+- Após qualquer atualização de `index.html` para um tema novo, validar a sintaxe do `HREF_MAP` (objeto JS bem formado) antes de considerar a tarefa concluída.
+
+---
+
 ## ERR-005 — Defeitos recorrentes na geração de HQ via Codex MCP
 
 **Arquivos afetados:** prompts de HQ (`.md`) e imagens geradas (`pg1–pg4.png`, portraits)
