@@ -159,15 +159,17 @@ Acentin em pose de super-herói, com uma capinha amarela agora. Atrás dele, let
 - **Acentin:** *"É a regra mais fácil da língua portuguesa!"*
 
 **Painel 4 (médio):**
-Lousa cheia de exemplos de proparoxítonas, todas com a antepenúltima sílaba destacada em amarelo e com acento desenhado:
-"**TÊ**-nis", "**LÁ**-gri-ma", "**TÚ**-nel", "**ÁL**-bum", "**HÍ**-fen", "me-**MÓ**... " — corrigir: as proparoxítonas devem ter a sílaba forte na antepenúltima. Mostrar: "**TÊ**-nis", "**LÁ**-gri-ma", "**PÁS**-sa-ro", "me-**MÓ**-ria", "**ÁR**-vo-re", "**MÉ**-di-co", "**FÊ**-nix".
-- **Bia (lendo):** *"Tênis, lágrima, pássaro, memória, árvore, médico, fênix... TODAS têm acento!"*
+Lousa cheia de exemplos de proparoxítonas, todas com a antepenúltima sílaba destacada em amarelo e com acento desenhado — ATENÇÃO: todas as palavras abaixo já foram conferidas uma a uma e têm a sílaba tônica na antepenúltima sílaba (proparoxítonas de verdade; nunca trocar por outras palavras sem reconferir sílaba a sílaba):
+"**MÉ**-di-co", "**LÁ**-gri-ma", "**PÁS**-sa-ro", "**ÁR**-vo-re", "**SÁ**-ba-do", "**NÚ**-me-ro".
+- **Bia (lendo):** *"Médico, lágrima, pássaro, árvore, sábado, número... TODAS têm acento!"*
 - **Acentin:** *"Isso! Sem exceção!"*
 
 **Painel 5 (final, participação do Prepo):**
 Prepo aparece pela primeira vez, chegando pela porta da sala com um livro aberto.
-- **Prepo:** *"Ei, Bia! Achei uma tira do Laerte com duas proparoxítonas: 'médico' e 'álbum'!"*
+- **Prepo:** *"Ei, Bia! Achei uma tira do Laerte com duas proparoxítonas: 'médico' e 'sábado'!"*
 - **Acentin (empolgado):** *"Perfeito! Proparoxítonas aparecem em tudo quanto é lugar!"*
+
+**⚠️ Este painel é o que apresentou o remendo amador (ERR-005g/ERR-013) — a caixa de texto com as palavras 'médico'/'álbum' colada sobre o livro do Prepo. Ao regenerar, a legenda das palavras dentro do livro deve nascer junto com a ilustração do livro na mesma geração — nunca ser adicionada depois como elemento sobreposto.**
 
 ---
 
@@ -194,7 +196,7 @@ Bia apontando para o quadro, sorridente.
 Lousa (lado direito) mostrando outro quadro:
 - Título: **PROPAROXÍTONA** = antepenúltima sílaba tônica
 - Regra: **TODAS levam acento** (sem exceção!)
-- Exemplos: médico, lágrima, pássaro, memória, árvore, tênis, fênix, hífen.
+- Exemplos (todos já conferidos sílaba a sílaba — sílaba tônica na antepenúltima; nunca trocar sem reconferir): médico, lágrima, pássaro, árvore, sábado, número, público, círculo.
 
 Prepo apontando com o dedinho robótico.
 - **Prepo:** *"E proparoxítona sempre leva acento. Fácil!"*
