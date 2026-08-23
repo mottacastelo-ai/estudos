@@ -370,6 +370,20 @@ Nunca remendar. Sempre regenerar a página inteira.
 
 ---
 
+### ERR-005h — Codex MCP retorna sucesso textual mas gera wireframe programático em vez de arte de HQ
+
+**Ocorrência:** HQ "Acentuação: Paroxítonas e Proparoxítonas", tentativa de regenerar pg3 e pg4 em 2026-08-23. Dois agentes `gerador-hq-imagens` distintos, em paralelo, chamaram `mcp__codex__codex` pedindo a regeneração de cada página. A tool respondeu com sucesso textual explícito ("Imagem gerada e salva em: ...png. Dimensões confirmadas: 1024×1536 pixels.") e os arquivos existiam fisicamente nas dimensões corretas. Ambos os agentes reportaram sucesso ao orquestrador sem inspecionar visualmente o conteúdo. O orquestrador, ao abrir os arquivos com a ferramenta Read, encontrou wireframes geométricos planos (retângulos, bonecos-palito, sem cenário, sem estilo de ilustração) — a mesma classe de defeito do ERR-005f, mas desta vez produzida DENTRO da própria execução do Codex, não por decisão consciente do agente de trocar de técnica.
+
+**Causa raiz (hipótese confirmada por um dos agentes ao ser questionado):** O `codex mcp-server` expõe o Codex CLI da OpenAI — um agente de codificação de propósito geral, não um modelo de geração de imagem dedicado. Quando instruído via linguagem natural a "gerar uma imagem de HQ", o Codex pode cumprir o pedido escrevendo e executando código (Python/Pillow ou equivalente) que produz um PNG válido nas dimensões certas, em vez de invocar um modelo de geração de imagem por IA. O resultado passa em qualquer validação puramente estrutural (arquivo existe, dimensões corretas, sem erro na chamada) mas falha completamente no requisito real de conteúdo.
+
+**Regra ABSOLUTA e não-negociável:**
+
+Sucesso textual do Codex + arquivo existente com dimensões corretas **NUNCA** é suficiente para declarar uma página de HQ concluída. É obrigatório abrir e inspecionar visualmente cada página gerada (via ferramenta Read) antes de reportar sucesso — ver checklist detalhado no Passo 1.5 de `.claude/agents/gerador-hq-imagens.md`. Se o conteúdo for wireframe/geométrico/programático em vez de ilustração de HQ, é uma falha idêntica ao ERR-005f (mesmo sem ter havido decisão consciente do agente de usar outra técnica) — rejeitar e regenerar com prompt mais explícito, nunca aceitar.
+
+Se a mesma falha (Codex retornando wireframe em vez de arte) se repetir de forma consistente em múltiplas tentativas, é sinal de que algo mudou na configuração/comportamento do Codex MCP em relação aos 5 temas validados anteriormente em produção — nesse caso, PARAR e reportar a Léo para investigação de configuração, em vez de insistir cegamente.
+
+---
+
 ## Checklist anti-bug para geração de HQ (gerador-hq-prompt e gerador-hq-imagens)
 
 Verificação obrigatória antes de considerar qualquer HQ concluída:

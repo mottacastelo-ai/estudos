@@ -109,6 +109,20 @@ Ver Passo 2 abaixo. Se a tool retornar erro ou os arquivos não existirem após 
 
 ---
 
+## Passo 1.5 — Inspeção visual OBRIGATÓRIA antes de declarar sucesso (ERR-005h)
+
+**Nunca confiar na confirmação textual do Codex de que a imagem foi gerada corretamente.** O Codex MCP é um agente de codificação (Codex CLI), não um modelo de geração de imagem nativo — quando instruído a "gerar uma imagem", ele pode responder escrevendo e executando código (Python/Pillow ou similar) que produz um PNG geometricamente válido (dimensões corretas, arquivo existe) mas que é um wireframe/clip-art programático, não arte de HQ ilustrada. Isso já ocorreu em produção (ver ERROS.md ERR-005h) com a tool retornando sucesso textual e dimensões corretas, mesmo o conteúdo sendo inteiramente proibido pela RESTRIÇÃO ABSOLUTA acima.
+
+Antes de declarar qualquer página concluída, **use a ferramenta Read para abrir e olhar o arquivo PNG gerado** (não apenas checar existência/tamanho via script) e confirmar visualmente:
+
+- Existe cenário ilustrado de fundo (ambiente, iluminação, objetos desenhados) — não fundo branco/liso ou grade geométrica?
+- Os personagens têm textura, sombreamento e estilo de ilustração — não são formas geométricas planas (retângulos, círculos, "boneco palito")?
+- O estilo é consistente com o resto do acervo de HQs do portal (comparar mentalmente com uma página já aprovada do mesmo tema, se existir)?
+
+Se QUALQUER um desses três pontos falhar, a imagem é uma regressão para renderização programática — rejeitar, NÃO reportar sucesso, e seguir o fluxo de "geração via Codex falhar repetidamente" (regenerar com prompt mais explícito pedindo estilo de ilustração de HQ; após 3 tentativas, PARAR e reportar ao orquestrador).
+
+---
+
 ## Passo 2 — Validar arquivos gerados
 
 ```python
