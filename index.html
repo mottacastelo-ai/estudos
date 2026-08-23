@@ -3323,7 +3323,27 @@ async function loadActivityStatus() {
     'historia/memoria-negra-imigrantes/selos-da-memoria.html':'memoria-negra-imigrantes|selos',
     'historia/pais-de-contrastes/detector-contrastes-pais-de-contrastes.html':'pais-de-contrastes|detector',
     'historia/pais-de-contrastes/mapa-mental-pais-de-contrastes.html':'pais-de-contrastes|mapa-mental',
-    'historia/pais-de-contrastes/quiz-pais-de-contrastes.html':'pais-de-contrastes|quiz'
+    'historia/pais-de-contrastes/quiz-pais-de-contrastes.html':'pais-de-contrastes|quiz',
+    'portugues/fabulas-conflito-moral/quiz-fabulas-conflito-moral.html':'fabulas-conflito-moral|quiz',
+    'portugues/fabulas-conflito-moral/classificador-fabulas-conflito-moral.html':'fabulas-conflito-moral|classificador',
+    'portugues/fabulas-conflito-moral/complete-lacuna-fabulas-conflito-moral.html':'fabulas-conflito-moral|complete-lacuna',
+    'portugues/fabulas-conflito-moral/mapa-mental-fabulas-conflito-moral.html':'fabulas-conflito-moral|mapa-mental',
+    'portugues/conjuncoes/quiz-conjuncoes.html':'conjuncoes|quiz',
+    'portugues/conjuncoes/classificador-conjuncoes.html':'conjuncoes|classificador',
+    'portugues/conjuncoes/complete-lacuna-conjuncoes.html':'conjuncoes|complete-lacuna',
+    'portugues/conjuncoes/mapa-mental-conjuncoes.html':'conjuncoes|mapa-mental',
+    'portugues/dicionario-verbetes/quiz-dicionario-verbetes.html':'dicionario-verbetes|quiz',
+    'portugues/dicionario-verbetes/classificador-dicionario-verbetes.html':'dicionario-verbetes|classificador',
+    'portugues/dicionario-verbetes/complete-lacuna-dicionario-verbetes.html':'dicionario-verbetes|complete-lacuna',
+    'portugues/dicionario-verbetes/mapa-mental-dicionario-verbetes.html':'dicionario-verbetes|mapa-mental',
+    'portugues/poema-visual-onomatopeias/quiz-poema-visual-onomatopeias.html':'poema-visual-onomatopeias|quiz',
+    'portugues/poema-visual-onomatopeias/classificador-poema-visual-onomatopeias.html':'poema-visual-onomatopeias|classificador',
+    'portugues/poema-visual-onomatopeias/complete-lacuna-poema-visual-onomatopeias.html':'poema-visual-onomatopeias|complete-lacuna',
+    'portugues/poema-visual-onomatopeias/mapa-mental-poema-visual-onomatopeias.html':'poema-visual-onomatopeias|mapa-mental',
+    'portugues/acentuacao-paroxitonas-proparoxitonas/quiz-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|quiz',
+    'portugues/acentuacao-paroxitonas-proparoxitonas/caca-erro-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|caca-erro',
+    'portugues/acentuacao-paroxitonas-proparoxitonas/classificador-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|classificador',
+    'portugues/acentuacao-paroxitonas-proparoxitonas/mapa-mental-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|mapa-mental'
   };
   var res = await supa.from('activity_log').select('theme_slug,activity_type,score').eq('user_id', sbUser.id);
   if (res.error || !res.data) return;
