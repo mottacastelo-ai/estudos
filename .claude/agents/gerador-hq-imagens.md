@@ -247,7 +247,17 @@ Após receber as páginas do Codex, verificar visualmente (ou instruir o Codex a
 - Cada painel tem elementos de cenário visíveis (não fundo branco/liso)? Se não, solicitar reprocessamento com cenário explícito por painel.
 - Os textos dos balões estão completos e legíveis (sem cortes ou embaralhamento)? Se não, solicitar reprocessamento com falas encurtadas para no máximo 12–15 palavras por balão.
 
-Consultar `ERROS.md` seção ERR-005 para detalhes completos e exemplos de reprocessamento.
+### Verificação de acentuação em texto maiúsculo/quadro-negro (ERR-005e)
+
+O Codex tem alta taxa de erro de acentuação especificamente em texto MAIÚSCULO, títulos e conteúdo de quadro-negro/lousa — enquanto texto em balões de fala minúsculos normalmente sai correto. Antes de aceitar qualquer painel, verificar:
+
+- Todo texto em caixa alta (títulos, banners, texto de lousa) tem acentuação 100% correta? Reler cada palavra em destaque, comparando com o português correto.
+- Há algum acento grave (`è`) fora dos contextos gramaticais válidos ("à", "àquele", "àquela")? Se sim, rejeitar o painel — `è` fora desses casos é sempre erro de geração.
+- Para temas cujo conteúdo inclui palavras acentuadas como termos-chave (acentuação, proparoxítonas, sílaba, tônica etc.), a lista de grafias corretas foi incluída no prompt de cada painel afetado no formato "SÍLABA não SILABA"?
+
+Se qualquer painel apresentar erro de acentuação em texto de destaque, solicitar reprocessamento com lista explícita das grafias corretas no prompt e instrução de releitura letra por letra antes de salvar.
+
+Consultar `ERROS.md` seção ERR-005e para exemplos de erros reais e grafias de reprocessamento.
 
 ---
 

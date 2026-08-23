@@ -294,6 +294,24 @@ Descrição canônica obrigatória da **Bia** — copiar literalmente em cada pa
 
 ---
 
+### ERR-005e — Acentuação perdida em texto maiúsculo/quadro-negro
+
+**Ocorrência:** HQ "Acentuação: Paroxítonas e Proparoxítonas" — páginas 1, 2 e título da página 3. Dezenas de palavras sem acento correto, especialmente em títulos e quadros-negro.
+
+**Exemplos reais:** "SILABA" em vez de "SÍLABA", "TONICA" em vez de "TÔNICA", "PAROXITONAS" em vez de "PAROXÍTONAS", "PENULTIMA" em vez de "PENÚLTIMA", "medico" em vez de "médico", "Nivel/bonus/revolver" em vez de "Nível/bônus/revólver", "proximas paginas" em vez de "próximas páginas", "Ja" em vez de "Já". Adicionalmente, apareceu um "è" com acento grave (inválido em português neste contexto) em vez de "é" com acento agudo.
+
+**Causa raiz:** O arquivo `.md` de prompt já continha os acentos corretos — o problema não é o prompt, é a geração de imagem. O Codex tende a "esquecer" acentos especificamente em texto renderizado em CAIXA ALTA e em conteúdo de quadro-negro (giz/lousa), enquanto texto em balões de fala minúsculos saiu correto na mesma HQ e nas outras 4 HQs geradas na mesma sessão (que não tiveram esse problema). A causa provável é que modelos de imagem são treinados com muito mais texto em inglês em caixa alta do que em português, e inglês não usa acentos — o viés se manifesta exatamente nos elementos de destaque visual.
+
+**Correção aplicada:** Regeneração das páginas 1, 2 e 3 com lista explícita de grafias corretas incluída no prompt de cada painel afetado (ex: "SÍLABA não SILABA", "TÔNICA não TONICA") e instrução para o Codex reler o texto renderizado palavra por palavra antes de aceitar cada painel.
+
+**Regra para a squad:**
+- Todo prompt de painel que contenha texto em português DEVE incluir a instrução: "todo texto em português deve ter acentuação 100% correta, incluindo em texto MAIÚSCULO/títulos/quadro-negro — texto em destaque (caixa alta, quadro-negro, banners) tem alta taxa de erro de acentuação e exige atenção redobrada."
+- Antes de aceitar qualquer painel, reler cada palavra em destaque (título, quadro-negro, texto grande) comparando com a grafia correta do português — não confiar na leitura geral da imagem.
+- Nunca usar acento grave (`è`) fora dos poucos casos gramaticalmente válidos em português ("à", "àquele", "àquela" etc.) — se aparecer `è` em qualquer outro contexto, é erro de geração e o painel deve ser rejeitado.
+- Para temas cujo conteúdo central são palavras com acento (ex: acentuação, paroxítonas, proparoxítonas, oxítonas), incluir no prompt de cada painel uma lista explícita das grafias corretas das palavras-chave do tema, no formato "X não Y" (ex: "SÍLABA não SILABA").
+
+---
+
 ## Checklist anti-bug para geração de HQ (gerador-hq-prompt e gerador-hq-imagens)
 
 Verificação obrigatória antes de considerar qualquer HQ concluída:
@@ -312,6 +330,8 @@ Verificação obrigatória antes de considerar qualquer HQ concluída:
 - [ ] Cada painel das páginas pg1–pg4 tem cenário visível com elementos ilustrados (não fundo branco/liso)?
 - [ ] Os textos dos balões estão legíveis e completos (sem palavras cortadas ou embaralhadas)?
 - [ ] O Prepo, quando presente, tem: etiqueta "PREPO" no peito, antenas com letras "D"/"E", olhos brancos redondos com pupila preta?
+- [ ] Todo texto em destaque (caixa alta, título, quadro-negro/lousa) tem acentuação 100% correta? (reler palavra por palavra — não confiar na leitura geral da imagem)
+- [ ] Nenhum painel contém acento grave (`è`) fora dos contextos gramaticais válidos em português? (se sim, rejeitar e reprocessar)
 - [ ] Todos os 4 arquivos de página existem fisicamente no caminho absoluto correto?
 
 ---
