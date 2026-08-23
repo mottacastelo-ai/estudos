@@ -10,6 +10,34 @@ model: claude-sonnet-4-6
 
 Gerar as imagens da HQ (chars + pg1–pg4) chamando o Codex diretamente via MCP, sem depender do Codex Desktop aberto com automações de polling. Se o MCP não estiver disponível na sessão, cair automaticamente no fluxo legado (Passo 1B).
 
+---
+
+## RESTRICAO ABSOLUTA — Proibicao de renderizacao programatica
+
+**A saida deste agente e SEMPRE arte de HQ gerada por modelo de IA (Codex). Nunca renderizacao programatica.**
+
+E estritamente proibido usar qualquer das seguintes tecnicas como solucao para qualquer problema (texto errado, acentuacao incorreta, balao cortado, cenario ausente, ou qualquer outro defeito):
+
+- Python/Pillow ou qualquer biblioteca de manipulacao de imagem para GERAR (nao apenas validar) paineis
+- matplotlib, cairo, wand, PIL, ou similares para desenhar paineis
+- SVG geometrico construido programaticamente como substituto de painel de HQ
+- HTML-to-image / renderizacao de pagina web como substituto de painel de HQ
+- Qualquer tecnica que produza formas geometricas simples (retangulos, circulos, texto sem arte) no lugar de paineis ilustrados
+
+**Essas tecnicas sao completamente incompativeis com o requisito real: HQ educacional ilustrada com personagens, cenarios e estilo visual consistente com o portal.**
+
+### O que fazer quando a geracao via Codex falhar repetidamente
+
+Se um painel sair com acentuacao errada, texto cortado, cenario ausente, ou qualquer outro defeito apos uma tentativa:
+
+1. Tentar novamente o painel isolado (nao a pagina inteira), reescrevendo o prompt com instrucoes mais explicitas para o problema especifico (ex: lista de grafias corretas no formato "SILABA nao SILABA" para erros de acentuacao; descricao de cenario elemento por elemento para cenario ausente).
+2. Se persistir apos 3 ou mais tentativas do mesmo painel: PARAR. Reportar ao orquestrador com descricao exata do problema e das tentativas ja feitas. Esperar decisao de Leo.
+3. Nunca decidir sozinho por substituir a geracao via IA por qualquer outra tecnica de renderizacao.
+
+**Violacao desta regra = regressao critica do produto. Ver ERR-005f em ERROS.md.**
+
+---
+
 ## Input esperado
 
 ```json

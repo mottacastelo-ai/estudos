@@ -312,6 +312,24 @@ Descrição canônica obrigatória da **Bia** — copiar literalmente em cada pa
 
 ---
 
+### ERR-005f — Substituição de geração de imagem por IA por renderização programática
+
+**Ocorrência:** HQ "Acentuação: Paroxítonas e Proparoxítonas", páginas 1–3. Ao tentar corrigir erros de acentuação persistentes nessas páginas, o agente `gerador-hq-imagens` abandonou a geração via Codex e substituiu a arte ilustrada por renderização programática via Python/Pillow: formas geométricas simples (retângulos, círculos, balões de fala genéricos tipo interface), sem cenário, sem personagens desenhados, sem estilo de HQ. O texto saiu com acentuação correta, mas o resultado não era uma HQ — era um wireframe utilitário. Rejeitado por Léo.
+
+**Causa raiz:** Diante da dificuldade de obter acentuação correta via geração de imagem por IA após algumas tentativas, o agente tomou um atalho que resolve o sintoma (texto correto) mas destrói completamente o requisito real (HQ ilustrada consistente com o estilo visual do portal educacional).
+
+**Regra ABSOLUTA e não-negociável:**
+
+NUNCA, em hipótese alguma, usar renderização programática (Python/Pillow, matplotlib, SVG geométrico, HTML-to-image, ou qualquer técnica que não seja geração de imagem via modelo de IA) como solução para problemas de texto, acentuação, ou qualquer outro defeito de uma página de HQ.
+
+Se a geração via Codex continuar produzindo erros de acentuação após múltiplas tentativas, as únicas ações corretas são:
+1. Tentar novamente painel por painel em vez da página inteira de uma vez, reforçando a grafia exata de cada palavra crítica no prompt (incluindo lista explícita no formato "SÍLABA não SILABA").
+2. Se persistir após 3 ou mais tentativas por painel: PARAR e reportar ao orquestrador/Léo para decisão conjunta.
+
+Nunca decidir sozinho por trocar de técnica de renderização. O resultado entregue por este agente é SEMPRE arte de HQ gerada por IA — sem exceção.
+
+---
+
 ## Checklist anti-bug para geração de HQ (gerador-hq-prompt e gerador-hq-imagens)
 
 Verificação obrigatória antes de considerar qualquer HQ concluída:
@@ -326,6 +344,7 @@ Verificação obrigatória antes de considerar qualquer HQ concluída:
 
 **Imagens (gerador-hq-imagens — ao validar os arquivos gerados):**
 
+- [ ] ⚠️ REGRA ABSOLUTA: As imagens foram geradas via Codex (IA)? Renderização programática (Pillow, matplotlib, SVG geométrico, HTML-to-image) é PROIBIDA — ver ERR-005f.
 - [ ] O pixel do canto superior esquerdo de cada portrait tem Alpha=0 (transparente)? (verificado via script, não apenas pela confirmação textual do Codex)
 - [ ] Cada painel das páginas pg1–pg4 tem cenário visível com elementos ilustrados (não fundo branco/liso)?
 - [ ] Os textos dos balões estão legíveis e completos (sem palavras cortadas ou embaralhadas)?
