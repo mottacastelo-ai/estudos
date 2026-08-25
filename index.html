@@ -726,6 +726,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('mat','circunferencia-circulo')">⭕ Circunferência e Círculo</button>
     <button class="theme-link" onclick="showTheme('mat','poligonos-triangulos-quadrilateros')">🔷 Polígonos, Triângulos e Quadriláteros</button>
     <button class="theme-link" onclick="showTheme('mat','giros-angulos')">📐 Giros e Ângulos</button>
+    <button class="theme-link" onclick="showTheme('mat','localizacao-deslocamento-ampliacao')">📍 Localização, Deslocamento e Ampliação</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-geo" onclick="showDisc('geo')">
@@ -784,8 +785,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Missões e desafios para dominar cada matéria. Escolha e bora! 🚀</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>33</span>temas</div>
-        <div class="hstat"><span>143</span>atividades</div>
+        <div class="hstat"><span>34</span>temas</div>
+        <div class="hstat"><span>147</span>atividades</div>
       </div>
       <div class="home-stats" id="streak-banner">
         <div class="hstat">🔥 <span id="streak-count">0</span>dias seguidos</div>
@@ -862,9 +863,9 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Matemática</div>
           <div class="dhc-desc">Cálculo, raciocínio lógico e resolução de problemas</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">11 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">43 atividades</span>
-            <span class="chip" style="background:#FEF3C7;color:#92400E">4 HQs</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">12 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">47 atividades</span>
+            <span class="chip" style="background:#FEF3C7;color:#92400E">5 HQs</span>
           </div>
         </button>
         <button class="disc-home-card geo" onclick="showDisc('geo')">
@@ -1963,6 +1964,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','circunferencia-circulo')">⭕ Circunferência e Círculo</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','poligonos-triangulos-quadrilateros')">🔷 Polígonos, Triângulos e Quadriláteros</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','giros-angulos')">📐 Giros e Ângulos</button>
+        <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','localizacao-deslocamento-ampliacao')">📍 Localização, Deslocamento e Ampliação</button>
       </div>
 
       <!-- TEMA: TABUADA -->
@@ -2571,6 +2573,48 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
             <div class="act-desc">Exercícios de identificação e medição de ângulos — leia o transferidor, classifique e relacione ângulos a giros do cotidiano.</div>
             <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Treino</span></div>
             <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+        </div>
+      </div>
+      <div class="theme-content" id="theme-mat-localizacao-deslocamento-ampliacao">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:800;background:var(--mat-bg);color:var(--mat-color);border:1.5px solid var(--mat-light);border-radius:99px;padding:3px 10px;letter-spacing:.04em">📄 pp. 217–224</span>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="matematica/localizacao-deslocamento-ampliacao/hq-localizacao-deslocamento-ampliacao.png" alt="HQ Localização, Deslocamento e Ampliação de Figuras"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Mapi e o Mapa das Aventuras — 4 páginas · Personagens: Bia e Mapi · Tema: Localização, Deslocamento e Ampliação de Figuras · pp. 217–224</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card mat" href="matematica/localizacao-deslocamento-ampliacao/mapa-mental-localizacao-deslocamento-ampliacao.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa de localização, deslocamento e ampliação de figuras.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/localizacao-deslocamento-ampliacao/quiz-localizacao-deslocamento-ampliacao.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre localização em malha quadriculada, deslocamento de figuras e ampliação proporcional.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Fixação</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/localizacao-deslocamento-ampliacao/missao-localizacao-deslocamento-ampliacao.html" target="sabendo-atividade">
+            <div class="act-icon">🎯</div>
+            <div class="act-title">Missão Mapi</div>
+            <div class="act-desc">A Mapi precisa de ajuda para navegar pela cidade — complete 4 fases cobrindo localização, deslocamento e ampliação de figuras.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Aplicação</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/localizacao-deslocamento-ampliacao/caca-erro-localizacao-deslocamento-ampliacao.html" target="sabendo-atividade">
+            <div class="act-icon">🔍</div>
+            <div class="act-title">Caça-Erro</div>
+            <div class="act-desc">Encontre os 4 erros escondidos em afirmações sobre localização, deslocamento e ampliação na malha quadriculada.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Análise</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
           </a>
         </div>
       </div>
@@ -3459,6 +3503,10 @@ async function loadActivityStatus() {
     'matematica/giros-angulos/classificador-giros-angulos.html':'giros-angulos|classificador',
     'matematica/giros-angulos/frases-giros-angulos.html':'giros-angulos|frases',
     'matematica/giros-angulos/treino-giros-angulos.html':'giros-angulos|treino',
+    'matematica/localizacao-deslocamento-ampliacao/mapa-mental-localizacao-deslocamento-ampliacao.html':'localizacao-deslocamento-ampliacao|mapa-mental',
+    'matematica/localizacao-deslocamento-ampliacao/quiz-localizacao-deslocamento-ampliacao.html':'localizacao-deslocamento-ampliacao|quiz',
+    'matematica/localizacao-deslocamento-ampliacao/missao-localizacao-deslocamento-ampliacao.html':'localizacao-deslocamento-ampliacao|missao',
+    'matematica/localizacao-deslocamento-ampliacao/caca-erro-localizacao-deslocamento-ampliacao.html':'localizacao-deslocamento-ampliacao|caca-erro',
     'matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html':'multiplicacao-divisao|associador',
     'matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html':'multiplicacao-divisao|construtor',
     'matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html':'multiplicacao-divisao|mapa-mental',
@@ -3744,6 +3792,7 @@ var THEME_CATALOG = [
   { disc:'mat',  slug:'circunferencia-circulo',         label:'Circunferência e Círculo',            emoji:'⭕', pages:[213,216], charName:'Circo',    charImg:'chars/circunferencia-circulo-hd.png' },
   { disc:'mat',  slug:'poligonos-triangulos-quadrilateros', label:'Polígonos, Triângulos e Quadriláteros', emoji:'🔷', pages:[203,212], charName:'Polito',  charImg:'chars/poligonos-triangulos-quadrilateros-hd.png' },
   { disc:'mat',  slug:'giros-angulos',                      label:'Giros e Ângulos',                       emoji:'📐', pages:[197,202], charName:'Angus',    charImg:'chars/giros-angulos-hd.png' },
+  { disc:'mat',  slug:'localizacao-deslocamento-ampliacao', label:'Localização, Deslocamento e Ampliação de Figuras', emoji:'📍', pages:[217,224], charName:'Mapi', charImg:'chars/localizacao-deslocamento-ampliacao-hd.png' },
   // ── Ciências
   { disc:'cien', slug:'lixo-que-produzimos',   label:'O Lixo que Produzimos',              emoji:'🗑️', pages:null,    charName:'Lixinho',           charImg:'chars/lixo-que-produzimos-hd.png' },
   { disc:'cien', slug:'caminho-do-lixo',        label:'O Caminho do Lixo',                  emoji:'🚛', pages:null,    charName:'Professora Ciência', charImg:'chars/caminho-do-lixo-hd.png' },
@@ -3873,6 +3922,7 @@ var THEME_META = {
   'circunferencia-circulo':      { label: 'Circunferência e Círculo',      navId: 'nav-mat',  disc: 'mat'  },
   'poligonos-triangulos-quadrilateros': { label: 'Polígonos, Triângulos e Quadriláteros', navId: 'nav-mat', disc: 'mat' },
   'giros-angulos':                      { label: 'Giros e Ângulos',                       navId: 'nav-mat', disc: 'mat' },
+  'localizacao-deslocamento-ampliacao': { label: 'Localização, Deslocamento e Ampliação de Figuras', navId: 'nav-mat', disc: 'mat' },
   'lixo-que-produzimos':         { label: 'O Lixo que Produzimos',        navId: 'nav-cien', disc: 'cien' },
   'caminho-do-lixo':             { label: 'O Caminho do Lixo',            navId: 'nav-cien', disc: 'cien' },
   'ciclo-da-agua':               { label: 'O Ciclo da Água',              navId: 'nav-cien', disc: 'cien' },
@@ -4014,6 +4064,10 @@ var ACTIVITY_FILE_PATHS = {
   'giros-angulos:classificador':     'matematica/giros-angulos/classificador-giros-angulos.html',
   'giros-angulos:frases':            'matematica/giros-angulos/frases-giros-angulos.html',
   'giros-angulos:treino':            'matematica/giros-angulos/treino-giros-angulos.html',
+  'localizacao-deslocamento-ampliacao:mapa-mental': 'matematica/localizacao-deslocamento-ampliacao/mapa-mental-localizacao-deslocamento-ampliacao.html',
+  'localizacao-deslocamento-ampliacao:quiz':        'matematica/localizacao-deslocamento-ampliacao/quiz-localizacao-deslocamento-ampliacao.html',
+  'localizacao-deslocamento-ampliacao:missao':      'matematica/localizacao-deslocamento-ampliacao/missao-localizacao-deslocamento-ampliacao.html',
+  'localizacao-deslocamento-ampliacao:caca-erro':   'matematica/localizacao-deslocamento-ampliacao/caca-erro-localizacao-deslocamento-ampliacao.html',
   'multiplicacao-divisao:associador':          'matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html',
   'multiplicacao-divisao:construtor':          'matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html',
   'multiplicacao-divisao:mapa-mental':         'matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html',

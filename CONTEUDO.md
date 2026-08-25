@@ -8,11 +8,11 @@
 | Disciplina | Temas | Atividades |
 |---|---|---|
 | 📝 Português | 20 | 92 |
-| 🔢 Matemática | 11 | 50 |
+| 🔢 Matemática | 12 | 54 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **43** | **190** |
+| **Total** | **44** | **194** |
 
 ---
 
@@ -420,6 +420,19 @@
 | Classificador de Ângulos | ✅ `classificador-giros-angulos.html` |
 | Frases sobre Ângulos | ✅ `frases-giros-angulos.html` |
 | Treino de Ângulos | ✅ `treino-giros-angulos.html` |
+
+---
+
+### Localizacao Deslocamento Ampliacao
+**Personagem:** Mapi (novo — pino de localização animado)
+**HQ:** ❌ `hq-localizacao-deslocamento-ampliacao.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Mapa Mental | ✅ `mapa-mental-localizacao-deslocamento-ampliacao.html` |
+| Quiz Interativo | ✅ `quiz-localizacao-deslocamento-ampliacao.html` |
+| Missão Mapi | ✅ `missao-localizacao-deslocamento-ampliacao.html` |
+| Caça-Erro | ✅ `caca-erro-localizacao-deslocamento-ampliacao.html` |
 
 ---
 
