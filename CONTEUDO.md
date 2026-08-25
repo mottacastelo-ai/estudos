@@ -372,7 +372,7 @@
 
 ### Reta Semirreta Segmento
 **Personagem:** Lino (uma reta animada verde-esmeralda que se transforma em semirreta e segmento)
-**HQ:** ❌ `hq-reta-semirreta-segmento.png` (ausente) | Prompt: ✅
+**HQ:** ✅ `hq-reta-semirreta-segmento.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -610,6 +610,7 @@
 | `Faca.png` |
 | `Gotinha.png` |
 | `Grafo.png` |
+| `Lino.png` |
 | `Lixinho.png` |
 | `Mapi.png` |
 | `Max-Min.png` |
