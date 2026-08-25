@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador de Ângulos — Giros e Ângulos</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #059669; --light: #34D399; --bg: #ECFDF5;
+  --dark: #064E3B; --border: #D1FAE5; --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: linear-gradient(135deg,#064E3B,#059669 60%,#34D399); color: white; padding: 24px 24px 20px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.75); background: none; border: none; cursor: pointer; font-family: "Baloo 2", cursive; margin-bottom: 12px; padding: 0; }
+.back-btn:hover { color: #fff; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 20px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+.container { max-width: 720px; margin: 0 auto; padding: 20px 16px 80px; }
+
+/* Régua de definições */
+.regras { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.regra-card { flex: 1; min-width: 140px; background: var(--card); border: 2px solid var(--border); border-radius: 14px; padding: 10px 14px; text-align: center; }
+.regra-titulo { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 800; margin-bottom: 4px; }
+.regra-card.agudo .regra-titulo { color: #2563EB; }
+.regra-card.reto  .regra-titulo { color: #059669; }
+.regra-card.obtuso .regra-titulo { color: #D97706; }
+.regra-def { font-size: 12px; font-weight: 600; color: var(--muted); }
+
+/* Itens arrastáveis */
+.itens-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.itens-area { display: flex; flex-wrap: wrap; gap: 10px; min-height: 60px; margin-bottom: 20px; padding: 12px; background: var(--card); border: 2px dashed var(--border); border-radius: var(--radius); }
+.item-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 700;
+  cursor: grab; border: 2px solid var(--border); background: var(--card);
+  user-select: none; transition: transform .12s, box-shadow .12s;
+  touch-action: none;
+}
+.item-chip:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.item-chip.dragging { opacity: .4; }
+.item-chip .chip-svg { width: 36px; height: 28px; display: block; flex-shrink: 0; }
+
+/* Zonas de drop */
+.zonas { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+@media (max-width: 540px) { .zonas { grid-template-columns: 1fr; } }
+.zona {
+  min-height: 120px; border-radius: var(--radius); border: 2px dashed #9CA3AF;
+  padding: 12px 10px; transition: border-color .2s, background .2s;
+}
+.zona.agudo  { background: #EFF6FF; border-color: #93C5FD; }
+.zona.reto   { background: #ECFDF5; border-color: #6EE7B7; }
+.zona.obtuso { background: #FFFBEB; border-color: #FCD34D; }
+.zona.over   { border-style: solid; box-shadow: 0 0 0 3px rgba(5,150,105,.2); }
+.zona-header { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 800; letter-spacing: .06em; margin-bottom: 8px; }
+.zona.agudo  .zona-header { color: #2563EB; }
+.zona.reto   .zona-header { color: #059669; }
+.zona.obtuso .zona-header { color: #D97706; }
+.zona-itens { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; }
+
+/* Resultado */
+.resultado { display: none; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px; text-align: center; }
+.resultado.show { display: block; animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+.resultado-score { font-family: "Space Mono", monospace; font-size: 36px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+.resultado-msg { font-size: 16px; font-weight: 700; color: var(--muted); margin-bottom: 16px; }
+.resultado-detalhe { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px; }
+.detalhe-item { padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.detalhe-item.ok  { background: #D1FAE5; color: #064E3B; }
+.detalhe-item.err { background: #FEE2E2; color: #7F1D1D; }
+.btn-tentar { font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; padding: 12px 28px; border-radius: 999px; border: none; cursor: pointer; background: linear-gradient(135deg,#059669,#34D399); color: white; }
+.btn-verificar { display: block; width: 100%; max-width: 340px; margin: 0 auto; font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800; padding: 14px 24px; border-radius: 999px; border: none; cursor: pointer; background: linear-gradient(135deg,#059669,#34D399); color: white; box-shadow: 0 4px 16px rgba(5,150,105,.3); transition: opacity .2s; }
+.btn-verificar:hover { opacity: .88; }
+.btn-verificar:disabled { opacity: .5; cursor: default; }
+
+/* Feedback por item na zona */
+.item-chip.correto { border-color: #059669; background: #D1FAE5; }
+.item-chip.errado  { border-color: #DC2626; background: #FEE2E2; }
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <h1>Classificador de Ângulos</h1>
+  <p>Giros e Ângulos · Matemática · 5º ano</p>
+</div>
+<div class="container">
+
+  <!-- Definições visíveis na tela -->
+  <div class="regras">
+    <div class="regra-card agudo">
+      <div class="regra-titulo">ÂNGULO AGUDO</div>
+      <div class="regra-def">abertura menor que 90°</div>
+    </div>
+    <div class="regra-card reto">
+      <div class="regra-titulo">ÂNGULO RETO</div>
+      <div class="regra-def">abertura igual a 90°</div>
+    </div>
+    <div class="regra-card obtuso">
+      <div class="regra-titulo">ÂNGULO OBTUSO</div>
+      <div class="regra-def">abertura maior que 90°</div>
+    </div>
+  </div>
+
+  <div class="itens-label">Arraste cada ângulo para a categoria correta:</div>
+  <div class="itens-area" id="banco"></div>
+
+  <div class="zonas">
+    <div class="zona agudo" id="zona-agudo" data-tipo="agudo">
+      <div class="zona-header">ÂNGULO AGUDO</div>
+      <div class="zona-itens" id="itens-agudo"></div>
+    </div>
+    <div class="zona reto" id="zona-reto" data-tipo="reto">
+      <div class="zona-header">ÂNGULO RETO</div>
+      <div class="zona-itens" id="itens-reto"></div>
+    </div>
+    <div class="zona obtuso" id="zona-obtuso" data-tipo="obtuso">
+      <div class="zona-header">ÂNGULO OBTUSO</div>
+      <div class="zona-itens" id="itens-obtuso"></div>
+    </div>
+  </div>
+
+  <div class="resultado" id="resultado">
+    <div class="resultado-score" id="res-score">0/8</div>
+    <div class="resultado-msg" id="res-msg"></div>
+    <div class="resultado-detalhe" id="res-detalhe"></div>
+    <button class="btn-tentar" onclick="reiniciar()">Tentar novamente</button>
+  </div>
+
+  <button class="btn-verificar" id="btn-verificar" onclick="verificar()">Verificar classificação</button>
+</div>
+
+<script>
+// Ângulos com suas medidas e tipo correto
+// Critério declarado na tela: agudo<90, reto=90, obtuso>90
+var ANGULOS_DATA = [
+  {id:'a1', graus: 30,  tipo:'agudo',  rotulo:'m(AÔB) = 30°'},
+  {id:'a2', graus: 90,  tipo:'reto',   rotulo:'m(CÔD) = 90°'},
+  {id:'a3', graus: 120, tipo:'obtuso', rotulo:'m(EÔF) = 120°'},
+  {id:'a4', graus: 45,  tipo:'agudo',  rotulo:'m(GÔH) = 45°'},
+  {id:'a5', graus: 150, tipo:'obtuso', rotulo:'m(PÔQ) = 150°'},
+  {id:'a6', graus: 60,  tipo:'agudo',  rotulo:'m(RÔS) = 60°'},
+  {id:'a7', graus: 135, tipo:'obtuso', rotulo:'m(MÔN) = 135°'},
+  {id:'a8', graus: 70,  tipo:'agudo',  rotulo:'m(XÔY) = 70°'},
+];
+
+// Gera SVG de um ângulo dado em graus
+function makeSVG(graus) {
+  var W=40, H=32, ox=4, oy=28, r=30, ra=12;
+  var rad = graus * Math.PI / 180;
+  var bx = ox + r * Math.cos(rad);
+  var by = oy - r * Math.sin(rad);
+  var ae_x = ox + ra * Math.cos(rad);
+  var ae_y = oy - ra * Math.sin(rad);
+  var arcPath, squarePath = '';
+  if (graus === 90) {
+    squarePath = '<path d="M'+(ox+8)+','+oy+' L'+(ox+8)+','+(oy-8)+' L'+ox+','+(oy-8)+'" fill="none" stroke="#059669" stroke-width="1.5"/>';
+    arcPath = '';
+  } else {
+    arcPath = '<path d="M'+(ox+ra)+','+oy+' A'+ra+','+ra+' 0 0,0 '+ae_x.toFixed(1)+','+ae_y.toFixed(1)+'" fill="rgba(5,150,105,0.25)" stroke="#059669" stroke-width="1.2"/>';
+  }
+  return '<svg class="chip-svg" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'
+    +'<line x1="'+ox+'" y1="'+oy+'" x2="'+(ox+r+2)+'" y2="'+oy+'" stroke="#374151" stroke-width="2"/>'
+    +'<line x1="'+ox+'" y1="'+oy+'" x2="'+bx.toFixed(1)+'" y2="'+by.toFixed(1)+'" stroke="#374151" stroke-width="2"/>'
+    +(squarePath||arcPath)
+    +'</svg>';
+}
+
+// Shuffle
+function embaralhar(arr) {
+  var a = arr.slice();
+  for (var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+
+var ordenado = embaralhar(ANGULOS_DATA);
+var localAtual = {}; // id → 'banco'|'agudo'|'reto'|'obtuso'
+var verificado = false;
+
+function montarBanco() {
+  var banco = document.getElementById('banco');
+  banco.innerHTML = '';
+  ordenado.forEach(function(ang) {
+    localAtual[ang.id] = 'banco';
+    var chip = criarChip(ang);
+    banco.appendChild(chip);
+  });
+}
+
+function criarChip(ang) {
+  var chip = document.createElement('div');
+  chip.className = 'item-chip';
+  chip.id = 'chip-'+ang.id;
+  chip.setAttribute('data-id', ang.id);
+  chip.setAttribute('draggable', 'true');
+  chip.innerHTML = makeSVG(ang.graus) + '<span>' + ang.rotulo + '</span>';
+
+  // Desktop drag
+  chip.addEventListener('dragstart', function(e) {
+    e.dataTransfer.setData('text/plain', ang.id);
+    chip.classList.add('dragging');
+  });
+  chip.addEventListener('dragend', function() { chip.classList.remove('dragging'); });
+
+  // Touch
+  var touchStartX, touchStartY, clone;
+  chip.addEventListener('touchstart', function(e) {
+    var t = e.touches[0];
+    touchStartX = t.clientX; touchStartY = t.clientY;
+    clone = chip.cloneNode(true);
+    clone.style.cssText = 'position:fixed;opacity:.75;pointer-events:none;z-index:9999;top:'+(t.clientY-20)+'px;left:'+(t.clientX-60)+'px;';
+    document.body.appendChild(clone);
+  }, {passive:true});
+  chip.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    if(clone){ clone.style.top = (t.clientY-20)+'px'; clone.style.left = (t.clientX-60)+'px'; }
+  }, {passive:false});
+  chip.addEventListener('touchend', function(e) {
+    if(clone){ document.body.removeChild(clone); clone=null; }
+    var t = e.changedTouches[0];
+    var el = document.elementFromPoint(t.clientX, t.clientY);
+    var zona = el ? el.closest('[data-tipo]') : null;
+    var destino = zona ? zona.getAttribute('data-tipo') : 'banco';
+    moverChip(ang.id, destino);
+  }, {passive:true});
+  return chip;
+}
+
+function moverChip(angId, destino) {
+  if (verificado) return;
+  var chip = document.getElementById('chip-'+angId);
+  if (!chip) return;
+  localAtual[angId] = destino;
+  var targetContainer;
+  if (destino === 'banco') targetContainer = document.getElementById('banco');
+  else targetContainer = document.getElementById('itens-'+destino);
+  targetContainer.appendChild(chip);
+  atualizarVerificar();
+}
+
+// Drop zones desktop
+['banco','agudo','reto','obtuso'].forEach(function(zona) {
+  var el = document.getElementById(zona === 'banco' ? 'banco' : 'zona-'+zona);
+  el.addEventListener('dragover', function(e) { e.preventDefault(); el.classList.add('over'); });
+  el.addEventListener('dragleave', function() { el.classList.remove('over'); });
+  el.addEventListener('drop', function(e) {
+    e.preventDefault(); el.classList.remove('over');
+    var angId = e.dataTransfer.getData('text/plain');
+    moverChip(angId, zona);
+  });
+});
+
+function atualizarVerificar() {
+  var todos = ANGULOS_DATA.every(function(ang){ return localAtual[ang.id] !== 'banco'; });
+  document.getElementById('btn-verificar').disabled = !todos;
+}
+
+function verificar() {
+  if (verificado) return;
+  verificado = true;
+  var acertos = 0;
+  var detalheHTML = '';
+  ANGULOS_DATA.forEach(function(ang) {
+    var chip = document.getElementById('chip-'+ang.id);
+    var colocado = localAtual[ang.id];
+    var correto = (colocado === ang.tipo);
+    if (correto) acertos++;
+    if (chip) chip.classList.add(correto ? 'correto' : 'errado');
+    detalheHTML += '<span class="detalhe-item '+(correto?'ok':'err')+'">'
+      + ang.rotulo + ' → ' + ang.tipo
+      + (correto ? ' ✓' : ' ✗ (colocado em ' + colocado + ')')
+      + '</span>';
+  });
+  var total = ANGULOS_DATA.length;
+  var pct = Math.round((acertos/total)*100);
+  window.sabendoScore = pct;
+  var msgs = ['Continue tentando! Revise as definições.','Bom esforço! Reveja os ângulos que erraste.','Muito bem! Quase lá!','Excelente! Você dominou a classificação de ângulos!'];
+  var msgIdx = pct < 50 ? 0 : pct < 75 ? 1 : pct < 100 ? 2 : 3;
+  document.getElementById('res-score').textContent = acertos+'/'+total;
+  document.getElementById('res-msg').textContent = msgs[msgIdx];
+  document.getElementById('res-detalhe').innerHTML = detalheHTML;
+  var resultado = document.getElementById('resultado');
+  resultado.classList.add('show');
+  document.getElementById('btn-verificar').style.display = 'none';
+}
+
+function reiniciar() {
+  verificado = false;
+  ANGULOS_DATA.forEach(function(ang) {
+    var chip = document.getElementById('chip-'+ang.id);
+    if (chip) { chip.classList.remove('correto','errado'); }
+  });
+  document.getElementById('resultado').classList.remove('show');
+  document.getElementById('btn-verificar').style.display = 'block';
+  document.getElementById('btn-verificar').disabled = true;
+  ['agudo','reto','obtuso'].forEach(function(t){ document.getElementById('itens-'+t).innerHTML=''; });
+  montarBanco();
+}
+
+window.addEventListener('load', function() {
+  montarBanco();
+  document.getElementById('btn-verificar').disabled = true;
+});
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "giros-angulos";
+  var ACTIVITY_TYPE = "classificador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Angus",
+    characterEmoji: "📐",
+    characterImg:   "chars/giros-angulos-hd.png",
+    themeLabel:     "Giros e Ângulos · Matemática",
+    totalActivities: 4,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-giros-angulos",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var sessData = res.data.session;
+    if (!sessData) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = sessData.user.id;
+    var pontuacao = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: pontuacao, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate()-1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;
+      await supa.from("streaks").update({ current_streak:ns, longest_streak:Math.max(ns,s.longest_streak), last_activity_date:today, total_activities:s.total_activities+1, updated_at:new Date().toISOString() }).eq("user_id",uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
