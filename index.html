@@ -722,6 +722,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('mat','multiplos-divisores-criterios')">🔢 Múltiplos e Divisores</button>
     <button class="theme-link" onclick="showTheme('mat','primos-compostos-fatoracao')">🔍 Primos e Fatoração</button>
     <button class="theme-link" onclick="showTheme('mat','mdc-mmc-problemas')">📐 mdc e mmc</button>
+    <button class="theme-link" onclick="showTheme('mat','reta-semirreta-segmento')">📏 Reta, Semirreta e Segmento</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-geo" onclick="showDisc('geo')">
@@ -780,8 +781,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Missões e desafios para dominar cada matéria. Escolha e bora! 🚀</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>31</span>temas</div>
-        <div class="hstat"><span>135</span>atividades</div>
+        <div class="hstat"><span>32</span>temas</div>
+        <div class="hstat"><span>139</span>atividades</div>
       </div>
       <div class="home-stats" id="streak-banner">
         <div class="hstat">🔥 <span id="streak-count">0</span>dias seguidos</div>
@@ -858,8 +859,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Matemática</div>
           <div class="dhc-desc">Cálculo, raciocínio lógico e resolução de problemas</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">7 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">26 atividades</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">8 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">30 atividades</span>
             <span class="chip" style="background:#FEF3C7;color:#92400E">3 HQs</span>
           </div>
         </button>
@@ -1955,6 +1956,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','multiplos-divisores-criterios')">🔢 Múltiplos e Divisores</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','primos-compostos-fatoracao')">🔍 Primos e Fatoração</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','mdc-mmc-problemas')">📐 mdc e mmc</button>
+        <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','reta-semirreta-segmento')">📏 Reta, Semirreta e Segmento</button>
       </div>
 
       <!-- TEMA: TABUADA -->
@@ -2386,6 +2388,49 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><div class="sched-day mat">Dia 4</div><div class="sched-acts"><span class="sched-act mat">🗺️ Mapa Mental — síntese final</span></div></div>
           <div class="sched-row"><div class="sched-day mat">Dia 5</div><div class="sched-acts"><span class="sched-act mat">🧩 Problemas Contextuais</span></div></div>
           <div class="sched-row"><div class="sched-day mat">Dia 6</div><div class="sched-acts"><span class="sched-act mat">📝 Treino no Papel — aprofundamento</span></div></div>
+        </div>
+      </div>
+
+      <div class="theme-content" id="theme-mat-reta-semirreta-segmento">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:800;background:var(--mat-bg);color:var(--mat-color);border:1.5px solid var(--mat-light);border-radius:99px;padding:3px 10px;letter-spacing:.04em">📄 pp. 186–196</span>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="matematica/reta-semirreta-segmento/hq-reta-semirreta-segmento.png" alt="HQ Reta, Semirreta e Segmento de Reta"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Lino e as Linhas Infinitas — 4 páginas · Personagens: Bia e Lino · Tema: Reta, Semirreta e Segmento de Reta · pp. 186–196</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card mat" href="matematica/reta-semirreta-segmento/quiz-reta-semirreta-segmento.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre reta, semirreta, segmento de reta, extremidades, notação e características de cada figura geométrica.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Múltipla Escolha</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card mat" href="matematica/reta-semirreta-segmento/detetive-nomes-reta-semirreta-segmento.html" target="sabendo-atividade">
+            <div class="act-icon">🔍</div>
+            <div class="act-title">Detetive dos Nomes</div>
+            <div class="act-desc">Observe a figura geométrica e identifique se é uma reta, semirreta ou segmento de reta pela presença ou ausência de extremidades.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Identificação</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/reta-semirreta-segmento/classificador-reta-semirreta-segmento.html" target="sabendo-atividade">
+            <div class="act-icon">📂</div>
+            <div class="act-title">Classificador Geométrico</div>
+            <div class="act-desc">Arraste cada figura para a categoria correta: reta, semirreta ou segmento. Classifique pela notação e pelas extremidades.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Classificação</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/reta-semirreta-segmento/mapa-mental-reta-semirreta-segmento.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa de reta, semirreta e segmento de reta com suas propriedades.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
         </div>
       </div>
 
@@ -3257,6 +3302,10 @@ async function loadActivityStatus() {
     'matematica/mdc-mmc-problemas/quiz-mdc-mmc-problemas.html':'mdc-mmc-problemas|quiz',
     'matematica/mdc-mmc-problemas/transformador-mdc-mmc-problemas.html':'mdc-mmc-problemas|transformador',
     'matematica/mdc-mmc-problemas/treino-mdc-mmc-problemas.html':'mdc-mmc-problemas|treino',
+    'matematica/reta-semirreta-segmento/quiz-reta-semirreta-segmento.html':'reta-semirreta-segmento|quiz',
+    'matematica/reta-semirreta-segmento/detetive-nomes-reta-semirreta-segmento.html':'reta-semirreta-segmento|detetive-nomes',
+    'matematica/reta-semirreta-segmento/classificador-reta-semirreta-segmento.html':'reta-semirreta-segmento|classificador',
+    'matematica/reta-semirreta-segmento/mapa-mental-reta-semirreta-segmento.html':'reta-semirreta-segmento|mapa-mental',
     'matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html':'multiplicacao-divisao|associador',
     'matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html':'multiplicacao-divisao|construtor',
     'matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html':'multiplicacao-divisao|mapa-mental',
@@ -3538,6 +3587,7 @@ var THEME_CATALOG = [
   { disc:'mat',  slug:'multiplos-divisores-criterios', label:'Múltiplos e Divisores',          emoji:'🔢', pages:[124,135], charName:'Divi',     charImg:'chars/multiplos-divisores-criterios-hd.png' },
   { disc:'mat',  slug:'primos-compostos-fatoracao',    label:'Primos e Fatoração',             emoji:'🔍', pages:[136,145], charName:'Primo',    charImg:'chars/primos-compostos-fatoracao-hd.png' },
   { disc:'mat',  slug:'mdc-mmc-problemas',             label:'mdc e mmc',                      emoji:'📐', pages:[146,157], charName:'Max & Min',charImg:'chars/mdc-mmc-problemas-hd.png' },
+  { disc:'mat',  slug:'reta-semirreta-segmento',       label:'Reta, Semirreta e Segmento de Reta', emoji:'📏', pages:[186,196], charName:'Lino',     charImg:'chars/reta-semirreta-segmento-hd.png' },
   // ── Ciências
   { disc:'cien', slug:'lixo-que-produzimos',   label:'O Lixo que Produzimos',              emoji:'🗑️', pages:null,    charName:'Lixinho',           charImg:'chars/lixo-que-produzimos-hd.png' },
   { disc:'cien', slug:'caminho-do-lixo',        label:'O Caminho do Lixo',                  emoji:'🚛', pages:null,    charName:'Professora Ciência', charImg:'chars/caminho-do-lixo-hd.png' },
@@ -3663,6 +3713,7 @@ var THEME_META = {
   'multiplos-divisores-criterios':{ label: 'Múltiplos e Divisores',       navId: 'nav-mat',  disc: 'mat'  },
   'primos-compostos-fatoracao':  { label: 'Primos e Fatoração',           navId: 'nav-mat',  disc: 'mat'  },
   'mdc-mmc-problemas':           { label: 'mdc e mmc',                    navId: 'nav-mat',  disc: 'mat'  },
+  'reta-semirreta-segmento':     { label: 'Reta, Semirreta e Segmento',   navId: 'nav-mat',  disc: 'mat'  },
   'lixo-que-produzimos':         { label: 'O Lixo que Produzimos',        navId: 'nav-cien', disc: 'cien' },
   'caminho-do-lixo':             { label: 'O Caminho do Lixo',            navId: 'nav-cien', disc: 'cien' },
   'ciclo-da-agua':               { label: 'O Ciclo da Água',              navId: 'nav-cien', disc: 'cien' },
@@ -3787,6 +3838,10 @@ var ACTIVITY_FILE_PATHS = {
   'mdc-mmc-problemas:quiz':                    'matematica/mdc-mmc-problemas/quiz-mdc-mmc-problemas.html',
   'mdc-mmc-problemas:transformador':           'matematica/mdc-mmc-problemas/transformador-mdc-mmc-problemas.html',
   'mdc-mmc-problemas:treino':                  'matematica/mdc-mmc-problemas/treino-mdc-mmc-problemas.html',
+  'reta-semirreta-segmento:quiz':              'matematica/reta-semirreta-segmento/quiz-reta-semirreta-segmento.html',
+  'reta-semirreta-segmento:detetive-nomes':    'matematica/reta-semirreta-segmento/detetive-nomes-reta-semirreta-segmento.html',
+  'reta-semirreta-segmento:classificador':     'matematica/reta-semirreta-segmento/classificador-reta-semirreta-segmento.html',
+  'reta-semirreta-segmento:mapa-mental':       'matematica/reta-semirreta-segmento/mapa-mental-reta-semirreta-segmento.html',
   'multiplicacao-divisao:associador':          'matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html',
   'multiplicacao-divisao:construtor':          'matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html',
   'multiplicacao-divisao:mapa-mental':         'matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html',

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Localização, Deslocamento e Ampliação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --mat: #059669; --mat-light: #34D399; --mat-bg: #ECFDF5;
+  --bg: #ECFDF5; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #A7F3D0;
+  --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--mat); text-decoration: none; margin-bottom: 16px; cursor: pointer; }
+.back-link:hover { opacity: .7; }
+.card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(5,150,105,.1); }
+.card-header { background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 30px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; }
+.card-header p  { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; }
+.prog-wrap { padding: 14px 24px 0; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; border-radius: 999px; background: #d1fae5; }
+.prog-fill  { height: 8px; border-radius: 999px; background: var(--mat); transition: width .4s; }
+.q-area { padding: 20px 24px; }
+.q-num { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
+.q-text { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 18px; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 14px; border: 2px solid var(--border); background: var(--card); cursor: pointer; transition: all .15s; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.opt:hover { border-color: var(--mat-light); background: var(--mat-bg); }
+.opt.correct { border-color: #059669; background: #d1fae5; }
+.opt.wrong   { border-color: #DC2626; background: #FEE2E2; }
+.opt.disabled { pointer-events: none; }
+.opt-letter { font-family: "Space Mono", monospace; font-size: 13px; font-weight: 800; color: var(--mat); min-width: 20px; }
+.opt.correct .opt-letter { color: #059669; }
+.opt.wrong   .opt-letter { color: #DC2626; }
+.feedback { display: none; padding: 12px 16px; border-radius: 14px; margin-top: 14px; font-size: 13px; font-weight: 700; line-height: 1.5; }
+.feedback.correct { background: #d1fae5; border: 2px solid #059669; color: #064E3B; }
+.feedback.wrong   { background: #FEE2E2; border: 2px solid #DC2626; color: #7F1D1D; }
+.fb-icon { font-size: 18px; margin-right: 6px; }
+.btn-next { display: none; margin-top: 16px; padding: 12px 28px; background: var(--mat); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(5,150,105,.3); transition: all .15s; }
+.btn-next:hover { background: #047857; transform: translateY(-1px); }
+.result-panel { display: none; padding: 28px 24px; text-align: center; }
+.result-emoji { font-size: 52px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 800; color: var(--mat); margin-bottom: 8px; }
+.result-sub { font-size: 15px; font-weight: 600; color: var(--muted); margin-bottom: 20px; }
+.result-score { font-size: 48px; font-weight: 900; color: var(--mat); }
+.result-score span { font-size: 18px; color: var(--muted); }
+.btn-restart { margin-top: 20px; padding: 12px 28px; background: var(--mat); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(5,150,105,.3); }
+@media (max-width: 480px) {
+  .q-text { font-size: 15px; }
+  .opt { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">❓</div>
+      <div><h1>Quiz Interativo</h1><p>Localização, Deslocamento e Ampliação</p></div>
+      <div class="hbadge">📖 10 questões</div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-area" id="q-area">
+      <div class="q-num" id="q-num"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Próxima questão →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title">Missão concluída!</div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="result-score"><span>Acertos: </span><span id="result-score-val"></span><span>/10</span></div>
+      <button class="btn-restart" onclick="restartQuiz()">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var QUESTIONS = [
+  {
+    q: "No guia de ruas, como são identificadas as regiões?",
+    opts: ["Apenas por números.", "Apenas por letras.", "Por uma combinação de letras e números (exemplo: C3).", "Pelo nome das ruas que se cruzam."],
+    ans: 2,
+    exp: "No guia de ruas, as regiões são identificadas pela combinação de letras (que representam as fileiras verticais) com números (que representam as fileiras horizontais). Por exemplo: o museu está na região C3."
+  },
+  {
+    q: "Na malha quadriculada com reta numérica horizontal e reta numérica vertical, como é representada a posição de um ponto?",
+    opts: ["Por apenas um número.", "Por uma letra seguida de um número, como C3.", "Por um par de números entre parênteses, como (2, 5).", "Pelo nome da interseção das retas."],
+    ans: 2,
+    exp: "Na malha quadriculada, a posição de cada ponto é representada por um par de números entre parênteses, como (2, 5). O primeiro número indica a posição na reta numérica horizontal e o segundo, na reta numérica vertical."
+  },
+  {
+    q: "Na posição (2, 5), o número 2 indica a posição em relação a qual reta?",
+    opts: ["Reta numérica vertical.", "Reta numérica diagonal.", "Reta numérica horizontal.", "Tanto faz — o primeiro número pode ser qualquer reta."],
+    ans: 2,
+    exp: "O primeiro número de um par de posição sempre indica a posição em relação à reta numérica horizontal. No exemplo (2, 5): 2 é a posição horizontal e 5 é a posição vertical."
+  },
+  {
+    q: "A formiga está na posição (2, 5) e a abelha está na posição (5, 2) em uma malha quadriculada. O que isso prova sobre a ordem dos números?",
+    opts: ["A ordem dos números não importa; as duas posições são iguais.", "Os dois insetos estão no mesmo lugar da malha.", "A ordem importa: (2, 5) e (5, 2) são posições diferentes na malha.", "Os dois números sempre devem ser iguais para indicar uma posição."],
+    ans: 2,
+    exp: "A ordem dos números importa! A formiga em (2, 5) está em 2 na reta horizontal e 5 na vertical. A abelha em (5, 2) está em 5 na horizontal e 2 na vertical. São posições completamente diferentes na malha quadriculada."
+  },
+  {
+    q: "O deslocamento de um inseto em uma malha quadriculada acontece:",
+    opts: ["Saltando diagonalmente entre os quadradinhos.", "Sempre em linha reta, sem nenhuma mudança de direção.", "Sobre as linhas da malha quadriculada.", "Pelo interior dos quadradinhos, não pelas linhas."],
+    ans: 2,
+    exp: "O deslocamento acontece sobre as linhas da malha quadriculada — o inseto se move pelas linhas (verticais ou horizontais), nunca pelo interior ou na diagonal."
+  },
+  {
+    q: "Ao se deslocar em uma malha quadriculada, um personagem dá um giro de 90° para a direita. Que tipo de mudança de direção isso representa?",
+    opts: ["Uma meia-volta — o personagem passa a andar na direção oposta.", "Uma volta completa — o personagem volta à mesma direção.", "Uma mudança de 90 graus na direção de caminhada.", "O personagem fica parado, sem mudar de direção."],
+    ans: 2,
+    exp: "Um giro de 90° para a direita representa uma mudança de 90 graus na direção de caminhada. O personagem vira um quarto de volta para a direita e passa a se deslocar em uma nova direção perpendicular à anterior."
+  },
+  {
+    q: "O que acontece com as medidas dos lados de uma figura quando ela sofre uma ampliação em malha quadriculada?",
+    opts: ["As medidas dos lados são divididas por um número.", "As medidas ficam iguais; apenas a posição da figura muda.", "Apenas a altura da figura aumenta; a largura fica igual.", "Todas as medidas dos lados são multiplicadas por um mesmo número."],
+    ans: 3,
+    exp: "Na ampliação, todas as medidas de todos os lados são multiplicadas por um mesmo número. Por exemplo, Mário multiplicou por 2 todas as medidas do desenho de Lucas, fazendo uma ampliação."
+  },
+  {
+    q: "O que diferencia uma ampliação de uma redução de figura em malha quadriculada?",
+    opts: ["Na ampliação, a figura muda de forma; na redução, mantém a forma.", "Na ampliação, as medidas são somadas; na redução, são subtraídas.", "Na ampliação, todas as medidas dos lados são multiplicadas; na redução, são divididas.", "Na ampliação, apenas a largura muda; na redução, apenas a altura."],
+    ans: 2,
+    exp: "A diferença está na operação: na ampliação, multiplicamos todas as medidas dos lados por um número (a figura fica maior); na redução, dividimos todas as medidas dos lados por um número (a figura fica menor). A forma da figura se mantém igual nos dois casos."
+  },
+  {
+    q: "Mário ampliou o desenho de Lucas multiplicando por 2 as medidas de todos os lados. Qual é a relação entre a forma do desenho de Mário e a do desenho de Lucas?",
+    opts: ["O desenho de Mário tem uma forma completamente diferente do de Lucas.", "O desenho de Mário é uma cópia exata com as mesmas medidas.", "O desenho de Mário mantém a mesma forma do de Lucas, com medidas maiores.", "O desenho de Mário tem menos lados do que o de Lucas."],
+    ans: 2,
+    exp: "Na ampliação, a forma da figura se mantém. O desenho de Mário tem exatamente a mesma forma do de Lucas — o mesmo barco com os mesmos ângulos e proporções —, porém com todas as medidas multiplicadas por 2, ficando maior."
+  },
+  {
+    q: "Para fazer uma redução de uma figura em malha quadriculada, o que deve ser feito com as medidas de TODOS os lados?",
+    opts: ["Somar um mesmo número a todas as medidas dos lados.", "Subtrair um mesmo número de todas as medidas dos lados.", "Alterar apenas as medidas dos lados maiores, deixando os pequenos iguais.", "Dividir todas as medidas dos lados por um mesmo número."],
+    ans: 3,
+    exp: "Na redução, dividimos todas as medidas de todos os lados por um mesmo número. Por exemplo, Ana dividiu por 2 todas as medidas do desenho de Lucas, fazendo uma redução. O importante é que TODOS os lados devem ser divididos pelo mesmo número."
+  }
+];
+
+var curIdx = 0, acertos = 0, respondeu = false;
+
+function shuffleOpts(q) {
+  var idxs = [0,1,2,3];
+  for (var i = idxs.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = idxs[i]; idxs[i] = idxs[j]; idxs[j] = tmp;
+  }
+  return idxs.map(function(i) { return {text: q.opts[i], correct: i === q.ans}; });
+}
+
+function renderQ() {
+  var q = QUESTIONS[curIdx];
+  respondeu = false;
+  document.getElementById('prog-label').textContent = 'Questão ' + (curIdx + 1) + ' de 10';
+  document.getElementById('prog-fill').style.width = (curIdx / 10 * 100) + '%';
+  document.getElementById('q-num').textContent = 'QUESTÃO ' + (curIdx + 1);
+  document.getElementById('q-text').textContent = q.q;
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback'; fb.style.display = 'none'; fb.innerHTML = '';
+  document.getElementById('btn-next').style.display = 'none';
+
+  var shuffled = shuffleOpts(q);
+  var letters = ['A','B','C','D'];
+  var optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+  shuffled.forEach(function(opt, i) {
+    var div = document.createElement('div');
+    div.className = 'opt';
+    div.innerHTML = '<span class="opt-letter">' + letters[i] + ')</span><span>' + opt.text + '</span>';
+    div.addEventListener('click', function() { if (!respondeu) selectOpt(div, opt.correct, q.exp, shuffled); });
+    optsEl.appendChild(div);
+  });
+}
+
+function selectOpt(chosen, isCorrect, exp, shuffled) {
+  respondeu = true;
+  if (isCorrect) acertos++;
+  var allOpts = document.getElementById('opts').querySelectorAll('.opt');
+  allOpts.forEach(function(el, i) {
+    el.classList.add('disabled');
+    if (shuffled[i].correct) el.classList.add('correct');
+  });
+  if (!isCorrect) chosen.classList.add('wrong');
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = '<span class="fb-icon">' + (isCorrect ? '✓' : '✗') + '</span>' + exp;
+  fb.style.display = 'block';
+  document.getElementById('btn-next').style.display = 'inline-block';
+  document.getElementById('btn-next').textContent = curIdx < 9 ? 'Próxima questão →' : 'Ver resultado';
+}
+
+function nextQ() {
+  curIdx++;
+  if (curIdx < 10) {
+    renderQ();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('q-area').style.display = 'none';
+  document.getElementById('prog-wrap') && (document.querySelector('.prog-wrap').style.display = 'none');
+  var pct = Math.round((acertos / 10) * 100);
+  window.sabendoScore = pct;
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  var emojis = acertos >= 9 ? '🌟🏆' : acertos >= 7 ? '🎉' : acertos >= 5 ? '💪' : '📚';
+  document.getElementById('result-emoji').textContent = emojis;
+  document.getElementById('result-sub').textContent = acertos >= 9
+    ? 'Incrível! Você dominou a localização e deslocamento!'
+    : acertos >= 7 ? 'Muito bem! Você está quase no mapa completo!'
+    : acertos >= 5 ? 'Bom esforço! Revise o gabarito e tente de novo.'
+    : 'Continue praticando — a Mapi está te apoiando!';
+  document.getElementById('result-score-val').textContent = acertos;
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Concluído!';
+}
+
+function restartQuiz() {
+  curIdx = 0; acertos = 0;
+  document.getElementById('q-area').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+  document.querySelector('.prog-wrap').style.display = 'block';
+  renderQ();
+}
+
+renderQ();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "localizacao-deslocamento-ampliacao";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Mapi",
+    characterEmoji: "📍",
+    characterImg:   "chars/localizacao-deslocamento-ampliacao-hd.png",
+    themeLabel:     "Localização, Deslocamento e Ampliação · Matemática",
+    totalActivities: 4,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-localizacao-deslocamento-ampliacao",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id, score = _capturedScore, today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data; var yest = new Date(); yest.setDate(yest.getDate() - 1); var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

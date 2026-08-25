@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete as Frases — Giros e Ângulos</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #059669; --light: #34D399; --bg: #ECFDF5;
+  --dark: #064E3B; --border: #D1FAE5; --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: linear-gradient(135deg,#064E3B,#059669 60%,#34D399); color: white; padding: 24px 24px 20px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.75); background: none; border: none; cursor: pointer; font-family: "Baloo 2", cursive; margin-bottom: 12px; padding: 0; }
+.back-btn:hover { color: #fff; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 20px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+.container { max-width: 680px; margin: 0 auto; padding: 20px 16px 80px; }
+
+/* Progresso */
+.progress-wrap { margin-bottom: 20px; }
+.progress-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { background: var(--border); border-radius: 99px; height: 10px; overflow: hidden; }
+.prog-fill { background: linear-gradient(90deg,var(--primary),var(--light)); height: 100%; border-radius: 99px; transition: width .4s ease; }
+
+/* Banco de palavras */
+.banco-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.banco { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; min-height: 54px; }
+.palavra {
+  padding: 7px 16px; border-radius: 999px; font-size: 14px; font-weight: 700;
+  background: var(--bg); border: 2px solid var(--border); cursor: pointer;
+  transition: all .15s; color: var(--text); font-family: "Baloo 2", cursive;
+}
+.palavra:hover:not(.usada) { border-color: var(--primary); background: #fff; transform: translateY(-2px); }
+.palavra.selecionada { background: var(--dark); border-color: var(--dark); color: #fff; transform: scale(1.05); }
+.palavra.usada { opacity: .38; cursor: default; text-decoration: line-through; }
+
+/* Frases */
+.frases-lista { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.frase-card {
+  background: var(--card); border: 2px solid var(--border); border-radius: 16px;
+  padding: 16px 18px; font-size: 15px; font-weight: 600; line-height: 1.7;
+  transition: border-color .2s;
+}
+.frase-card.correto { border-color: #059669; background: #f0fdf4; }
+.frase-card.errado  { border-color: #DC2626; background: #fef2f2; }
+.lacuna {
+  display: inline-block; min-width: 90px; text-align: center;
+  border-bottom: 3px solid var(--primary); margin: 0 4px; padding: 0 6px;
+  cursor: pointer; border-radius: 4px; font-weight: 800; color: var(--primary);
+  transition: all .15s; line-height: 1.4;
+}
+.lacuna:hover:not(.preenchida-bloqueada) { background: var(--bg); }
+.lacuna.aguardando { border-color: #F59E0B; color: #92400E; background: #FFFBEB; animation: pulso .6s ease infinite alternate; }
+@keyframes pulso { from { opacity:.7; } to { opacity:1; } }
+.lacuna.correto-fill { color: #064E3B; border-color: #059669; }
+.lacuna.errado-fill  { color: #7F1D1D; border-color: #DC2626; }
+.feedback-frase { font-size: 12px; font-weight: 700; margin-top: 6px; display: none; }
+.feedback-frase.ok  { color: #059669; display: block; }
+.feedback-frase.nok { color: #DC2626; display: block; }
+
+/* Resultado final */
+.resultado { display: none; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; margin-bottom: 16px; }
+.resultado.show { display: block; animation: fadeIn .3s ease; }
+@keyframes fadeIn { from {opacity:0;transform:translateY(8px)} to {opacity:1;transform:translateY(0)} }
+.res-score { font-family: "Space Mono", monospace; font-size: 40px; font-weight: 700; color: var(--primary); }
+.res-msg { font-size: 16px; font-weight: 700; color: var(--muted); margin: 8px 0 16px; }
+.btn-reiniciar { font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; padding: 12px 28px; border-radius: 999px; border: none; cursor: pointer; background: linear-gradient(135deg,#059669,#34D399); color: white; }
+.btn-verificar { display: block; width: 100%; max-width: 340px; margin: 0 auto; font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800; padding: 14px 24px; border-radius: 999px; border: none; cursor: pointer; background: linear-gradient(135deg,#059669,#34D399); color: white; box-shadow: 0 4px 16px rgba(5,150,105,.3); transition: opacity .2s; }
+.btn-verificar:disabled { opacity:.5; cursor:default; }
+.btn-verificar:hover:not(:disabled) { opacity:.88; }
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <h1>Complete as Frases</h1>
+  <p>Giros e Ângulos · Matemática · 5º ano</p>
+</div>
+<div class="container">
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="prog-label">0 de 10 preenchidas</div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="banco-label">Banco de palavras — clique uma palavra, depois clique na lacuna:</div>
+  <div class="banco" id="banco"></div>
+
+  <div class="frases-lista" id="frases-lista"></div>
+
+  <div class="resultado" id="resultado">
+    <div class="res-score" id="res-score"></div>
+    <div class="res-msg" id="res-msg"></div>
+    <button class="btn-reiniciar" onclick="reiniciar()">Tentar novamente</button>
+  </div>
+
+  <button class="btn-verificar" id="btn-verificar" onclick="verificar()" disabled>Verificar respostas</button>
+</div>
+
+<script>
+// Frases com lacunas. Resposta determinável pelos termos visíveis na tela + contexto da própria frase.
+var FRASES = [
+  { antes: 'O ',                     apos: ' de um ângulo é o ponto de encontro de duas semirretas.',          resp: 'vértice' },
+  { antes: 'Os ',                    apos: ' de um ângulo são as semirretas que partem do vértice.',           resp: 'lados' },
+  { antes: 'Um ângulo é formado por duas ', apos: ' de mesma origem.',                                         resp: 'semirretas' },
+  { antes: 'O instrumento que mede ângulos em ', apos: ' é chamado transferidor.',                             resp: 'grau' },
+  { antes: 'O giro de uma volta completa equivale a um ângulo de ', apos: '.',                                 resp: '360°' },
+  { antes: 'O giro de meia-volta equivale a um ângulo de ', apos: '.',                                        resp: '180°' },
+  { antes: 'O giro de um quarto de volta equivale a um ângulo de ', apos: '.',                                resp: '90°' },
+  { antes: 'O ângulo ',              apos: ' tem abertura menor que a do ângulo reto.',                        resp: 'agudo' },
+  { antes: 'O ângulo ',              apos: ' tem abertura maior que a do ângulo reto.',                        resp: 'obtuso' },
+  { antes: 'O ângulo ',              apos: ' tem abertura de exatamente 90°.',                                 resp: 'reto' },
+];
+
+// Banco: respostas corretas + 2 distratores
+var PALAVRAS_BANCO = ['vértice','lados','semirretas','grau','360°','180°','90°','agudo','obtuso','reto','ângulo','volta'];
+
+var palavraSelecionada = null;
+var respostas = new Array(FRASES.length).fill(null);
+var verificado = false;
+
+function embaralhar(arr) {
+  var a = arr.slice();
+  for (var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+
+function montarBanco() {
+  var banco = document.getElementById('banco');
+  banco.innerHTML = '';
+  embaralhar(PALAVRAS_BANCO).forEach(function(palavra) {
+    var el = document.createElement('button');
+    el.className = 'palavra';
+    el.textContent = palavra;
+    el.setAttribute('data-palavra', palavra);
+    el.addEventListener('click', function() { selecionarPalavra(palavra, el); });
+    banco.appendChild(el);
+  });
+}
+
+function montarFrases() {
+  var lista = document.getElementById('frases-lista');
+  lista.innerHTML = '';
+  FRASES.forEach(function(frase, idx) {
+    var card = document.createElement('div');
+    card.className = 'frase-card';
+    card.id = 'frase-'+idx;
+    var lacuna = '<span class="lacuna" id="lacuna-'+idx+'" data-idx="'+idx+'">______</span>';
+    card.innerHTML = frase.antes + lacuna + frase.apos + '<div class="feedback-frase" id="fb-'+idx+'"></div>';
+    lista.appendChild(card);
+    document.getElementById('lacuna-'+idx).addEventListener('click', function() { clicarLacuna(idx); });
+  });
+}
+
+function selecionarPalavra(palavra, el) {
+  if (verificado) return;
+  // Verifica se a palavra já está em uso em alguma lacuna
+  var emUso = respostas.some(function(r) { return r === palavra; });
+  if (emUso) return;
+  // Toggle seleção
+  if (palavraSelecionada === palavra) {
+    palavraSelecionada = null;
+    atualizarDestaqueBanco();
+    limparAguardando();
+    return;
+  }
+  palavraSelecionada = palavra;
+  atualizarDestaqueBanco();
+  // Marca lacunas vazias como aguardando
+  limparAguardando();
+  FRASES.forEach(function(_, idx) {
+    if (!respostas[idx]) {
+      document.getElementById('lacuna-'+idx).classList.add('aguardando');
+    }
+  });
+}
+
+function clicarLacuna(idx) {
+  if (verificado) return;
+  if (palavraSelecionada) {
+    // Preenche lacuna
+    var velha = respostas[idx];
+    respostas[idx] = palavraSelecionada;
+    var lacunaEl = document.getElementById('lacuna-'+idx);
+    lacunaEl.textContent = palavraSelecionada;
+    lacunaEl.classList.remove('aguardando');
+    // Devolve palavra antiga ao banco (marca como não usada)
+    if (velha) {
+      var velhaEl = document.querySelector('.palavra[data-palavra="'+velha+'"]');
+      if (velhaEl) velhaEl.classList.remove('usada');
+    }
+    // Marca nova palavra como usada
+    var elBanco = document.querySelector('.palavra[data-palavra="'+palavraSelecionada+'"]');
+    if (elBanco) elBanco.classList.add('usada');
+    palavraSelecionada = null;
+    limparAguardando();
+    atualizarDestaqueBanco();
+    atualizarProgresso();
+  } else {
+    // Clicou na lacuna sem palavra selecionada: devolve se preenchida
+    if (respostas[idx]) {
+      var devolver = respostas[idx];
+      respostas[idx] = null;
+      var lacunaEl2 = document.getElementById('lacuna-'+idx);
+      lacunaEl2.textContent = '______';
+      var elBanco2 = document.querySelector('.palavra[data-palavra="'+devolver+'"]');
+      if (elBanco2) elBanco2.classList.remove('usada');
+      atualizarProgresso();
+    }
+  }
+}
+
+function atualizarDestaqueBanco() {
+  document.querySelectorAll('.palavra').forEach(function(el) {
+    el.classList.toggle('selecionada', el.getAttribute('data-palavra') === palavraSelecionada);
+  });
+}
+
+function limparAguardando() {
+  document.querySelectorAll('.lacuna').forEach(function(el) { el.classList.remove('aguardando'); });
+}
+
+function atualizarProgresso() {
+  var preenchidas = respostas.filter(function(r) { return r !== null; }).length;
+  var total = FRASES.length;
+  document.getElementById('prog-label').textContent = preenchidas + ' de ' + total + ' preenchidas';
+  document.getElementById('prog-fill').style.width = Math.round(preenchidas/total*100) + '%';
+  document.getElementById('btn-verificar').disabled = preenchidas < total;
+}
+
+function verificar() {
+  if (verificado) return;
+  verificado = true;
+  var acertos = 0;
+  FRASES.forEach(function(frase, idx) {
+    var correto = (respostas[idx] === frase.resp);
+    if (correto) acertos++;
+    var lacunaEl = document.getElementById('lacuna-'+idx);
+    var card = document.getElementById('frase-'+idx);
+    var fbEl = document.getElementById('fb-'+idx);
+    lacunaEl.classList.add(correto ? 'correto-fill' : 'errado-fill');
+    card.classList.add(correto ? 'correto' : 'errado');
+    if (!correto) {
+      fbEl.className = 'feedback-frase nok';
+      fbEl.textContent = 'Resposta correta: ' + frase.resp;
+    } else {
+      fbEl.className = 'feedback-frase ok';
+      fbEl.textContent = 'Correto! ✓';
+    }
+  });
+  var total = FRASES.length;
+  var pct = Math.round((acertos/total)*100);
+  window.sabendoScore = pct;
+  var msgs = ['Continue tentando! Revise os termos do livro.','Bom esforço! Reveja as definições.','Muito bem! Quase perfeito!','Perfeito! Você dominou a terminologia de ângulos!'];
+  document.getElementById('res-score').textContent = acertos + '/' + total;
+  document.getElementById('res-msg').textContent = msgs[pct < 50 ? 0 : pct < 75 ? 1 : pct < 100 ? 2 : 3];
+  document.getElementById('resultado').classList.add('show');
+  document.getElementById('btn-verificar').style.display = 'none';
+}
+
+function reiniciar() {
+  verificado = false;
+  palavraSelecionada = null;
+  respostas = new Array(FRASES.length).fill(null);
+  document.getElementById('resultado').classList.remove('show');
+  document.getElementById('btn-verificar').style.display = 'block';
+  document.getElementById('btn-verificar').disabled = true;
+  montarBanco();
+  montarFrases();
+  atualizarProgresso();
+}
+
+window.addEventListener('load', function() {
+  montarBanco();
+  montarFrases();
+});
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "giros-angulos";
+  var ACTIVITY_TYPE = "frases";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Angus",
+    characterEmoji: "📐",
+    characterImg:   "chars/giros-angulos-hd.png",
+    themeLabel:     "Giros e Ângulos · Matemática",
+    totalActivities: 4,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-giros-angulos",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var sessData = res.data.session;
+    if (!sessData) {
+      btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = sessData.user.id;
+    var pontuacao = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id:uid, discipline:DISCIPLINE, theme_slug:THEME_SLUG, activity_type:ACTIVITY_TYPE, score:pontuacao, is_first_attempt:isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if (sr.data) {
+      var s = sr.data; var yest = new Date(); yest.setDate(yest.getDate()-1); var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;
+      await supa.from("streaks").update({ current_streak:ns, longest_streak:Math.max(ns,s.longest_streak), last_activity_date:today, total_activities:s.total_activities+1, updated_at:new Date().toISOString() }).eq("user_id",uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treino de Ângulos — Giros e Ângulos</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #059669; --light: #34D399; --bg: #ECFDF5;
+  --dark: #064E3B; --border: #D1FAE5; --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: linear-gradient(135deg,#064E3B,#059669 60%,#34D399); color: white; padding: 24px 24px 20px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.75); background: none; border: none; cursor: pointer; font-family: "Baloo 2", cursive; margin-bottom: 12px; padding: 0; }
+.back-btn:hover { color: #fff; }
+.header h1 { font-family: "Space Mono", monospace; font-size: 20px; margin-bottom: 4px; }
+.header p { font-size: 13px; font-weight: 600; opacity: .85; }
+.container { max-width: 600px; margin: 0 auto; padding: 20px 16px 80px; }
+
+/* Definições fixas no topo */
+.definicoes { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.def-item { flex: 1; min-width: 120px; background: var(--card); border: 2px solid var(--border); border-radius: 12px; padding: 8px 12px; text-align: center; }
+.def-nome { font-family: "Space Mono", monospace; font-size: 10px; font-weight: 800; letter-spacing: .04em; }
+.def-item.agudo  .def-nome  { color: #2563EB; }
+.def-item.reto   .def-nome  { color: #059669; }
+.def-item.obtuso .def-nome  { color: #D97706; }
+.def-regra { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+/* Progresso */
+.progress-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.prog-track { flex: 1; background: var(--border); border-radius: 99px; height: 10px; overflow: hidden; }
+.prog-fill { background: linear-gradient(90deg,var(--primary),var(--light)); height: 100%; border-radius: 99px; transition: width .4s ease; }
+.prog-texto { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+
+/* Placar */
+.placar { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+.score-chip { background: var(--dark); color: #fff; font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 99px; }
+
+/* Card de treino */
+.treino-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 28px 24px 24px; box-shadow: 0 2px 12px rgba(5,150,105,.07); animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+.card-numero { font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.card-instrucao { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 16px; }
+.angulo-wrapper { display: flex; justify-content: center; margin: 16px 0; }
+.angulo-svg { width: 200px; height: 160px; }
+.rotulo-angulo { text-align: center; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 18px; }
+.opcoes { display: flex; flex-direction: column; gap: 10px; }
+@media (min-width: 420px) { .opcoes { flex-direction: row; } }
+.opcao-btn {
+  flex: 1; padding: 14px 10px; border-radius: 14px; font-family: "Baloo 2", cursive;
+  font-size: 15px; font-weight: 800; cursor: pointer; border: 2px solid var(--border);
+  background: var(--bg); color: var(--text); transition: all .15s; text-align: center;
+}
+.opcao-btn:hover:not(:disabled) { border-color: var(--primary); background: #fff; }
+.opcao-btn.correto { background: #D1FAE5; border-color: #059669; color: #064E3B; }
+.opcao-btn.errado  { background: #FEE2E2; border-color: #DC2626; color: #7F1D1D; }
+.opcao-btn:disabled { cursor: default; }
+
+/* Feedback */
+.feedback { display: none; margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; }
+.feedback.show { display: flex; align-items: flex-start; gap: 10px; animation: fadeIn .25s ease; }
+.feedback.ok  { background: #D1FAE5; color: #064E3B; border: 2px solid #6EE7B7; }
+.feedback.nok { background: #FEE2E2; color: #7F1D1D; border: 2px solid #FCA5A5; }
+.feedback-icon { font-size: 18px; flex-shrink: 0; }
+.btn-proximo { display: none; margin-top: 14px; width: 100%; padding: 13px; border-radius: 14px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; background: linear-gradient(135deg,#059669,#34D399); color: white; border: none; }
+.btn-proximo.show { display: block; }
+
+/* Resultado final */
+.resultado { display: none; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 32px 24px; text-align: center; animation: fadeIn .3s ease; }
+.resultado.show { display: block; }
+.res-emoji { font-size: 48px; margin-bottom: 10px; }
+.res-score { font-family: "Space Mono", monospace; font-size: 42px; font-weight: 700; color: var(--primary); }
+.res-msg { font-size: 16px; font-weight: 700; color: var(--muted); margin: 8px 0 20px; }
+.res-lista { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; text-align: left; }
+.res-item { padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.res-item.ok  { background: #D1FAE5; color: #064E3B; }
+.res-item.nok { background: #FEE2E2; color: #7F1D1D; }
+.btn-reiniciar { font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; padding: 13px 32px; border-radius: 999px; border: none; cursor: pointer; background: linear-gradient(135deg,#059669,#34D399); color: white; }
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="back-btn" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <h1>Treino de Ângulos</h1>
+  <p>Giros e Ângulos · Matemática · 5º ano</p>
+</div>
+<div class="container">
+
+  <!-- Definições sempre visíveis -->
+  <div class="definicoes">
+    <div class="def-item agudo">
+      <div class="def-nome">AGUDO</div>
+      <div class="def-regra">abertura &lt; 90°</div>
+    </div>
+    <div class="def-item reto">
+      <div class="def-nome">RETO</div>
+      <div class="def-regra">abertura = 90°</div>
+    </div>
+    <div class="def-item obtuso">
+      <div class="def-nome">OBTUSO</div>
+      <div class="def-regra">abertura &gt; 90°</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-texto" id="prog-texto">1/8</div>
+  </div>
+
+  <div class="placar"><span class="score-chip" id="score-chip">0 pontos</span></div>
+
+  <div id="treino-area"></div>
+  <div id="resultado" class="resultado"></div>
+</div>
+
+<script>
+// Dados de treino: ângulos desenhados em SVG, aluno classifica como agudo/reto/obtuso.
+// Critério declarado no topo da tela: agudo<90, reto=90, obtuso>90.
+// A classificação pode ser determinada visualmente (ângulo desenhado) + comparação com o ângulo reto de referência.
+var TREINO_ITENS = [
+  { rotulo:'m(AÔB) = 30°',  graus:30,  tipo:'agudo',  explicacao:'30° < 90°, portanto é um ângulo agudo.' },
+  { rotulo:'m(CÔD) = 90°',  graus:90,  tipo:'reto',   explicacao:'A abertura de exatamente 90° define o ângulo reto. Veja o símbolo □ entre os lados.' },
+  { rotulo:'m(EÔF) = 120°', graus:120, tipo:'obtuso', explicacao:'120° > 90°, portanto é um ângulo obtuso.' },
+  { rotulo:'m(GÔH) = 60°',  graus:60,  tipo:'agudo',  explicacao:'60° < 90°, portanto é um ângulo agudo.' },
+  { rotulo:'m(PÔQ) = 150°', graus:150, tipo:'obtuso', explicacao:'150° > 90°, portanto é um ângulo obtuso.' },
+  { rotulo:'m(RÔS) = 45°',  graus:45,  tipo:'agudo',  explicacao:'45° < 90°, portanto é um ângulo agudo.' },
+  { rotulo:'m(MÔN) = 135°', graus:135, tipo:'obtuso', explicacao:'135° > 90°, portanto é um ângulo obtuso.' },
+  { rotulo:'m(XÔY) = 90°',  graus:90,  tipo:'reto',   explicacao:'A abertura de exatamente 90° define o ângulo reto. Símbolo □ entre os lados.' },
+];
+
+// Gera SVG de ângulo
+function makeSVG(graus) {
+  var ox=90, oy=130, rBraco=80, rArco=28;
+  var rad = graus * Math.PI / 180;
+  var bx = (ox + rBraco * Math.cos(rad)).toFixed(1);
+  var by = (oy - rBraco * Math.sin(rad)).toFixed(1);
+  var ax = (ox + rBraco + 10).toFixed(1);
+  var ay = oy;
+  var arcEx = (ox + rArco * Math.cos(rad)).toFixed(1);
+  var arcEy = (oy - rArco * Math.sin(rad)).toFixed(1);
+  var arcPart = '';
+  if (graus === 90) {
+    // Símbolo de ângulo reto (quadradinho)
+    arcPart = '<path d="M'+(ox+12)+','+oy+' L'+(ox+12)+','+(oy-12)+' L'+ox+','+(oy-12)+'" fill="none" stroke="#059669" stroke-width="2"/>';
+  } else {
+    arcPart = '<path d="M'+(ox+rArco)+','+oy+' A'+rArco+','+rArco+' 0 0,0 '+arcEx+','+arcEy+'" fill="rgba(5,150,105,0.2)" stroke="#059669" stroke-width="1.8"/>';
+  }
+  var lblBx = (parseFloat(bx) + (graus > 90 ? -16 : 8)).toFixed(0);
+  var lblBy = (parseFloat(by) - 5).toFixed(0);
+  return '<svg class="angulo-svg" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">'
+    + '<line x1="'+ox+'" y1="'+oy+'" x2="'+ax+'" y2="'+ay+'" stroke="#1A1A2E" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<line x1="'+ox+'" y1="'+oy+'" x2="'+bx+'" y2="'+by+'" stroke="#1A1A2E" stroke-width="2.5" stroke-linecap="round"/>'
+    + arcPart
+    + '<text x="'+(ox-14)+'" y="'+(oy+6)+'" font-size="13" font-weight="700" fill="#1A1A2E" font-family="Baloo 2,cursive">O</text>'
+    + '<text x="'+(parseFloat(ax)+4)+'" y="'+(ay+5)+'" font-size="12" font-weight="700" fill="#374151" font-family="Baloo 2,cursive">A</text>'
+    + '<text x="'+lblBx+'" y="'+lblBy+'" font-size="12" font-weight="700" fill="#374151" font-family="Baloo 2,cursive">B</text>'
+    + '</svg>';
+}
+
+var indiceAtual = 0;
+var pontuacao = 0;
+var registros = []; // {correto: bool, rotulo: str}
+var respondeu = false;
+
+function mostrarItem(idx) {
+  if (idx >= TREINO_ITENS.length) {
+    mostrarResultado();
+    return;
+  }
+  respondeu = false;
+  var item = TREINO_ITENS[idx];
+  var total = TREINO_ITENS.length;
+  document.getElementById('prog-fill').style.width = Math.round(idx/total*100)+'%';
+  document.getElementById('prog-texto').textContent = (idx+1)+'/'+total;
+
+  var html = '<div class="treino-card">'
+    + '<div class="card-numero">Ângulo '+(idx+1)+' de '+total+'</div>'
+    + '<div class="card-instrucao">Olhe o ângulo desenhado e classifique-o:</div>'
+    + '<div class="angulo-wrapper">'+makeSVG(item.graus)+'</div>'
+    + '<div class="rotulo-angulo">'+item.rotulo+'</div>'
+    + '<div class="opcoes">'
+    + '<button class="opcao-btn" id="opt-agudo" onclick="responder(\'agudo\')">Ângulo agudo</button>'
+    + '<button class="opcao-btn" id="opt-reto"  onclick="responder(\'reto\')">Ângulo reto</button>'
+    + '<button class="opcao-btn" id="opt-obtuso" onclick="responder(\'obtuso\')">Ângulo obtuso</button>'
+    + '</div>'
+    + '<div class="feedback" id="feedback"></div>'
+    + '<button class="btn-proximo" id="btn-proximo" onclick="proximoItem()">'
+    + (idx < total-1 ? 'Próximo ângulo →' : 'Ver resultado')
+    + '</button>'
+    + '</div>';
+  document.getElementById('treino-area').innerHTML = html;
+}
+
+function responder(tipo) {
+  if (respondeu) return;
+  respondeu = true;
+  var item = TREINO_ITENS[indiceAtual];
+  var correto = (tipo === item.tipo);
+  if (correto) pontuacao++;
+  registros.push({correto: correto, rotulo: item.rotulo, dado: tipo, certo: item.tipo});
+
+  // Atualiza botões
+  ['agudo','reto','obtuso'].forEach(function(t) {
+    var btn = document.getElementById('opt-'+t);
+    if (btn) {
+      btn.disabled = true;
+      if (t === item.tipo) btn.classList.add('correto');
+      else if (t === tipo && !correto) btn.classList.add('errado');
+    }
+  });
+
+  // Feedback
+  var fb = document.getElementById('feedback');
+  if (correto) {
+    fb.className = 'feedback ok show';
+    fb.innerHTML = '<span class="feedback-icon">✓</span><span>Correto! '+item.explicacao+'</span>';
+  } else {
+    fb.className = 'feedback nok show';
+    fb.innerHTML = '<span class="feedback-icon">✗</span><span>Era '+item.tipo+'. '+item.explicacao+'</span>';
+  }
+
+  // Placar
+  document.getElementById('score-chip').textContent = pontuacao + ' ponto'+(pontuacao===1?'':'s');
+
+  // Botão próximo
+  var btnProx = document.getElementById('btn-proximo');
+  if (btnProx) btnProx.classList.add('show');
+}
+
+function proximoItem() {
+  indiceAtual++;
+  mostrarItem(indiceAtual);
+}
+
+function mostrarResultado() {
+  document.getElementById('treino-area').innerHTML = '';
+  var total = TREINO_ITENS.length;
+  var pct = Math.round((pontuacao/total)*100);
+  window.sabendoScore = pct;
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-texto').textContent = total+'/'+total;
+  var emojis = ['😅','🙂','😊','🎉'];
+  var msgs = ['Continue praticando! Reveja as definições de agudo, reto e obtuso.','Bom trabalho! Reveja os ângulos que errou.','Muito bem! Quase perfeito!','Parabéns! Você reconhece todos os tipos de ângulo com facilidade!'];
+  var mi = pct < 50 ? 0 : pct < 75 ? 1 : pct < 100 ? 2 : 3;
+  var listaHTML = registros.map(function(r) {
+    return '<div class="res-item '+(r.correto?'ok':'nok')+'">'
+      + (r.correto?'✓':'✗') + ' ' + r.rotulo
+      + (!r.correto ? ' — era ângulo '+r.certo : '')
+      + '</div>';
+  }).join('');
+  document.getElementById('resultado').innerHTML =
+    '<div class="res-emoji">'+emojis[mi]+'</div>'
+    + '<div class="res-score">'+pontuacao+'/'+total+'</div>'
+    + '<div class="res-msg">'+msgs[mi]+'</div>'
+    + '<div class="res-lista">'+listaHTML+'</div>'
+    + '<button class="btn-reiniciar" onclick="reiniciar()">Treinar novamente</button>';
+  document.getElementById('resultado').classList.add('show');
+}
+
+function reiniciar() {
+  indiceAtual = 0; pontuacao = 0; registros = []; respondeu = false;
+  document.getElementById('resultado').classList.remove('show');
+  document.getElementById('score-chip').textContent = '0 pontos';
+  mostrarItem(0);
+}
+
+window.addEventListener('load', function() { mostrarItem(0); });
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "giros-angulos";
+  var ACTIVITY_TYPE = "treino";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Angus",
+    characterEmoji: "📐",
+    characterImg:   "chars/giros-angulos-hd.png",
+    themeLabel:     "Giros e Ângulos · Matemática",
+    totalActivities: 4,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-giros-angulos",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var sessData = res.data.session;
+    if (!sessData) {
+      btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = sessData.user.id;
+    var pontuacaoFinal = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id:uid, discipline:DISCIPLINE, theme_slug:THEME_SLUG, activity_type:ACTIVITY_TYPE, score:pontuacaoFinal, is_first_attempt:isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if (sr.data) {
+      var s = sr.data; var yest = new Date(); yest.setDate(yest.getDate()-1); var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;
+      await supa.from("streaks").update({ current_streak:ns, longest_streak:Math.max(ns,s.longest_streak), last_activity_date:today, total_activities:s.total_activities+1, updated_at:new Date().toISOString() }).eq("user_id",uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
