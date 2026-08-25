@@ -398,7 +398,7 @@
 
 ### Poligonos Triangulos Quadrilateros
 **Personagem:** Polito (figura geométrica plana animada, transforma-se em polígonos)
-**HQ:** ❌ `hq-poligonos-triangulos-quadrilateros.png` (ausente) | Prompt: ✅
+**HQ:** ✅ `hq-poligonos-triangulos-quadrilateros.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -616,6 +616,7 @@
 | `Max-Min.png` |
 | `Morá.png` |
 | `Poli.png` |
+| `Polito.png` |
 | `Pontuacao.png` |
 | `Prepo musculoso.png` |
 | `Prepo.png` |
