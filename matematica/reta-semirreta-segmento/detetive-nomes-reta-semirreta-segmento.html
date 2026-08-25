@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detetive dos Nomes — Reta, Semirreta e Segmento de Reta</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --mat:#059669;--mat-light:#34D399;--mat-bg:#ECFDF5;--mat-dark:#064E3B;
+  --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;--card:#fff;--radius:18px;
+}
+body{font-family:"Baloo 2",cursive;background:var(--mat-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px}
+.wrap{max-width:700px;margin:0 auto}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--mat);text-decoration:none;margin-bottom:14px}
+.back-link:hover{opacity:.7}
+.card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 24px rgba(5,150,105,.1)}
+.card-header{background:linear-gradient(135deg,#064E3B,#059669 60%,#34D399);padding:20px 24px 18px;display:flex;align-items:center;gap:14px}
+.card-header .hicon{font-size:32px;line-height:1}
+.card-header h1{font-family:"Space Mono",monospace;font-size:17px;color:#fff;line-height:1.2}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap}
+.instrucao{padding:12px 24px;font-size:13px;font-weight:600;color:var(--muted);line-height:1.6;border-bottom:2px solid var(--border);background:var(--mat-bg)}
+.instrucao strong{color:var(--text)}
+.body{padding:20px 24px}
+.fig-title{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--mat);letter-spacing:.08em;margin-bottom:12px}
+.fig-wrap{background:var(--mat-bg);border:2px solid var(--border);border-radius:14px;padding:12px;overflow-x:auto;margin-bottom:20px}
+.fig-wrap svg{display:block;min-width:360px;width:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;font-size:12px;font-weight:600;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.id-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.id-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border:2px solid var(--border);border-radius:12px;background:var(--card);flex-wrap:wrap}
+.id-row.correct{border-color:#059669;background:#D1FAE5}
+.id-row.wrong{border-color:#DC2626;background:#FEF2F2}
+.elem-tag{font-family:"Space Mono",monospace;font-size:13px;font-weight:700;color:var(--mat-dark);background:var(--mat-bg);border:2px solid var(--border);border-radius:8px;padding:3px 10px;flex-shrink:0;min-width:44px;text-align:center}
+.choices{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.choice-btn{padding:6px 12px;border:2px solid var(--border);border-radius:999px;background:var(--card);font-family:"Baloo 2",cursive;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.choice-btn:hover{border-color:var(--mat-light);color:var(--mat)}
+.choice-btn.selected{background:var(--mat);border-color:var(--mat);color:#fff}
+.row-result{font-size:13px;font-weight:700;margin-left:auto;flex-shrink:0}
+.id-row.correct .row-result{color:#059669}
+.id-row.wrong .row-result{color:#DC2626}
+.check-btn{width:100%;padding:14px;background:linear-gradient(135deg,#059669,#34D399);color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;transition:opacity .2s;margin-bottom:16px}
+.check-btn:hover{opacity:.9}
+.check-btn:disabled{opacity:.5;cursor:default}
+.score-bar{display:none;padding:16px;background:var(--mat-bg);border:2px solid var(--border);border-radius:14px;text-align:center}
+.score-bar.show{display:block}
+.score-num{font-family:"Space Mono",monospace;font-size:28px;font-weight:700;color:var(--mat)}
+.score-sub{font-size:13px;font-weight:600;color:var(--muted);margin-top:4px}
+.score-msg{font-size:15px;font-weight:700;color:var(--mat-dark);margin-top:10px}
+.retry-btn{margin-top:12px;padding:10px 24px;background:var(--mat);color:#fff;border:none;border-radius:999px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer}
+@media(max-width:480px){
+  .body{padding:14px 14px}
+  .choices{gap:4px}
+  .choice-btn{font-size:12px;padding:5px 9px}
+  .card-header h1{font-size:14px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal();return false;">← Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">🔍</div>
+      <div><h1>Detetive dos Nomes</h1><p>Reta, Semirreta e Segmento de Reta</p></div>
+      <div class="hbadge">⚡ Identificação</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como fazer:</strong> Observe a figura com os elementos geométricos a, b, c, d, e e f.
+      Para cada elemento, selecione se é uma <strong>reta</strong>, uma <strong>semirreta</strong> ou um <strong>segmento de reta</strong>.
+      Use as setas e pontos como pistas visuais. Depois clique em <strong>Verificar respostas</strong>.
+    </div>
+    <div class="body">
+      <div class="fig-title">FIGURA — IDENTIFIQUE CADA ELEMENTO</div>
+
+      <!-- Legenda visual -->
+      <div class="legend">
+        <span>
+          <svg width="36" height="14" viewBox="0 0 36 14">
+            <defs><marker id="la1" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#059669"/></marker>
+            <marker id="la2" markerWidth="7" markerHeight="7" refX="1" refY="3" orient="auto-start-reverse"><path d="M0,0 L0,6 L7,3 z" fill="#059669"/></marker></defs>
+            <line x1="4" y1="7" x2="32" y2="7" stroke="#059669" stroke-width="2" marker-end="url(#la1)" marker-start="url(#la2)"/>
+          </svg>
+          setas nas duas pontas = reta
+        </span>
+        <span>
+          <svg width="36" height="14" viewBox="0 0 36 14">
+            <defs><marker id="lb" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#059669"/></marker></defs>
+            <circle cx="4" cy="7" r="3" fill="#059669"/>
+            <line x1="4" y1="7" x2="32" y2="7" stroke="#059669" stroke-width="2" marker-end="url(#lb)"/>
+          </svg>
+          ponto + seta = semirreta
+        </span>
+        <span>
+          <svg width="36" height="14" viewBox="0 0 36 14">
+            <circle cx="4" cy="7" r="3" fill="#059669"/>
+            <line x1="4" y1="7" x2="32" y2="7" stroke="#059669" stroke-width="2"/>
+            <circle cx="32" cy="7" r="3" fill="#059669"/>
+          </svg>
+          pontos nas duas pontas = segmento
+        </span>
+      </div>
+
+      <div class="fig-wrap">
+        <svg viewBox="0 0 420 290" xmlns="http://www.w3.org/2000/svg" font-family="'Baloo 2',cursive">
+          <defs>
+            <!-- seta direita -->
+            <marker id="arr-r" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#059669" opacity=".85"/>
+            </marker>
+            <!-- seta esquerda (auto-start-reverse) -->
+            <marker id="arr-l" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto-start-reverse">
+              <path d="M0,0 L0,6 L8,3 z" fill="#059669" opacity=".85"/>
+            </marker>
+            <!-- seta para baixo -->
+            <marker id="arr-d" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#6366F1" opacity=".85"/>
+            </marker>
+            <marker id="arr-u" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto-start-reverse">
+              <path d="M0,0 L0,6 L8,3 z" fill="#6366F1" opacity=".85"/>
+            </marker>
+          </defs>
+
+          <!-- === ELEMENTO a — RETA horizontal (setas nos dois lados) === -->
+          <line x1="8" y1="44" x2="412" y2="44" stroke="#059669" stroke-width="2.2" marker-end="url(#arr-r)" marker-start="url(#arr-l)"/>
+          <text x="206" y="35" text-anchor="middle" font-size="13" font-weight="800" fill="#064E3B">a</text>
+
+          <!-- === ELEMENTO b — SEMIRRETA (ponto esquerdo, seta à direita), inclinada === -->
+          <circle cx="22" cy="110" r="4" fill="#6366F1"/>
+          <line x1="22" y1="110" x2="198" y2="158" stroke="#6366F1" stroke-width="2.2" marker-end="url(#arr-d)"/>
+          <text x="100" y="123" text-anchor="middle" font-size="13" font-weight="800" fill="#4338CA">b</text>
+
+          <!-- === ELEMENTO c — SEGMENTO diagonal (pontos nos dois lados) === -->
+          <circle cx="242" cy="88" r="4" fill="#B45309"/>
+          <line x1="242" y1="88" x2="390" y2="158" stroke="#B45309" stroke-width="2.2"/>
+          <circle cx="390" cy="158" r="4" fill="#B45309"/>
+          <text x="325" y="106" text-anchor="middle" font-size="13" font-weight="800" fill="#92400E">c</text>
+
+          <!-- === ELEMENTO d — RETA inclinada (setas nos dois lados) === -->
+          <line x1="8" y1="238" x2="188" y2="185" stroke="#059669" stroke-width="2.2" marker-end="url(#arr-u)" marker-start="url(#arr-r)"/>
+          <text x="90" y="225" text-anchor="middle" font-size="13" font-weight="800" fill="#064E3B">d</text>
+
+          <!-- === ELEMENTO e — SEMIRRETA horizontal (ponto à esquerda, seta à direita) === -->
+          <circle cx="230" cy="200" r="4" fill="#6366F1"/>
+          <line x1="230" y1="200" x2="408" y2="200" stroke="#6366F1" stroke-width="2.2" marker-end="url(#arr-d)"/>
+          <text x="318" y="190" text-anchor="middle" font-size="13" font-weight="800" fill="#4338CA">e</text>
+
+          <!-- === ELEMENTO f — SEGMENTO horizontal curto (pontos nos dois lados) === -->
+          <circle cx="22" cy="262" r="4" fill="#B45309"/>
+          <line x1="22" y1="262" x2="170" y2="262" stroke="#B45309" stroke-width="2.2"/>
+          <circle cx="170" cy="262" r="4" fill="#B45309"/>
+          <text x="96" y="253" text-anchor="middle" font-size="13" font-weight="800" fill="#92400E">f</text>
+        </svg>
+      </div>
+
+      <div class="id-grid" id="id-grid">
+        <!-- rows injected by JS -->
+      </div>
+
+      <button class="check-btn" id="check-btn" onclick="checkAnswers()" disabled>Verificar respostas</button>
+
+      <div class="score-bar" id="score-bar">
+        <div class="score-num" id="score-num"></div>
+        <div class="score-sub" id="score-sub"></div>
+        <div class="score-msg" id="score-msg"></div>
+        <button class="retry-btn" onclick="resetActivity()">Tentar novamente</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var detiElements = [
+  {id:'a', label:'Elemento a', correct:'reta'},
+  {id:'b', label:'Elemento b', correct:'semi'},
+  {id:'c', label:'Elemento c', correct:'seg'},
+  {id:'d', label:'Elemento d', correct:'reta'},
+  {id:'e', label:'Elemento e', correct:'semi'},
+  {id:'f', label:'Elemento f', correct:'seg'},
+];
+var detiAnswers = {};
+var detiDone = false;
+
+var typeLabels = {reta:'Reta', semi:'Semirreta', seg:'Segmento de reta'};
+var typeKeys = ['reta','semi','seg'];
+
+function buildGrid() {
+  var grid = document.getElementById('id-grid');
+  grid.innerHTML = '';
+  detiElements.forEach(function(elem) {
+    var row = document.createElement('div');
+    row.className = 'id-row';
+    row.id = 'row-'+elem.id;
+    var tag = document.createElement('span');
+    tag.className = 'elem-tag';
+    tag.textContent = elem.id;
+    row.appendChild(tag);
+    var choices = document.createElement('div');
+    choices.className = 'choices';
+    typeKeys.forEach(function(k) {
+      var btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = typeLabels[k];
+      btn.dataset.elem = elem.id;
+      btn.dataset.type = k;
+      btn.addEventListener('click', function() {
+        if (detiDone) return;
+        var siblings = choices.querySelectorAll('.choice-btn');
+        siblings.forEach(function(s){ s.classList.remove('selected'); });
+        btn.classList.add('selected');
+        detiAnswers[elem.id] = k;
+        updateCheckBtn();
+      });
+      choices.appendChild(btn);
+    });
+    row.appendChild(choices);
+    grid.appendChild(row);
+  });
+}
+
+function updateCheckBtn() {
+  var answered = Object.keys(detiAnswers).length;
+  document.getElementById('check-btn').disabled = answered < detiElements.length;
+}
+
+function checkAnswers() {
+  if (detiDone) return;
+  detiDone = true;
+  var correct = 0;
+  detiElements.forEach(function(elem) {
+    var row = document.getElementById('row-'+elem.id);
+    var ans = detiAnswers[elem.id];
+    var isCorrect = ans === elem.correct;
+    if (isCorrect) correct++;
+    row.classList.add(isCorrect ? 'correct' : 'wrong');
+    var resEl = document.createElement('span');
+    resEl.className = 'row-result';
+    resEl.textContent = isCorrect ? '✓ ' + typeLabels[elem.correct] : '✗ É ' + typeLabels[elem.correct];
+    row.appendChild(resEl);
+    row.querySelectorAll('.choice-btn').forEach(function(b){ b.disabled = true; });
+  });
+  document.getElementById('check-btn').disabled = true;
+  document.getElementById('check-btn').textContent = 'Verificado!';
+  var pct = Math.round((correct / detiElements.length) * 100);
+  window.sabendoScore = pct;
+  var sb = document.getElementById('score-bar');
+  sb.className = 'score-bar show';
+  document.getElementById('score-num').textContent = correct + '/' + detiElements.length;
+  document.getElementById('score-sub').textContent = pct + '% de acertos';
+  var msgs = ['Continue praticando! Observe as setas e pontos de cada elemento para identificar o tipo.','Bom trabalho! Você está reconhecendo bem os elementos geométricos!','Perfeito! Você identificou todos os elementos corretamente!'];
+  document.getElementById('score-msg').textContent = pct >= 100 ? msgs[2] : pct >= 67 ? msgs[1] : msgs[0];
+}
+
+function resetActivity() {
+  detiAnswers = {};
+  detiDone = false;
+  buildGrid();
+  document.getElementById('check-btn').disabled = true;
+  document.getElementById('check-btn').textContent = 'Verificar respostas';
+  document.getElementById('score-bar').className = 'score-bar';
+}
+
+buildGrid();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "reta-semirreta-segmento";
+  var ACTIVITY_TYPE = "detetive-nomes";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Lino",
+    characterEmoji: "📏",
+    characterImg:   "chars/reta-semirreta-segmento-hd.png",
+    themeLabel:     "Reta, Semirreta e Segmento · Matemática",
+    totalActivities: 4,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-reta-semirreta-segmento",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

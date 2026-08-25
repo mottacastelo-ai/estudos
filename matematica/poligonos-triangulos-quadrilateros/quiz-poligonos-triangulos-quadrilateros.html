@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Polígonos, Triângulos e Quadriláteros</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --mat:#059669;--mat-light:#34D399;--mat-bg:#ECFDF5;--mat-dark:#064E3B;
+  --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;--card:#fff;--radius:18px;
+  --ok:#059669;--ok-bg:#ECFDF5;--err:#DC2626;--err-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--mat-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:700px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--mat);text-decoration:none;margin-bottom:14px;cursor:pointer;background:none;border:none;padding:0;}
+.back-link:hover{opacity:.7;}
+.card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(5,150,105,.1);}
+.card-header{background:linear-gradient(135deg,#064E3B,#059669 60%,#34D399);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:32px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+.prog-wrap{padding:14px 24px 0;border-bottom:2px solid var(--border);}
+.prog-label{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px;}
+.prog-track{height:8px;background:#D1FAE5;border-radius:999px;margin-bottom:14px;}
+.prog-fill{height:8px;background:linear-gradient(90deg,var(--mat),var(--mat-light));border-radius:999px;transition:width .4s;}
+.q-body{padding:24px;}
+.q-num{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--mat);letter-spacing:.08em;margin-bottom:8px;}
+.q-text{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:18px;}
+.opts{display:grid;gap:10px;}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:2px solid var(--border);border-radius:14px;cursor:pointer;font-size:14px;font-weight:600;background:var(--card);transition:border-color .15s,background .15s;text-align:left;width:100%;}
+.opt:hover:not(:disabled){border-color:var(--mat-light);background:var(--mat-bg);}
+.opt .ltr{font-family:"Space Mono",monospace;font-size:12px;font-weight:700;color:var(--mat);background:var(--mat-bg);border-radius:8px;padding:2px 8px;flex-shrink:0;margin-top:1px;}
+.opt.correct{border-color:var(--ok);background:var(--ok-bg);}
+.opt.correct .ltr{background:var(--ok);color:#fff;}
+.opt.wrong{border-color:var(--err);background:var(--err-bg);}
+.opt.wrong .ltr{background:var(--err);color:#fff;}
+.opt:disabled{cursor:default;}
+.feedback{margin-top:16px;padding:14px 16px;border-radius:14px;font-size:14px;font-weight:600;line-height:1.5;display:none;}
+.feedback.correct{background:var(--ok-bg);border:2px solid var(--ok);color:#065F46;}
+.feedback.wrong{background:var(--err-bg);border:2px solid var(--err);color:#991B1B;}
+.feedback-icon{font-size:18px;margin-right:8px;}
+.next-btn{display:none;margin-top:16px;width:100%;padding:14px;background:linear-gradient(135deg,var(--mat),var(--mat-light));color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer;transition:opacity .15s;}
+.next-btn:hover{opacity:.88;}
+.result-panel{display:none;padding:32px 24px;text-align:center;}
+.result-emoji{font-size:64px;line-height:1;margin-bottom:12px;}
+.result-title{font-family:"Space Mono",monospace;font-size:20px;font-weight:700;color:var(--mat-dark);margin-bottom:8px;}
+.result-score{font-size:48px;font-weight:900;color:var(--mat);line-height:1;margin-bottom:8px;}
+.result-msg{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+.result-bar-wrap{background:#D1FAE5;border-radius:999px;height:12px;margin:0 auto 24px;max-width:320px;}
+.result-bar{height:12px;background:linear-gradient(90deg,var(--mat),var(--mat-light));border-radius:999px;transition:width .6s;}
+.restart-btn{padding:12px 28px;background:linear-gradient(135deg,var(--mat),var(--mat-light));color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;}
+@media(max-width:480px){.q-text{font-size:15px;}.opt{font-size:13px;padding:11px 13px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">❓</div>
+      <div><h1>Quiz Interativo</h1><p>Polígonos, Triângulos e Quadriláteros</p></div>
+      <div class="hbadge">📖 10 questões</div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-body" id="q-body">
+      <div class="q-num" id="q-num">QUESTÃO 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn">Próxima questão →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title">Resultado final</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-bar-wrap"><div class="result-bar" id="result-bar" style="width:0%"></div></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="restart-btn" onclick="restartQuiz()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var quizData = [
+  {
+    q: "De acordo com o livro, um polígono é uma figura geométrica plana que:",
+    opts: [
+      "é uma região fechada, tem lados como segmentos de reta e seus lados não se cruzam",
+      "é uma região aberta, tem lados como segmentos de reta e seus lados não se cruzam",
+      "é uma região fechada, tem lados curvos e seus lados não se cruzam",
+      "é uma região fechada, tem lados como segmentos de reta e seus lados se cruzam"
+    ],
+    ans: 0,
+    expl: "Correto! Um polígono é uma região fechada, cujos lados são segmentos de reta e não se cruzam entre si."
+  },
+  {
+    q: "Como é chamado o polígono com 7 lados?",
+    opts: ["Hexágono","Heptágono","Octógono","Eneágono"],
+    ans: 1,
+    expl: "Correto! O heptágono tem 7 lados. Hexa=6, hepta=7, octo=8, enea=9."
+  },
+  {
+    q: "Em um polígono, os vértices são:",
+    opts: [
+      "Segmentos de reta entre dois vértices não consecutivos",
+      "Ângulos formados por dois lados consecutivos",
+      "Pontos de encontro de dois lados consecutivos",
+      "Cada um dos segmentos de reta que formam a figura"
+    ],
+    ans: 2,
+    expl: "Correto! Os vértices são os pontos de encontro de dois lados consecutivos. As diagonais são segmentos entre vértices não consecutivos, e os ângulos internos são formados por dois lados consecutivos."
+  },
+  {
+    q: "O triângulo equilátero tem:",
+    opts: [
+      "Dois lados com a mesma medida e um com medida diferente",
+      "Os três lados com medidas diferentes",
+      "Os três lados com a mesma medida",
+      "Um lado com medida dobrada em relação aos outros dois"
+    ],
+    ans: 2,
+    expl: "Correto! Triângulo equilátero: os três lados têm a mesma medida. m(AB) = m(BC) = m(CA)."
+  },
+  {
+    q: "Um triângulo isósceles tem:",
+    opts: [
+      "Os três lados com a mesma medida",
+      "Dois lados com a mesma medida e um com medida diferente",
+      "Os três lados com medidas diferentes",
+      "Um ângulo obtuso e dois lados paralelos"
+    ],
+    ans: 1,
+    expl: "Correto! O triângulo isósceles tem dois lados com a mesma medida. m(AB) ≅ m(CA), enquanto m(BC) é diferente."
+  },
+  {
+    q: "Como é classificado, quanto aos ângulos, um triângulo que tem os três ângulos agudos?",
+    opts: ["Triângulo retângulo","Triângulo obtusângulo","Triângulo escaleno","Triângulo acutângulo"],
+    ans: 3,
+    expl: "Correto! Triângulo acutângulo tem os três ângulos agudos. Retângulo tem um ângulo reto; obtusângulo tem um ângulo obtuso. Escaleno é classificação pelos lados, não pelos ângulos."
+  },
+  {
+    q: "São chamados de quadriláteros os polígonos que têm:",
+    opts: [
+      "Quatro lados, quatro ângulos, quatro vértices e duas diagonais",
+      "Quatro lados, três ângulos, quatro vértices e quatro diagonais",
+      "Três lados, três ângulos, três vértices e uma diagonal",
+      "Quatro lados, quatro ângulos, três vértices e três diagonais"
+    ],
+    ans: 0,
+    expl: "Correto! Os quadriláteros têm exatamente 4 lados, 4 ângulos internos, 4 vértices e 2 diagonais."
+  },
+  {
+    q: "O paralelogramo é um quadrilátero cujos lados opostos são:",
+    opts: [
+      "Sempre perpendiculares entre si",
+      "Paralelos e têm a mesma medida",
+      "Com medidas diferentes entre si",
+      "Sempre maiores que os lados adjacentes"
+    ],
+    ans: 1,
+    expl: "Correto! No paralelogramo, os lados opostos são paralelos e têm a mesma medida. Por isso ele se chama paralelogramo."
+  },
+  {
+    q: "No trapézio, os dois lados paralelos são chamados de:",
+    opts: ["Vértices","Diagonais","Ângulos internos","Bases"],
+    ans: 3,
+    expl: "Correto! No trapézio, os dois lados paralelos são as bases: base maior e base menor."
+  },
+  {
+    q: "Qual paralelogramo tem quatro ângulos retos e os quatro lados com a mesma medida?",
+    opts: ["Retângulo","Losango","Quadrado","Trapézio"],
+    ans: 2,
+    expl: "Correto! O quadrado tem quatro ângulos retos E quatro lados com a mesma medida. O retângulo tem quatro ângulos retos mas dois pares de lados (não todos iguais). O losango tem quatro lados iguais mas não necessariamente ângulos retos."
+  }
+];
+
+var currentQ = 0;
+var quizScore = 0;
+var quizAnswered = false;
+
+function showQuestion() {
+  var d = quizData[currentQ];
+  document.getElementById('q-num').textContent = 'QUESTÃO ' + (currentQ + 1);
+  document.getElementById('q-text').textContent = d.q;
+  document.getElementById('prog-label').textContent = 'Questão ' + (currentQ + 1) + ' de 10';
+  document.getElementById('prog-fill').style.width = (currentQ * 10) + '%';
+
+  var opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  var ltrs = ['A','B','C','D'];
+  d.opts.forEach(function(o, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<span class="ltr">' + ltrs[i] + '</span>' + o;
+    btn.addEventListener('click', function() { checkAnswer(i); });
+    opts.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback');
+  fb.style.display = 'none'; fb.className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+  quizAnswered = false;
+}
+
+function checkAnswer(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  var d = quizData[currentQ];
+  var allOpts = document.querySelectorAll('.opt');
+  allOpts.forEach(function(b) { b.disabled = true; });
+
+  var correct = idx === d.ans;
+  if (correct) quizScore++;
+
+  allOpts[d.ans].classList.add('correct');
+  if (!correct) allOpts[idx].classList.add('wrong');
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = '<span class="feedback-icon">' + (correct ? '✓' : '✗') + '</span>' + d.expl;
+  fb.style.display = 'block';
+
+  var nextBtn = document.getElementById('next-btn');
+  if (currentQ < quizData.length - 1) {
+    nextBtn.textContent = 'Próxima questão →';
+    nextBtn.style.display = 'block';
+  } else {
+    nextBtn.textContent = 'Ver resultado';
+    nextBtn.style.display = 'block';
+  }
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  currentQ++;
+  if (currentQ < quizData.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult() {
+  document.getElementById('q-body').style.display = 'none';
+  document.getElementById('prog-wrap') && (document.querySelector('.prog-wrap').style.display = 'none');
+  var pct = Math.round((quizScore / quizData.length) * 100);
+  window.sabendoScore = pct;
+
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  document.getElementById('result-score').textContent = quizScore + '/10';
+  document.getElementById('result-bar').style.width = pct + '%';
+
+  var emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Incrível! Você domina polígonos!'; }
+  else if (pct >= 70) { emoji = '⭐'; msg = 'Muito bem! Quase perfeito!'; }
+  else if (pct >= 50) { emoji = '💪'; msg = 'Bom esforço! Continue praticando!'; }
+  else { emoji = '📚'; msg = 'Revise o conteúdo e tente de novo!'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function restartQuiz() {
+  currentQ = 0; quizScore = 0;
+  document.getElementById('q-body').style.display = 'block';
+  document.querySelector('.prog-wrap').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+  showQuestion();
+}
+
+showQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "poligonos-triangulos-quadrilateros";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Polito",
+    characterEmoji: "🔷",
+    characterImg: "chars/poligonos-triangulos-quadrilateros-hd.png",
+    themeLabel: "Polígonos, Triângulos e Quadriláteros · Matemática",
+    totalActivities: 5,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-poligonos-triangulos-quadrilateros",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id;
+    var quizFinalScore = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: quizFinalScore, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
