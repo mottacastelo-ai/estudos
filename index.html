@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -723,6 +723,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('mat','primos-compostos-fatoracao')">🔍 Primos e Fatoração</button>
     <button class="theme-link" onclick="showTheme('mat','mdc-mmc-problemas')">📐 mdc e mmc</button>
     <button class="theme-link" onclick="showTheme('mat','reta-semirreta-segmento')">📏 Reta, Semirreta e Segmento</button>
+    <button class="theme-link" onclick="showTheme('mat','circunferencia-circulo')">⭕ Circunferência e Círculo</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-geo" onclick="showDisc('geo')">
@@ -781,8 +782,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Missões e desafios para dominar cada matéria. Escolha e bora! 🚀</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>32</span>temas</div>
-        <div class="hstat"><span>139</span>atividades</div>
+        <div class="hstat"><span>33</span>temas</div>
+        <div class="hstat"><span>143</span>atividades</div>
       </div>
       <div class="home-stats" id="streak-banner">
         <div class="hstat">🔥 <span id="streak-count">0</span>dias seguidos</div>
@@ -859,8 +860,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Matemática</div>
           <div class="dhc-desc">Cálculo, raciocínio lógico e resolução de problemas</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">8 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">30 atividades</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">9 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">34 atividades</span>
             <span class="chip" style="background:#FEF3C7;color:#92400E">3 HQs</span>
           </div>
         </button>
@@ -1957,6 +1958,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','primos-compostos-fatoracao')">🔍 Primos e Fatoração</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','mdc-mmc-problemas')">📐 mdc e mmc</button>
         <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','reta-semirreta-segmento')">📏 Reta, Semirreta e Segmento</button>
+        <button class="theme-tab-btn mat-tab" onclick="showTheme('mat','circunferencia-circulo')">⭕ Circunferência e Círculo</button>
       </div>
 
       <!-- TEMA: TABUADA -->
@@ -2434,6 +2436,48 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         </div>
       </div>
 
+      <div class="theme-content" id="theme-mat-circunferencia-circulo">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:800;background:var(--mat-bg);color:var(--mat-color);border:1.5px solid var(--mat-light);border-radius:99px;padding:3px 10px;letter-spacing:.04em">📄 pp. 213–216</span>
+        </div>
+        <div class="hq-card">
+          <img class="hq-img" src="matematica/circunferencia-circulo/hq-circunferencia-circulo.png" alt="HQ Circunferência e Círculo"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Circo e os Segredos do Compasso — 4 páginas · Personagens: Bia e Circo · Tema: Circunferência e Círculo · pp. 213–216</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card mat" href="matematica/circunferencia-circulo/quiz-circunferencia-circulo.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">9 questões sobre circunferência, círculo, raio, diâmetro, corda e centro — conceitos e características de cada elemento.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Múltipla Escolha</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card mat" href="matematica/circunferencia-circulo/complete-lacuna-circunferencia-circulo.html" target="sabendo-atividade">
+            <div class="act-icon">✏️</div>
+            <div class="act-title">Complete a Lacuna</div>
+            <div class="act-desc">8 frases com lacunas sobre circunferência e círculo — escolha o termo correto para cada definição.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Completar</span></div>
+            <div class="level lv2">⚡ Praticar (80%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/circunferencia-circulo/criador-circunferencia-circulo.html" target="sabendo-atividade">
+            <div class="act-icon">🖊️</div>
+            <div class="act-title">Monte sua Circunferência</div>
+            <div class="act-desc">Explore os elementos da circunferência posicionando raio, diâmetro e corda para descobrir suas relações.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Criação</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+          <a class="act-card mat" href="matematica/circunferencia-circulo/mapa-mental-circunferencia-circulo.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa de circunferência e círculo com seus elementos.</div>
+            <div class="act-tags"><span class="tag tag-dm">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar (90%)</div>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -3306,6 +3350,10 @@ async function loadActivityStatus() {
     'matematica/reta-semirreta-segmento/detetive-nomes-reta-semirreta-segmento.html':'reta-semirreta-segmento|detetive-nomes',
     'matematica/reta-semirreta-segmento/classificador-reta-semirreta-segmento.html':'reta-semirreta-segmento|classificador',
     'matematica/reta-semirreta-segmento/mapa-mental-reta-semirreta-segmento.html':'reta-semirreta-segmento|mapa-mental',
+    'matematica/circunferencia-circulo/quiz-circunferencia-circulo.html':'circunferencia-circulo|quiz',
+    'matematica/circunferencia-circulo/complete-lacuna-circunferencia-circulo.html':'circunferencia-circulo|complete-lacuna',
+    'matematica/circunferencia-circulo/criador-circunferencia-circulo.html':'circunferencia-circulo|criador',
+    'matematica/circunferencia-circulo/mapa-mental-circunferencia-circulo.html':'circunferencia-circulo|mapa-mental',
     'matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html':'multiplicacao-divisao|associador',
     'matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html':'multiplicacao-divisao|construtor',
     'matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html':'multiplicacao-divisao|mapa-mental',
@@ -3588,6 +3636,7 @@ var THEME_CATALOG = [
   { disc:'mat',  slug:'primos-compostos-fatoracao',    label:'Primos e Fatoração',             emoji:'🔍', pages:[136,145], charName:'Primo',    charImg:'chars/primos-compostos-fatoracao-hd.png' },
   { disc:'mat',  slug:'mdc-mmc-problemas',             label:'mdc e mmc',                      emoji:'📐', pages:[146,157], charName:'Max & Min',charImg:'chars/mdc-mmc-problemas-hd.png' },
   { disc:'mat',  slug:'reta-semirreta-segmento',       label:'Reta, Semirreta e Segmento de Reta', emoji:'📏', pages:[186,196], charName:'Lino',     charImg:'chars/reta-semirreta-segmento-hd.png' },
+  { disc:'mat',  slug:'circunferencia-circulo',         label:'Circunferência e Círculo',            emoji:'⭕', pages:[213,216], charName:'Circo',    charImg:'chars/circunferencia-circulo-hd.png' },
   // ── Ciências
   { disc:'cien', slug:'lixo-que-produzimos',   label:'O Lixo que Produzimos',              emoji:'🗑️', pages:null,    charName:'Lixinho',           charImg:'chars/lixo-que-produzimos-hd.png' },
   { disc:'cien', slug:'caminho-do-lixo',        label:'O Caminho do Lixo',                  emoji:'🚛', pages:null,    charName:'Professora Ciência', charImg:'chars/caminho-do-lixo-hd.png' },
@@ -3714,6 +3763,7 @@ var THEME_META = {
   'primos-compostos-fatoracao':  { label: 'Primos e Fatoração',           navId: 'nav-mat',  disc: 'mat'  },
   'mdc-mmc-problemas':           { label: 'mdc e mmc',                    navId: 'nav-mat',  disc: 'mat'  },
   'reta-semirreta-segmento':     { label: 'Reta, Semirreta e Segmento',   navId: 'nav-mat',  disc: 'mat'  },
+  'circunferencia-circulo':      { label: 'Circunferência e Círculo',      navId: 'nav-mat',  disc: 'mat'  },
   'lixo-que-produzimos':         { label: 'O Lixo que Produzimos',        navId: 'nav-cien', disc: 'cien' },
   'caminho-do-lixo':             { label: 'O Caminho do Lixo',            navId: 'nav-cien', disc: 'cien' },
   'ciclo-da-agua':               { label: 'O Ciclo da Água',              navId: 'nav-cien', disc: 'cien' },
@@ -3842,6 +3892,10 @@ var ACTIVITY_FILE_PATHS = {
   'reta-semirreta-segmento:detetive-nomes':    'matematica/reta-semirreta-segmento/detetive-nomes-reta-semirreta-segmento.html',
   'reta-semirreta-segmento:classificador':     'matematica/reta-semirreta-segmento/classificador-reta-semirreta-segmento.html',
   'reta-semirreta-segmento:mapa-mental':       'matematica/reta-semirreta-segmento/mapa-mental-reta-semirreta-segmento.html',
+  'circunferencia-circulo:quiz':               'matematica/circunferencia-circulo/quiz-circunferencia-circulo.html',
+  'circunferencia-circulo:complete-lacuna':    'matematica/circunferencia-circulo/complete-lacuna-circunferencia-circulo.html',
+  'circunferencia-circulo:criador':            'matematica/circunferencia-circulo/criador-circunferencia-circulo.html',
+  'circunferencia-circulo:mapa-mental':        'matematica/circunferencia-circulo/mapa-mental-circunferencia-circulo.html',
   'multiplicacao-divisao:associador':          'matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html',
   'multiplicacao-divisao:construtor':          'matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html',
   'multiplicacao-divisao:mapa-mental':         'matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html',

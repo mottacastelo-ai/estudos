@@ -8,11 +8,11 @@
 | Disciplina | Temas | Atividades |
 |---|---|---|
 | 📝 Português | 20 | 92 |
-| 🔢 Matemática | 8 | 37 |
+| 🔢 Matemática | 9 | 41 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **40** | **177** |
+| **Total** | **41** | **181** |
 
 ---
 
@@ -380,6 +380,19 @@
 | Detetive dos Nomes | ✅ `detetive-nomes-reta-semirreta-segmento.html` |
 | Classificador Geométrico | ✅ `classificador-reta-semirreta-segmento.html` |
 | Mapa Mental | ✅ `mapa-mental-reta-semirreta-segmento.html` |
+
+---
+
+### Circunferencia Circulo
+**Personagem:** Circo (compasso animado verde-esmeralda)
+**HQ:** ❌ `hq-circunferencia-circulo.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-circunferencia-circulo.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-circunferencia-circulo.html` |
+| Monte sua Circunferência | ✅ `criador-circunferencia-circulo.html` |
+| Mapa Mental | ✅ `mapa-mental-circunferencia-circulo.html` |
 
 ---
 
