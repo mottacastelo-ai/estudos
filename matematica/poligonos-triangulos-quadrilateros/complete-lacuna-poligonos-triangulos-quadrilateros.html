@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete a Lacuna — Polígonos, Triângulos e Quadriláteros</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --mat:#059669;--mat-light:#34D399;--mat-bg:#ECFDF5;--mat-dark:#064E3B;
+  --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;--card:#fff;
+  --ok:#059669;--ok-bg:#ECFDF5;--err:#DC2626;--err-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--mat-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:760px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--mat);text-decoration:none;margin-bottom:14px;background:none;border:none;cursor:pointer;padding:0;}
+.back-link:hover{opacity:.7;}
+.card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(5,150,105,.1);}
+.card-header{background:linear-gradient(135deg,#064E3B,#059669 60%,#34D399);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:32px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+.prog-wrap{padding:14px 24px 0;border-bottom:2px solid var(--border);}
+.prog-label{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px;}
+.prog-track{height:8px;background:#D1FAE5;border-radius:999px;margin-bottom:14px;}
+.prog-fill{height:8px;background:linear-gradient(90deg,var(--mat),var(--mat-light));border-radius:999px;transition:width .4s;}
+/* word bank */
+.bank-wrap{padding:16px 20px;border-bottom:2px solid var(--border);background:var(--mat-bg);}
+.bank-title{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--mat-dark);letter-spacing:.06em;margin-bottom:10px;}
+.bank{display:flex;flex-wrap:wrap;gap:8px;}
+.word-chip{background:var(--card);border:2px solid var(--mat-light);border-radius:10px;padding:5px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;user-select:none;}
+.word-chip:hover{background:var(--mat-bg);border-color:var(--mat);}
+.word-chip.used{opacity:.3;cursor:default;text-decoration:line-through;}
+/* question */
+.q-body{padding:20px;}
+.q-num{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--mat);letter-spacing:.08em;margin-bottom:8px;}
+.q-sentence{font-size:16px;font-weight:600;line-height:2;margin-bottom:14px;}
+.blank{display:inline-block;min-width:130px;border-bottom:3px solid var(--mat-light);padding:0 8px;text-align:center;font-weight:800;color:var(--mat-dark);cursor:pointer;transition:border-color .15s;vertical-align:bottom;margin:0 4px;}
+.blank:hover{border-color:var(--mat);}
+.blank.filled{border-color:var(--mat);}
+.blank.correct{border-color:var(--ok);color:var(--ok);}
+.blank.wrong{border-color:var(--err);color:var(--err);}
+.blank.active-blank{border-color:#F59E0B;box-shadow:0 2px 0 #F59E0B;}
+.feedback{margin-top:12px;padding:13px 16px;border-radius:14px;font-size:14px;font-weight:600;line-height:1.5;display:none;}
+.feedback.correct{background:var(--ok-bg);border:2px solid var(--ok);color:#065F46;}
+.feedback.wrong{background:var(--err-bg);border:2px solid var(--err);color:#991B1B;}
+.check-btn{display:none;margin-top:14px;width:100%;padding:13px;background:linear-gradient(135deg,var(--mat),var(--mat-light));color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer;}
+.check-btn:hover{opacity:.88;}
+.next-btn{display:none;margin-top:10px;width:100%;padding:12px;background:var(--card);border:2px solid var(--mat);color:var(--mat);border-radius:14px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;}
+.next-btn:hover{background:var(--mat-bg);}
+/* result */
+.result-panel{display:none;padding:30px 24px;text-align:center;}
+.result-emoji{font-size:56px;margin-bottom:10px;}
+.result-title{font-family:"Space Mono",monospace;font-size:18px;font-weight:700;color:var(--mat-dark);margin-bottom:6px;}
+.result-score{font-size:44px;font-weight:900;color:var(--mat);margin-bottom:8px;}
+.result-bar-wrap{background:#D1FAE5;border-radius:999px;height:10px;margin:0 auto 20px;max-width:280px;}
+.result-bar{height:10px;background:linear-gradient(90deg,var(--mat),var(--mat-light));border-radius:999px;transition:width .6s;}
+.result-msg{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:18px;}
+.restart-btn{padding:12px 28px;background:linear-gradient(135deg,var(--mat),var(--mat-light));color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;}
+@media(max-width:480px){.q-sentence{font-size:14px;}.blank{min-width:100px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">✏️</div>
+      <div><h1>Complete a Lacuna</h1><p>Terminologia de Polígonos</p></div>
+      <div class="hbadge">📖 10 frases</div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label" id="prog-label">Frase 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="bank-wrap">
+      <div class="bank-title">BANCO DE PALAVRAS — clique em uma palavra e depois na lacuna</div>
+      <div class="bank" id="word-bank"></div>
+    </div>
+    <div class="q-body" id="q-body">
+      <div class="q-num" id="q-num">FRASE 1</div>
+      <div class="q-sentence" id="q-sentence"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="check-btn" id="check-btn" onclick="checkAnswer()">Verificar</button>
+      <button class="next-btn" id="next-btn">Próxima frase →</button>
+    </div>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title">Atividade concluída!</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-bar-wrap"><div class="result-bar" id="result-bar" style="width:0%"></div></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="restart-btn" onclick="restartActivity()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+// Each question: sentence template, blanks with answers, explanation
+// Blanks marked as [0], [1], etc. in template
+var QUESTIONS = [
+  {
+    template: 'Um polígono é uma figura geométrica plana que é uma região [0], cujos lados são [1] de reta e seus lados não se cruzam.',
+    answers: ['fechada','segmentos'],
+    expl: 'Polígono: região fechada, lados como segmentos de reta, lados que não se cruzam.',
+  },
+  {
+    template: 'Os [0] de um polígono são os pontos de encontro de dois lados consecutivos.',
+    answers: ['vértices'],
+    expl: 'Vértices são os pontos de encontro de dois lados consecutivos do polígono.',
+  },
+  {
+    template: 'As [0] de um polígono são segmentos de reta entre dois [1] não consecutivos.',
+    answers: ['diagonais','vértices'],
+    expl: 'Diagonais: segmentos de reta que unem dois vértices não consecutivos.',
+  },
+  {
+    template: 'Se todos os lados e todos os ângulos de um polígono têm medidas iguais, ele é chamado de polígono [0].',
+    answers: ['regular'],
+    expl: 'Polígono regular: todos os lados iguais e todos os ângulos iguais.',
+  },
+  {
+    template: 'Um triângulo [0] tem os três lados com a mesma medida. Um triângulo [1] tem dois lados com a mesma medida.',
+    answers: ['equilátero','isósceles'],
+    expl: 'Classificação pelos lados: equilátero (3 lados iguais), isósceles (2 lados iguais), escaleno (3 lados diferentes).',
+  },
+  {
+    template: 'Um triângulo [0] tem os três lados com medidas diferentes.',
+    answers: ['escaleno'],
+    expl: 'Triângulo escaleno: todos os três lados têm medidas diferentes entre si.',
+  },
+  {
+    template: 'O triângulo [0] tem um ângulo reto e dois ângulos agudos. O triângulo [1] tem os três ângulos agudos.',
+    answers: ['retângulo','acutângulo'],
+    expl: 'Classificação pelos ângulos: retângulo (1 ângulo reto), acutângulo (3 ângulos agudos), obtusângulo (1 ângulo obtuso).',
+  },
+  {
+    template: 'Os quadriláteros têm quatro lados, quatro ângulos internos, quatro vértices e duas [0].',
+    answers: ['diagonais'],
+    expl: 'Quadrilátero: 4 lados, 4 ângulos, 4 vértices e 2 diagonais — é um polígono com quatro lados.',
+  },
+  {
+    template: 'O [0] é um quadrilátero que tem os lados opostos paralelos e com a mesma medida. O [1] tem apenas dois lados paralelos chamados de bases.',
+    answers: ['paralelogramo','trapézio'],
+    expl: 'Paralelogramo: lados opostos paralelos e iguais. Trapézio: apenas dois lados paralelos (base maior e base menor).',
+  },
+  {
+    template: 'Entre os paralelogramos, o [0] tem quatro ângulos retos e dois pares de lados iguais; o [1] tem quatro ângulos retos e quatro lados iguais; o [2] tem quatro lados iguais sem exigir ângulos retos.',
+    answers: ['retângulo','quadrado','losango'],
+    expl: 'Paralelogramos importantes: retângulo (4 ângulos retos, 2 pares de lados iguais), quadrado (4 ângulos retos, 4 lados iguais), losango (4 lados iguais).',
+  },
+];
+
+// All unique answer words (for the bank)
+var ALL_WORDS = ['fechada','segmentos','vértices','diagonais','regular','equilátero','isósceles','escaleno','retângulo','acutângulo','paralelogramo','trapézio','quadrado','losango'];
+
+var currentQIdx = 0;
+var lacunaScore = 0;
+var selectedWord = null;
+var activeBlankIdx = null;
+var filledBlanks = [];
+var blankElements = [];
+var answered = false;
+
+function buildBank() {
+  var bank = document.getElementById('word-bank');
+  bank.innerHTML = '';
+  ALL_WORDS.forEach(function(w) {
+    var chip = document.createElement('div');
+    chip.className = 'word-chip';
+    chip.setAttribute('data-word', w);
+    chip.textContent = w;
+    chip.addEventListener('click', function() {
+      if (chip.classList.contains('used') || answered) return;
+      // deselect previous
+      document.querySelectorAll('.word-chip.selected').forEach(function(c){ c.classList.remove('selected'); c.style.background=''; c.style.borderColor=''; });
+      selectedWord = w;
+      chip.classList.add('selected');
+      chip.style.background = '#d1fae5';
+      chip.style.borderColor = '#059669';
+      // If a blank is already active, fill it
+      if (activeBlankIdx !== null) {
+        fillBlank(activeBlankIdx);
+      }
+    });
+    bank.appendChild(chip);
+  });
+}
+
+function fillBlank(idx) {
+  if (selectedWord === null) return;
+  // If blank was previously filled, return its word to bank
+  if (filledBlanks[idx]) {
+    var prevWord = filledBlanks[idx];
+    var prevChip = document.querySelector('.word-chip[data-word="'+prevWord+'"]');
+    if (prevChip) { prevChip.classList.remove('used'); }
+  }
+  filledBlanks[idx] = selectedWord;
+  blankElements[idx].textContent = selectedWord;
+  blankElements[idx].classList.add('filled');
+  blankElements[idx].classList.remove('active-blank','correct','wrong');
+
+  // Mark word as used in bank
+  var chip = document.querySelector('.word-chip[data-word="'+selectedWord+'"]');
+  if (chip) { chip.classList.add('used'); chip.classList.remove('selected'); chip.style.background=''; chip.style.borderColor=''; }
+  selectedWord = null;
+  activeBlankIdx = null;
+
+  // Show check button if all blanks filled
+  var allFilled = filledBlanks.every(function(f){ return f !== null; });
+  if (allFilled) document.getElementById('check-btn').style.display = 'block';
+}
+
+function showQuestion() {
+  answered = false;
+  selectedWord = null;
+  activeBlankIdx = null;
+  var q = QUESTIONS[currentQIdx];
+  var numBlanks = q.answers.length;
+  filledBlanks = new Array(numBlanks).fill(null);
+  blankElements = [];
+
+  document.getElementById('q-num').textContent = 'FRASE ' + (currentQIdx + 1);
+  document.getElementById('prog-label').textContent = 'Frase ' + (currentQIdx + 1) + ' de 10';
+  document.getElementById('prog-fill').style.width = (currentQIdx * 10) + '%';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('check-btn').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+
+  // Build sentence with blank spans
+  var parts = q.template.split(/\[(\d+)\]/);
+  var sentenceEl = document.getElementById('q-sentence');
+  sentenceEl.innerHTML = '';
+  parts.forEach(function(part, i) {
+    if (/^\d+$/.test(part)) {
+      var blankIdx = parseInt(part);
+      var span = document.createElement('span');
+      span.className = 'blank';
+      span.setAttribute('data-blank', blankIdx);
+      span.textContent = '___';
+      span.addEventListener('click', function() {
+        if (answered) return;
+        // deselect previous active blank
+        document.querySelectorAll('.blank.active-blank').forEach(function(b){ b.classList.remove('active-blank'); });
+        activeBlankIdx = blankIdx;
+        span.classList.add('active-blank');
+        if (selectedWord !== null) fillBlank(blankIdx);
+      });
+      blankElements[blankIdx] = span;
+      sentenceEl.appendChild(span);
+    } else if (part) {
+      sentenceEl.appendChild(document.createTextNode(part));
+    }
+  });
+}
+
+function checkAnswer() {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[currentQIdx];
+  var correctCount = 0;
+  q.answers.forEach(function(ans, i) {
+    var blank = blankElements[i];
+    if (filledBlanks[i] && filledBlanks[i].toLowerCase() === ans.toLowerCase()) {
+      blank.classList.add('correct');
+      correctCount++;
+    } else {
+      blank.classList.add('wrong');
+      blank.textContent = filledBlanks[i] || '___';
+    }
+  });
+
+  var allCorrect = correctCount === q.answers.length;
+  if (allCorrect) lacunaScore++;
+
+  var fb = document.getElementById('feedback');
+  if (allCorrect) {
+    fb.className = 'feedback correct';
+    fb.innerHTML = '<span style="font-size:18px">✓</span> ' + q.expl;
+  } else {
+    fb.className = 'feedback wrong';
+    var correctList = q.answers.map(function(a,i){ return '['+(i+1)+'] '+a; }).join(', ');
+    fb.innerHTML = '<span style="font-size:18px">✗</span> Resposta(s) correta(s): <strong>' + correctList + '</strong>. ' + q.expl;
+    // Show correct answers in blanks
+    q.answers.forEach(function(ans, i) {
+      if (blankElements[i].classList.contains('wrong')) {
+        blankElements[i].textContent = ans;
+        blankElements[i].style.borderColor = '#059669';
+        blankElements[i].style.color = '#065F46';
+      }
+    });
+  }
+  fb.style.display = 'block';
+  document.getElementById('check-btn').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'block';
+
+  if (currentQIdx < QUESTIONS.length - 1) {
+    document.getElementById('next-btn').textContent = 'Próxima frase →';
+  } else {
+    document.getElementById('next-btn').textContent = 'Ver resultado';
+  }
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  currentQIdx++;
+  if (currentQIdx < QUESTIONS.length) {
+    buildBank();
+    showQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult() {
+  document.getElementById('q-body').style.display = 'none';
+  document.querySelector('.bank-wrap').style.display = 'none';
+  document.querySelector('.prog-wrap').style.display = 'none';
+  var pct = Math.round((lacunaScore / QUESTIONS.length) * 100);
+  window.sabendoScore = pct;
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  document.getElementById('result-score').textContent = lacunaScore + '/10';
+  document.getElementById('result-bar').style.width = pct + '%';
+  var emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Perfeito! Você domina toda a terminologia!'; }
+  else if (pct >= 70) { emoji = '⭐'; msg = 'Muito bem! Continue praticando!'; }
+  else if (pct >= 50) { emoji = '💪'; msg = 'Bom esforço! Revise os termos e tente de novo!'; }
+  else { emoji = '📚'; msg = 'Revise polígonos, triângulos e quadriláteros e tente de novo!'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function restartActivity() {
+  currentQIdx = 0; lacunaScore = 0;
+  document.getElementById('q-body').style.display = 'block';
+  document.querySelector('.bank-wrap').style.display = 'block';
+  document.querySelector('.prog-wrap').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+  buildBank();
+  showQuestion();
+}
+
+buildBank();
+showQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "poligonos-triangulos-quadrilateros";
+  var ACTIVITY_TYPE = "complete-lacuna";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+  var GAMI_CONFIG = {
+    characterName: "Polito", characterEmoji: "🔷",
+    characterImg: "chars/poligonos-triangulos-quadrilateros-hd.png",
+    themeLabel: "Polígonos, Triângulos e Quadriláteros · Matemática",
+    totalActivities: 5, primaryColor: "#059669", lightColor: "#34D399", bgColor: "#ECFDF5",
+    glowRgb: "5,150,105", backUrl: "../../index.html#theme-mat-poligonos-triangulos-quadrilateros", activityType: ACTIVITY_TYPE,
+  };
+  var btn = document.createElement("button"); btn.id = "concluir-btn"; btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") { _capturedScore = Math.round(window._sabendoScoreInternal); btn.style.display = "block"; }
+  }
+  var _sabendoScoreInternal = null;
+  try { Object.defineProperty(window, 'sabendoScore', { configurable:true, get:function(){return _sabendoScoreInternal;}, set:function(v){_sabendoScoreInternal=v;window._sabendoScoreInternal=v;showBtn();} }); } catch(e) {}
+  document.addEventListener('sabendo:criador-done', function(){ window._sabendoScoreInternal=100; showBtn(); });
+  var observer = new MutationObserver(function(mutations){ mutations.forEach(function(m){ var el=m.target; if(m.attributeName==="style"&&el.style&&el.style.display==="block"){var sig=(el.id||"")+" "+(el.className||"");if(/result|score|gabarito|feedback|correc/i.test(sig))showBtn();} if(m.attributeName==="class"&&el.classList&&el.classList.contains("show")){var sig2=(el.id||"")+" "+(el.className||"");if(/result|score|gabarito|feedback|correc/i.test(sig2))showBtn();} }); });
+  observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:["class","style"]});
+  btn.addEventListener("click", async function() {
+    btn.textContent="Registrando..."; btn.disabled=true;
+    var res=await supa.auth.getSession(); var session=res.data.session;
+    if(!session){btn.textContent="Faca login no portal";btn.style.background="#EF4444";setTimeout(function(){btn.textContent="Concluir atividade";btn.style.background="linear-gradient(135deg,#059669,#34D399)";btn.disabled=false;},3000);return;}
+    var uid=session.user.id; var clScore=_capturedScore; var today=new Date().toISOString().split("T")[0];
+    var existCheck=await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst=!existCheck.data||existCheck.data.length===0;
+    await supa.from("activity_log").insert({user_id:uid,discipline:DISCIPLINE,theme_slug:THEME_SLUG,activity_type:ACTIVITY_TYPE,score:clScore,is_first_attempt:isFirst});
+    var sr=await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if(sr.data){var s=sr.data;var yest=new Date();yest.setDate(yest.getDate()-1);var yStr=yest.toISOString().split("T")[0];var ns=(s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;await supa.from("streaks").update({current_streak:ns,longest_streak:Math.max(ns,s.longest_streak),last_activity_date:today,total_activities:s.total_activities+1,updated_at:new Date().toISOString()}).eq("user_id",uid);}
+    btn.style.display="none";
+    if(window.SabendoGamification) await SabendoGamification.run(supa,uid,THEME_SLUG,DISCIPLINE,GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
