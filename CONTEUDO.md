@@ -8,11 +8,11 @@
 | Disciplina | Temas | Atividades |
 |---|---|---|
 | 📝 Português | 20 | 92 |
-| 🔢 Matemática | 10 | 46 |
+| 🔢 Matemática | 11 | 50 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **42** | **186** |
+| **Total** | **43** | **190** |
 
 ---
 
@@ -410,6 +410,19 @@
 
 ---
 
+### Giros Angulos
+**Personagem:** Angus (transferidor animado verde-esmeralda)
+**HQ:** ❌ `hq-giros-angulos.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Mapa Mental | ✅ `mapa-mental-giros-angulos.html` |
+| Classificador de Ângulos | ✅ `classificador-giros-angulos.html` |
+| Frases sobre Ângulos | ✅ `frases-giros-angulos.html` |
+| Treino de Ângulos | ✅ `treino-giros-angulos.html` |
+
+---
+
 ## 🔬 Ciências
 
 ### Lixo Que Produzimos
@@ -585,6 +598,7 @@
 | `Gotinha.png` |
 | `Grafo.png` |
 | `Lixinho.png` |
+| `Mapi.png` |
 | `Max-Min.png` |
 | `Morá.png` |
 | `Poli.png` |
