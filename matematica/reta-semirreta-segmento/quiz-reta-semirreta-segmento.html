@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Reta, Semirreta e Segmento de Reta</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --mat:#059669;--mat-light:#34D399;--mat-bg:#ECFDF5;--mat-dark:#064E3B;
+  --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;--card:#fff;--radius:18px;
+}
+body{font-family:"Baloo 2",cursive;background:var(--mat-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px}
+.wrap{max-width:680px;margin:0 auto}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--mat);text-decoration:none;margin-bottom:14px}
+.back-link:hover{opacity:.7}
+.card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 24px rgba(5,150,105,.1)}
+.card-header{background:linear-gradient(135deg,#064E3B,#059669 60%,#34D399);padding:20px 24px 18px;display:flex;align-items:center;gap:14px}
+.card-header .hicon{font-size:32px;line-height:1}
+.card-header h1{font-family:"Space Mono",monospace;font-size:17px;color:#fff;line-height:1.2}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap}
+.prog-wrap{padding:14px 24px 10px;border-bottom:2px solid var(--border)}
+.prog-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.prog-track{height:8px;background:#D1FAE5;border-radius:999px;overflow:hidden}
+.prog-fill{height:8px;background:var(--mat);border-radius:999px;transition:width .4s}
+.quiz-body{padding:24px}
+.question-num{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--mat);letter-spacing:.08em;margin-bottom:8px}
+.question-text{font-size:17px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:20px}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-btn{display:flex;align-items:center;gap:12px;padding:13px 16px;border:2px solid var(--border);border-radius:14px;background:var(--card);cursor:pointer;font-family:"Baloo 2",cursive;font-size:15px;font-weight:600;color:var(--text);text-align:left;transition:all .15s;width:100%}
+.opt-btn:hover:not(:disabled){border-color:var(--mat-light);background:var(--mat-bg);transform:translateX(3px)}
+.opt-btn .opt-letter{min-width:28px;height:28px;border-radius:50%;background:var(--mat-bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace;font-size:12px;font-weight:700;color:var(--mat);flex-shrink:0}
+.opt-btn.correct{border-color:#059669;background:#D1FAE5}
+.opt-btn.correct .opt-letter{background:#059669;color:#fff;border-color:#059669}
+.opt-btn.wrong{border-color:#DC2626;background:#FEF2F2}
+.opt-btn.wrong .opt-letter{background:#DC2626;color:#fff;border-color:#DC2626}
+.opt-btn:disabled{cursor:default}
+.feedback{margin-top:16px;padding:14px 16px;border-radius:14px;display:none;gap:10px;align-items:flex-start}
+.feedback.show{display:flex}
+.feedback.fb-correct{background:#D1FAE5;border:2px solid #6EE7B7}
+.feedback.fb-wrong{background:#FEF2F2;border:2px solid #FCA5A5}
+.feedback-icon{font-size:20px;flex-shrink:0;line-height:1;margin-top:1px}
+.feedback-text{font-size:14px;font-weight:600;color:var(--text);line-height:1.5}
+.next-btn{margin-top:20px;width:100%;padding:14px;background:linear-gradient(135deg,#059669,#34D399);color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:16px;font-weight:800;cursor:pointer;display:none;transition:opacity .2s}
+.next-btn:hover{opacity:.9}
+.result-screen{display:none;padding:32px 24px;text-align:center}
+.result-screen.show{display:block}
+.result-emoji{font-size:56px;line-height:1;margin-bottom:12px}
+.result-score{font-family:"Space Mono",monospace;font-size:32px;font-weight:700;color:var(--mat);margin-bottom:8px}
+.result-label{font-size:16px;font-weight:600;color:var(--muted);margin-bottom:24px}
+.result-msg{background:var(--mat-bg);border:2px solid var(--border);border-radius:14px;padding:16px;font-size:15px;font-weight:700;color:var(--mat-dark);margin-bottom:20px;line-height:1.5}
+.restart-btn{padding:12px 28px;background:var(--mat);color:#fff;border:none;border-radius:999px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer}
+.restart-btn:hover{opacity:.9}
+@media(max-width:480px){
+  .question-text{font-size:15px}
+  .opt-btn{font-size:14px;padding:11px 13px}
+  .card-header h1{font-size:15px}
+  .quiz-body{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal();return false;">← Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">❓</div>
+      <div><h1>Quiz Interativo</h1><p>Reta, Semirreta e Segmento de Reta</p></div>
+      <div class="hbadge">📖 10 questões</div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label" id="prog-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="quiz-body" id="quiz-body">
+      <div class="question-num" id="q-num">QUESTÃO 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+      <div class="feedback" id="q-feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div class="feedback-text" id="fb-text"></div>
+      </div>
+      <button class="next-btn" id="next-btn">Próxima questão →</button>
+    </div>
+    <div class="result-screen" id="result-screen">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-label" id="result-label"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="restart-btn" onclick="restartQuiz()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var quizQuestions = [
+  {
+    text: "Uma reta se prolonga indefinidamente nos ___ sentidos.",
+    opts: ["Quatro sentidos","Dois sentidos","Apenas um sentido","Nenhum sentido"],
+    correct: 1,
+    feedback: "A reta não tem espessura nem limites, prolongando-se indefinidamente nos dois sentidos — tanto para a direita como para a esquerda."
+  },
+  {
+    text: "Dois pontos distintos, A e B, determinam…",
+    opts: ["Infinitas retas","Apenas uma reta","Apenas duas retas","Nenhuma reta"],
+    correct: 1,
+    feedback: "Dois pontos distintos determinam uma única reta. Uma reta que passa por A e B pode ser representada como reta AB ou reta BA."
+  },
+  {
+    text: "Retas concorrentes são aquelas que…",
+    opts: ["Nunca se encontram","Se cruzam em um ponto comum","Formam sempre quatro ângulos retos","Têm a mesma inclinação"],
+    correct: 1,
+    feedback: "Retas concorrentes se cruzam em um ponto chamado ponto de intersecção. Por exemplo, as retas r e s se cruzam no ponto P."
+  },
+  {
+    text: "Retas perpendiculares são retas concorrentes que…",
+    opts: ["Se cruzam em qualquer ângulo","Formam quatro ângulos retos","Nunca têm pontos comuns","São sempre horizontais"],
+    correct: 1,
+    feedback: "Retas perpendiculares são retas concorrentes que, quando se cruzam, formam quatro ângulos retos."
+  },
+  {
+    text: "Retas paralelas são aquelas que…",
+    opts: ["Se cruzam em um ponto","Formam quatro ângulos retos","Não têm pontos comuns","São sempre verticais"],
+    correct: 2,
+    feedback: "Retas paralelas não têm pontos comuns. Indicamos: t // u (lemos: reta t paralela à reta u)."
+  },
+  {
+    text: "Uma semirreta é uma parte da reta que…",
+    opts: ["Não tem origem nem fim","Tem origem, mas não tem fim","Tem início e fim bem definidos","Se prolonga nos dois sentidos"],
+    correct: 1,
+    feedback: "A semirreta tem uma origem, mas não tem fim. Por exemplo, a semirreta OM tem origem em O e passa pelo ponto M."
+  },
+  {
+    text: "O menor caminho de um ponto a outro é chamado de…",
+    opts: ["Reta","Semirreta","Segmento de reta","Ponto de intersecção"],
+    correct: 2,
+    feedback: "O segmento de reta é o menor caminho entre dois pontos. Os pontos extremos são chamados de extremidades."
+  },
+  {
+    text: "Quando dois segmentos têm a mesma medida, chamamos de segmentos…",
+    opts: ["Paralelos","Concorrentes","Congruentes","Perpendiculares"],
+    correct: 2,
+    feedback: "Segmentos congruentes têm a mesma medida. Indicamos: AB ≅ CD (lemos: segmento AB é congruente ao segmento CD)."
+  },
+  {
+    text: "O ponto médio M de um segmento AB é aquele em que…",
+    opts: ["AM é maior que MB","MB é maior que AM","AM é congruente a MB","AB é congruente a MN"],
+    correct: 2,
+    feedback: "O ponto médio M divide o segmento AB em duas partes iguais: AM ≅ MB."
+  },
+  {
+    text: "Medir um segmento de reta significa compará-lo com…",
+    opts: ["Uma reta paralela","Um ponto de intersecção","Outro segmento usado como unidade de medida","O ponto médio do segmento"],
+    correct: 2,
+    feedback: "Medir um segmento de reta significa compará-lo com outro, utilizado como unidade de medida. O instrumento mais usado é a régua numerada, com centímetro (cm) e milímetro (mm)."
+  }
+];
+
+var quizIdx = 0;
+var quizScore = 0;
+var quizAnswered = false;
+var letters = ['A','B','C','D'];
+
+function renderQuestion() {
+  var q = quizQuestions[quizIdx];
+  document.getElementById('prog-label').textContent = 'Questão '+(quizIdx+1)+' de 10';
+  document.getElementById('prog-fill').style.width = (quizIdx/10*100)+'%';
+  document.getElementById('q-num').textContent = 'QUESTÃO '+(quizIdx+1);
+  document.getElementById('q-text').textContent = q.text;
+  var optsEl = document.getElementById('q-options');
+  optsEl.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+opt;
+    btn.addEventListener('click', function(){ handleAnswer(i); });
+    optsEl.appendChild(btn);
+  });
+  var fb = document.getElementById('q-feedback');
+  fb.className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+  quizAnswered = false;
+}
+
+function handleAnswer(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  var q = quizQuestions[quizIdx];
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){ b.disabled = true; });
+  var correct = idx === q.correct;
+  if (correct) { quizScore++; btns[idx].classList.add('correct'); }
+  else { btns[idx].classList.add('wrong'); btns[q.correct].classList.add('correct'); }
+  var fb = document.getElementById('q-feedback');
+  fb.className = 'feedback fb-'+(correct?'correct':'wrong')+' show';
+  document.getElementById('fb-icon').textContent = correct ? '✓' : '✗';
+  document.getElementById('fb-text').textContent = q.feedback;
+  var nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = quizIdx < 9 ? 'Próxima questão →' : 'Ver resultado';
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  quizIdx++;
+  if (quizIdx < 10) { renderQuestion(); }
+  else { showResult(); }
+});
+
+function showResult() {
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Concluído!';
+  document.getElementById('quiz-body').style.display = 'none';
+  var pct = Math.round((quizScore/10)*100);
+  window.sabendoScore = pct;
+  var rs = document.getElementById('result-screen');
+  rs.className = 'result-screen show';
+  var emoji = pct>=80?'🏆':pct>=60?'⭐':'💪';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-score').textContent = quizScore+'/10';
+  document.getElementById('result-label').textContent = pct+'% de acertos';
+  var msgs = ['Continue praticando! Revise as definições de reta, semirreta e segmento de reta.','Bom trabalho! Você está dominando os conceitos de geometria!','Excelente! Você é um especialista em retas, semirretas e segmentos!'];
+  document.getElementById('result-msg').textContent = pct>=80?msgs[2]:pct>=60?msgs[1]:msgs[0];
+}
+
+function restartQuiz() {
+  quizIdx = 0; quizScore = 0; quizAnswered = false;
+  document.getElementById('quiz-body').style.display = 'block';
+  document.getElementById('result-screen').className = 'result-screen';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "reta-semirreta-segmento";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Lino",
+    characterEmoji: "📏",
+    characterImg:   "chars/reta-semirreta-segmento-hd.png",
+    themeLabel:     "Reta, Semirreta e Segmento · Matemática",
+    totalActivities: 4,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-reta-semirreta-segmento",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
