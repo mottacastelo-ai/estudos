@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordenação — Polígonos por Número de Lados</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --mat:#059669;--mat-light:#34D399;--mat-bg:#ECFDF5;--mat-dark:#064E3B;
+  --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;--card:#fff;
+  --ok:#059669;--ok-bg:#ECFDF5;--err:#DC2626;--err-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--mat-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:760px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--mat);text-decoration:none;margin-bottom:14px;background:none;border:none;cursor:pointer;padding:0;}
+.back-link:hover{opacity:.7;}
+.card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(5,150,105,.1);}
+.card-header{background:linear-gradient(135deg,#064E3B,#059669 60%,#34D399);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:32px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+.instrucao{padding:14px 24px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border);background:var(--mat-bg);line-height:1.6;}
+.instrucao strong{color:var(--text);}
+.activity-body{padding:20px;}
+/* pool */
+.pool-label{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin-bottom:10px;}
+.pool{display:flex;flex-wrap:wrap;gap:10px;min-height:90px;padding:12px;background:var(--mat-bg);border:2px dashed var(--border);border-radius:16px;margin-bottom:20px;}
+/* slots */
+.slots-label{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;color:var(--mat-dark);letter-spacing:.06em;margin-bottom:10px;}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.slot{border:2px dashed var(--border);border-radius:16px;padding:8px;min-height:105px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .15s,background .15s;}
+.slot.over{border-color:var(--mat-light);background:var(--mat-bg);}
+.slot-num{font-family:"Space Mono",monospace;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+/* polygon card */
+.poly-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:8px 12px;cursor:grab;user-select:none;text-align:center;transition:box-shadow .15s,border-color .15s;touch-action:none;width:100%;}
+.poly-card:hover{border-color:var(--mat-light);box-shadow:0 4px 12px rgba(5,150,105,.15);}
+.poly-card.dragging{opacity:.4;cursor:grabbing;}
+.poly-card.correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.poly-card.wrong{border-color:var(--err);background:var(--err-bg);}
+.poly-svg{display:block;margin:0 auto 4px;}
+.poly-name{font-size:11px;font-weight:800;color:var(--text);}
+/* buttons */
+.btn-row{display:flex;gap:10px;margin-bottom:16px;}
+.check-btn{flex:2;padding:13px;background:linear-gradient(135deg,var(--mat),var(--mat-light));color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer;}
+.check-btn:hover{opacity:.88;}
+.reset-btn{flex:1;padding:13px;background:var(--card);border:2px solid var(--border);border-radius:14px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;}
+.reset-btn:hover{border-color:var(--mat-light);color:var(--mat);}
+/* feedback */
+.feedback-box{margin-bottom:12px;padding:13px 16px;border-radius:14px;font-size:14px;font-weight:600;line-height:1.5;display:none;}
+.feedback-box.correct{background:var(--ok-bg);border:2px solid var(--ok);color:#065F46;}
+.feedback-box.partial{background:#FFFBEB;border:2px solid #F59E0B;color:#78350F;}
+/* answer key */
+.answer-key{margin-top:16px;display:none;padding:16px;background:var(--mat-bg);border:2px solid var(--border);border-radius:16px;}
+.ak-title{font-family:"Space Mono",monospace;font-size:11px;font-weight:800;color:var(--mat-dark);margin-bottom:10px;}
+.ak-list{display:flex;flex-wrap:wrap;gap:8px;}
+.ak-item{background:var(--card);border:2px solid var(--mat-light);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--mat-dark);}
+/* score bar */
+.score-wrap{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.score-track{flex:1;height:8px;background:#bbf7d0;border-radius:999px;}
+.score-fill{height:8px;background:var(--mat);border-radius:999px;transition:width .4s;}
+.score-label{font-size:13px;font-weight:800;color:var(--mat-dark);white-space:nowrap;}
+@media(max-width:560px){.slots{grid-template-columns:repeat(2,1fr);}.pool{gap:8px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">🔢</div>
+      <div><h1>Ordenação de Polígonos</h1><p>Do menor para o maior número de lados</p></div>
+      <div class="hbadge">⚡ Praticar</div>
+    </div>
+    <div class="instrucao">
+      <strong>O que fazer:</strong> Arraste cada polígono para a posição correta, ordenando <strong>do menor para o maior número de lados</strong>.
+      Observe a forma de cada polígono — conte os lados da figura para descobrir a ordem!
+    </div>
+    <div class="activity-body">
+      <div class="pool-label">POLÍGONOS PARA ORDENAR</div>
+      <div class="pool" id="pool"></div>
+      <div class="slots-label">POSIÇÃO CORRETA (1 = menos lados → 8 = mais lados)</div>
+      <div class="slots" id="slots"></div>
+      <div class="score-wrap">
+        <div class="score-track"><div class="score-fill" id="ord-fill" style="width:0%"></div></div>
+        <span class="score-label" id="ord-label">0 / 8 corretos</span>
+      </div>
+      <div class="btn-row">
+        <button class="check-btn" onclick="checkOrder()">Verificar ordem</button>
+        <button class="reset-btn" onclick="resetOrdenacao()">↺ Reiniciar</button>
+      </div>
+      <div class="feedback-box" id="ord-feedback"></div>
+      <div class="answer-key" id="answer-key">
+        <div class="ak-title">GABARITO — ORDEM CORRETA</div>
+        <div class="ak-list" id="ak-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var POLYGONS = [
+  {id:'tri',  name:'Triângulo',   sides:3,  color:'#FCA5A5'},
+  {id:'quad', name:'Quadrilátero',sides:4,  color:'#FCD34D'},
+  {id:'pent', name:'Pentágono',   sides:5,  color:'#86EFAC'},
+  {id:'hex',  name:'Hexágono',    sides:6,  color:'#6EE7B7'},
+  {id:'hept', name:'Heptágono',   sides:7,  color:'#93C5FD'},
+  {id:'octo', name:'Octógono',    sides:8,  color:'#C4B5FD'},
+  {id:'enea', name:'Eneágono',    sides:9,  color:'#F9A8D4'},
+  {id:'deca', name:'Decágono',    sides:10, color:'#FBD38D'},
+];
+
+// CORRECT ORDER (sorted by sides: 3,4,5,6,7,8,9,10)
+var CORRECT_ORDER = POLYGONS.map(function(p){return p.id;});
+
+var slotContents = new Array(8).fill(null); // slotContents[i] = polygon id or null
+var draggedId = null;
+var dragFromSlot = null;
+
+function makeSVG(sides, color) {
+  var size = 44;
+  var cx = size/2, cy = size/2, r = 18;
+  var pts = [];
+  for (var i = 0; i < sides; i++) {
+    var angle = (2 * Math.PI * i / sides) - Math.PI/2;
+    pts.push((cx + r * Math.cos(angle)).toFixed(1) + ',' + (cy + r * Math.sin(angle)).toFixed(1));
+  }
+  return '<svg class="poly-svg" width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'
+    + '<polygon points="'+pts.join(' ')+'" fill="'+color+'" stroke="#374151" stroke-width="1.5"/>'
+    + '</svg>';
+}
+
+function buildCard(polyData) {
+  var div = document.createElement('div');
+  div.className = 'poly-card';
+  div.id = 'poly-' + polyData.id;
+  div.setAttribute('data-id', polyData.id);
+  div.innerHTML = makeSVG(polyData.sides, polyData.color) + '<div class="poly-name">' + polyData.name + '</div>';
+  div.draggable = true;
+
+  div.addEventListener('dragstart', function(e) {
+    draggedId = polyData.id;
+    // find if card is in a slot
+    dragFromSlot = null;
+    slotContents.forEach(function(sid, i) {
+      if (sid === polyData.id) dragFromSlot = i;
+    });
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(function(){ div.classList.add('dragging'); }, 0);
+  });
+  div.addEventListener('dragend', function(){ div.classList.remove('dragging'); });
+  return div;
+}
+
+function initSlots() {
+  var container = document.getElementById('slots');
+  container.innerHTML = '';
+  for (var i = 0; i < 8; i++) {
+    (function(idx) {
+      var slot = document.createElement('div');
+      slot.className = 'slot';
+      slot.id = 'slot-' + idx;
+      slot.innerHTML = '<div class="slot-num">Posição ' + (idx+1) + '</div>';
+      slot.addEventListener('dragover', function(e) { e.preventDefault(); slot.classList.add('over'); });
+      slot.addEventListener('dragleave', function() { slot.classList.remove('over'); });
+      slot.addEventListener('drop', function(e) {
+        e.preventDefault(); slot.classList.remove('over');
+        if (draggedId === null) return;
+        var card = document.getElementById('poly-' + draggedId);
+        if (!card) return;
+        // If slot is occupied, swap
+        if (slotContents[idx] !== null) {
+          var occupantId = slotContents[idx];
+          if (dragFromSlot !== null) {
+            // swap
+            slotContents[dragFromSlot] = occupantId;
+            var occupantCard = document.getElementById('poly-' + occupantId);
+            document.getElementById('slot-' + dragFromSlot).appendChild(occupantCard);
+          } else {
+            // send occupant back to pool
+            slotContents[idx] = null;
+            document.getElementById('pool').appendChild(document.getElementById('poly-' + occupantId));
+          }
+        } else {
+          if (dragFromSlot !== null) {
+            slotContents[dragFromSlot] = null;
+          }
+        }
+        slotContents[idx] = draggedId;
+        slot.appendChild(card);
+        draggedId = null; dragFromSlot = null;
+      });
+      container.appendChild(slot);
+    })(i);
+  }
+}
+
+function initPool() {
+  var pool = document.getElementById('pool');
+  pool.innerHTML = '';
+  // shuffle
+  var shuffled = POLYGONS.slice();
+  for (var i = shuffled.length-1; i > 0; i--) {
+    var j = Math.floor(Math.random()*(i+1));
+    var t = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = t;
+  }
+  shuffled.forEach(function(p) {
+    pool.appendChild(buildCard(p));
+  });
+  pool.addEventListener('dragover', function(e) { e.preventDefault(); });
+  pool.addEventListener('drop', function(e) {
+    e.preventDefault();
+    if (draggedId === null) return;
+    var card = document.getElementById('poly-' + draggedId);
+    if (!card) return;
+    if (dragFromSlot !== null) { slotContents[dragFromSlot] = null; }
+    pool.appendChild(card);
+    draggedId = null; dragFromSlot = null;
+  });
+}
+
+function checkOrder() {
+  var correctCount = 0;
+  var allFilled = true;
+  slotContents.forEach(function(id, i) {
+    if (id === null) { allFilled = false; return; }
+    var card = document.getElementById('poly-' + id);
+    card.classList.remove('correct','wrong');
+    if (id === CORRECT_ORDER[i]) {
+      card.classList.add('correct');
+      correctCount++;
+    } else {
+      card.classList.add('wrong');
+    }
+  });
+
+  var pct = Math.round((correctCount / 8) * 100);
+  document.getElementById('ord-fill').style.width = pct + '%';
+  document.getElementById('ord-label').textContent = correctCount + ' / 8 corretos';
+  window.sabendoScore = pct;
+
+  var fb = document.getElementById('ord-feedback');
+  if (!allFilled) {
+    fb.className = 'feedback-box partial';
+    fb.innerHTML = '⚠ Ainda há polígonos no banco. Coloque todos nas posições e verifique de novo.';
+    fb.style.display = 'block';
+    return;
+  }
+
+  if (correctCount === 8) {
+    fb.className = 'feedback-box correct';
+    fb.innerHTML = '✓ Perfeito! Ordem correta: triângulo (3) → quadrilátero (4) → pentágono (5) → hexágono (6) → heptágono (7) → octógono (8) → eneágono (9) → decágono (10).';
+  } else {
+    fb.className = 'feedback-box partial';
+    fb.innerHTML = '⚠ ' + correctCount + ' de 8 corretos. Os cards em vermelho estão fora de ordem. Dica: conte os lados de cada figura!';
+  }
+  fb.style.display = 'block';
+
+  // Show answer key
+  var akList = document.getElementById('ak-list');
+  akList.innerHTML = '';
+  POLYGONS.forEach(function(p, i) {
+    var item = document.createElement('div');
+    item.className = 'ak-item';
+    item.textContent = (i+1) + '. ' + p.name + ' (' + p.sides + ' lados)';
+    akList.appendChild(item);
+  });
+  document.getElementById('answer-key').style.display = 'block';
+}
+
+function resetOrdenacao() {
+  slotContents = new Array(8).fill(null);
+  document.getElementById('ord-fill').style.width = '0%';
+  document.getElementById('ord-label').textContent = '0 / 8 corretos';
+  document.getElementById('ord-feedback').style.display = 'none';
+  document.getElementById('answer-key').style.display = 'none';
+  document.querySelectorAll('.poly-card').forEach(function(c){ c.classList.remove('correct','wrong','dragging'); });
+  initSlots();
+  initPool();
+}
+
+// Touch support
+var touchPoly = null;
+var touchClone = null;
+var touchFromSlot = null;
+document.addEventListener('touchstart', function(e) {
+  var t = e.target.closest('.poly-card');
+  if (!t) return;
+  touchPoly = t;
+  touchFromSlot = null;
+  slotContents.forEach(function(sid, i) {
+    if (sid === t.getAttribute('data-id')) touchFromSlot = i;
+  });
+  var rect = t.getBoundingClientRect();
+  touchClone = t.cloneNode(true);
+  touchClone.style.cssText = 'position:fixed;opacity:.7;pointer-events:none;z-index:9999;width:'+rect.width+'px;left:'+rect.left+'px;top:'+rect.top+'px;transform:scale(1.05);';
+  document.body.appendChild(touchClone);
+}, {passive:true});
+document.addEventListener('touchmove', function(e) {
+  if (!touchClone) return;
+  e.preventDefault();
+  var tt = e.touches[0];
+  touchClone.style.left = (tt.clientX - touchClone.offsetWidth/2)+'px';
+  touchClone.style.top  = (tt.clientY - touchClone.offsetHeight/2)+'px';
+}, {passive:false});
+document.addEventListener('touchend', function(e) {
+  if (!touchClone || !touchPoly) { touchPoly=null; touchClone=null; return; }
+  document.body.removeChild(touchClone); touchClone=null;
+  var tt = e.changedTouches[0];
+  var el = document.elementFromPoint(tt.clientX, tt.clientY);
+  var slot = el ? el.closest('.slot') : null;
+  var pid = touchPoly.getAttribute('data-id');
+  if (slot) {
+    var slotId = parseInt(slot.id.replace('slot-',''));
+    if (slotContents[slotId] !== null && slotContents[slotId] !== pid) {
+      var occupantId = slotContents[slotId];
+      if (touchFromSlot !== null) {
+        slotContents[touchFromSlot] = occupantId;
+        slot.appendChild(document.getElementById('poly-' + occupantId));
+        // fix: move occupant TO FROM slot
+        document.getElementById('slot-'+touchFromSlot).appendChild(document.getElementById('poly-'+occupantId));
+      } else {
+        slotContents[slotId] = null;
+        document.getElementById('pool').appendChild(document.getElementById('poly-' + occupantId));
+      }
+    } else if (touchFromSlot !== null) {
+      slotContents[touchFromSlot] = null;
+    }
+    slotContents[slotId] = pid;
+    slot.appendChild(touchPoly);
+  } else {
+    if (touchFromSlot !== null) slotContents[touchFromSlot] = null;
+    document.getElementById('pool').appendChild(touchPoly);
+  }
+  touchPoly = null;
+});
+
+resetOrdenacao();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "poligonos-triangulos-quadrilateros";
+  var ACTIVITY_TYPE = "ordenacao";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+  var GAMI_CONFIG = {
+    characterName: "Polito", characterEmoji: "🔷",
+    characterImg: "chars/poligonos-triangulos-quadrilateros-hd.png",
+    themeLabel: "Polígonos, Triângulos e Quadriláteros · Matemática",
+    totalActivities: 5, primaryColor: "#059669", lightColor: "#34D399", bgColor: "#ECFDF5",
+    glowRgb: "5,150,105", backUrl: "../../index.html#theme-mat-poligonos-triangulos-quadrilateros", activityType: ACTIVITY_TYPE,
+  };
+  var btn = document.createElement("button"); btn.id = "concluir-btn"; btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") { _capturedScore = Math.round(window._sabendoScoreInternal); btn.style.display = "block"; }
+  }
+  var _sabendoScoreInternal = null;
+  try { Object.defineProperty(window, 'sabendoScore', { configurable:true, get:function(){return _sabendoScoreInternal;}, set:function(v){_sabendoScoreInternal=v;window._sabendoScoreInternal=v;showBtn();} }); } catch(e) {}
+  document.addEventListener('sabendo:criador-done', function(){ window._sabendoScoreInternal=100; showBtn(); });
+  var observer = new MutationObserver(function(mutations){ mutations.forEach(function(m){ var el=m.target; if(m.attributeName==="style"&&el.style&&el.style.display==="block"){var sig=(el.id||"")+" "+(el.className||"");if(/result|score|gabarito|feedback|correc/i.test(sig))showBtn();} if(m.attributeName==="class"&&el.classList&&el.classList.contains("show")){var sig2=(el.id||"")+" "+(el.className||"");if(/result|score|gabarito|feedback|correc/i.test(sig2))showBtn();} }); });
+  observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:["class","style"]});
+  btn.addEventListener("click", async function() {
+    btn.textContent="Registrando..."; btn.disabled=true;
+    var res=await supa.auth.getSession(); var session=res.data.session;
+    if(!session){btn.textContent="Faca login no portal";btn.style.background="#EF4444";setTimeout(function(){btn.textContent="Concluir atividade";btn.style.background="linear-gradient(135deg,#059669,#34D399)";btn.disabled=false;},3000);return;}
+    var uid=session.user.id; var ordScore=_capturedScore; var today=new Date().toISOString().split("T")[0];
+    var existCheck=await supa.from("activity_log").select("id").eq("user_id",uid).eq("theme_slug",THEME_SLUG).eq("activity_type",ACTIVITY_TYPE).limit(1);
+    var isFirst=!existCheck.data||existCheck.data.length===0;
+    await supa.from("activity_log").insert({user_id:uid,discipline:DISCIPLINE,theme_slug:THEME_SLUG,activity_type:ACTIVITY_TYPE,score:ordScore,is_first_attempt:isFirst});
+    var sr=await supa.from("streaks").select("*").eq("user_id",uid).single();
+    if(sr.data){var s=sr.data;var yest=new Date();yest.setDate(yest.getDate()-1);var yStr=yest.toISOString().split("T")[0];var ns=(s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;await supa.from("streaks").update({current_streak:ns,longest_streak:Math.max(ns,s.longest_streak),last_activity_date:today,total_activities:s.total_activities+1,updated_at:new Date().toISOString()}).eq("user_id",uid);}
+    btn.style.display="none";
+    if(window.SabendoGamification) await SabendoGamification.run(supa,uid,THEME_SLUG,DISCIPLINE,GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

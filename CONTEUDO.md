@@ -534,6 +534,7 @@
 | `Calco.png` |
 | `Calê.png` |
 | `Ciclao.png` |
+| `Circo.png` |
 | `Dicio.png` |
 | `Divi.png` |
 | `Elastico.png` |

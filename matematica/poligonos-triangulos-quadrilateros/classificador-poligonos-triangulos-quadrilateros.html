@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificador — Triângulos e Quadriláteros</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --mat:#059669;--mat-light:#34D399;--mat-bg:#ECFDF5;--mat-dark:#064E3B;
+  --text:#1A1A2E;--muted:#6B7280;--border:#A7F3D0;--card:#fff;
+  --ok:#059669;--ok-bg:#ECFDF5;--err:#DC2626;--err-bg:#FEF2F2;
+}
+body{font-family:"Baloo 2",cursive;background:var(--mat-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px;}
+.wrap{max-width:800px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--mat);text-decoration:none;margin-bottom:14px;background:none;border:none;cursor:pointer;padding:0;}
+.back-link:hover{opacity:.7;}
+.card{background:var(--card);border:2px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(5,150,105,.1);}
+.card-header{background:linear-gradient(135deg,#064E3B,#059669 60%,#34D399);padding:20px 24px 18px;display:flex;align-items:center;gap:14px;}
+.card-header .hicon{font-size:32px;line-height:1;}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2;}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+/* rounds nav */
+.rounds-nav{display:flex;gap:8px;padding:14px 20px;border-bottom:2px solid var(--border);background:var(--mat-bg);}
+.round-btn{flex:1;padding:8px 4px;border:2px solid var(--border);border-radius:12px;font-family:"Baloo 2",cursive;font-size:12px;font-weight:700;color:var(--muted);background:var(--card);cursor:pointer;transition:all .15s;}
+.round-btn.active{border-color:var(--mat);color:var(--mat);background:var(--mat-bg);}
+.round-btn.done{border-color:var(--mat-light);color:var(--mat);background:#d1fae5;}
+/* body */
+.round-body{padding:20px;display:none;}
+.round-body.visible{display:block;}
+.round-title{font-family:"Space Mono",monospace;font-size:13px;font-weight:700;color:var(--mat-dark);margin-bottom:6px;}
+.round-sub{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:18px;line-height:1.5;}
+/* drag cards */
+.cards-pool{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;min-height:64px;padding:12px;background:var(--mat-bg);border-radius:16px;border:2px dashed var(--border);}
+.drag-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:10px 14px;font-size:13px;font-weight:600;cursor:grab;user-select:none;transition:box-shadow .15s,border-color .15s;touch-action:none;}
+.drag-card:hover{border-color:var(--mat-light);box-shadow:0 4px 12px rgba(5,150,105,.15);}
+.drag-card.dragging{opacity:.4;cursor:grabbing;}
+.drag-card.correct{background:var(--ok-bg);border-color:var(--ok);cursor:default;}
+.drag-card.wrong-placed{background:var(--err-bg);border-color:var(--err);}
+/* drop zones */
+.zones{display:grid;gap:12px;margin-bottom:16px;}
+.zone{border:2px dashed var(--border);border-radius:16px;padding:12px;min-height:90px;}
+.zone.over{border-color:var(--mat-light);background:var(--mat-bg);}
+.zone-label{font-family:"Space Mono",monospace;font-size:11px;font-weight:800;color:var(--mat-dark);margin-bottom:8px;letter-spacing:.04em;}
+.zone-desc{font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:600;}
+.zone-items{display:flex;flex-wrap:wrap;gap:8px;min-height:36px;}
+/* feedback */
+.check-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--mat),var(--mat-light));color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:15px;font-weight:800;cursor:pointer;transition:opacity .15s;}
+.check-btn:hover{opacity:.88;}
+.check-btn:disabled{opacity:.5;cursor:default;}
+.feedback-box{margin-top:14px;padding:13px 16px;border-radius:14px;font-size:14px;font-weight:600;line-height:1.5;display:none;}
+.feedback-box.correct{background:var(--ok-bg);border:2px solid var(--ok);color:#065F46;}
+.feedback-box.partial{background:#FFFBEB;border:2px solid #F59E0B;color:#78350F;}
+.next-round-btn{display:none;margin-top:12px;width:100%;padding:12px;background:var(--card);border:2px solid var(--mat);color:var(--mat);border-radius:14px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;}
+.next-round-btn:hover{background:var(--mat-bg);}
+/* result */
+.final-result{display:none;padding:28px 24px;text-align:center;}
+.final-emoji{font-size:56px;margin-bottom:10px;}
+.final-title{font-family:"Space Mono",monospace;font-size:18px;font-weight:700;color:var(--mat-dark);margin-bottom:6px;}
+.final-score{font-size:42px;font-weight:900;color:var(--mat);margin-bottom:16px;}
+.final-msg{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:18px;}
+.restart-btn{padding:12px 28px;background:linear-gradient(135deg,var(--mat),var(--mat-light));color:#fff;border:none;border-radius:14px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;}
+@media(max-width:480px){.zones{grid-template-columns:1fr;}.drag-card{font-size:12px;padding:8px 11px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</button>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">🗂️</div>
+      <div><h1>Classificador</h1><p>Triângulos e Quadriláteros</p></div>
+      <div class="hbadge">⚡ 3 rodadas</div>
+    </div>
+    <div class="rounds-nav">
+      <button class="round-btn active" id="rb-0">1 · Lados</button>
+      <button class="round-btn" id="rb-1">2 · Ângulos</button>
+      <button class="round-btn" id="rb-2">3 · Quadriláteros</button>
+    </div>
+
+    <!-- ROUND 0: Triângulos quanto aos lados -->
+    <div class="round-body visible" id="round-0">
+      <div class="round-title">RODADA 1 — Triângulos: classificação quanto aos lados</div>
+      <div class="round-sub">Arraste cada card para a categoria correta: <strong>Triângulo equilátero</strong>, <strong>Triângulo isósceles</strong> ou <strong>Triângulo escaleno</strong>.</div>
+      <div class="cards-pool" id="pool-0"></div>
+      <div class="zones" style="grid-template-columns:1fr 1fr 1fr;" id="zones-0">
+        <div class="zone" data-cat="equil" id="zone-equil">
+          <div class="zone-label">EQUILÁTERO</div>
+          <div class="zone-desc">3 lados com a mesma medida</div>
+          <div class="zone-items" id="items-equil"></div>
+        </div>
+        <div class="zone" data-cat="isoc" id="zone-isoc">
+          <div class="zone-label">ISÓSCELES</div>
+          <div class="zone-desc">2 lados com a mesma medida</div>
+          <div class="zone-items" id="items-isoc"></div>
+        </div>
+        <div class="zone" data-cat="escal" id="zone-escal">
+          <div class="zone-label">ESCALENO</div>
+          <div class="zone-desc">3 lados com medidas diferentes</div>
+          <div class="zone-items" id="items-escal"></div>
+        </div>
+      </div>
+      <button class="check-btn" id="check-0" onclick="checkRound(0)">Verificar</button>
+      <div class="feedback-box" id="fb-0"></div>
+      <button class="next-round-btn" id="next-0" onclick="goRound(1)">Próxima rodada →</button>
+    </div>
+
+    <!-- ROUND 1: Triângulos quanto aos ângulos -->
+    <div class="round-body" id="round-1">
+      <div class="round-title">RODADA 2 — Triângulos: classificação quanto aos ângulos</div>
+      <div class="round-sub">Arraste cada card para a categoria correta: <strong>Triângulo retângulo</strong>, <strong>Triângulo acutângulo</strong> ou <strong>Triângulo obtusângulo</strong>.</div>
+      <div class="cards-pool" id="pool-1"></div>
+      <div class="zones" style="grid-template-columns:1fr 1fr 1fr;" id="zones-1">
+        <div class="zone" data-cat="ret" id="zone-ret">
+          <div class="zone-label">RETÂNGULO</div>
+          <div class="zone-desc">1 ângulo reto + 2 ângulos agudos</div>
+          <div class="zone-items" id="items-ret"></div>
+        </div>
+        <div class="zone" data-cat="acut" id="zone-acut">
+          <div class="zone-label">ACUTÂNGULO</div>
+          <div class="zone-desc">3 ângulos agudos</div>
+          <div class="zone-items" id="items-acut"></div>
+        </div>
+        <div class="zone" data-cat="obtu" id="zone-obtu">
+          <div class="zone-label">OBTUSÂNGULO</div>
+          <div class="zone-desc">1 ângulo obtuso + 2 ângulos agudos</div>
+          <div class="zone-items" id="items-obtu"></div>
+        </div>
+      </div>
+      <button class="check-btn" id="check-1" onclick="checkRound(1)">Verificar</button>
+      <div class="feedback-box" id="fb-1"></div>
+      <button class="next-round-btn" id="next-1" onclick="goRound(2)">Próxima rodada →</button>
+    </div>
+
+    <!-- ROUND 2: Quadriláteros -->
+    <div class="round-body" id="round-2">
+      <div class="round-title">RODADA 3 — Quadriláteros: paralelogramo ou trapézio?</div>
+      <div class="round-sub">Arraste cada card para a categoria correta. <strong>Paralelogramo</strong>: lados opostos paralelos e com a mesma medida. <strong>Trapézio</strong>: apenas dois lados paralelos (as bases).</div>
+      <div class="cards-pool" id="pool-2"></div>
+      <div class="zones" style="grid-template-columns:1fr 1fr;" id="zones-2">
+        <div class="zone" data-cat="para" id="zone-para">
+          <div class="zone-label">PARALELOGRAMO</div>
+          <div class="zone-desc">Lados opostos paralelos e iguais</div>
+          <div class="zone-items" id="items-para"></div>
+        </div>
+        <div class="zone" data-cat="trap2" id="zone-trap2">
+          <div class="zone-label">TRAPÉZIO</div>
+          <div class="zone-desc">Apenas 2 lados paralelos (bases)</div>
+          <div class="zone-items" id="items-trap2"></div>
+        </div>
+      </div>
+      <button class="check-btn" id="check-2" onclick="checkRound(2)">Verificar</button>
+      <div class="feedback-box" id="fb-2"></div>
+      <button class="next-round-btn" id="next-2" onclick="showFinal()">Ver resultado final →</button>
+    </div>
+
+    <!-- FINAL -->
+    <div class="final-result" id="final-result">
+      <div class="final-emoji" id="final-emoji">🏆</div>
+      <div class="final-title">Classificador concluído!</div>
+      <div class="final-score" id="final-score">0/18</div>
+      <div class="final-msg" id="final-msg"></div>
+      <button class="restart-btn" onclick="restartAll()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var ROUNDS = [
+  {
+    cards: [
+      {id:'c0',text:'m(AB) = m(BC) = m(CA)\nTodos os lados iguais',cat:'equil'},
+      {id:'c1',text:'Lados: 4 cm, 4 cm e 4 cm',cat:'equil'},
+      {id:'c2',text:'m(AB) ≅ m(CA)\nUm lado diferente dos outros dois',cat:'isoc'},
+      {id:'c3',text:'Lados: 5 cm, 5 cm e 8 cm',cat:'isoc'},
+      {id:'c4',text:'m(AB) ≠ m(BC) ≠ m(CA)\nTodos os lados diferentes',cat:'escal'},
+      {id:'c5',text:'Lados: 3 cm, 5 cm e 7 cm',cat:'escal'},
+    ],
+    zoneIds: ['equil','isoc','escal'],
+  },
+  {
+    cards: [
+      {id:'d0',text:'Tem um ângulo reto (90°)\ne dois ângulos agudos',cat:'ret'},
+      {id:'d1',text:'Ângulos: 90°, 45°, 45°',cat:'ret'},
+      {id:'d2',text:'Os três ângulos são agudos\n(menores que 90°)',cat:'acut'},
+      {id:'d3',text:'Ângulos: 60°, 70°, 50°',cat:'acut'},
+      {id:'d4',text:'Tem um ângulo obtuso\n(maior que 90°)',cat:'obtu'},
+      {id:'d5',text:'Ângulos: 110°, 40°, 30°',cat:'obtu'},
+    ],
+    zoneIds: ['ret','acut','obtu'],
+  },
+  {
+    cards: [
+      {id:'e0',text:'Retângulo: quatro ângulos retos,\ndois pares de lados com a mesma medida',cat:'para'},
+      {id:'e1',text:'Quadrado: quatro ângulos retos\ne quatro lados com a mesma medida',cat:'para'},
+      {id:'e2',text:'Losango: quatro lados com\na mesma medida',cat:'para'},
+      {id:'e3',text:'Trapézio retângulo: dois ângulos retos,\napenas dois lados paralelos',cat:'trap2'},
+      {id:'e4',text:'Trapézio isósceles: dois lados\nnão paralelos com a mesma medida',cat:'trap2'},
+      {id:'e5',text:'Apenas dois lados paralelos:\nbase maior e base menor',cat:'trap2'},
+    ],
+    zoneIds: ['para','trap2'],
+  },
+];
+
+var roundScores = [0, 0, 0];
+var currentRound = 0;
+var dragItem = null;
+var dragOriginPool = false;
+var dragOriginZone = null;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i+1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function buildCard(cardData, roundIdx) {
+  var div = document.createElement('div');
+  div.className = 'drag-card';
+  div.id = 'card-' + cardData.id;
+  div.setAttribute('data-id', cardData.id);
+  div.setAttribute('data-cat', cardData.cat);
+  div.setAttribute('data-round', roundIdx);
+  div.style.whiteSpace = 'pre-line';
+  div.textContent = cardData.text;
+  div.draggable = true;
+
+  div.addEventListener('dragstart', function(e) {
+    dragItem = cardData.id;
+    var inPool = document.getElementById('pool-' + roundIdx).contains(div);
+    dragOriginPool = inPool;
+    dragOriginZone = inPool ? null : div.parentElement.parentElement.getAttribute('data-cat');
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(function(){ div.classList.add('dragging'); }, 0);
+  });
+  div.addEventListener('dragend', function() { div.classList.remove('dragging'); });
+  return div;
+}
+
+function setupZones(roundIdx) {
+  var round = ROUNDS[roundIdx];
+  round.zoneIds.forEach(function(zid) {
+    var zone = document.getElementById('zone-' + zid);
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('over'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault(); zone.classList.remove('over');
+      if (dragItem === null) return;
+      var cardEl = document.getElementById('card-' + dragItem);
+      if (!cardEl || cardEl.classList.contains('correct')) return;
+      // Move card to this zone
+      document.getElementById('items-' + zid).appendChild(cardEl);
+      dragItem = null;
+    });
+  });
+  // pool drop
+  var pool = document.getElementById('pool-' + roundIdx);
+  pool.addEventListener('dragover', function(e) { e.preventDefault(); });
+  pool.addEventListener('drop', function(e) {
+    e.preventDefault();
+    if (dragItem === null) return;
+    var cardEl = document.getElementById('card-' + dragItem);
+    if (!cardEl || cardEl.classList.contains('correct')) return;
+    pool.appendChild(cardEl);
+    dragItem = null;
+  });
+}
+
+function initRound(roundIdx) {
+  var round = ROUNDS[roundIdx];
+  var pool = document.getElementById('pool-' + roundIdx);
+  pool.innerHTML = '';
+  round.zoneIds.forEach(function(zid) {
+    document.getElementById('items-' + zid).innerHTML = '';
+  });
+  var shuffled = shuffle(round.cards);
+  shuffled.forEach(function(cd) {
+    pool.appendChild(buildCard(cd, roundIdx));
+  });
+  setupZones(roundIdx);
+  document.getElementById('fb-' + roundIdx).style.display = 'none';
+  document.getElementById('fb-' + roundIdx).className = 'feedback-box';
+  document.getElementById('next-' + roundIdx).style.display = 'none';
+  document.getElementById('check-' + roundIdx).disabled = false;
+}
+
+function checkRound(roundIdx) {
+  var round = ROUNDS[roundIdx];
+  var totalCards = round.cards.length;
+  var correctCount = 0;
+  var wrongCards = [];
+
+  round.zoneIds.forEach(function(zid) {
+    var items = document.getElementById('items-' + zid);
+    Array.from(items.querySelectorAll('.drag-card')).forEach(function(card) {
+      var cardCat = card.getAttribute('data-cat');
+      if (cardCat === zid) {
+        card.classList.add('correct');
+        correctCount++;
+      } else {
+        card.classList.add('wrong-placed');
+        wrongCards.push(card.id);
+      }
+    });
+  });
+
+  roundScores[roundIdx] = correctCount;
+  var fb = document.getElementById('fb-' + roundIdx);
+  var pct = Math.round((correctCount / totalCards) * 100);
+
+  if (correctCount === totalCards) {
+    fb.className = 'feedback-box correct';
+    fb.innerHTML = '✓ Perfeito! Todos os ' + totalCards + ' cards classificados corretamente!';
+  } else {
+    fb.className = 'feedback-box partial';
+    fb.innerHTML = '⚠ ' + correctCount + ' de ' + totalCards + ' corretos. Os cards destacados em vermelho estão na categoria errada — você pode movê-los e tentar de novo.';
+    wrongCards.forEach(function(cid) {
+      document.getElementById(cid).classList.remove('wrong-placed');
+    });
+  }
+  fb.style.display = 'block';
+  document.getElementById('check-' + roundIdx).disabled = true;
+
+  if (correctCount === totalCards) {
+    document.getElementById('next-' + roundIdx).style.display = 'block';
+    document.getElementById('rb-' + roundIdx).classList.add('done');
+  } else {
+    document.getElementById('check-' + roundIdx).disabled = false;
+  }
+}
+
+function goRound(idx) {
+  document.getElementById('round-' + currentRound).classList.remove('visible');
+  document.getElementById('rb-' + currentRound).classList.remove('active');
+  currentRound = idx;
+  document.getElementById('round-' + idx).classList.add('visible');
+  document.getElementById('rb-' + idx).classList.add('active');
+  initRound(idx);
+}
+
+function showFinal() {
+  document.getElementById('round-2').classList.remove('visible');
+  document.getElementById('rb-2').classList.add('done');
+  var total = ROUNDS.reduce(function(s,r){ return s + r.cards.length; }, 0);
+  var got = roundScores.reduce(function(a,b){ return a+b; }, 0);
+  var pct = Math.round((got / total) * 100);
+  window.sabendoScore = pct;
+
+  document.getElementById('final-result').style.display = 'block';
+  document.getElementById('final-score').textContent = got + '/' + total;
+  var emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Classificador mestre! Você domina triângulos e quadriláteros!'; }
+  else if (pct >= 70) { emoji = '⭐'; msg = 'Muito bem! Quase perfeito!'; }
+  else { emoji = '💪'; msg = 'Continue praticando para fixar as classificações!'; }
+  document.getElementById('final-emoji').textContent = emoji;
+  document.getElementById('final-msg').textContent = msg;
+}
+
+function restartAll() {
+  roundScores = [0, 0, 0];
+  document.getElementById('final-result').style.display = 'none';
+  document.getElementById('round-0').classList.add('visible');
+  [0,1,2].forEach(function(i){
+    document.getElementById('rb-'+i).className='round-btn'+(i===0?' active':'');
+  });
+  currentRound = 0;
+  initRound(0);
+}
+
+// Touch drag support
+var touchCard = null;
+var touchClone = null;
+document.addEventListener('touchstart', function(e) {
+  var t = e.target.closest('.drag-card');
+  if (!t || t.classList.contains('correct')) return;
+  touchCard = t;
+  var rect = t.getBoundingClientRect();
+  touchClone = t.cloneNode(true);
+  touchClone.style.cssText = 'position:fixed;opacity:.7;pointer-events:none;z-index:9999;width:'+rect.width+'px;left:'+rect.left+'px;top:'+rect.top+'px;';
+  document.body.appendChild(touchClone);
+}, {passive:true});
+document.addEventListener('touchmove', function(e) {
+  if (!touchClone) return;
+  e.preventDefault();
+  var tt = e.touches[0];
+  touchClone.style.left = (tt.clientX - touchClone.offsetWidth/2) + 'px';
+  touchClone.style.top  = (tt.clientY - touchClone.offsetHeight/2) + 'px';
+}, {passive:false});
+document.addEventListener('touchend', function(e) {
+  if (!touchClone || !touchCard) { touchCard=null; touchClone=null; return; }
+  document.body.removeChild(touchClone); touchClone=null;
+  var tt = e.changedTouches[0];
+  var el = document.elementFromPoint(tt.clientX, tt.clientY);
+  var zone = el ? el.closest('.zone') : null;
+  if (zone) {
+    var zid = zone.getAttribute('data-cat');
+    var itemsEl = document.getElementById('items-' + zid);
+    if (itemsEl) itemsEl.appendChild(touchCard);
+  } else {
+    var pool = touchCard.closest('.round-body').querySelector('.cards-pool');
+    if (pool) pool.appendChild(touchCard);
+  }
+  touchCard = null;
+});
+
+initRound(0);
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "poligonos-triangulos-quadrilateros";
+  var ACTIVITY_TYPE = "classificador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Polito",
+    characterEmoji: "🔷",
+    characterImg: "chars/poligonos-triangulos-quadrilateros-hd.png",
+    themeLabel: "Polígonos, Triângulos e Quadriláteros · Matemática",
+    totalActivities: 5,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-poligonos-triangulos-quadrilateros",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id; var classScore = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: classScore, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data; var yest = new Date(); yest.setDate(yest.getDate()-1); var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date===today)?s.current_streak:(s.last_activity_date===yStr)?s.current_streak+1:1;
+      await supa.from("streaks").update({ current_streak:ns, longest_streak:Math.max(ns,s.longest_streak), last_activity_date:today, total_activities:s.total_activities+1, updated_at:new Date().toISOString() }).eq("user_id",uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

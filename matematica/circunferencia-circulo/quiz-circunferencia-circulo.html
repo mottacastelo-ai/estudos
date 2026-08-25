@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Circunferência e Círculo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --mat: #059669; --mat-light: #34D399; --mat-bg: #ECFDF5;
+  --bg: #ECFDF5; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #D1FAE5;
+  --correct: #059669; --wrong: #DC2626; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+.wrap { max-width: 700px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--mat); text-decoration: none; margin-bottom: 16px; cursor: pointer; }
+.back-link:hover { opacity: .7; }
+.card-header { background: linear-gradient(135deg, #064E3B, #059669 60%, #34D399); border-radius: 20px 20px 0 0; padding: 20px 24px 16px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 30px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 16px; color: #fff; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); font-weight: 600; margin-top: 2px; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; border: 1px solid rgba(255,255,255,.3); }
+.quiz-body { background: var(--card); border: 2px solid var(--border); border-top: none; border-radius: 0 0 20px 20px; padding: 20px; }
+
+/* Progress */
+.prog-wrap { margin-bottom: 16px; }
+.prog-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.prog-label { font-size: 12px; font-weight: 700; color: var(--muted); }
+.prog-score { font-size: 12px; font-weight: 800; color: var(--mat); }
+.prog-track { height: 8px; background: var(--mat-bg); border-radius: 999px; }
+.prog-fill { height: 8px; background: linear-gradient(90deg, #059669, #34D399); border-radius: 999px; transition: width .4s; }
+
+/* Question */
+.question-card { background: var(--mat-bg); border: 2px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
+.question-num { font-size: 11px; font-weight: 800; color: var(--mat); letter-spacing: .06em; margin-bottom: 6px; }
+.question-text { font-size: 15px; font-weight: 700; line-height: 1.5; color: var(--text); }
+
+/* Options */
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.option-btn { font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; text-align: left; padding: 12px 16px; border-radius: 14px; border: 2px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; transition: all .15s; line-height: 1.4; }
+.option-btn:hover:not(:disabled) { border-color: var(--mat-light); background: var(--mat-bg); }
+.option-btn.correct { border-color: var(--correct); background: #D1FAE5; color: #064E3B; font-weight: 700; }
+.option-btn.wrong   { border-color: var(--wrong); background: #FEE2E2; color: #7F1D1D; font-weight: 700; }
+.option-btn:disabled { cursor: default; }
+
+/* Feedback */
+.feedback { display: none; padding: 12px 16px; border-radius: 14px; font-size: 13px; font-weight: 600; line-height: 1.5; margin-bottom: 14px; }
+.feedback.correct { background: #D1FAE5; border: 2px solid #059669; color: #064E3B; display: flex; gap: 10px; }
+.feedback.wrong   { background: #FEE2E2; border: 2px solid #DC2626; color: #7F1D1D; display: flex; gap: 10px; }
+.feedback-icon { font-size: 18px; flex-shrink: 0; }
+
+/* Nav */
+.nav-row { display: flex; justify-content: flex-end; }
+.btn-next { font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; padding: 10px 28px; border-radius: 999px; border: none; background: linear-gradient(135deg,#059669,#34D399); color: white; cursor: pointer; display: none; box-shadow: 0 4px 12px rgba(5,150,105,.3); transition: transform .1s; }
+.btn-next:hover { transform: scale(1.03); }
+
+/* Result */
+.result-panel { display: none; text-align: center; padding: 20px; }
+.result-emoji { font-size: 52px; margin-bottom: 10px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 20px; font-weight: 700; color: var(--mat); margin-bottom: 6px; }
+.result-sub { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 20px; }
+.result-score-big { font-size: 48px; font-weight: 900; color: var(--mat); line-height: 1; }
+.result-score-label { font-size: 13px; color: var(--muted); font-weight: 600; margin-top: 4px; margin-bottom: 20px; }
+.btn-restart { font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; padding: 12px 32px; border-radius: 999px; border: none; background: linear-gradient(135deg,#059669,#34D399); color: white; cursor: pointer; box-shadow: 0 4px 12px rgba(5,150,105,.3); }
+
+@media (max-width: 480px) {
+  .question-text { font-size: 14px; }
+  .option-btn { font-size: 13px; padding: 10px 13px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal(); return false;">← Voltar ao portal</a>
+  <div class="card-header">
+    <div class="hicon">⭕</div>
+    <div><h1>Quiz</h1><p>Circunferência e Círculo — 5º Ano</p></div>
+    <div class="hbadge">9 questões</div>
+  </div>
+  <div class="quiz-body">
+    <div class="prog-wrap">
+      <div class="prog-info">
+        <span class="prog-label" id="prog-label">Questão 1 de 9</span>
+        <span class="prog-score" id="prog-score">0 acertos</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="quiz-area">
+      <div class="question-card">
+        <div class="question-num" id="q-num">QUESTÃO 1 / 9</div>
+        <div class="question-text" id="q-text"></div>
+      </div>
+      <div class="options" id="options-wrap"></div>
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div id="fb-text"></div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-next" id="btn-next">Próxima →</button>
+      </div>
+    </div>
+
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="res-emoji">🏆</div>
+      <div class="result-title">Quiz concluído!</div>
+      <div class="result-sub" id="res-sub"></div>
+      <div class="result-score-big" id="res-pct"></div>
+      <div class="result-score-label" id="res-label"></div>
+      <button class="btn-restart" onclick="restartQuiz()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var quizQuestions = [
+  {
+    text: "O que é a circunferência, segundo a definição do livro?",
+    opts: [
+      "A região interna de um círculo preenchida até o centro",
+      "O conjunto de pontos de um plano situados à mesma distância de um centro",
+      "O segmento de reta que une dois pontos opostos de uma figura redonda",
+      "O instrumento utilizado para medir ângulos e arcos"
+    ],
+    correct: 1,
+    feedback: "A circunferência é o conjunto dos pontos de um plano situados à mesma distância de um ponto dado, chamado de centro. Todos esses pontos estão igualmente distantes do centro."
+  },
+  {
+    text: "Qual é a diferença entre circunferência e círculo?",
+    opts: [
+      "A circunferência tem centro e o círculo não tem",
+      "A circunferência é maior que o círculo em todas as situações",
+      "O círculo é a união da circunferência com a região interna por ela limitada",
+      "São nomes diferentes para a mesma figura geométrica"
+    ],
+    correct: 2,
+    feedback: "O círculo é a união da circunferência com a região interna por ela limitada. A circunferência é apenas a linha curva fechada; o círculo inclui essa linha e todo o interior."
+  },
+  {
+    text: "O que é o raio de uma circunferência?",
+    opts: [
+      "O ponto fixo localizado ao centro da circunferência",
+      "A distância total ao redor da circunferência",
+      "O segmento de reta que divide a circunferência em duas partes iguais",
+      "O segmento que une o centro a qualquer ponto da circunferência"
+    ],
+    correct: 3,
+    feedback: "O raio (r) é o segmento que une o centro a qualquer ponto da circunferência. Todos os raios de uma mesma circunferência têm exatamente a mesma medida."
+  },
+  {
+    text: "O que é o diâmetro de uma circunferência?",
+    opts: [
+      "O segmento que une o centro a um ponto da circunferência",
+      "O ponto central de onde partem todos os raios",
+      "O segmento que une dois pontos da circunferência passando pelo centro",
+      "A linha curva que forma a borda da circunferência"
+    ],
+    correct: 2,
+    feedback: "O diâmetro (d) é o segmento que une dois pontos da circunferência, passando pelo centro. Por isso o diâmetro sempre passa pelo centro e é o maior segmento que pode ser traçado dentro da circunferência."
+  },
+  {
+    text: "Qual é a fórmula que relaciona o diâmetro (d) e o raio (r) de uma circunferência?",
+    opts: [
+      "d = r + 2",
+      "d = r ÷ 2",
+      "d = r × r",
+      "d = 2 × r"
+    ],
+    correct: 3,
+    feedback: "A fórmula é d = 2 × r. O diâmetro é sempre o dobro do raio, pois o diâmetro passa pelo centro e equivale a dois raios colocados um após o outro."
+  },
+  {
+    text: "Qual instrumento é utilizado para traçar circunferências?",
+    opts: [
+      "Transferidor",
+      "Régua",
+      "Esquadro",
+      "Compasso"
+    ],
+    correct: 3,
+    feedback: "O compasso é o instrumento utilizado para traçar circunferências. Ele tem uma ponta-seca que fica fixa no centro e uma ponta com grafite que gira traçando a circunferência."
+  },
+  {
+    text: "Ao usar o compasso para traçar uma circunferência, qual parte deve ser fixada no ponto central?",
+    opts: [
+      "A ponta com grafite",
+      "A ponta-seca",
+      "A haste superior do compasso",
+      "O parafuso de ajuste da abertura"
+    ],
+    correct: 1,
+    feedback: "A ponta-seca deve ser fixada no ponto escolhido como centro. Ela permanece estática enquanto a ponta com grafite gira ao redor, traçando a circunferência."
+  },
+  {
+    text: "O que são circunferências concêntricas?",
+    opts: [
+      "Circunferências com raios iguais e centros diferentes",
+      "Circunferências que se cruzam em dois pontos da mesma linha",
+      "Circunferências com o mesmo centro, mas raios diferentes",
+      "Circunferências que formam um círculo quando sobrepostas"
+    ],
+    correct: 2,
+    feedback: "Circunferências concêntricas têm o mesmo centro (ponto O), porém raios diferentes. O prefixo 'co' significa 'juntos' e 'cêntrico' vem de 'centro' — como os anéis de um tronco de árvore."
+  },
+  {
+    text: "Uma circunferência tem raio de 4 cm. Para calcular o diâmetro usando a fórmula d = 2 × r, qual é o resultado?",
+    opts: [
+      "2 cm",
+      "6 cm",
+      "8 cm",
+      "16 cm"
+    ],
+    correct: 2,
+    feedback: "Aplicando a fórmula: d = 2 × r = 2 × 4 cm = 8 cm. O diâmetro é sempre o dobro do raio."
+  }
+];
+
+var quizCurrent = 0, quizScore = 0, quizAnswered = false;
+
+function renderQuestion() {
+  var q = quizQuestions[quizCurrent];
+  document.getElementById('q-num').textContent = 'QUESTÃO ' + (quizCurrent + 1) + ' / ' + quizQuestions.length;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('prog-label').textContent = 'Questão ' + (quizCurrent + 1) + ' de ' + quizQuestions.length;
+  document.getElementById('prog-fill').style.width = (quizCurrent / quizQuestions.length * 100) + '%';
+
+  var wrap = document.getElementById('options-wrap');
+  wrap.innerHTML = '';
+  q.opts.forEach(function(opt, idx) {
+    var btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.addEventListener('click', function() { selectOption(idx); });
+    wrap.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+  quizAnswered = false;
+}
+
+function selectOption(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  var q = quizQuestions[quizCurrent];
+  var btns = document.getElementById('options-wrap').querySelectorAll('.option-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+
+  var isCorrect = (idx === q.correct);
+  if (isCorrect) quizScore++;
+
+  btns[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) btns[q.correct].classList.add('correct');
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.style.display = 'flex';
+  document.getElementById('fb-icon').textContent = isCorrect ? '✓' : '✗';
+  document.getElementById('fb-text').textContent = q.feedback;
+
+  document.getElementById('prog-score').textContent = quizScore + (quizScore === 1 ? ' acerto' : ' acertos');
+  document.getElementById('btn-next').style.display = 'block';
+}
+
+document.getElementById('btn-next').addEventListener('click', function() {
+  quizCurrent++;
+  if (quizCurrent < quizQuestions.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult() {
+  var total = quizQuestions.length;
+  var pct = Math.round((quizScore / total) * 100);
+  window.sabendoScore = pct;
+
+  document.getElementById('quiz-area').style.display = 'none';
+  var rp = document.getElementById('result-panel');
+  rp.style.display = 'block';
+
+  var emoji = pct >= 80 ? '🏆' : pct >= 60 ? '⭐' : '📚';
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-sub').textContent = quizScore + ' de ' + total + ' questões corretas';
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Concluído!';
+
+  var msg = pct >= 80 ? 'Excelente! Você domina circunferência e círculo!' : pct >= 60 ? 'Bom trabalho! Continue praticando os conceitos.' : 'Continue estudando — revise raio, diâmetro e as definições.';
+  document.getElementById('res-label').textContent = msg;
+}
+
+function restartQuiz() {
+  quizCurrent = 0; quizScore = 0;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+  document.getElementById('prog-score').textContent = '0 acertos';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "circunferencia-circulo";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Circo",
+    characterEmoji: "⭕",
+    characterImg:   "chars/circunferencia-circulo-hd.png",
+    themeLabel:     "Circunferência e Círculo · Matemática",
+    totalActivities: 4,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-circunferencia-circulo",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var scoreVal = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: scoreVal, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
