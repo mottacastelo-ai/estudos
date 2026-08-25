@@ -8,11 +8,11 @@
 | Disciplina | Temas | Atividades |
 |---|---|---|
 | 📝 Português | 20 | 92 |
-| 🔢 Matemática | 9 | 41 |
+| 🔢 Matemática | 10 | 46 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **41** | **181** |
+| **Total** | **42** | **186** |
 
 ---
 
@@ -393,6 +393,20 @@
 | Complete a Lacuna | ✅ `complete-lacuna-circunferencia-circulo.html` |
 | Monte sua Circunferência | ✅ `criador-circunferencia-circulo.html` |
 | Mapa Mental | ✅ `mapa-mental-circunferencia-circulo.html` |
+
+---
+
+### Poligonos Triangulos Quadrilateros
+**Personagem:** Polito (figura geométrica plana animada, transforma-se em polígonos)
+**HQ:** ❌ `hq-poligonos-triangulos-quadrilateros.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-poligonos-triangulos-quadrilateros.html` |
+| Classificador de Polígonos | ✅ `classificador-poligonos-triangulos-quadrilateros.html` |
+| Ordene as Figuras | ✅ `ordenacao-poligonos-triangulos-quadrilateros.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-poligonos-triangulos-quadrilateros.html` |
+| Mapa Mental | ✅ `mapa-mental-poligonos-triangulos-quadrilateros.html` |
 
 ---
 
