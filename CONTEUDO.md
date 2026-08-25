@@ -425,7 +425,7 @@
 
 ### Localizacao Deslocamento Ampliacao
 **Personagem:** Mapi (novo — pino de localização animado)
-**HQ:** ❌ `hq-localizacao-deslocamento-ampliacao.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
+**HQ:** ✅ `hq-localizacao-deslocamento-ampliacao.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
