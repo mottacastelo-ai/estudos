@@ -385,7 +385,7 @@
 
 ### Circunferencia Circulo
 **Personagem:** Circo (compasso animado verde-esmeralda)
-**HQ:** ❌ `hq-circunferencia-circulo.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
+**HQ:** ✅ `hq-circunferencia-circulo.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
