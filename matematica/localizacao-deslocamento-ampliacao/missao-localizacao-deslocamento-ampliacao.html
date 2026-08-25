@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão Mapi — Localização, Deslocamento e Ampliação</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --mat: #059669; --mat-light: #34D399; --mat-bg: #ECFDF5;
+  --bg: #ECFDF5; --card: #fff; --text: #1A1A2E; --muted: #6B7280; --border: #A7F3D0;
+}
+body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+.wrap { max-width: 720px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--mat); text-decoration: none; margin-bottom: 16px; cursor: pointer; }
+.back-link:hover { opacity: .7; }
+.card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(5,150,105,.1); }
+.card-header { background: linear-gradient(135deg,#064E3B,#059669 60%,#34D399); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 30px; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; }
+/* XP bar */
+.xp-bar { padding: 12px 24px; background: #f0fdf8; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.xp-label { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--mat); white-space: nowrap; }
+.xp-track { flex: 1; min-width: 120px; height: 10px; border-radius: 999px; background: #d1fae5; }
+.xp-fill { height: 10px; border-radius: 999px; background: linear-gradient(90deg,#059669,#34D399); transition: width .5s; }
+.level-badge { background: var(--mat); color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+/* Mission area */
+.mission-area { padding: 20px 24px; }
+.mission-intro { text-align: center; padding: 12px 0 20px; }
+.mission-intro .big-emoji { font-size: 56px; }
+.mission-intro h2 { font-family: "Space Mono", monospace; font-size: 18px; color: var(--mat); margin-top: 10px; }
+.mission-intro p { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+.btn-start { margin-top: 20px; padding: 14px 32px; background: var(--mat); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(5,150,105,.3); }
+/* Level header */
+.level-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px 16px; background: var(--mat-bg); border-radius: 16px; border: 2px solid var(--border); }
+.level-icon { font-size: 28px; }
+.level-title { font-family: "Space Mono", monospace; font-size: 13px; font-weight: 800; color: var(--mat); }
+.level-sub { font-size: 12px; color: var(--muted); font-weight: 600; }
+/* Visual grid SVG */
+.grid-visual { width: 100%; max-width: 340px; margin: 0 auto 16px; display: block; border-radius: 12px; border: 2px solid var(--border); background: #fff; }
+/* Question */
+.q-text { font-size: 15px; font-weight: 700; line-height: 1.5; margin-bottom: 14px; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px; border-radius: 14px; border: 2px solid var(--border); background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600; line-height: 1.4; transition: all .15s; }
+.opt:hover { border-color: var(--mat-light); background: var(--mat-bg); }
+.opt.correct { border-color: #059669; background: #d1fae5; }
+.opt.wrong   { border-color: #DC2626; background: #FEE2E2; }
+.opt.disabled { pointer-events: none; }
+.opt-letter { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 800; color: var(--mat); min-width: 18px; }
+.opt.correct .opt-letter { color: #059669; }
+.opt.wrong   .opt-letter { color: #DC2626; }
+.feedback { display: none; padding: 11px 14px; border-radius: 12px; margin-top: 12px; font-size: 13px; font-weight: 700; line-height: 1.5; }
+.feedback.correct { background: #d1fae5; border: 2px solid #059669; color: #064E3B; }
+.feedback.wrong   { background: #FEE2E2; border: 2px solid #DC2626; color: #7F1D1D; }
+.btn-action { margin-top: 14px; padding: 11px 24px; background: var(--mat); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 3px 10px rgba(5,150,105,.3); display: none; }
+.q-sep { height: 1px; background: var(--border); margin: 20px 0; }
+/* Result */
+.result-panel { display: none; text-align: center; padding: 24px 0; }
+.result-emoji { font-size: 52px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 20px; color: var(--mat); margin-bottom: 8px; }
+.result-sub { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+.result-score { font-size: 44px; font-weight: 900; color: var(--mat); }
+.result-score small { font-size: 16px; color: var(--muted); }
+.btn-restart { margin-top: 18px; padding: 12px 28px; background: var(--mat); color: #fff; border: none; border-radius: 999px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.stars { font-size: 28px; letter-spacing: 4px; margin: 8px 0; }
+@media (max-width: 480px) {
+  .q-text { font-size: 14px; }
+  .opt { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" onclick="voltarAoPortal()">← Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">📍</div>
+      <div><h1>Missão Mapi</h1><p>Localização, Deslocamento e Ampliação</p></div>
+      <div class="hbadge">4 fases</div>
+    </div>
+    <div class="xp-bar">
+      <span class="xp-label">XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="level-badge" id="level-badge">Fase 0/4</span>
+      <span style="font-size:13px;font-weight:800;color:var(--mat)" id="xp-pts">0 pts</span>
+    </div>
+    <div class="mission-area" id="mission-area">
+      <!-- Intro screen -->
+      <div class="mission-intro" id="intro-screen">
+        <div class="big-emoji">📍</div>
+        <h2>Missão Mapi!</h2>
+        <p>A Mapi precisa da sua ajuda para navegar pela cidade!<br>Complete as 4 fases e ganhe XP em cada acerto.<br>Cada fase cobre um conceito do tema.</p>
+        <button class="btn-start" onclick="startMission()">Iniciar missão!</button>
+      </div>
+      <!-- Question screen -->
+      <div id="q-screen" style="display:none"></div>
+      <!-- Result screen -->
+      <div class="result-panel" id="result-panel">
+        <div class="result-emoji" id="res-emoji"></div>
+        <div class="result-title">Missão completa!</div>
+        <div class="stars" id="res-stars"></div>
+        <div class="result-sub" id="res-sub"></div>
+        <div class="result-score"><small>Acertos: </small><span id="res-acertos"></span><small>/8</small></div>
+        <button class="btn-restart" onclick="restartMission()">↺ Jogar novamente</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// Guia de ruas grid — letras A-E, números 1-4, estrela em B3
+function svgGuiaRuas() {
+  var cols = ['A','B','C','D','E'];
+  var rows = [1,2,3,4];
+  var cellW = 46, cellH = 38, padX = 30, padY = 24;
+  var W = padX + cols.length * cellW + 10;
+  var H = padY + rows.length * cellH + 10;
+  var out = '<svg class="grid-visual" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="\'Baloo 2\',cursive">';
+  // Column headers
+  cols.forEach(function(c,ci) {
+    out += '<text x="' + (padX + ci*cellW + cellW/2) + '" y="16" text-anchor="middle" font-size="12" font-weight="800" fill="#059669">' + c + '</text>';
+  });
+  // Row headers
+  rows.forEach(function(r,ri) {
+    out += '<text x="14" y="' + (padY + ri*cellH + cellH/2 + 4) + '" text-anchor="middle" font-size="12" font-weight="800" fill="#059669">' + r + '</text>';
+  });
+  // Grid cells
+  rows.forEach(function(r,ri) {
+    cols.forEach(function(c,ci) {
+      var x = padX + ci*cellW, y = padY + ri*cellH;
+      var isStar = (c === 'B' && r === 3);
+      out += '<rect x="' + x + '" y="' + y + '" width="' + cellW + '" height="' + cellH + '" rx="4" fill="' + (isStar ? '#d1fae5' : '#f8fffe') + '" stroke="#A7F3D0" stroke-width="1.5"/>';
+      if (isStar) out += '<text x="' + (x+cellW/2) + '" y="' + (y+cellH/2+5) + '" text-anchor="middle" font-size="18">⭐</text>';
+    });
+  });
+  out += '</svg>';
+  return out;
+}
+
+// Malha quadriculada com ponto em (3,5)
+function svgMalhaGrid() {
+  var maxX = 7, maxY = 7, cellSz = 32, padX = 28, padY = 8, marginBot = 24;
+  var W = padX + maxX*cellSz + 8, H = padY + maxY*cellSz + marginBot;
+  var out = '<svg class="grid-visual" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="\'Baloo 2\',cursive">';
+  // Grid lines
+  for (var xi = 0; xi <= maxX; xi++) {
+    var gx = padX + xi*cellSz;
+    out += '<line x1="' + gx + '" y1="' + padY + '" x2="' + gx + '" y2="' + (padY+maxY*cellSz) + '" stroke="#A7F3D0" stroke-width="1"/>';
+  }
+  for (var yi = 0; yi <= maxY; yi++) {
+    var gy = padY + yi*cellSz;
+    out += '<line x1="' + padX + '" y1="' + gy + '" x2="' + (padX+maxX*cellSz) + '" y2="' + gy + '" stroke="#A7F3D0" stroke-width="1"/>';
+  }
+  // Axes
+  var axisX = padX, axisY = padY + maxY*cellSz;
+  out += '<line x1="' + axisX + '" y1="' + padY + '" x2="' + axisX + '" y2="' + axisY + '" stroke="#059669" stroke-width="2.5"/>';
+  out += '<line x1="' + axisX + '" y1="' + axisY + '" x2="' + (padX+maxX*cellSz) + '" y2="' + axisY + '" stroke="#059669" stroke-width="2.5"/>';
+  // Labels x
+  for (var n = 0; n <= maxX; n++) {
+    out += '<text x="' + (padX+n*cellSz) + '" y="' + (axisY+16) + '" text-anchor="middle" font-size="10" font-weight="700" fill="#374151">' + n + '</text>';
+  }
+  // Labels y
+  for (var m = 0; m <= maxY; m++) {
+    var lY = padY + (maxY-m)*cellSz;
+    out += '<text x="' + (axisX-8) + '" y="' + (lY+4) + '" text-anchor="end" font-size="10" font-weight="700" fill="#374151">' + m + '</text>';
+  }
+  // Axis labels
+  out += '<text x="' + (padX+maxX*cellSz/2) + '" y="' + (axisY+28) + '" text-anchor="middle" font-size="9" font-weight="700" fill="#059669">Reta numérica horizontal</text>';
+  // Point at (3,5)
+  var ptX = padX + 3*cellSz, ptY = padY + (maxY-5)*cellSz;
+  out += '<circle cx="' + ptX + '" cy="' + ptY + '" r="7" fill="#059669" opacity="0.9"/>';
+  out += '<text x="' + (ptX+10) + '" y="' + (ptY+4) + '" font-size="11" font-weight="800" fill="#064E3B">P</text>';
+  out += '</svg>';
+  return out;
+}
+
+// Missions data
+var LEVELS = [
+  {
+    icon: '🗺️', title: 'Fase 1 — Guia de Ruas', sub: 'Identifique regiões no guia',
+    qs: [
+      {
+        visual: svgGuiaRuas(),
+        q: 'Observe o guia de ruas acima. Em qual região está a estrela (⭐)?',
+        opts: ['A3', 'B3', 'C2', 'B4'],
+        ans: 1,
+        exp: 'A estrela está na coluna B (letra da fileira vertical) e na linha 3 (número da fileira horizontal), portanto na região B3.'
+      },
+      {
+        visual: null,
+        q: 'Em um guia de ruas, o fórum está na região F2. O que isso significa?',
+        opts: ['Fileira vertical F e fileira horizontal 2.', 'Fileira horizontal F e fileira vertical 2.', 'A 6ª rua e a 2ª avenida.', 'O fórum fica na rua F, número 2.'],
+        ans: 0,
+        exp: 'No guia de ruas, as letras representam as fileiras verticais e os números representam as fileiras horizontais. F2 = fileira vertical F + fileira horizontal 2.'
+      }
+    ]
+  },
+  {
+    icon: '📐', title: 'Fase 2 — Malha Quadriculada', sub: 'Localize pontos por par de números',
+    qs: [
+      {
+        visual: svgMalhaGrid(),
+        q: 'O ponto P está marcado na malha acima. Qual é a posição do ponto P?',
+        opts: ['(5, 3)', '(3, 5)', '(3, 3)', '(5, 5)'],
+        ans: 1,
+        exp: 'O ponto P está em 3 unidades na reta numérica horizontal e 5 unidades na reta numérica vertical, portanto na posição (3, 5). Lembre-se: o primeiro número é sempre o horizontal!'
+      },
+      {
+        visual: null,
+        q: 'Na posição (4, 2), o número 4 representa a posição em relação a qual reta numérica?',
+        opts: ['Reta numérica vertical.', 'Reta numérica horizontal.', 'Reta diagonal.', 'Tanto faz, o número pode ser de qualquer reta.'],
+        ans: 1,
+        exp: 'O primeiro número de um par de posição sempre indica a posição na reta numérica horizontal. Na posição (4, 2): 4 é a posição horizontal e 2 é a posição vertical.'
+      }
+    ]
+  },
+  {
+    icon: '🐢', title: 'Fase 3 — Deslocamento', sub: 'Acompanhe o caminho e os giros',
+    qs: [
+      {
+        visual: null,
+        q: 'A tartaruga partiu da posição (2, 2) e se deslocou sobre as linhas da malha quadriculada até a posição (6, 2). Sobre qual reta ela se deslocou?',
+        opts: ['Reta numérica vertical — o segundo número mudou.', 'Reta numérica horizontal — o primeiro número mudou.', 'As duas retas ao mesmo tempo.', 'Ela não se deslocou.'],
+        ans: 1,
+        exp: 'De (2,2) para (6,2): o segundo número (vertical) ficou igual em 2, mas o primeiro (horizontal) mudou de 2 para 6. Isso significa que a tartaruga se deslocou apenas ao longo da reta numérica horizontal.'
+      },
+      {
+        visual: null,
+        q: 'A tartaruga está andando para a direita na malha quadriculada e dá um giro de 90° para a esquerda. Em qual direção ela passa a andar?',
+        opts: ['Continua para a direita.', 'Para baixo (sentido contrário).', 'Para cima.', 'Para trás (direção contrária).'],
+        ans: 2,
+        exp: 'Andando para a direita, um giro de 90° para a esquerda faz a tartaruga passar a andar para cima. É como virar na esquina à esquerda: antes ia na horizontal, agora vai na vertical, subindo.'
+      }
+    ]
+  },
+  {
+    icon: '🔍', title: 'Fase 4 — Ampliação e Redução', sub: 'Identifique o que muda nas figuras',
+    qs: [
+      {
+        visual: null,
+        q: 'Mário disse: "Eu multipliquei por 2 todas as medidas de todos os lados do desenho de Lucas." O que Mário fez?',
+        opts: ['Uma redução do desenho de Lucas.', 'Uma cópia com as mesmas medidas.', 'Uma ampliação do desenho de Lucas.', 'Apenas mudou a posição da figura.'],
+        ans: 2,
+        exp: 'Multiplicar todas as medidas de todos os lados por um mesmo número é o que caracteriza uma ampliação. O desenho de Mário ficou maior que o de Lucas, mantendo a mesma forma.'
+      },
+      {
+        visual: null,
+        q: 'Para fazer uma redução de uma figura em malha quadriculada, o que deve ser feito com as medidas de TODOS os lados?',
+        opts: ['Somar um mesmo número a todas as medidas.', 'Subtrair um mesmo número de todas as medidas.', 'Dividir todas as medidas dos lados por um mesmo número.', 'Alterar apenas os lados mais longos.'],
+        ans: 2,
+        exp: 'Na redução, dividimos todas as medidas de todos os lados por um mesmo número. Ana dividiu por 2 todas as medidas do desenho de Lucas, fazendo uma redução. TODOS os lados devem ser divididos pelo mesmo número.'
+      }
+    ]
+  }
+];
+
+var curLevelIdx = 0, curQIdx = 0, totalAcertos = 0, xpTotal = 0;
+var levelDone = false, missionStarted = false;
+
+function startMission() {
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('q-screen').style.display = 'block';
+  curLevelIdx = 0; curQIdx = 0; totalAcertos = 0; xpTotal = 0;
+  missionStarted = true;
+  renderLevel();
+}
+
+function updateXP() {
+  var pct = (xpTotal / 8) * 100;
+  document.getElementById('xp-fill').style.width = pct + '%';
+  document.getElementById('xp-pts').textContent = (xpTotal * 25) + ' pts';
+  document.getElementById('level-badge').textContent = 'Fase ' + Math.min(curLevelIdx + 1, 4) + '/4';
+}
+
+function renderLevel() {
+  var lv = LEVELS[curLevelIdx];
+  var qIdx = curQIdx;
+  var q = lv.qs[qIdx];
+  var letters = ['A','B','C','D'];
+
+  document.getElementById('level-badge').textContent = 'Fase ' + (curLevelIdx + 1) + '/4';
+
+  var html = '';
+  html += '<div class="level-header">';
+  html += '<div class="level-icon">' + lv.icon + '</div>';
+  html += '<div><div class="level-title">' + lv.title + '</div><div class="level-sub">' + lv.sub + '</div></div>';
+  html += '</div>';
+
+  if (q.visual) html += q.visual;
+
+  html += '<div class="q-text">Pergunta ' + (qIdx + 1) + ' de 2: ' + q.q + '</div>';
+  html += '<div class="opts" id="opts-container">';
+  q.opts.forEach(function(opt, i) {
+    html += '<div class="opt" data-idx="' + i + '" onclick="selectAnswer(this,' + (i === q.ans) + ')">';
+    html += '<span class="opt-letter">' + letters[i] + ')</span><span>' + opt + '</span></div>';
+  });
+  html += '</div>';
+  html += '<div class="feedback" id="mission-feedback"></div>';
+  html += '<button class="btn-action" id="btn-next-mission" onclick="advanceMission()">' +
+    (curLevelIdx < 3 || qIdx < 1 ? 'Próxima →' : 'Ver resultado') + '</button>';
+
+  document.getElementById('q-screen').innerHTML = html;
+  updateXP();
+}
+
+function selectAnswer(el, isCorrect) {
+  var allOpts = document.getElementById('opts-container').querySelectorAll('.opt');
+  allOpts.forEach(function(o) {
+    o.classList.add('disabled');
+    var idx = parseInt(o.getAttribute('data-idx'));
+    if (idx === LEVELS[curLevelIdx].qs[curQIdx].ans) o.classList.add('correct');
+  });
+  if (!isCorrect) el.classList.add('wrong');
+
+  if (isCorrect) { totalAcertos++; xpTotal++; }
+
+  var fb = document.getElementById('mission-feedback');
+  fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '<b>✓ Correto!</b> ' : '<b>✗ Quase!</b> ') + LEVELS[curLevelIdx].qs[curQIdx].exp;
+  fb.style.display = 'block';
+  document.getElementById('btn-next-mission').style.display = 'inline-block';
+  updateXP();
+}
+
+function advanceMission() {
+  curQIdx++;
+  if (curQIdx < LEVELS[curLevelIdx].qs.length) {
+    renderLevel();
+  } else {
+    curLevelIdx++;
+    curQIdx = 0;
+    if (curLevelIdx < LEVELS.length) {
+      renderLevel();
+    } else {
+      showMissionResult();
+    }
+  }
+}
+
+function showMissionResult() {
+  document.getElementById('q-screen').style.display = 'none';
+  var pct = Math.round((totalAcertos / 8) * 100);
+  window.sabendoScore = pct;
+  var panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  var starCount = totalAcertos >= 7 ? 3 : totalAcertos >= 5 ? 2 : 1;
+  document.getElementById('res-emoji').textContent = totalAcertos >= 7 ? '🏆' : totalAcertos >= 5 ? '🎉' : '📚';
+  document.getElementById('res-stars').textContent = '⭐'.repeat(starCount);
+  document.getElementById('res-sub').textContent = totalAcertos >= 7
+    ? 'Mapi está orgulhosa! Você dominou a localização!'
+    : totalAcertos >= 5 ? 'Bom trabalho! Continue praticando!'
+    : 'Revise os conceitos e tente de novo — a Mapi acredita em você!';
+  document.getElementById('res-acertos').textContent = totalAcertos;
+  document.getElementById('level-badge').textContent = 'Fase 4/4';
+  document.getElementById('xp-fill').style.width = '100%';
+}
+
+function restartMission() {
+  document.getElementById('result-panel').style.display = 'none';
+  document.getElementById('q-screen').style.display = 'block';
+  curLevelIdx = 0; curQIdx = 0; totalAcertos = 0; xpTotal = 0;
+  renderLevel();
+}
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "mat";
+  var THEME_SLUG = "localizacao-deslocamento-ampliacao";
+  var ACTIVITY_TYPE = "missao";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Mapi",
+    characterEmoji: "📍",
+    characterImg:   "chars/localizacao-deslocamento-ampliacao-hd.png",
+    themeLabel:     "Localização, Deslocamento e Ampliação · Matemática",
+    totalActivities: 4,
+    primaryColor: "#059669",
+    lightColor: "#34D399",
+    bgColor: "#ECFDF5",
+    glowRgb: "5,150,105",
+    backUrl: "../../index.html#theme-mat-localizacao-deslocamento-ampliacao",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#059669,#34D399);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(5,150,105,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) { _sabendoScoreInternal = v; window._sabendoScoreInternal = v; showBtn(); }
+    });
+  } catch(e) {}
+  document.addEventListener('sabendo:criador-done', function() { window._sabendoScoreInternal = 100; showBtn(); });
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando..."; btn.disabled = true;
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal"; btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#059669,#34D399)"; btn.disabled = false; }, 3000);
+      return;
+    }
+    var uid = session.user.id, score = _capturedScore, today = new Date().toISOString().split("T")[0];
+    var existCheck = await supa.from("activity_log").select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+    await supa.from("activity_log").insert({ user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG, activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst });
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data; var yest = new Date(); yest.setDate(yest.getDate() - 1); var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+    btn.style.display = "none";
+    if (window.SabendoGamification) await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

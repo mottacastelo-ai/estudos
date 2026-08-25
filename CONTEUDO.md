@@ -8,11 +8,11 @@
 | Disciplina | Temas | Atividades |
 |---|---|---|
 | 📝 Português | 20 | 92 |
-| 🔢 Matemática | 7 | 33 |
+| 🔢 Matemática | 8 | 37 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **39** | **173** |
+| **Total** | **40** | **177** |
 
 ---
 
@@ -367,6 +367,19 @@
 | Mapa Mental | ✅ `mapa-mental-mdc-mmc-problemas.html` |
 | Problemas Contextuais | ✅ `problemas-mdc-mmc-problemas.html` |
 | Treino no Papel | ✅ `treino-mdc-mmc-problemas.html` |
+
+---
+
+### Reta Semirreta Segmento
+**Personagem:** Lino (uma reta animada verde-esmeralda que se transforma em semirreta e segmento)
+**HQ:** ❌ `hq-reta-semirreta-segmento.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-reta-semirreta-segmento.html` |
+| Detetive dos Nomes | ✅ `detetive-nomes-reta-semirreta-segmento.html` |
+| Classificador Geométrico | ✅ `classificador-reta-semirreta-segmento.html` |
+| Mapa Mental | ✅ `mapa-mental-reta-semirreta-segmento.html` |
 
 ---
 
