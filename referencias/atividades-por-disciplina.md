@@ -1,23 +1,25 @@
 # Catálogo de Atividades — Portal Educacional 5º Ano
 **Última atualização:** 2026-05-25
-**Gerado por:** Claude (chat) com base no estado real do site + taxonomia pedagógica (Bloom revisado + Glasser)
+**Gerado por:** Claude (chat) com base no estado real do site + taxonomia pedagógica (Bloom revisado e ações de aprendizagem)
 
 > **Instruções para o agente gerador-atividades:**
 > 1. Consulte a seção da disciplina correspondente ao tema em produção
 > 2. Verifique quais tipos já foram usados nos temas existentes dessa disciplina
 > 3. Selecione 2–3 atividades variáveis que **não repitam** nenhum tipo já usado
-> 4. Priorize: pelo menos um nível intermediário (70–80%) e uma atividade de criação (90%)
+> 4. Priorize: pelo menos uma atividade de exploração ou prática e uma atividade de criação
 > 5. Ao finalizar a geração, adicione o novo tema na coluna "Usada em" dos tipos escolhidos
 
 ---
 
-## Legenda de níveis
+## Ações de aprendizagem
 
-| Código | Nível Glasser | Dimensão Bloom | Classe CSS |
+Os rótulos descrevem ações, não uma hierarquia nem percentuais de retenção. Use Explorar para observar e comparar, Praticar para aplicar e exercitar, Criar para produzir e Explicar para comunicar relações e raciocínios. Preserve percentuais de acerto e progresso, que medem o desempenho real da atividade.
+
+| Código | Ação de aprendizagem | Dimensão Bloom | Classe CSS |
 |---|---|---|---|
-| L1 | 50–60% Discutir | Compreender / Analisar | `lv1` |
-| L2 | 70–80% Praticar | Aplicar / Analisar | `lv2` |
-| L3 | 90% Ensinar/Criar | Avaliar / Criar | `lv3` |
+| L1 | Explorar | Compreender / Analisar | `lv1` |
+| L2 | Praticar | Aplicar / Analisar | `lv2` |
+| L3 | Criar / Explicar | Avaliar / Criar | `lv3` |
 | L4 | Retrieval practice | Lembrar / Aplicar | `lv4` |
 
 ---

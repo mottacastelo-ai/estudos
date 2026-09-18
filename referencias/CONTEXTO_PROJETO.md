@@ -5,7 +5,7 @@
 
 ## Visão Geral
 
-Portal web educacional (SPA) para o aprendizado do André (5º ano). Fundamentado em metodologia de aprendizagem ativa e estruturado na Pirâmide de Aprendizagem de Glasser: cada tema começa com uma HQ, avança por atividades de retrieval practice e culmina em tarefas de criação. Inclui sistema de gamificação completo com cartas colecionáveis e reforço adaptativo.
+Portal web educacional (SPA) para o aprendizado do André (5º ano). Fundamentado em aprendizagem ativa, com atividades de exploração, prática, criação e explicação, sem percentuais fixos de retenção: cada tema começa com uma HQ, avança por atividades de retrieval practice e culmina em tarefas de criação. Inclui sistema de gamificação completo com cartas colecionáveis e reforço adaptativo.
 
 ---
 
@@ -265,7 +265,7 @@ Tipos de atividade: quiz / complete-lacuna / caca-erro / ordenacao / criador /
 |---|---|
 | Retrieval practice | Atividades de recuperação progressiva em cada tema |
 | Aprendizagem multimídia | Integração de HQs, texto e atividades interativas |
-| Pirâmide de Glasser | Progressão HQ → retrieval → aplicação → criação |
+| Ações de aprendizagem | Progressão HQ → retrieval → aplicação → criação |
 | Spaced repetition | Reforço adaptativo com `due_date + 5 dias` |
 | Gamificação | Cartas colecionáveis, reveal progressivo, raridade por desempenho |
 

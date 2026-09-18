@@ -311,7 +311,7 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 - **Arquivo:** `[disc-folder]/[slug]/quiz-[slug].html`
 - **Estrutura:** 10 questões de múltipla escolha com 4 alternativas
 - **Feedback:** imediato por questão + placar final com mensagem motivacional
-- **Nível Glasser:** 📖 Retrieval practice
+- **Ação de aprendizagem:** 📖 Retrieval practice
 - **Card no index:**
 ```html
 <a class="act-card [disc]" href="[disc-folder]/[slug]/quiz-[slug].html" target="_blank">
@@ -327,7 +327,7 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 - **Arquivo:** `[disc-folder]/[slug]/mapa-mental-[slug].html`
 - **Template canônico:** `historia/diversidade-cultural/mapa-mental-diversidade-cultural.html` — ler antes de implementar
 - **Conteúdo:** máximo 10 nós (exemplos contam para o limite)
-- **Nível Glasser:** 🏆 Ensinar (90%)
+- **Ação de aprendizagem:** 🏆 Explicar
 - **Sempre é a última atividade listada no act-grid**
 
 **Regras de implementação obrigatórias:**
@@ -349,7 +349,7 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
   <div class="act-title">Mapa Mental</div>
   <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema. Compare com o gabarito ao final.</div>
   <div class="act-tags"><span class="tag tag-[tag-disc]">Digital</span><span class="tag tag-a">Síntese</span></div>
-  <div class="level lv3">🏆 Ensinar (90%)</div>
+  <div class="level lv3">🏆 Explicar</div>
 </a>
 ```
 
@@ -357,18 +357,20 @@ Fundo branco, nome abaixo de cada personagem, mesmo estilo das outras páginas.]
 
 Consulte `referencias/atividades-por-disciplina.md` para sugestões por disciplina. Selecione **2-3 atividades** respeitando:
 1. Nenhuma deve repetir o tipo de interação de outro tema da mesma disciplina
-2. Deve cobrir pelo menos um nível intermediário (70% ou 80% da pirâmide)
-3. Deve haver pelo menos uma atividade de criação/produção (90%)
+2. Deve cobrir pelo menos uma atividade de exploração ou prática
+3. Deve haver pelo menos uma atividade de criação/produção
 
 A escolha deve ser **justificada** com base no conteúdo específico do tema.
 
-### 4.3 Níveis e classes CSS
+### 4.3 Ações de aprendizagem e classes CSS
 
-| Nível Glasser | Label               | Classe CSS |
+Os rótulos descrevem ações, não uma hierarquia nem percentuais de retenção. Use Explorar para observar e comparar, Praticar para aplicar e exercitar, Criar para produzir e Explicar para comunicar relações e raciocínios. Preserve percentuais de acerto e progresso, que medem o desempenho real da atividade.
+
+| Ação de aprendizagem | Label               | Classe CSS |
 |---------------|---------------------|------------|
-| 50-60%        | 💬 Discutir (70%)   | `lv1`      |
-| 70-80%        | ⚡ Praticar (80%)   | `lv2`      |
-| 90%           | 🏆 Ensinar (90%)    | `lv3`      |
+| Explorar | 💬 Explorar | `lv1` |
+| Praticar | ⚡ Praticar | `lv2` |
+| Criar / Explicar | 🏆 Criar ou 🏆 Explicar, conforme a tarefa | `lv3` |
 | Retrieval     | 📖 Retrieval practice | `lv4`    |
 
 ---
