@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criador de Artigo de Opinião</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;--port-dark:#4C1D95;
+  --border:#DDD6FE;--card:#fff;--text:#1A1A2E;--muted:#6B7280;--radius:18px;
+  --ok:#059669;--ok-bg:#ECFDF5;--ok-border:#6EE7B7;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px}
+.wrap{max-width:700px;margin:0 auto}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);text-decoration:none;margin-bottom:14px}
+.back-link:hover{opacity:.75}
+.card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.1)}
+.card-header{background:linear-gradient(135deg,#2D1B69,#7C3AED 60%,#A78BFA);padding:20px 22px 18px;display:flex;align-items:center;gap:14px}
+.card-header .hicon{font-size:32px}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap}
+
+/* STEPS NAV */
+.steps-nav{display:flex;align-items:center;padding:14px 16px 10px;gap:0;overflow-x:auto;border-bottom:2px solid var(--border)}
+.step-dot{flex-shrink:0;width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--muted);transition:all .2s;cursor:default}
+.step-dot.active{background:var(--port);border-color:var(--port-dark);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.35)}
+.step-dot.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 2px;min-width:8px;transition:background .2s}
+.step-line.done{background:var(--ok)}
+.steps-labels{display:flex;justify-content:space-between;padding:4px 16px 12px;font-size:10px;font-weight:700;color:var(--muted);overflow-x:auto}
+.steps-labels span{text-align:center;white-space:nowrap;font-size:9px}
+
+/* STEP CONTENT */
+.step-content{display:none;padding:18px 20px 16px;animation:fadeIn .25s ease}
+.step-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.step-title{font-family:"Space Mono",monospace;font-size:14px;font-weight:700;color:var(--port-dark);margin-bottom:4px}
+.step-desc{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.step-tip{font-size:12px;font-weight:600;color:var(--port);background:var(--port-bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:12px;line-height:1.5}
+.step-tip strong{color:var(--port-dark)}
+
+/* Tema options (step 1) */
+.tema-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tema-opt{border:2px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;text-align:center;font-size:13px;font-weight:700;transition:all .15s;background:var(--port-bg);color:var(--text)}
+.tema-opt:hover{border-color:var(--port-light);background:#EDE9FE}
+.tema-opt.selected{border-color:var(--port);background:var(--port-bg);color:var(--port-dark);box-shadow:0 0 0 2px var(--port-light)}
+.tema-opt .tema-icon{font-size:24px;display:block;margin-bottom:4px}
+.tema-opt .tema-name{font-size:12px;font-weight:800}
+
+/* Textarea */
+.field-label{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.field-label .char-count{color:var(--port-light)}
+textarea{width:100%;min-height:90px;border:2px solid var(--border);border-radius:12px;padding:12px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:600;color:var(--text);resize:vertical;transition:border-color .15s;background:var(--port-bg);line-height:1.55}
+textarea:focus{outline:none;border-color:var(--port-light)}
+textarea::placeholder{color:var(--muted);font-weight:600;font-style:italic}
+.field-wrap{margin-bottom:12px}
+
+/* Buttons */
+.btn-row{display:flex;gap:10px;margin-top:16px}
+.btn-next-s{flex:1;padding:13px;background:linear-gradient(135deg,var(--port),var(--port-light));color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;font-family:"Baloo 2",cursive;transition:all .2s}
+.btn-next-s:hover{opacity:.9;transform:translateY(-1px)}
+.btn-next-s:disabled{opacity:.45;cursor:default;transform:none}
+.btn-back-s{padding:13px 18px;background:var(--port-bg);border:2px solid var(--border);color:var(--port);border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;font-family:"Baloo 2",cursive}
+.btn-back-s:hover{border-color:var(--port-light)}
+
+/* PREVIEW (final step) */
+.preview-paper{background:#fff;border:2px solid var(--border);border-radius:16px;padding:20px;margin-top:12px;font-size:14px;line-height:1.7;color:var(--text)}
+.preview-title{font-family:"Space Mono",monospace;font-size:15px;font-weight:700;color:var(--port-dark);text-align:center;margin-bottom:4px}
+.preview-author{font-size:11px;font-weight:700;color:var(--muted);text-align:center;margin-bottom:14px}
+.preview-section{margin-bottom:12px}
+.preview-section-label{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--port-light);letter-spacing:.08em;margin-bottom:3px}
+.preview-section p{font-size:13px;font-weight:600;line-height:1.65;color:var(--text)}
+
+/* Checklist */
+.checklist{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.check-item{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;padding:10px 14px;border-radius:12px;background:var(--port-bg);border:2px solid var(--border);cursor:pointer;transition:all .15s;user-select:none}
+.check-item:hover{border-color:var(--port-light)}
+.check-item.checked{background:var(--ok-bg);border-color:var(--ok-border);color:#065F46}
+.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;background:#fff}
+.check-item.checked .check-box{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* Done */
+.done-panel{display:none;text-align:center;padding:24px 20px}
+.done-panel.show{display:block}
+.done-panel .done-emoji{font-size:52px;margin-bottom:10px}
+.done-panel h2{font-family:"Space Mono",monospace;font-size:18px;font-weight:700;color:var(--port-dark);margin-bottom:6px}
+.done-panel p{font-size:13px;color:var(--muted);font-weight:600}
+.done-badge{display:inline-block;background:var(--port);color:#fff;font-size:14px;font-weight:800;padding:8px 22px;border-radius:999px;margin-top:14px}
+
+@media(max-width:480px){
+  .tema-grid{grid-template-columns:1fr 1fr}
+  .tema-opt .tema-name{font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" onclick="voltarAoPortal()" href="#">&#8592; Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">✍️</div>
+      <div><h1>Criador de Artigo de Opinião</h1><p>Defenda seu ponto de vista passo a passo</p></div>
+      <div class="hbadge">🏆 Criar</div>
+    </div>
+
+    <!-- Steps nav -->
+    <div class="steps-nav" id="steps-nav"></div>
+    <div class="steps-labels" id="steps-labels"></div>
+
+    <!-- Step 1: Choose topic -->
+    <div class="step-content active" id="step-0">
+      <div class="step-title">Passo 1 — Escolha o problema</div>
+      <div class="step-desc">Artigos de opinião abordam situações reais. Escolha um problema vivenciado por estudantes da sua idade na escola:</div>
+      <div class="tema-grid" id="tema-grid">
+        <div class="tema-opt" onclick="selectTema(this,'sono')"><span class="tema-icon">😴</span><span class="tema-name">Sono durante a aula</span></div>
+        <div class="tema-opt" onclick="selectTema(this,'bullying')"><span class="tema-icon">😟</span><span class="tema-name">Bullying ou dificuldade para se enturmar</span></div>
+        <div class="tema-opt" onclick="selectTema(this,'celular')"><span class="tema-icon">📱</span><span class="tema-name">Distração pelo uso do celular</span></div>
+        <div class="tema-opt" onclick="selectTema(this,'concentracao')"><span class="tema-icon">😰</span><span class="tema-name">Falta de concentração por problemas familiares</span></div>
+        <div class="tema-opt" onclick="selectTema(this,'apresentacao')"><span class="tema-icon">🎤</span><span class="tema-name">Dificuldade para organizar apresentação em grupo</span></div>
+        <div class="tema-opt" onclick="selectTema(this,'atencao')"><span class="tema-icon">🙈</span><span class="tema-name">Problemas para manter atenção em atividades em grupo</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-next-s" id="btn1" onclick="goStep(1)" disabled>Próximo: Apresentação do tema →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Apresentação do tema -->
+    <div class="step-content" id="step-1">
+      <div class="step-title">Passo 2 — Apresentação do tema</div>
+      <div class="step-tip"><strong>Dica do livro:</strong> Apresente, no primeiro parágrafo, o assunto sobre o qual vai falar. Introduza o problema de forma clara para o leitor.</div>
+      <div class="step-desc">Escreva um parágrafo apresentando o problema <strong id="tema-nome-1"></strong> na escola.</div>
+      <div class="field-wrap">
+        <div class="field-label"><span>Parágrafo de apresentação</span><span class="char-count" id="cc1">0/200</span></div>
+        <textarea id="ta1" maxlength="200" placeholder="Exemplo: 'Nos últimos anos, percebe-se que muitos estudantes têm chegado às aulas com sono, o que prejudica o aprendizado...'" oninput="updateCC(1,200)"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back-s" onclick="goStep(0)">← Voltar</button>
+        <button class="btn-next-s" id="btn2" onclick="goStep(2)" disabled>Próximo: Argumentos →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Argumentos / Desenvolvimento -->
+    <div class="step-content" id="step-2">
+      <div class="step-title">Passo 3 — Desenvolvimento e argumentos</div>
+      <div class="step-tip"><strong>Dica do livro:</strong> Para defender seu ponto de vista, apresente argumentos: informações de especialistas, dados, exemplificações. Faça um parágrafo para cada argumento.</div>
+      <div class="step-desc">Escreva pelo menos dois argumentos que defendam sua opinião sobre o problema.</div>
+      <div class="field-wrap">
+        <div class="field-label"><span>Argumento 1</span><span class="char-count" id="cc2a">0/180</span></div>
+        <textarea id="ta2a" maxlength="180" placeholder="Exemplo: 'Crianças que dormem pouco têm dificuldade para memorizar conteúdos, segundo pesquisas de especialistas em saúde infantil...'" oninput="updateCC('2a',180)"></textarea>
+      </div>
+      <div class="field-wrap">
+        <div class="field-label"><span>Argumento 2</span><span class="char-count" id="cc2b">0/180</span></div>
+        <textarea id="ta2b" maxlength="180" placeholder="Exemplo: 'Além disso, alunos sonolentos tendem a se distrair mais facilmente e perder momentos importantes da explicação do professor...'" oninput="updateCC('2b',180)"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back-s" onclick="goStep(1)">← Voltar</button>
+        <button class="btn-next-s" id="btn3" onclick="goStep(3)" disabled>Próximo: Proposta de ação →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Proposta de ação -->
+    <div class="step-content" id="step-3">
+      <div class="step-title">Passo 4 — Proposta de ação</div>
+      <div class="step-tip"><strong>Dica do livro:</strong> Se achar apropriado, apresente possíveis soluções para o problema. Elas devem estar em conformidade com o que você já escreveu.</div>
+      <div class="step-desc">Sugira uma ou mais ações concretas para resolver ou amenizar o problema.</div>
+      <div class="field-wrap">
+        <div class="field-label"><span>Proposta de ação</span><span class="char-count" id="cc3">0/180</span></div>
+        <textarea id="ta3" maxlength="180" placeholder="Exemplo: 'Para mudar essa realidade, é necessário que pais e escola trabalhem juntos para garantir que os alunos tenham uma rotina de sono adequada...'" oninput="updateCC(3,180)"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back-s" onclick="goStep(2)">← Voltar</button>
+        <button class="btn-next-s" id="btn4" onclick="goStep(4)" disabled>Próximo: Conclusão →</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Conclusão e revisão -->
+    <div class="step-content" id="step-4">
+      <div class="step-title">Passo 5 — Conclusão e revisão</div>
+      <div class="step-tip"><strong>Dica do livro:</strong> Finalize com um parágrafo conclusivo que pode trazer uma síntese do que foi dito, uma frase marcante ou uma citação que complete o ponto de vista.</div>
+      <div class="step-desc">Escreva a conclusão do seu artigo de opinião.</div>
+      <div class="field-wrap">
+        <div class="field-label"><span>Conclusão</span><span class="char-count" id="cc4">0/180</span></div>
+        <textarea id="ta4" maxlength="180" placeholder="Exemplo: 'Portanto, cuidar da saúde dos estudantes é cuidar do futuro da educação. Pequenas mudanças de rotina podem transformar a experiência escolar de toda uma turma.'" oninput="updateCC(4,180)"></textarea>
+      </div>
+
+      <!-- Checklist de revisão -->
+      <div class="step-desc" style="margin-top:16px;margin-bottom:8px"><strong>Avaliação do seu artigo — marque os itens concluídos:</strong></div>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          O problema e o ponto de vista defendido estão claros para o leitor?
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          Foram usados argumentos para defender uma opinião?
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          O ponto de vista está coerente com os argumentos apresentados?
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          As ideias têm relação umas com as outras?
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          O registro de linguagem não é informal demais para um artigo de opinião?
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back-s" onclick="goStep(3)">← Voltar</button>
+        <button class="btn-next-s" id="btn5" onclick="goStep(5)" disabled>Ver meu artigo completo ✓</button>
+      </div>
+    </div>
+
+    <!-- Step 6: Full preview -->
+    <div class="step-content" id="step-5">
+      <div class="step-title">Seu artigo de opinião</div>
+      <div class="step-desc">Aqui está o artigo que você produziu! Leia em voz alta para um familiar.</div>
+      <div class="preview-paper" id="preview-paper"></div>
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn-back-s" onclick="goStep(4)">← Editar</button>
+        <button class="btn-next-s" onclick="concluirCriador()">Concluir atividade ✓</button>
+      </div>
+    </div>
+
+    <!-- Done -->
+    <div class="done-panel" id="done-panel">
+      <div class="done-emoji">🏆</div>
+      <h2>Parabéns! Artigo criado!</h2>
+      <p>Você escreveu seu próprio artigo de opinião usando todos os elementos que estudou no Capítulo 7. Você é um defensor de ideias!</p>
+      <div class="done-badge">💬 Defende aprova!</div>
+    </div>
+  </div>
+</div>
+
+<script>
+var STEP_NAMES=['Tema','Apresentação','Argumentos','Proposta','Revisão','Preview'];
+var TOTAL_STEPS=6;
+var selectedTema='';
+var temasMap={
+  sono:'Sono durante a aula',
+  bullying:'Bullying ou dificuldade para se enturmar',
+  celular:'Distração pelo uso do celular',
+  concentracao:'Falta de concentração por problemas familiares',
+  apresentacao:'Dificuldade para organizar apresentações em grupo',
+  atencao:'Problemas para manter atenção em atividades em grupo'
+};
+var checkDone=[false,false,false,false,false];
+
+// Build nav
+(function(){
+  var nav=document.getElementById('steps-nav');
+  var labels=document.getElementById('steps-labels');
+  for(var i=0;i<TOTAL_STEPS;i++){
+    var dot=document.createElement('div');
+    dot.className='step-dot'+(i===0?' active':'');
+    dot.id='dot-'+i;
+    dot.textContent=(i+1);
+    nav.appendChild(dot);
+    if(i<TOTAL_STEPS-1){var line=document.createElement('div');line.className='step-line';line.id='line-'+i;nav.appendChild(line);}
+  }
+  STEP_NAMES.forEach(function(n){
+    var s=document.createElement('span');s.textContent=n;labels.appendChild(s);
+  });
+})();
+
+function updateNav(cur){
+  for(var i=0;i<TOTAL_STEPS;i++){
+    var d=document.getElementById('dot-'+i);
+    d.className='step-dot'+(i<cur?' done':i===cur?' active':'');
+    if(i<TOTAL_STEPS-1){
+      var l=document.getElementById('line-'+i);
+      l.className='step-line'+(i<cur?' done':'');
+    }
+  }
+}
+
+function goStep(step){
+  document.querySelectorAll('.step-content').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('step-'+step).classList.add('active');
+  updateNav(step);
+  if(step===5) buildPreview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function selectTema(el,key){
+  document.querySelectorAll('.tema-opt').forEach(function(o){o.classList.remove('selected')});
+  el.classList.add('selected');
+  selectedTema=key;
+  document.getElementById('btn1').disabled=false;
+  document.getElementById('tema-nome-1').textContent='"'+temasMap[key]+'"';
+}
+
+function updateCC(id,max){
+  var ta=document.getElementById('ta'+id);
+  var cc=document.getElementById('cc'+id);
+  var val=ta.value.trim().length;
+  cc.textContent=val+'/'+max;
+  checkFields();
+}
+
+function checkFields(){
+  var v1=document.getElementById('ta1').value.trim().length>=20;
+  var v2a=document.getElementById('ta2a').value.trim().length>=20;
+  var v2b=document.getElementById('ta2b').value.trim().length>=20;
+  var v3=document.getElementById('ta3').value.trim().length>=20;
+  var v4=document.getElementById('ta4').value.trim().length>=20;
+  var chk=checkDone.filter(Boolean).length>=3;
+  if(document.getElementById('btn2')) document.getElementById('btn2').disabled=!v1;
+  if(document.getElementById('btn3')) document.getElementById('btn3').disabled=!(v2a&&v2b);
+  if(document.getElementById('btn4')) document.getElementById('btn4').disabled=!v3;
+  if(document.getElementById('btn5')) document.getElementById('btn5').disabled=!(v4&&chk);
+}
+
+function toggleCheck(el){
+  var idx=Array.from(document.querySelectorAll('.check-item')).indexOf(el);
+  checkDone[idx]=!checkDone[idx];
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').textContent=checkDone[idx]?'✓':'';
+  checkFields();
+}
+
+function buildPreview(){
+  var t=temasMap[selectedTema]||'';
+  var ta1=document.getElementById('ta1').value.trim();
+  var ta2a=document.getElementById('ta2a').value.trim();
+  var ta2b=document.getElementById('ta2b').value.trim();
+  var ta3=document.getElementById('ta3').value.trim();
+  var ta4=document.getElementById('ta4').value.trim();
+  var html='<div class="preview-title">'+t+'</div><div class="preview-author">Artigo de Opinião · por você</div>';
+  html+='<div class="preview-section"><div class="preview-section-label">Apresentação do tema</div><p>'+esc(ta1)+'</p></div>';
+  html+='<div class="preview-section"><div class="preview-section-label">Desenvolvimento e argumentos</div><p>'+esc(ta2a)+'</p><p style="margin-top:8px">'+esc(ta2b)+'</p></div>';
+  html+='<div class="preview-section"><div class="preview-section-label">Proposta de ação</div><p>'+esc(ta3)+'</p></div>';
+  html+='<div class="preview-section"><div class="preview-section-label">Conclusão</div><p>'+esc(ta4)+'</p></div>';
+  document.getElementById('preview-paper').innerHTML=html;
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function concluirCriador(){
+  document.querySelectorAll('.step-content').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('done-panel').className='done-panel show';
+  window.sabendoScore=100;
+  document.dispatchEvent(new Event('sabendo:criador-done'));
+}
+
+// Initial check
+checkFields();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "cronica-argumentativa-artigo-opiniao";
+  var ACTIVITY_TYPE = "criador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Defende",
+    characterEmoji: "💬",
+    characterImg:   "chars/cronica-argumentativa-artigo-opiniao-hd.png",
+    themeLabel:     "Crônica Argumentativa e Artigo de Opinião · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-cronica-argumentativa-artigo-opiniao",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var sessionData = res.data.session;
+    if (!sessionData) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = sessionData.user.id;
+    var scoreVal = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: scoreVal, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

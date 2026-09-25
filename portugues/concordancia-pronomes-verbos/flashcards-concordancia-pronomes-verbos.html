@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — Concordância entre Pronomes e Verbos</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;--port-dark:#4C1D95;
+  --text:#1A1A2E;--muted:#6B7280;--border:#DDD6FE;--card:#fff;--radius:18px;
+  --green:#10B981;--red:#EF4444;--orange:#F59E0B;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px}
+.wrap{max-width:560px;margin:0 auto}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);text-decoration:none;margin-bottom:14px}
+.back-link:hover{opacity:.7}
+.card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.1)}
+.card-header{background:linear-gradient(135deg,#4C1D95,#7C3AED 60%,#A78BFA);padding:18px 20px 16px;display:flex;align-items:center;gap:12px}
+.card-header .hico{font-size:28px;line-height:1}
+.card-header h1{font-family:"Space Mono",monospace;font-size:15px;color:#fff;line-height:1.2}
+.card-header p{font-size:11px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;white-space:nowrap}
+
+.instrucao{padding:12px 20px;font-size:13px;font-weight:600;color:var(--muted);line-height:1.6;border-bottom:2px solid var(--border);background:var(--port-bg)}
+.instrucao strong{color:var(--text)}
+
+/* deck status */
+.deck-status{display:flex;gap:8px;padding:10px 20px;border-bottom:2px solid var(--border);flex-wrap:wrap}
+.pile{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px}
+.pile-new{background:#EDE9FE;color:var(--port-dark)}
+.pile-hard{background:#FEE2E2;color:#991B1B}
+.pile-easy{background:#D1FAE5;color:#065F46}
+.pile-done{background:#F3F4F6;color:var(--muted)}
+.pile-num{font-family:"Space Mono",monospace;font-size:14px;font-weight:700;margin-left:2px}
+
+/* progress */
+.prog-wrap{padding:10px 20px 0}
+.prog-track{height:7px;border-radius:999px;background:var(--border)}
+.prog-fill{height:7px;border-radius:999px;background:linear-gradient(90deg,#7C3AED,#A78BFA);transition:width .4s}
+.prog-label{font-size:11px;font-weight:700;color:var(--muted);margin-top:4px;text-align:right}
+
+/* card flip area */
+.flip-area{padding:20px;display:flex;flex-direction:column;align-items:center}
+.counter{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:.05em}
+
+.flashcard-wrap{perspective:800px;width:100%;max-width:400px;height:220px;cursor:pointer;margin-bottom:16px}
+.flashcard{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.flashcard.flipped{transform:rotateY(180deg)}
+.fc-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;border:3px solid var(--border)}
+.fc-front{background:linear-gradient(135deg,#4C1D95,#7C3AED,#A78BFA);color:#fff}
+.fc-back{background:var(--card);transform:rotateY(180deg);border-color:var(--border)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.08em;opacity:.7;margin-bottom:8px}
+.fc-pronome{font-family:"Space Mono",monospace;font-size:42px;font-weight:700;color:#fff;line-height:1}
+.fc-pessoa{font-size:18px;font-weight:800;color:var(--port-dark);margin-bottom:4px;text-align:center}
+.fc-numero{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;text-align:center}
+.fc-exemplos{width:100%;border-top:2px dashed var(--border);padding-top:10px;display:flex;flex-direction:column;gap:3px}
+.fc-ex{font-size:12px;font-weight:700;color:var(--text);text-align:center}
+.fc-ex span{color:var(--port);font-weight:800}
+.fc-hint{font-size:12px;color:rgba(255,255,255,.7);margin-top:8px}
+
+.tap-hint{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:14px}
+
+/* rating buttons */
+.rating-btns{display:flex;gap:8px;width:100%;max-width:400px;justify-content:center}
+.rating-btns.hidden{visibility:hidden}
+.rbtn{flex:1;max-width:120px;padding:10px 0;border:none;border-radius:12px;font-family:"Baloo 2",cursive;font-size:13px;font-weight:800;cursor:pointer;transition:all .15s}
+.rbtn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.rbtn-hard{background:#FEE2E2;color:#991B1B;border:2px solid #FCA5A5}
+.rbtn-ok{background:#FEF3C7;color:#92400E;border:2px solid #FDE68A}
+.rbtn-easy{background:#D1FAE5;color:#065F46;border:2px solid #6EE7B7}
+
+/* completed */
+.completed{display:none;padding:28px 20px;text-align:center}
+.completed.show{display:block}
+.comp-emoji{font-size:52px;margin-bottom:10px}
+.comp-title{font-family:"Space Mono",monospace;font-size:18px;font-weight:700;color:var(--port-dark);margin-bottom:6px}
+.comp-sub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:18px}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.comp-stat{padding:12px;border-radius:14px;text-align:center}
+.comp-stat.easy{background:#D1FAE5;color:#065F46}
+.comp-stat.hard{background:#FEE2E2;color:#991B1B}
+.comp-num{font-family:"Space Mono",monospace;font-size:28px;font-weight:700}
+.comp-lbl{font-size:11px;font-weight:800;letter-spacing:.05em}
+.btn-restart{padding:12px 24px;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:#fff;border:none;border-radius:12px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer;margin-right:8px}
+.btn-review{padding:12px 24px;background:var(--port-bg);color:var(--port-dark);border:2px solid var(--border);border-radius:12px;font-family:"Baloo 2",cursive;font-size:14px;font-weight:800;cursor:pointer}
+
+@media(max-width:480px){
+  .flashcard-wrap{height:200px}
+  .fc-pronome{font-size:34px}
+  .fc-pessoa{font-size:15px}
+  .rbtn{font-size:12px;padding:9px 0}
+  .rating-btns{gap:5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal();return false;">← Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hico">🃏</div>
+      <div><h1>Flashcards</h1><p>Concordância entre Pronomes e Verbos</p></div>
+      <div class="hbadge">6 pronomes</div>
+    </div>
+    <div class="instrucao">
+      <strong>Como usar:</strong> Veja o pronome pessoal na frente do card. Pense: qual é sua pessoa e número? Depois clique para virar e conferir. Avalie sua resposta: <strong>Difícil</strong> (reveja depois), <strong>Ok</strong> ou <strong>Fácil</strong>.
+    </div>
+    <div class="deck-status">
+      <div class="pile pile-new">Novos <span class="pile-num" id="pile-new-count">6</span></div>
+      <div class="pile pile-hard">Difícil <span class="pile-num" id="pile-hard-count">0</span></div>
+      <div class="pile pile-easy">Fácil <span class="pile-num" id="pile-easy-count">0</span></div>
+      <div class="pile pile-done">Concluídos <span class="pile-num" id="pile-done-count">0</span></div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="prog-label" id="prog-label">0 de 6 vistos</div>
+    </div>
+    <div id="deck-area">
+      <div class="flip-area">
+        <div class="counter" id="counter">CARD 1 DE 6</div>
+        <div class="flashcard-wrap" id="fc-wrap" onclick="flipCard()">
+          <div class="flashcard" id="flashcard">
+            <div class="fc-face fc-front" id="fc-front">
+              <div class="fc-label">PRONOME PESSOAL</div>
+              <div class="fc-pronome" id="fc-pronome"></div>
+              <div class="fc-hint">Toque para ver pessoa, número e exemplos</div>
+            </div>
+            <div class="fc-face fc-back" id="fc-back">
+              <div class="fc-pessoa" id="fc-pessoa"></div>
+              <div class="fc-numero" id="fc-numero"></div>
+              <div class="fc-exemplos" id="fc-exemplos"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tap-hint" id="tap-hint">Toque no card para virar</div>
+        <div class="rating-btns hidden" id="rating-btns">
+          <button class="rbtn rbtn-hard" onclick="rate('hard')">😓 Difícil</button>
+          <button class="rbtn rbtn-ok" onclick="rate('ok')">😊 Ok</button>
+          <button class="rbtn rbtn-easy" onclick="rate('easy')">😄 Fácil</button>
+        </div>
+      </div>
+    </div>
+    <div class="completed" id="completed">
+      <div class="comp-emoji">🎉</div>
+      <div class="comp-title">Rodada concluída!</div>
+      <div class="comp-sub" id="comp-sub"></div>
+      <div class="comp-grid">
+        <div class="comp-stat easy">
+          <div class="comp-num" id="easy-count">0</div>
+          <div class="comp-lbl">FÁCIL / OK</div>
+        </div>
+        <div class="comp-stat hard">
+          <div class="comp-num" id="hard-count">0</div>
+          <div class="comp-lbl">DIFÍCIL</div>
+        </div>
+      </div>
+      <button class="btn-restart" onclick="restartAll()">↺ Recomeçar tudo</button>
+      <button class="btn-review" id="btn-review" onclick="reviewHard()" style="display:none">📚 Revisar difíceis</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var ALL_CARDS = [
+  {
+    pronome: 'eu',
+    pessoa: '1ª pessoa do singular',
+    exemplos: [
+      {label:'Presente', ex:'eu <span>abro</span>'},
+      {label:'Passado',  ex:'eu <span>vivi</span>'},
+      {label:'Futuro',   ex:'eu <span>cantarei</span>'}
+    ]
+  },
+  {
+    pronome: 'tu',
+    pessoa: '2ª pessoa do singular',
+    exemplos: [
+      {label:'Presente', ex:'tu <span>abres</span>'},
+      {label:'Passado',  ex:'tu <span>viveste</span>'},
+      {label:'Futuro',   ex:'tu <span>cantarás</span>'}
+    ]
+  },
+  {
+    pronome: 'ele/ela',
+    pessoa: '3ª pessoa do singular',
+    exemplos: [
+      {label:'Presente', ex:'ele/ela <span>abre</span>'},
+      {label:'Passado',  ex:'ele/ela <span>viveu</span>'},
+      {label:'Futuro',   ex:'ele/ela <span>cantará</span>'}
+    ]
+  },
+  {
+    pronome: 'nós',
+    pessoa: '1ª pessoa do plural',
+    exemplos: [
+      {label:'Presente', ex:'nós <span>abrimos</span>'},
+      {label:'Passado',  ex:'nós <span>vivemos</span>'},
+      {label:'Futuro',   ex:'nós <span>cantaremos</span>'}
+    ]
+  },
+  {
+    pronome: 'vós',
+    pessoa: '2ª pessoa do plural',
+    exemplos: [
+      {label:'Presente', ex:'vós <span>abris</span>'},
+      {label:'Passado',  ex:'vós <span>vivestes</span>'},
+      {label:'Futuro',   ex:'vós <span>cantareis</span>'}
+    ]
+  },
+  {
+    pronome: 'eles/elas',
+    pessoa: '3ª pessoa do plural',
+    exemplos: [
+      {label:'Presente', ex:'eles/elas <span>abrem</span>'},
+      {label:'Passado',  ex:'eles/elas <span>viveram</span>'},
+      {label:'Futuro',   ex:'eles/elas <span>cantarão</span>'}
+    ]
+  }
+];
+
+var deck = ALL_CARDS.slice();
+var hardCards = [];
+var currentIdx = 0;
+var isFlipped = false;
+var seenCount = 0;
+var easyCount = 0;
+var hardCount = 0;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function loadCard() {
+  if (currentIdx >= deck.length) { finishRound(); return; }
+  isFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('rating-btns').className = 'rating-btns hidden';
+  document.getElementById('tap-hint').style.display = 'block';
+  var c = deck[currentIdx];
+  document.getElementById('counter').textContent = 'CARD ' + (currentIdx + 1) + ' DE ' + deck.length;
+  document.getElementById('fc-pronome').textContent = c.pronome;
+  // back
+  document.getElementById('fc-pessoa').textContent = c.pessoa;
+  var singular = c.pessoa.indexOf('singular') >= 0 ? 'Singular' : 'Plural';
+  document.getElementById('fc-numero').textContent = singular;
+  var exBox = document.getElementById('fc-exemplos');
+  exBox.innerHTML = '';
+  c.exemplos.forEach(function(e) {
+    var div = document.createElement('div');
+    div.className = 'fc-ex';
+    div.innerHTML = '<span style="color:var(--muted);font-size:10px;">' + e.label + ':</span> ' + e.ex;
+    exBox.appendChild(div);
+  });
+  updateStatus();
+}
+
+function flipCard() {
+  if (isFlipped) return;
+  isFlipped = true;
+  document.getElementById('flashcard').classList.add('flipped');
+  document.getElementById('tap-hint').style.display = 'none';
+  document.getElementById('rating-btns').className = 'rating-btns';
+  seenCount++;
+  updateProgress();
+}
+
+function rate(level) {
+  if (level === 'hard') {
+    hardCards.push(deck[currentIdx]);
+    hardCount++;
+  } else {
+    easyCount++;
+  }
+  currentIdx++;
+  if (currentIdx >= deck.length) {
+    finishRound();
+  } else {
+    loadCard();
+  }
+  updateStatus();
+}
+
+function updateStatus() {
+  document.getElementById('pile-new-count').textContent = Math.max(0, deck.length - currentIdx);
+  document.getElementById('pile-hard-count').textContent = hardCards.length;
+  document.getElementById('pile-easy-count').textContent = easyCount;
+  document.getElementById('pile-done-count').textContent = currentIdx;
+}
+
+function updateProgress() {
+  var pct = Math.round((seenCount / ALL_CARDS.length) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = seenCount + ' de ' + ALL_CARDS.length + ' vistos';
+}
+
+function finishRound() {
+  document.getElementById('deck-area').style.display = 'none';
+  document.getElementById('completed').className = 'completed show';
+  document.getElementById('easy-count').textContent = easyCount;
+  document.getElementById('hard-count').textContent = hardCount;
+  var pct = ALL_CARDS.length > 0 ? Math.round((easyCount / ALL_CARDS.length) * 100) : 100;
+  window.sabendoScore = pct;
+  document.getElementById('comp-sub').textContent = easyCount + ' fácil/ok · ' + hardCount + ' difícil · ' + pct + '% de aproveitamento';
+  if (hardCards.length > 0) {
+    document.getElementById('btn-review').style.display = 'inline-block';
+  }
+}
+
+function restartAll() {
+  deck = shuffle(ALL_CARDS);
+  hardCards = []; currentIdx = 0; seenCount = 0; easyCount = 0; hardCount = 0;
+  isFlipped = false;
+  document.getElementById('deck-area').style.display = 'block';
+  document.getElementById('completed').className = 'completed';
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('prog-label').textContent = '0 de ' + ALL_CARDS.length + ' vistos';
+  loadCard();
+}
+
+function reviewHard() {
+  deck = shuffle(hardCards);
+  hardCards = []; currentIdx = 0; seenCount = 0; easyCount = 0; hardCount = 0;
+  isFlipped = false;
+  document.getElementById('deck-area').style.display = 'block';
+  document.getElementById('completed').className = 'completed';
+  loadCard();
+}
+
+deck = shuffle(ALL_CARDS);
+loadCard();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "concordancia-pronomes-verbos";
+  var ACTIVITY_TYPE = "flashcards";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Concorda",
+    characterEmoji: "🔗",
+    characterImg:   "chars/concordancia-pronomes-verbos-hd.png",
+    themeLabel:     "Concordância Pronomes e Verbos · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-concordancia-pronomes-verbos",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var scoreVal = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: scoreVal, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
