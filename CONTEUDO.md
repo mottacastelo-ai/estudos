@@ -655,6 +655,7 @@
 | `Ciclao.png` |
 | `Circo.png` |
 | `Concorda.png` |
+| `Defende.png` |
 | `Dicio.png` |
 | `Divi.png` |
 | `Elastico.png` |
