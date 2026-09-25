@@ -276,6 +276,16 @@ var quizQuestions = [
 var quizIndex = 0;
 var quizHits = 0;
 var answered = [];
+var currentCorrectIdx = 0;
+
+function shuffleArray(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
 
 function buildDots() {
   var row = document.getElementById('dots-row');
@@ -308,11 +318,15 @@ function loadQuestion() {
   var optArea = document.getElementById('options-area');
   optArea.innerHTML = '';
   var letters = ['A', 'B', 'C', 'D'];
-  q.opts.forEach(function(opt, i) {
+  var origIndices = [0, 1, 2, 3];
+  var shuffledIndices = shuffleArray(origIndices);
+  currentCorrectIdx = shuffledIndices.indexOf(q.correct);
+  shuffledIndices.forEach(function(origIdx, displayIdx) {
+    var opt = q.opts[origIdx];
     var btn = document.createElement('button');
     btn.className = 'opt-btn';
-    btn.innerHTML = '<div class="opt-letter">' + letters[i] + '</div><span>' + opt + '</span>';
-    btn.addEventListener('click', function() { selectAnswer(i); });
+    btn.innerHTML = '<div class="opt-letter">' + letters[displayIdx] + '</div><span>' + opt + '</span>';
+    btn.addEventListener('click', (function(di) { return function() { selectAnswer(di); }; })(displayIdx));
     optArea.appendChild(btn);
   });
 
@@ -326,10 +340,10 @@ function selectAnswer(idx) {
   var q = quizQuestions[quizIndex];
   var buttons = document.querySelectorAll('.opt-btn');
   buttons.forEach(function(b) { b.disabled = true; });
-  buttons[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
-  if (idx !== q.correct) buttons[q.correct].classList.add('correct');
+  buttons[idx].classList.add(idx === currentCorrectIdx ? 'correct' : 'wrong');
+  if (idx !== currentCorrectIdx) buttons[currentCorrectIdx].classList.add('correct');
 
-  var isCorrect = idx === q.correct;
+  var isCorrect = idx === currentCorrectIdx;
   if (isCorrect) quizHits++;
   answered[quizIndex] = isCorrect;
 

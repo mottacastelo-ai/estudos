@@ -126,7 +126,7 @@ var QUIZ = [
   },
   {
     q: "A palavra <strong>\"neném\"</strong> leva acento gráfico porque é oxítona terminada em:",
-    opts: ["ditongo aberto","\"em\"","vogal 'e' simples","consoante nasal"],
+    opts: ["Um ditongo aberto (ei, eu, oi)","Uma terminação em ou ens","Uma vogal E simples isolada","Uma consoante nasal qualquer"],
     ans: 1,
     fb: "Correto! <strong>Neném</strong> (ne-NÉM) termina em <strong>em</strong> — oxítonas terminadas em 'em' ou 'ens' sempre recebem acento. Outros exemplos: além, também, armazéns, parabéns."
   },
@@ -162,7 +162,7 @@ var QUIZ = [
   },
   {
     q: "Qual das frases apresenta o acento <strong>correto</strong> em uma palavra oxítona?",
-    opts: ["O herói salvou a cidade.","Ela pediu um cafe com leite.","Compramos maracuja na feira.","Ele praticava judo toda semana."],
+    opts: ["O jovem herói salvou toda a cidade.","Ela pediu um cafe com leite e pão.","Compramos maracuja fresca na feira.","Ele praticava judo toda semana cedo."],
     ans: 0,
     fb: "Correto! <strong>Herói</strong> leva acento por ser oxítona com ditongo aberto 'oi'. As demais frases têm palavras oxítonas sem o acento obrigatório: café (e), maracujá (a), judô (o)."
   }
@@ -172,6 +172,7 @@ var quizCurrent = 0;
 var quizAcertos = 0;
 var quizErros = 0;
 var quizAnswered = false;
+var quizCurrentAns = 0;
 var LETTERS = ['A','B','C','D'];
 
 function renderQuestion() {
