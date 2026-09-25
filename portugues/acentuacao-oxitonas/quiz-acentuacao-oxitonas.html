@@ -217,7 +217,7 @@ function checkAnswer(idx) {
   opts.forEach(function(o) { o.classList.add('disabled'); });
 
   var fb = document.getElementById('feedback-box');
-  if (idx === qd.ans) {
+  if (idx === quizCurrentAns) {
     quizAcertos++;
     opts[idx].classList.add('correct');
     fb.className = 'feedback-box correct';
@@ -226,7 +226,7 @@ function checkAnswer(idx) {
   } else {
     quizErros++;
     opts[idx].classList.add('wrong');
-    opts[qd.ans].classList.add('reveal-correct');
+    opts[quizCurrentAns].classList.add('reveal-correct');
     var wrongMsg = 'Não foi dessa vez! ';
     fb.className = 'feedback-box wrong';
     fb.innerHTML = '<span class="fb-icon">✗</span>' + wrongMsg + qd.fb;
