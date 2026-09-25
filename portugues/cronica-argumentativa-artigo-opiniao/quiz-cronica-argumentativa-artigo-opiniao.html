@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Crônica Argumentativa e Artigo de Opinião</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --port:#7C3AED;--port-light:#A78BFA;--port-bg:#F3F0FF;--port-dark:#4C1D95;
+  --border:#DDD6FE;--card:#fff;--text:#1A1A2E;--muted:#6B7280;--radius:18px;
+  --ok:#059669;--ok-bg:#ECFDF5;--ok-border:#6EE7B7;
+  --err:#DC2626;--err-bg:#FEF2F2;--err-border:#FECACA;
+}
+body{font-family:"Baloo 2",cursive;background:var(--port-bg);color:var(--text);min-height:100vh;padding:20px 16px 80px}
+.wrap{max-width:680px;margin:0 auto}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--port);text-decoration:none;margin-bottom:14px}
+.back-link:hover{opacity:.75}
+.card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 24px rgba(124,58,237,.1)}
+.card-header{background:linear-gradient(135deg,#2D1B69,#7C3AED 60%,#A78BFA);padding:20px 22px 18px;display:flex;align-items:center;gap:14px}
+.card-header .hicon{font-size:32px}
+.card-header h1{font-family:"Space Mono",monospace;font-size:16px;color:#fff;line-height:1.2}
+.card-header p{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap}
+.prog-wrap{padding:14px 20px 0}
+.prog-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.prog-track{height:8px;background:var(--border);border-radius:999px}
+.prog-fill{height:8px;background:var(--port);border-radius:999px;transition:width .4s}
+.score-bar{display:flex;gap:16px;padding:10px 20px 12px}
+.score-chip{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--port)}
+.score-chip span{font-size:18px}
+.q-area{padding:18px 20px 20px}
+.q-text{font-size:15px;font-weight:700;line-height:1.55;margin-bottom:16px;color:var(--text)}
+.q-num{display:inline-block;background:var(--port);color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:12px;background:var(--port-bg);border:2px solid var(--border);border-radius:14px;padding:12px 14px;cursor:pointer;font-size:14px;font-weight:600;line-height:1.45;transition:all .15s;text-align:left}
+.opt:hover:not(.disabled){border-color:var(--port-light);background:#EDE9FE;transform:translateY(-1px)}
+.opt-letter{flex-shrink:0;width:26px;height:26px;border-radius:999px;background:var(--port-light);color:var(--port-dark);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace}
+.opt.correct{background:var(--ok-bg);border-color:var(--ok-border)}
+.opt.correct .opt-letter{background:var(--ok);color:#fff}
+.opt.wrong{background:var(--err-bg);border-color:var(--err-border)}
+.opt.wrong .opt-letter{background:var(--err);color:#fff}
+.opt.disabled{cursor:default;transform:none}
+.feedback{margin-top:14px;padding:12px 14px;border-radius:14px;font-size:13px;font-weight:700;line-height:1.5;display:none;gap:10px;align-items:flex-start}
+.feedback.show{display:flex}
+.feedback.correct{background:var(--ok-bg);border:2px solid var(--ok-border);color:#065F46}
+.feedback.wrong{background:var(--err-bg);border:2px solid var(--err-border);color:#7F1D1D}
+.feedback-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.btn-next{display:none;margin-top:16px;width:100%;padding:13px;background:linear-gradient(135deg,var(--port),var(--port-light));color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;font-family:"Baloo 2",cursive;transition:all .2s}
+.btn-next.show{display:block}
+.btn-next:hover{opacity:.9;transform:translateY(-1px)}
+/* RESULTS */
+.results{display:none;padding:28px 22px;text-align:center}
+.results.show{display:block}
+.result-emoji{font-size:56px;margin-bottom:8px}
+.result-title{font-family:"Space Mono",monospace;font-size:19px;font-weight:700;color:var(--port-dark);margin-bottom:4px}
+.result-sub{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:18px}
+.result-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--port),var(--port-light));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(124,58,237,.35)}
+.result-pct{font-family:"Space Mono",monospace;font-size:26px;font-weight:700;color:#fff}
+.result-pct-label{font-size:10px;color:rgba(255,255,255,.85);font-weight:700}
+.result-medal{display:inline-block;background:var(--port-bg);border:2px solid var(--border);color:var(--port);font-size:14px;font-weight:800;padding:8px 20px;border-radius:999px;margin-bottom:20px}
+.review-list{margin-top:16px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.review-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;font-weight:600;padding:8px 12px;border-radius:10px}
+.review-item.ok{background:var(--ok-bg);color:#065F46}
+.review-item.nok{background:var(--err-bg);color:#7F1D1D}
+.ri-icon{flex-shrink:0;font-size:14px;margin-top:1px}
+.btn-restart{margin-top:16px;padding:13px 28px;background:var(--port);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;font-family:"Baloo 2",cursive}
+.btn-restart:hover{opacity:.9}
+@media(max-width:480px){
+  .card-header h1{font-size:14px}
+  .q-text{font-size:14px}
+  .opt{font-size:13px;padding:10px 12px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" onclick="voltarAoPortal()" href="#">&#8592; Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">💬</div>
+      <div><h1>Quiz Interativo</h1><p>Crônica Argumentativa e Artigo de Opinião</p></div>
+      <div class="hbadge">📖 10 questões</div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label"><span id="prog-txt">Questão 1 de 10</span><span id="hits-txt">0 acertos</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="score-bar">
+      <div class="score-chip"><span>⭐</span> <span id="score-disp">0</span> pts</div>
+    </div>
+    <div class="q-area" id="q-area">
+      <div class="q-num" id="q-num">Questão 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div id="fb-text"></div>
+      </div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima questão →</button>
+    </div>
+    <div class="results" id="results">
+      <div class="result-emoji" id="res-emoji"></div>
+      <div class="result-circle"><div class="result-pct" id="res-pct"></div><div class="result-pct-label">acerto</div></div>
+      <div class="result-title" id="res-title"></div>
+      <div class="result-sub" id="res-sub"></div>
+      <div class="result-medal" id="res-medal"></div>
+      <div class="review-list" id="review-list"></div>
+      <button class="btn-restart" onclick="restart()">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var QUESTIONS = [
+  {
+    text:"O que é uma <strong>crônica argumentativa</strong>, segundo o livro?",
+    opts:["Texto que conta uma história de ficção com personagens e aventuras inventadas","Texto que defende uma ideia com base em um relato pessoal do cotidiano","Texto que informa sobre fatos do dia a dia sem apresentar nenhuma opinião","Texto que dá instruções passo a passo para realizar uma tarefa prática"],
+    correct:1,
+    explanation:"A crônica argumentativa é um texto que tem por objetivo <strong>defender uma ideia com base em um relato pessoal do cotidiano</strong>."
+  },
+  {
+    text:"Na crônica <em>'Um jogo que é uma vergonha'</em>, Fernando Bonassi usa a imagem de um jogo de futebol desigual como metáfora para falar sobre:",
+    opts:["A importância do esporte e da atividade física na formação de crianças","As desigualdades sociais que afetam crianças sem acesso à escola e à moradia","A rivalidade entre times de futebol profissional em campeonatos","A necessidade de uniformes e equipamentos adequados para jogadores amadores"],
+    correct:1,
+    explanation:"O jogo desigual representa <strong>as desigualdades sociais</strong>: um time com tênis e camisa (quem tem escola e casa) e outro descalço e de calção (quem não tem). É uma metáfora da vida real."
+  },
+  {
+    text:"Na crônica de Fernando Bonassi, qual expressão indica claramente a <strong>opinião do autor</strong>?",
+    opts:["'Imagina um jogo desse jeito: o campo é de pedra bem pontuda'","'O time que tem tênis e camisa ganha fácil, dá aquela goleada!'","'Para mim, a diferença da vida entre nós, que temos escola e casa, e as crianças que não têm é um jogo assim'","'Acontece num dia muito frio'"],
+    correct:2,
+    explanation:"'<strong>Para mim</strong>' é uma expressão típica de opinião. Ela indica que o autor está apresentando seu ponto de vista pessoal, não um fato."
+  },
+  {
+    text:"Rosely Sayão, autora do artigo de opinião <em>'Você acha que faz muita coisa? Fale com seus pais!'</em>, é apresentada no texto como:",
+    opts:["Médica especialista em pediatria e diretora de uma escola particular de São Paulo","Professora universitária de pedagogia e escritora de livros escolares","Psicóloga e consultora educacional, colunista da <em>Folha de S.Paulo</em>","Jornalista esportiva e especialista em educação física infantil"],
+    correct:2,
+    explanation:"Rosely Sayão é <strong>psicóloga e consultora educacional</strong>. Ela escreveu para a <em>Folha de S.Paulo</em> por muitos anos. Essa formação confere <strong>credibilidade</strong> às suas opiniões sobre educação de crianças."
+  },
+  {
+    text:"De acordo com o livro, <strong>argumentar</strong> significa:",
+    opts:["Contar uma história usando personagens para transmitir uma lição de moral","Apresentar informações de forma neutra e equilibrada, sem tomar partido","Defender um ponto de vista apresentando razões, ideias e fatos para sustentar uma opinião","Descrever situações do cotidiano de modo detalhado e imparcial"],
+    correct:2,
+    explanation:"<strong>Argumentar é defender um ponto de vista</strong>. É apresentar razões, ideias e fatos para sustentar ou defender uma opinião. Isso pode acontecer no artigo de opinião, na crônica argumentativa e até em uma conversa informal."
+  },
+  {
+    text:"Qual das alternativas a seguir <strong>NÃO</strong> é uma parte da estrutura do texto argumentativo, conforme estudado no capítulo?",
+    opts:["Apresentação do tema","Proposta de ação para enfrentar o problema","Opinião do autor","Clímax e reviravolta da narrativa"],
+    correct:3,
+    explanation:"'Clímax e reviravolta da narrativa' são elementos de textos narrativos, não do texto argumentativo. As partes do texto argumentativo são: Apresentação do tema, Apresentação do problema, Opinião do autor, Nova opinião do autor, <strong>Proposta de ação</strong> e <strong>Conclusão</strong>."
+  },
+  {
+    text:"No artigo de opinião de Rosely Sayão, qual é a proposta da autora para resolver o problema das crianças sobrecarregadas?",
+    opts:["Proibir atividades extracurriculares até o término do ensino fundamental","Criar uma lei que limite o número de cursos por criança por semana","O diálogo sério entre filhos e pais, sem reclamações, chororô ou drama","Contratar psicólogos nas escolas para avaliar individualmente cada aluno"],
+    correct:2,
+    explanation:"A autora propõe o <strong>diálogo entre filhos e pais</strong>: 'conversar de verdade: sem reclamação, chororô, drama.' Ela sugere que a criança explique aos pais que precisa ter vida de criança e tempo livre."
+  },
+  {
+    text:"De acordo com o livro, o que pode conferir <strong>credibilidade</strong> a um texto veiculado na mídia?",
+    opts:["Ter um título chamativo e criativo que prende a atenção do leitor imediatamente","Ser escrito por uma única pessoa com estilo literário sofisticado e refinado","Conter informações fundamentadas em pesquisas e falas de autoridades reconhecidas no assunto","Usar linguagem simples e informal para alcançar um número maior de leitores"],
+    correct:2,
+    explanation:"A <strong>credibilidade da fonte</strong> depende de: informações baseadas em pesquisas científicas, citações de autoridades no assunto e publicação em veículos de comunicação confiáveis."
+  },
+  {
+    text:"Ao escrever um artigo de opinião, o que o livro orienta sobre a escolha do <strong>registro de linguagem</strong>?",
+    opts:["Usar gírias e expressões populares para parecer autêntico e próximo dos jovens leitores","Preferir o registro informal, pois artigos precisam ser espontâneos e descontraídos","Considerar o público leitor e evitar gírias e expressões excessivamente informais","Usar sempre linguagem extremamente formal, com termos técnicos e vocabulário erudito"],
+    correct:2,
+    explanation:"O livro orienta que, em um artigo de opinião, o registro <strong>não convém ser informal demais</strong>. Deve-se pensar no público leitor e evitar gírias e expressões que seriam mais adequadas em uma conversa com amigos."
+  },
+  {
+    text:"Ao revisar um artigo de opinião escrito por um colega, qual destes critérios deve ser verificado, segundo as orientações de produção do capítulo?",
+    opts:["Se o texto apresenta pelo menos três personagens com nomes diferentes e bem definidos","Se as rimas estão bem distribuídas nos parágrafos finais do texto","Se o ponto de vista está coerente com os argumentos apresentados ao longo do texto","Se o texto tem exatamente sete parágrafos e uma frase conclusiva que rime com o título"],
+    correct:2,
+    explanation:"O checklist de revisão do livro inclui: O ponto de vista defendido está claro? Foram usados argumentos? <strong>O ponto de vista está coerente com os argumentos?</strong> As ideias têm relação entre si? O registro é adequado?"
+  }
+];
+
+var cur=0,quizHits=0,quizScore=0,answered=false,quizLog=[];
+
+function loadQ(){
+  var q=QUESTIONS[cur];
+  document.getElementById('q-num').textContent='Questão '+(cur+1);
+  document.getElementById('q-text').innerHTML=q.text;
+  document.getElementById('prog-txt').textContent='Questão '+(cur+1)+' de 10';
+  document.getElementById('prog-fill').style.width=(cur/10*100)+'%';
+  var fb=document.getElementById('feedback');
+  fb.className='feedback';
+  document.getElementById('btn-next').className='btn-next';
+  answered=false;
+  var opts=document.getElementById('opts');
+  opts.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="opt-letter">'+['A','B','C','D'][i]+'</span><span>'+o+'</span>';
+    btn.setAttribute('data-i',i);
+    btn.addEventListener('click',function(){answer(i)});
+    opts.appendChild(btn);
+  });
+}
+
+function answer(idx){
+  if(answered)return;
+  answered=true;
+  var q=QUESTIONS[cur];
+  var allOpts=document.querySelectorAll('.opt');
+  allOpts.forEach(function(b){b.classList.add('disabled')});
+  var fb=document.getElementById('feedback');
+  if(idx===q.correct){
+    allOpts[idx].classList.add('correct');
+    fb.className='feedback correct show';
+    document.getElementById('fb-icon').textContent='✓';
+    document.getElementById('fb-text').innerHTML='<strong>Correto!</strong> '+q.explanation;
+    quizHits++;quizScore+=10;
+    document.getElementById('hits-txt').textContent=quizHits+' acerto'+(quizHits!==1?'s':'');
+    document.getElementById('score-disp').textContent=quizScore;
+    quizLog.push({ok:true,text:q.text.replace(/<[^>]+>/g,'')});
+  } else {
+    allOpts[idx].classList.add('wrong');
+    allOpts[q.correct].classList.add('correct');
+    fb.className='feedback wrong show';
+    document.getElementById('fb-icon').textContent='✗';
+    document.getElementById('fb-text').innerHTML='<strong>Quase!</strong> A resposta era a <strong>'+['A','B','C','D'][q.correct]+'</strong>. '+q.explanation;
+    quizLog.push({ok:false,text:q.text.replace(/<[^>]+>/g,'')});
+  }
+  if(cur<QUESTIONS.length-1){
+    document.getElementById('btn-next').className='btn-next show';
+  } else {
+    setTimeout(showResults,1600);
+  }
+}
+
+function nextQuestion(){cur++;loadQ();}
+
+function showResults(){
+  document.getElementById('q-area').style.display='none';
+  var res=document.getElementById('results');
+  res.className='results show';
+  var pct=Math.round((quizHits/QUESTIONS.length)*100);
+  window.sabendoScore=pct;
+  document.getElementById('res-pct').textContent=pct+'%';
+  var emoji,title,medal;
+  if(quizHits===10){emoji='🏆';title='Perfeito! Mestre em argumentação!';medal='🥇 Medalha de Ouro';}
+  else if(quizHits>=8){emoji='🌟';title='Incrível! Quase perfeito!';medal='🥈 Medalha de Prata';}
+  else if(quizHits>=6){emoji='😊';title='Muito bem! Bom trabalho!';medal='🥉 Medalha de Bronze';}
+  else if(quizHits>=4){emoji='💪';title='Continue praticando!';medal='📚 Continua estudando!';}
+  else{emoji='🔄';title='Revise o conteúdo e tente de novo!';medal='📖 Hora de revisar!';}
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-sub').textContent='Você acertou '+quizHits+' de 10 questões ('+pct+'%)';
+  document.getElementById('res-medal').textContent=medal;
+  var rl=document.getElementById('review-list');
+  rl.innerHTML='<p style="font-size:12px;font-weight:800;margin-bottom:8px;color:var(--muted)">RESUMO DAS QUESTÕES:</p>';
+  quizLog.forEach(function(r,i){
+    var d=document.createElement('div');
+    d.className='review-item '+(r.ok?'ok':'nok');
+    d.innerHTML='<span class="ri-icon">'+(r.ok?'✅':'❌')+'</span><span><strong>Q'+(i+1)+'.</strong> '+r.text.substring(0,70)+(r.text.length>70?'…':'')+'</span>';
+    rl.appendChild(d);
+  });
+}
+
+function restart(){
+  cur=0;quizHits=0;quizScore=0;answered=false;quizLog=[];
+  document.getElementById('score-disp').textContent=0;
+  document.getElementById('hits-txt').textContent='0 acertos';
+  document.getElementById('q-area').style.display='block';
+  document.getElementById('results').className='results';
+  loadQ();
+}
+
+loadQ();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "cronica-argumentativa-artigo-opiniao";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Defende",
+    characterEmoji: "💬",
+    characterImg:   "chars/cronica-argumentativa-artigo-opiniao-hd.png",
+    themeLabel:     "Crônica Argumentativa e Artigo de Opinião · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-cronica-argumentativa-artigo-opiniao",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var sessionData = res.data.session;
+    if (!sessionData) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = sessionData.user.id;
+    var scoreVal = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: scoreVal, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

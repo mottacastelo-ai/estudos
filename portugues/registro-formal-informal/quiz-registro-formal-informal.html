@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Registro Linguístico: Formal e Informal</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --port: #7C3AED; --port-light: #A78BFA; --port-bg: #F3F0FF;
+  --port-dark: #4C1D95; --border: #DDD6FE;
+  --text: #1A1A2E; --muted: #6B7280; --card: #fff; --radius: 18px;
+  --ok: #059669; --ok-bg: #ECFDF5; --ok-border: #6EE7B7;
+  --err: #DC2626; --err-bg: #FEF2F2; --err-border: #FCA5A5;
+}
+body { font-family: "Baloo 2", cursive; background: var(--port-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 640px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--port); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .75; }
+.activity-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 24px rgba(124,58,237,.12); }
+.card-header { background: linear-gradient(135deg, var(--port-dark), var(--port) 60%, var(--port-light)); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 16px; color: #fff; line-height: 1.3; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+
+/* Progress */
+.progress-area { padding: 16px 24px 0; }
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--port), var(--port-light)); transition: width .4s; }
+
+/* Score */
+.score-area { display: flex; justify-content: center; gap: 24px; padding: 10px 24px 0; }
+.score-item { text-align: center; }
+.score-val { font-family: "Space Mono", monospace; font-size: 22px; font-weight: 700; color: var(--port); line-height: 1; }
+.score-lbl { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .04em; }
+
+/* Dots */
+.dots-row { display: flex; justify-content: center; gap: 6px; padding: 12px 24px 4px; flex-wrap: wrap; }
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border); transition: background .2s; }
+.dot.active { background: var(--port-light); }
+.dot.hit  { background: var(--ok); }
+.dot.miss { background: var(--err); }
+
+/* Question */
+.q-area { padding: 20px 24px 0; }
+.q-text { font-size: 15px; font-weight: 700; line-height: 1.6; color: var(--text); margin-bottom: 16px; }
+.q-num { display: inline-block; background: var(--port); color: #fff; font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-bottom: 8px; }
+.quote-box { background: var(--port-bg); border-left: 4px solid var(--port-light); border-radius: 8px; padding: 10px 14px; margin: 0 0 14px; font-size: 14px; font-style: italic; color: var(--text); line-height: 1.5; }
+
+/* Options */
+.options { display: flex; flex-direction: column; gap: 10px; padding: 0 24px 4px; }
+.opt-btn { display: flex; align-items: flex-start; gap: 12px; background: var(--port-bg); border: 2px solid var(--border); border-radius: 14px; padding: 12px 16px; cursor: pointer; text-align: left; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; color: var(--text); transition: all .18s; }
+.opt-btn:hover:not(:disabled) { border-color: var(--port-light); background: #EDE9FE; }
+.opt-btn .opt-letter { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--port-dark); }
+.opt-btn.selected { border-color: var(--port); background: #EDE9FE; }
+.opt-btn.correct { border-color: var(--ok); background: var(--ok-bg); color: var(--ok); }
+.opt-btn.correct .opt-letter { background: var(--ok); color: #fff; }
+.opt-btn.wrong   { border-color: var(--err); background: var(--err-bg); color: var(--err); }
+.opt-btn.wrong .opt-letter { background: var(--err); color: #fff; }
+.opt-btn:disabled { cursor: default; }
+
+/* Feedback */
+.feedback { margin: 12px 24px 0; border-radius: 14px; padding: 12px 16px; display: none; align-items: flex-start; gap: 10px; animation: fadeIn .25s; }
+.feedback.correct { background: var(--ok-bg); border: 2px solid var(--ok-border); }
+.feedback.wrong   { background: var(--err-bg); border: 2px solid var(--err-border); }
+.feedback.show    { display: flex; }
+.feedback-icon { font-size: 20px; flex-shrink: 0; line-height: 1; }
+.feedback-text { font-size: 13px; font-weight: 600; line-height: 1.5; }
+.feedback.correct .feedback-text { color: #065F46; }
+.feedback.wrong   .feedback-text { color: #7F1D1D; }
+
+/* Next button */
+.nav-row { display: flex; justify-content: flex-end; padding: 14px 24px 20px; }
+.btn-next { background: linear-gradient(135deg, var(--port), var(--port-light)); color: #fff; border: none; border-radius: 50px; padding: 12px 28px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(124,58,237,.3); transition: transform .15s; }
+.btn-next:hover { transform: scale(1.04); }
+
+/* Results */
+.results { display: none; padding: 32px 24px; text-align: center; }
+.results.show { display: block; }
+.result-emoji { font-size: 52px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--port-dark); margin-bottom: 8px; }
+.result-score { font-family: "Space Mono", monospace; font-size: 42px; font-weight: 700; color: var(--port); margin: 8px 0; }
+.result-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+.btn-restart { background: linear-gradient(135deg, var(--port), var(--port-light)); color: #fff; border: none; border-radius: 50px; padding: 14px 32px; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(124,58,237,.3); }
+.btn-restart:hover { transform: scale(1.04); transition: transform .15s; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 480px) {
+  body { padding: 16px 10px 80px; }
+  .card-header h1 { font-size: 14px; }
+  .q-text { font-size: 14px; }
+  .opt-btn { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal(); return false;">← Voltar ao portal</a>
+  <div class="activity-card">
+    <div class="card-header">
+      <div class="hicon">🦎</div>
+      <div><h1>Quiz</h1><p>Registro Linguístico: Formal e Informal</p></div>
+      <div class="hbadge">10 questões</div>
+    </div>
+    <div class="progress-area">
+      <div class="progress-label">
+        <span id="prog-label">Questão 1 de 10</span>
+        <span id="hits-display">0 acertos</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="dots-row" id="dots-row"></div>
+    <div class="score-area">
+      <div class="score-item"><div class="score-val" id="score-val">0</div><div class="score-lbl">ACERTOS</div></div>
+      <div class="score-item"><div class="score-val" id="total-val">10</div><div class="score-lbl">TOTAL</div></div>
+    </div>
+
+    <div id="quiz-area">
+      <div class="q-area" id="q-area"></div>
+      <div class="options" id="options-area"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="nav-row"><button class="btn-next" id="btn-next">Próxima →</button></div>
+    </div>
+
+    <div class="results" id="results">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <button class="btn-restart" onclick="restartQuiz()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var quizQuestions = [
+  {
+    num: 1,
+    text: 'De acordo com o que estudamos, o que são registros de linguagem?',
+    opts: [
+      'Diferentes modos de falar ou escrever de acordo com a situação de comunicação',
+      'Regras gramaticais que devem ser seguidas em todo tipo de texto',
+      'Palavras criadas pelos jovens para se comunicar entre si',
+      'Sinais de pontuação que marcam o tom e a emoção da frase'
+    ],
+    correct: 0,
+    fb_ok: 'Exatamente! Os registros de linguagem são os diferentes modos de falar ou escrever de acordo com a situação de comunicação.',
+    fb_err: 'Não. Registros de linguagem são os diferentes modos de falar ou escrever de acordo com a situação de comunicação em que nos encontramos.'
+  },
+  {
+    num: 2,
+    text: 'Qual das situações a seguir exige o uso do registro formal?',
+    opts: [
+      'Enviar uma mensagem ao diretor da escola pedindo um documento',
+      'Trocar mensagens engraçadas com o melhor amigo no celular',
+      'Contar uma piada para os colegas no recreio',
+      'Jogar vídeo game com um primo em casa'
+    ],
+    correct: 0,
+    fb_ok: 'Correto! Falar com o diretor é uma situação de comunicação que exige uso mais sério e monitorado da língua: registro formal.',
+    fb_err: 'Não. Enviar uma mensagem ao diretor exige registro formal, pois é uma situação que requer um uso mais sério e monitorado da língua.'
+  },
+  {
+    num: 3,
+    text: 'No livro, um menino diz à senhora: "Tudo bem com a senhora?" Esse é um exemplo de:',
+    opts: [
+      'Registro formal, porque a situação de comunicação exige um uso mais monitorado',
+      'Registro informal, porque a frase é curta e simples',
+      'Linguagem regional, usada apenas em partes do Brasil',
+      'Registro formal, porque a palavra "senhora" nunca aparece no informal'
+    ],
+    correct: 0,
+    fb_ok: 'Perfeito! Cumprimentar uma senhora de forma respeitosa é uma situação comunicativa que pede registro formal — uso mais sério e monitorado.',
+    fb_err: 'Não. "Tudo bem com a senhora?" é registro formal, pois a situação (cumprimentar um adulto mais velho) exige um uso mais sério e monitorado da língua.'
+  },
+  {
+    num: 4,
+    text: 'Na crônica de Fernando Bonassi estudada, a expressão "dá aquela goleada" é uma marca de:',
+    opts: [
+      'Registro informal, pois usa expressões espontâneas do cotidiano',
+      'Registro formal, pois o texto foi publicado em jornal',
+      'Registro formal, pois descreve uma partida de futebol',
+      'Registro informal, pois contém erros de gramática propositais'
+    ],
+    correct: 0,
+    fb_ok: 'Isso! "Dá aquela goleada" é uma expressão espontânea do cotidiano, típica do registro informal — uso mais espontâneo da língua.',
+    fb_err: 'Não. "Dá aquela goleada" é registro informal: expressão espontânea do cotidiano. O fato de ter sido publicado no suplemento infantil de um jornal não torna o texto formal.'
+  },
+  {
+    num: 5,
+    text: 'Qual frase seria mais adequada em um contexto formal de comunicação?',
+    quote: true,
+    optA: 'A) "O time que tem tênis e camisa ganha fácil, dá aquela goleada!"',
+    optB: 'B) "O time que tem mais recursos ganha com facilidade e alcança o sucesso."',
+    opts: [
+      'A frase B, pois não usa expressões espontâneas e tem construção mais elaborada',
+      'A frase A, pois usa vocabulário do esporte que é sempre formal',
+      'A frase A, pois menciona tênis e camisa, que são termos técnicos',
+      'A frase B, pois foi criada para o livro didático'
+    ],
+    correct: 0,
+    fb_ok: 'Muito bem! A frase B é mais formal: não usa expressões espontâneas como "ganha fácil" e "goleada", e tem uma construção mais elaborada e monitorada.',
+    fb_err: 'Não. A frase B é mais adequada para contexto formal: evita expressões espontâneas ("ganha fácil", "goleada") e usa uma construção mais elaborada.'
+  },
+  {
+    num: 6,
+    text: '"E aí, beleza?" — dito por uma menina a uma amiga. Essa frase representa:',
+    opts: [
+      'Registro informal, pois a situação permite um uso mais espontâneo da língua',
+      'Registro formal, pois a menina está se preocupando com o bem-estar da colega',
+      'Registro formal, pois a frase é breve e objetiva',
+      'Registro informal, pois a menina está dentro do ambiente escolar'
+    ],
+    correct: 0,
+    fb_ok: 'Correto! Entre amigas, a situação de comunicação permite um uso mais espontâneo da língua: por isso, o registro informal é adequado.',
+    fb_err: 'Não. "E aí, beleza?" é registro informal porque a situação — conversa entre amigas — permite um uso mais espontâneo da língua.'
+  },
+  {
+    num: 7,
+    text: 'Quando o registro informal permite um uso "mais espontâneo da língua", isso significa que:',
+    opts: [
+      'A pessoa fala de forma mais natural, sem grande preocupação com o uso monitorado',
+      'A pessoa pode misturar palavras de qualquer idioma livremente',
+      'A pessoa não precisa seguir nenhuma regra de convivência social',
+      'A pessoa deve falar mais devagar para ser entendida'
+    ],
+    correct: 0,
+    fb_ok: 'Exato! No registro informal, a pessoa se comunica de forma mais natural e espontânea, sem a preocupação com o uso monitorado exigido pelo registro formal.',
+    fb_err: 'Não. "Uso mais espontâneo" significa comunicar-se de forma mais natural, sem a preocupação com o uso monitorado que o registro formal exige.'
+  },
+  {
+    num: 8,
+    text: 'Na crônica, a palavra "caras" é usada para se referir aos jogadores. Essa escolha é típica de:',
+    opts: [
+      'Registro informal, pois é uma expressão do uso espontâneo da língua',
+      'Registro formal, pois descreve as personagens do texto',
+      'Linguagem técnica do esporte, como "atletas" ou "jogadores"',
+      'Linguagem regional restrita a uma parte do Brasil'
+    ],
+    correct: 0,
+    fb_ok: 'Isso mesmo! "Caras" é uma palavra do uso espontâneo, cotidiano — marca clara do registro informal.',
+    fb_err: 'Não. "Caras" é uma marca do registro informal: expressão do uso espontâneo e cotidiano da língua.'
+  },
+  {
+    num: 9,
+    text: 'Para comunicar a mesma ideia em uma situação formal, qual alternativa substituiria melhor a frase "A gente vai se atrasar!"?',
+    opts: [
+      '"Nós chegaremos atrasados."',
+      '"A gente chega tarde mesmo!"',
+      '"Caramba, vamos se atrasar!"',
+      '"Oxente, vamo atrasar feio!"'
+    ],
+    correct: 0,
+    fb_ok: 'Correto! "Nós chegaremos atrasados." usa construção monitorada, sem expressões espontâneas, adequada para uma situação formal de comunicação.',
+    fb_err: 'Não. Para registro formal, o mais adequado é "Nós chegaremos atrasados." — sem expressões espontâneas, com construção mais monitorada.'
+  },
+  {
+    num: 10,
+    text: 'O registro formal e o registro informal comunicam:',
+    opts: [
+      'A mesma informação de modos diferentes, adequados a situações de comunicação distintas',
+      'Informações sempre diferentes e incompatíveis entre si',
+      'A mesma informação, mas o informal é sempre mais eficiente',
+      'Informações opostas, pois são registros contrários'
+    ],
+    correct: 0,
+    fb_ok: 'Perfeito! "Tudo bem com a senhora?" e "E aí, beleza?" comunicam a mesma informação — mas de modos diferentes, adequados a situações de comunicação distintas.',
+    fb_err: 'Não. Formal e informal podem comunicar a mesma informação de modos diferentes, cada um adequado a um tipo de situação de comunicação.'
+  }
+];
+
+var quizIndex = 0;
+var quizHits = 0;
+var answered = [];
+
+function buildDots() {
+  var row = document.getElementById('dots-row');
+  row.innerHTML = '';
+  quizQuestions.forEach(function(_, i) {
+    var d = document.createElement('div');
+    d.className = 'dot' + (i === quizIndex ? ' active' : '');
+    if (answered[i] === true)  d.className = 'dot hit';
+    if (answered[i] === false) d.className = 'dot miss';
+    row.appendChild(d);
+  });
+}
+
+function loadQuestion() {
+  var q = quizQuestions[quizIndex];
+  document.getElementById('prog-label').textContent = 'Questão ' + (quizIndex + 1) + ' de ' + quizQuestions.length;
+  document.getElementById('prog-fill').style.width = (quizIndex / quizQuestions.length * 100) + '%';
+  document.getElementById('hits-display').textContent = quizHits + ' acerto' + (quizHits !== 1 ? 's' : '');
+
+  var qArea = document.getElementById('q-area');
+  qArea.innerHTML = '<div class="q-num">Questão ' + q.num + '</div><div class="q-text">' + q.text + '</div>';
+
+  if (q.quote) {
+    var qb = document.createElement('div');
+    qb.className = 'quote-box';
+    qb.innerHTML = q.optA + '<br>' + q.optB;
+    qArea.appendChild(qb);
+  }
+
+  var optArea = document.getElementById('options-area');
+  optArea.innerHTML = '';
+  var letters = ['A', 'B', 'C', 'D'];
+  q.opts.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<div class="opt-letter">' + letters[i] + '</div><span>' + opt + '</span>';
+    btn.addEventListener('click', function() { selectAnswer(i); });
+    optArea.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  var q = quizQuestions[quizIndex];
+  var buttons = document.querySelectorAll('.opt-btn');
+  buttons.forEach(function(b) { b.disabled = true; });
+  buttons[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
+  if (idx !== q.correct) buttons[q.correct].classList.add('correct');
+
+  var isCorrect = idx === q.correct;
+  if (isCorrect) quizHits++;
+  answered[quizIndex] = isCorrect;
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong') + ' show';
+  fb.innerHTML = '<div class="feedback-icon">' + (isCorrect ? '✓' : '✗') + '</div><div class="feedback-text">' + (isCorrect ? q.fb_ok : q.fb_err) + '</div>';
+
+  document.getElementById('score-val').textContent = quizHits;
+  document.getElementById('hits-display').textContent = quizHits + ' acerto' + (quizHits !== 1 ? 's' : '');
+  document.getElementById('btn-next').style.display = 'block';
+  buildDots();
+}
+
+function nextQuestion() {
+  quizIndex++;
+  if (quizIndex >= quizQuestions.length) {
+    showResults();
+  } else {
+    loadQuestion();
+    buildDots();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Concluído!';
+
+  var pct = Math.round((quizHits / quizQuestions.length) * 100);
+  window.sabendoScore = pct;
+
+  var emoji = pct === 100 ? '🏆' : pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📚';
+  var titulo = pct === 100 ? 'Incrível! 10 de 10!' : pct >= 80 ? 'Muito bem!' : pct >= 60 ? 'Bom trabalho!' : 'Continue praticando!';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = titulo;
+  document.getElementById('result-score').textContent = pct + '%';
+  document.getElementById('result-sub').textContent = quizHits + ' de ' + quizQuestions.length + ' questões corretas';
+
+  var results = document.getElementById('results');
+  results.className = 'results show';
+}
+
+function restartQuiz() {
+  quizIndex = 0;
+  quizHits = 0;
+  answered = [];
+  document.getElementById('score-val').textContent = 0;
+  document.getElementById('hits-display').textContent = '0 acertos';
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('results').className = 'results';
+  buildDots();
+  loadQuestion();
+}
+
+document.getElementById('btn-next').addEventListener('click', nextQuestion);
+buildDots();
+loadQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "port";
+  var THEME_SLUG = "registro-formal-informal";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Camaleão Ling",
+    characterEmoji: "🦎",
+    characterImg:   "chars/registro-formal-informal-hd.png",
+    themeLabel:     "Registro Linguístico · Português",
+    totalActivities: 4,
+    primaryColor: "#7C3AED",
+    lightColor: "#A78BFA",
+    bgColor: "#F3F0FF",
+    glowRgb: "124,58,237",
+    backUrl: "../../index.html#theme-port-registro-formal-informal",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#7C3AED,#A78BFA)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
