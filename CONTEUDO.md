@@ -1,5 +1,5 @@
 # Conteúdo do Portal — Estado Atual
-**Última atualização:** 2026-09-24
+**Última atualização:** 2026-09-25
 
 ---
 
@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 23 | 104 |
+| 📝 Português | 24 | 108 |
 | 🔢 Matemática | 12 | 54 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **47** | **206** |
+| **Total** | **48** | **210** |
 
 ---
 
@@ -311,6 +311,19 @@
 | Rotulador de Partes | ✅ `rotulador-partes-cronica-argumentativa-artigo-opiniao.html` |
 | Criador de Artigo | ✅ `criador-artigo-cronica-argumentativa-artigo-opiniao.html` |
 | Mapa Mental | ✅ `mapa-mental-cronica-argumentativa-artigo-opiniao.html` |
+
+---
+
+### Acentuacao Oxitonas
+**Personagem:** Oxin (acento agudo animado, caçula da família dos acentos)
+**HQ:** ❌ `hq-acentuacao-oxitonas.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-acentuacao-oxitonas.html` |
+| Flashcards SIM/NÃO | ✅ `flashcards-acentuacao-oxitonas.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-acentuacao-oxitonas.html` |
+| Mapa Mental | ✅ `mapa-mental-acentuacao-oxitonas.html` |
 
 ---
 

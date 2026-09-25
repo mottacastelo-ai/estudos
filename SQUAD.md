@@ -1,5 +1,5 @@
 # SQUAD — Portal Educacional 5º Ano
-**Última atualização:** 2026-09-24
+**Última atualização:** 2026-09-25
 
 ---
 
