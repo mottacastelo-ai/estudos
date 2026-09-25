@@ -182,9 +182,18 @@ function renderQuestion() {
   document.getElementById('prog-label').textContent = 'Questão ' + (quizCurrent+1) + ' de ' + QUIZ.length;
   document.getElementById('prog-fill').style.width = (quizCurrent / QUIZ.length * 100) + '%';
 
+  // Shuffle options (Fisher-Yates) and track new position of correct answer
+  var indices = [0, 1, 2, 3];
+  for (var si = indices.length - 1; si > 0; si--) {
+    var sj = Math.floor(Math.random() * (si + 1));
+    var tmp = indices[si]; indices[si] = indices[sj]; indices[sj] = tmp;
+  }
+  var shuffledOpts = indices.map(function(k) { return qd.opts[k]; });
+  quizCurrentAns = indices.indexOf(qd.ans);
+
   var wrap = document.getElementById('opts-wrap');
   wrap.innerHTML = '';
-  qd.opts.forEach(function(opt, i) {
+  shuffledOpts.forEach(function(opt, i) {
     var btn = document.createElement('button');
     btn.className = 'opt';
     btn.innerHTML = '<span class="opt-letter">' + LETTERS[i] + '</span>' + opt;
