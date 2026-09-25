@@ -684,7 +684,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
     <span class="d-icon">📝</span>
     <span class="d-name">Português</span>
-    <span class="d-count">92</span>
+    <span class="d-count">100</span>
   </button>
   <div class="theme-sub" id="sub-port">
     <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
@@ -707,6 +707,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('port','poema-visual-onomatopeias')">🐟 Poema Visual e Onomatopeias</button>
     <button class="theme-link" onclick="showTheme('port','dicionario-verbetes')">📔 Estudo do Dicionário: Verbetes</button>
     <button class="theme-link" onclick="showTheme('port','acentuacao-paroxitonas-proparoxitonas')">✒️ Acentuação: Paroxítonas e Proparoxítonas</button>
+    <button class="theme-link" onclick="showTheme('port','concordancia-pronomes-verbos')">🤝 Concordância entre Pronomes e Verbos</button>
+    <button class="theme-link" onclick="showTheme('port','registro-formal-informal')">🦎 Registro Formal e Informal</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
@@ -853,8 +855,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Português</div>
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#FDF2F8;color:#9D174D">20 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">75 atividades</span>
+            <span class="chip" style="background:#FDF2F8;color:#9D174D">22 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">83 atividades</span>
             <span class="chip" style="background:#FEF3C7;color:#92400E">16 HQs</span>
           </div>
         </button>
@@ -938,6 +940,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn" onclick="showTheme('port','poema-visual-onomatopeias')">🐟 Poema Visual e Onomatopeias</button>
         <button class="theme-tab-btn" onclick="showTheme('port','dicionario-verbetes')">📔 Estudo do Dicionário: Verbetes</button>
         <button class="theme-tab-btn" onclick="showTheme('port','acentuacao-paroxitonas-proparoxitonas')">✒️ Acentuação: Paroxítonas e Proparoxítonas</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','concordancia-pronomes-verbos')">🤝 Concordância entre Pronomes e Verbos</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','registro-formal-informal')">🦎 Registro Formal e Informal</button>
       </div>
 
       <!-- TEMA: TEXTO TEATRAL -->
@@ -1937,6 +1941,94 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <div class="sched">
           <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🔍 Caça-Erro</span><span class="sched-act port">🔎 Classificador</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: CONCORDÂNCIA ENTRE PRONOMES E VERBOS -->
+      <div class="theme-content" id="theme-port-concordancia-pronomes-verbos">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/concordancia-pronomes-verbos/hq-concordancia-pronomes-verbos.png" alt="HQ Concordância entre Pronomes e Verbos"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Concorda em Campo — 4 páginas · Personagens: Concorda, Bia, Prepo · Tema: concordância entre pronomes e verbos · pp. 208–209</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/concordancia-pronomes-verbos/quiz-concordancia-pronomes-verbos.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre concordância entre pronomes pessoais e verbos no presente, passado e futuro.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/concordancia-pronomes-verbos/transformador-concordancia-pronomes-verbos.html" target="sabendo-atividade">
+            <div class="act-icon">🔄</div><div class="act-title">Transformador</div>
+            <div class="act-desc">Receba uma frase com concordância errada e transforme-a ajustando o pronome e o verbo para a forma correta.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Aplicar</span></div>
+            <div class="level lv2">⚡ Praticar</div>
+          </a>
+          <a class="act-card port" href="portugues/concordancia-pronomes-verbos/flashcards-concordancia-pronomes-verbos.html" target="sabendo-atividade">
+            <div class="act-icon">🃏</div><div class="act-title">Flashcards</div>
+            <div class="act-desc">Treine a conjugação correta de cada pronome pessoal com repetição espaçada: pronome na frente, conjugação no verso.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Memorizar</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/concordancia-pronomes-verbos/mapa-mental-concordancia-pronomes-verbos.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema de concordância entre pronomes e verbos.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Explicar</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🃏 Flashcards</span><span class="sched-act port">🔄 Transformador</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: REGISTRO FORMAL E INFORMAL -->
+      <div class="theme-content" id="theme-port-registro-formal-informal">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/registro-formal-informal/hq-registro-formal-informal.png" alt="HQ Registro Formal e Informal"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Camaleão Ling e os Dois Trajes — 4 páginas · Personagens: Camaleão Ling, Bia, Prepo · Tema: registro linguístico formal e informal · pp. 214–216</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/registro-formal-informal/quiz-registro-formal-informal.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre linguagem formal e informal, contextos de uso e adequação da linguagem à situação comunicativa.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/registro-formal-informal/transformador-registro-formal-informal.html" target="sabendo-atividade">
+            <div class="act-icon">🔄</div><div class="act-title">Transformador Formal↔Informal</div>
+            <div class="act-desc">Reescreva frases passando do registro informal para o formal e vice-versa, adequando a linguagem ao contexto.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Aplicar</span></div>
+            <div class="level lv2">⚡ Praticar</div>
+          </a>
+          <a class="act-card port" href="portugues/registro-formal-informal/classificador-registro-formal-informal.html" target="sabendo-atividade">
+            <div class="act-icon">🔎</div><div class="act-title">Classificador</div>
+            <div class="act-desc">Classifique textos e frases como linguagem formal ou informal com base no contexto e nas características linguísticas.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Classificar</span></div>
+            <div class="level lv1">💬 Explorar</div>
+          </a>
+          <a class="act-card port" href="portugues/registro-formal-informal/mapa-mental-registro-formal-informal.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema de registro linguístico formal e informal.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar 90%</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🔄 Transformador</span><span class="sched-act port">🔎 Classificador</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
         </div>
       </div>
@@ -3593,7 +3685,15 @@ async function loadActivityStatus() {
     'portugues/acentuacao-paroxitonas-proparoxitonas/quiz-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|quiz',
     'portugues/acentuacao-paroxitonas-proparoxitonas/caca-erro-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|caca-erro',
     'portugues/acentuacao-paroxitonas-proparoxitonas/classificador-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|classificador',
-    'portugues/acentuacao-paroxitonas-proparoxitonas/mapa-mental-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|mapa-mental'
+    'portugues/acentuacao-paroxitonas-proparoxitonas/mapa-mental-acentuacao-paroxitonas-proparoxitonas.html':'acentuacao-paroxitonas-proparoxitonas|mapa-mental',
+    'portugues/concordancia-pronomes-verbos/quiz-concordancia-pronomes-verbos.html':'concordancia-pronomes-verbos|quiz',
+    'portugues/concordancia-pronomes-verbos/transformador-concordancia-pronomes-verbos.html':'concordancia-pronomes-verbos|transformador',
+    'portugues/concordancia-pronomes-verbos/flashcards-concordancia-pronomes-verbos.html':'concordancia-pronomes-verbos|flashcards',
+    'portugues/concordancia-pronomes-verbos/mapa-mental-concordancia-pronomes-verbos.html':'concordancia-pronomes-verbos|mapa-mental',
+    'portugues/registro-formal-informal/quiz-registro-formal-informal.html':'registro-formal-informal|quiz',
+    'portugues/registro-formal-informal/transformador-registro-formal-informal.html':'registro-formal-informal|transformador',
+    'portugues/registro-formal-informal/classificador-registro-formal-informal.html':'registro-formal-informal|classificador',
+    'portugues/registro-formal-informal/mapa-mental-registro-formal-informal.html':'registro-formal-informal|mapa-mental'
   };
   var res = await supa.from('activity_log').select('theme_slug,activity_type,score').eq('user_id', sbUser.id);
   if (res.error || !res.data) return;
@@ -3780,6 +3880,8 @@ var THEME_CATALOG = [
   { disc:'port', slug:'poema-visual-onomatopeias', label:'Poema Visual e Onomatopeias', emoji:'🐟', pages:[190,193], charName:'Ziguinho',   charImg:'chars/poema-visual-onomatopeias-hd.png' },
   { disc:'port', slug:'dicionario-verbetes',       label:'Estudo do Dicionário: Verbetes', emoji:'📔', pages:[186,189], charName:'Dicio',    charImg:'chars/dicionario-verbetes-hd.png' },
   { disc:'port', slug:'acentuacao-paroxitonas-proparoxitonas', label:'Acentuação: Paroxítonas e Proparoxítonas', emoji:'✒️', pages:[196,197], charName:'Acentin', charImg:'chars/acentuacao-paroxitonas-proparoxitonas-hd.png' },
+  { disc:'port', slug:'concordancia-pronomes-verbos', label:'Concordância entre Pronomes e Verbos', emoji:'🤝', pages:[208,209], charName:'Concorda', charImg:'chars/concordancia-pronomes-verbos-hd.png' },
+  { disc:'port', slug:'registro-formal-informal', label:'Registro Formal e Informal', emoji:'🦎', pages:[214,216], charName:'Camaleão Ling', charImg:'chars/registro-formal-informal-hd.png' },
   // ── Matemática
   { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null, charName:'Prepo',    charImg:'prepo-hd.png' },
   { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null, charName:'Calco',    charImg:'chars/multiplicacao-divisao-hd.png' },
@@ -3942,7 +4044,9 @@ var THEME_META = {
   'conjuncoes':                  { label: 'Conjunções',                   navId: 'nav-port', disc: 'port' },
   'poema-visual-onomatopeias':  { label: 'Poema Visual e Onomatopeias',  navId: 'nav-port', disc: 'port' },
   'dicionario-verbetes':        { label: 'Estudo do Dicionário: Verbetes', navId: 'nav-port', disc: 'port' },
-  'acentuacao-paroxitonas-proparoxitonas': { label: 'Acentuação: Paroxítonas e Proparoxítonas', navId: 'nav-port', disc: 'port' }
+  'acentuacao-paroxitonas-proparoxitonas': { label: 'Acentuação: Paroxítonas e Proparoxítonas', navId: 'nav-port', disc: 'port' },
+  'concordancia-pronomes-verbos': { label: 'Concordância entre Pronomes e Verbos', navId: 'nav-port', disc: 'port' },
+  'registro-formal-informal':    { label: 'Registro Formal e Informal',            navId: 'nav-port', disc: 'port' }
 };
 var ACTIVITY_FILE_PATHS = {
   'preposicoes:quiz':                          'portugues/preposicoes/quiz-preposicoes.html',
@@ -3998,6 +4102,14 @@ var ACTIVITY_FILE_PATHS = {
   'acentuacao-paroxitonas-proparoxitonas:caca-erro':    'portugues/acentuacao-paroxitonas-proparoxitonas/caca-erro-acentuacao-paroxitonas-proparoxitonas.html',
   'acentuacao-paroxitonas-proparoxitonas:classificador':'portugues/acentuacao-paroxitonas-proparoxitonas/classificador-acentuacao-paroxitonas-proparoxitonas.html',
   'acentuacao-paroxitonas-proparoxitonas:mapa-mental':  'portugues/acentuacao-paroxitonas-proparoxitonas/mapa-mental-acentuacao-paroxitonas-proparoxitonas.html',
+  'concordancia-pronomes-verbos:quiz':         'portugues/concordancia-pronomes-verbos/quiz-concordancia-pronomes-verbos.html',
+  'concordancia-pronomes-verbos:transformador':'portugues/concordancia-pronomes-verbos/transformador-concordancia-pronomes-verbos.html',
+  'concordancia-pronomes-verbos:flashcards':   'portugues/concordancia-pronomes-verbos/flashcards-concordancia-pronomes-verbos.html',
+  'concordancia-pronomes-verbos:mapa-mental':  'portugues/concordancia-pronomes-verbos/mapa-mental-concordancia-pronomes-verbos.html',
+  'registro-formal-informal:quiz':            'portugues/registro-formal-informal/quiz-registro-formal-informal.html',
+  'registro-formal-informal:transformador':   'portugues/registro-formal-informal/transformador-registro-formal-informal.html',
+  'registro-formal-informal:classificador':   'portugues/registro-formal-informal/classificador-registro-formal-informal.html',
+  'registro-formal-informal:mapa-mental':     'portugues/registro-formal-informal/mapa-mental-registro-formal-informal.html',
   'letral:detetive':                           'portugues/letra-l/detetive-silaba-letra-l.html',
   'letral:fabrica':                            'portugues/letra-l/fabrica-letra-l.html',
   'letral:mapa-mental':                        'portugues/letra-l/mapa-mental-letra-l.html',

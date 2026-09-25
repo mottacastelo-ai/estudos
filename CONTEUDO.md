@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 20 | 92 |
+| 📝 Português | 22 | 100 |
 | 🔢 Matemática | 12 | 54 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **44** | **194** |
+| **Total** | **46** | **202** |
 
 ---
 
@@ -273,6 +273,31 @@
 | Caça-Erro | ✅ `caca-erro-acentuacao-paroxitonas-proparoxitonas.html` |
 | Classificador | ✅ `classificador-acentuacao-paroxitonas-proparoxitonas.html` |
 | Mapa Mental | ✅ `mapa-mental-acentuacao-paroxitonas-proparoxitonas.html` |
+
+---
+
+### Concordancia Pronomes Verbos
+**Personagem:** Concorda (dupla puzzle: pronome "EU" + relógio-verbo)
+**HQ:** ❌ `hq-concordancia-pronomes-verbos.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-concordancia-pronomes-verbos.html` |
+| Transformador | ✅ `transformador-concordancia-pronomes-verbos.html` |
+| Flashcards | ✅ `flashcards-concordancia-pronomes-verbos.html` |
+| Mapa Mental | ✅ `mapa-mental-concordancia-pronomes-verbos.html` |
+
+---
+
+### Registro Formal Informal
+**HQ:** ❌ `hq-registro-formal-informal.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-registro-formal-informal.html` |
+| Transformador Formal↔Informal | ✅ `transformador-registro-formal-informal.html` |
+| Classificador | ✅ `classificador-registro-formal-informal.html` |
+| Mapa Mental | ✅ `mapa-mental-registro-formal-informal.html` |
 
 ---
 
