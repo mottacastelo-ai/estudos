@@ -651,8 +651,10 @@
 | `Bia.png` |
 | `Calco.png` |
 | `Calê.png` |
+| `CamaleaoLing.png` |
 | `Ciclao.png` |
 | `Circo.png` |
+| `Concorda.png` |
 | `Dicio.png` |
 | `Divi.png` |
 | `Elastico.png` |
@@ -667,6 +669,7 @@
 | `Mapi.png` |
 | `Max-Min.png` |
 | `Morá.png` |
+| `Oxin.png` |
 | `Poli.png` |
 | `Polito.png` |
 | `Pontuacao.png` |
