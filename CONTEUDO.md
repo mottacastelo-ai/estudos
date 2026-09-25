@@ -7,12 +7,12 @@
 
 | Disciplina | Temas | Atividades |
 |---|---|---|
-| 📝 Português | 22 | 100 |
+| 📝 Português | 23 | 104 |
 | 🔢 Matemática | 12 | 54 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
 | 📜 História | 5 | 19 |
-| **Total** | **46** | **202** |
+| **Total** | **47** | **206** |
 
 ---
 
@@ -298,6 +298,19 @@
 | Transformador Formal↔Informal | ✅ `transformador-registro-formal-informal.html` |
 | Classificador | ✅ `classificador-registro-formal-informal.html` |
 | Mapa Mental | ✅ `mapa-mental-registro-formal-informal.html` |
+
+---
+
+### Cronica Argumentativa Artigo Opiniao
+**Personagem:** DEFENDE
+**HQ:** ❌ `hq-cronica-argumentativa-artigo-opiniao.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-cronica-argumentativa-artigo-opiniao.html` |
+| Rotulador de Partes | ✅ `rotulador-partes-cronica-argumentativa-artigo-opiniao.html` |
+| Criador de Artigo | ✅ `criador-artigo-cronica-argumentativa-artigo-opiniao.html` |
+| Mapa Mental | ✅ `mapa-mental-cronica-argumentativa-artigo-opiniao.html` |
 
 ---
 

@@ -684,7 +684,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-port" onclick="showDisc('port')">
     <span class="d-icon">📝</span>
     <span class="d-name">Português</span>
-    <span class="d-count">100</span>
+    <span class="d-count">104</span>
   </button>
   <div class="theme-sub" id="sub-port">
     <button class="theme-link" onclick="showTheme('port','preposicoes')">🔗 Preposições</button>
@@ -709,6 +709,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('port','acentuacao-paroxitonas-proparoxitonas')">✒️ Acentuação: Paroxítonas e Proparoxítonas</button>
     <button class="theme-link" onclick="showTheme('port','concordancia-pronomes-verbos')">🤝 Concordância entre Pronomes e Verbos</button>
     <button class="theme-link" onclick="showTheme('port','registro-formal-informal')">🦎 Registro Formal e Informal</button>
+    <button class="theme-link" onclick="showTheme('port','cronica-argumentativa-artigo-opiniao')">📣 Crônica Argumentativa e Artigo de Opinião</button>
+    <button class="theme-link" onclick="showTheme('port','acentuacao-oxitonas')">✏️ Acentuação das Palavras Oxítonas</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-mat" onclick="showDisc('mat')">
@@ -855,8 +857,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">Português</div>
           <div class="dhc-desc">Gramática, interpretação e produção de texto</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#FDF2F8;color:#9D174D">22 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">83 atividades</span>
+            <span class="chip" style="background:#FDF2F8;color:#9D174D">23 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">87 atividades</span>
             <span class="chip" style="background:#FEF3C7;color:#92400E">16 HQs</span>
           </div>
         </button>
@@ -942,6 +944,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn" onclick="showTheme('port','acentuacao-paroxitonas-proparoxitonas')">✒️ Acentuação: Paroxítonas e Proparoxítonas</button>
         <button class="theme-tab-btn" onclick="showTheme('port','concordancia-pronomes-verbos')">🤝 Concordância entre Pronomes e Verbos</button>
         <button class="theme-tab-btn" onclick="showTheme('port','registro-formal-informal')">🦎 Registro Formal e Informal</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','cronica-argumentativa-artigo-opiniao')">📣 Crônica Argumentativa e Artigo de Opinião</button>
+        <button class="theme-tab-btn" onclick="showTheme('port','acentuacao-oxitonas')">✏️ Acentuação das Palavras Oxítonas</button>
       </div>
 
       <!-- TEMA: TEXTO TEATRAL -->
@@ -2029,6 +2033,50 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <div class="sched">
           <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🔄 Transformador</span><span class="sched-act port">🔎 Classificador</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA: CRÔNICA ARGUMENTATIVA E ARTIGO DE OPINIÃO -->
+      <div class="theme-content" id="theme-port-cronica-argumentativa-artigo-opiniao">
+        <div class="hq-card">
+          <img class="hq-img" src="portugues/cronica-argumentativa-artigo-opiniao/hq-cronica-argumentativa-artigo-opiniao.png" alt="HQ Crônica Argumentativa e Artigo de Opinião"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Defende e a Bancada Argumentativa — 4 páginas · Personagens: Defende, Bia, Prepo · Tema: crônica argumentativa e artigo de opinião · pp. 201–227</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card port" href="portugues/cronica-argumentativa-artigo-opiniao/quiz-cronica-argumentativa-artigo-opiniao.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div><div class="act-title">Quiz Interativo</div>
+            <div class="act-desc">10 questões sobre crônica argumentativa e artigo de opinião: estrutura, argumentação e recursos persuasivos.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card port" href="portugues/cronica-argumentativa-artigo-opiniao/rotulador-partes-cronica-argumentativa-artigo-opiniao.html" target="sabendo-atividade">
+            <div class="act-icon">🏷️</div><div class="act-title">Rotulador de Partes</div>
+            <div class="act-desc">Identifique e rotule as partes do texto argumentativo: tese, argumentos, contra-argumentos e conclusão.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Analisar</span></div>
+            <div class="level lv2">⚡ Praticar</div>
+          </a>
+          <a class="act-card port" href="portugues/cronica-argumentativa-artigo-opiniao/criador-artigo-cronica-argumentativa-artigo-opiniao.html" target="sabendo-atividade">
+            <div class="act-icon">✍️</div><div class="act-title">Criador de Artigo</div>
+            <div class="act-desc">Produza um artigo de opinião de forma guiada, escolhendo tema, elaborando tese, argumentos e conclusão.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv1">💬 Explorar</div>
+          </a>
+          <a class="act-card port" href="portugues/cronica-argumentativa-artigo-opiniao/mapa-mental-cronica-argumentativa-artigo-opiniao.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div><div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tema de crônica argumentativa e artigo de opinião.</div>
+            <div class="act-tags"><span class="tag tag-d">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Ensinar 90%</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><div class="sched-day port">Dia 1</div><div class="sched-acts"><span class="sched-act port">📖 Ler HQ</span><span class="sched-act port">❓ Quiz</span></div></div>
+          <div class="sched-row"><div class="sched-day port">Dia 2</div><div class="sched-acts"><span class="sched-act port">🏷️ Rotulador</span><span class="sched-act port">✍️ Criador de Artigo</span></div></div>
           <div class="sched-row"><div class="sched-day port">Dia 3</div><div class="sched-acts"><span class="sched-act port">🗺️ Mapa Mental</span></div></div>
         </div>
       </div>
@@ -3693,7 +3741,11 @@ async function loadActivityStatus() {
     'portugues/registro-formal-informal/quiz-registro-formal-informal.html':'registro-formal-informal|quiz',
     'portugues/registro-formal-informal/transformador-registro-formal-informal.html':'registro-formal-informal|transformador',
     'portugues/registro-formal-informal/classificador-registro-formal-informal.html':'registro-formal-informal|classificador',
-    'portugues/registro-formal-informal/mapa-mental-registro-formal-informal.html':'registro-formal-informal|mapa-mental'
+    'portugues/registro-formal-informal/mapa-mental-registro-formal-informal.html':'registro-formal-informal|mapa-mental',
+    'portugues/cronica-argumentativa-artigo-opiniao/quiz-cronica-argumentativa-artigo-opiniao.html':'cronica-argumentativa-artigo-opiniao|quiz',
+    'portugues/cronica-argumentativa-artigo-opiniao/rotulador-partes-cronica-argumentativa-artigo-opiniao.html':'cronica-argumentativa-artigo-opiniao|rotulador',
+    'portugues/cronica-argumentativa-artigo-opiniao/criador-artigo-cronica-argumentativa-artigo-opiniao.html':'cronica-argumentativa-artigo-opiniao|criador',
+    'portugues/cronica-argumentativa-artigo-opiniao/mapa-mental-cronica-argumentativa-artigo-opiniao.html':'cronica-argumentativa-artigo-opiniao|mapa-mental'
   };
   var res = await supa.from('activity_log').select('theme_slug,activity_type,score').eq('user_id', sbUser.id);
   if (res.error || !res.data) return;
@@ -3882,6 +3934,7 @@ var THEME_CATALOG = [
   { disc:'port', slug:'acentuacao-paroxitonas-proparoxitonas', label:'Acentuação: Paroxítonas e Proparoxítonas', emoji:'✒️', pages:[196,197], charName:'Acentin', charImg:'chars/acentuacao-paroxitonas-proparoxitonas-hd.png' },
   { disc:'port', slug:'concordancia-pronomes-verbos', label:'Concordância entre Pronomes e Verbos', emoji:'🤝', pages:[208,209], charName:'Concorda', charImg:'chars/concordancia-pronomes-verbos-hd.png' },
   { disc:'port', slug:'registro-formal-informal', label:'Registro Formal e Informal', emoji:'🦎', pages:[214,216], charName:'Camaleão Ling', charImg:'chars/registro-formal-informal-hd.png' },
+  { disc:'port', slug:'cronica-argumentativa-artigo-opiniao', label:'Crônica Argumentativa e Artigo de Opinião', emoji:'📣', pages:[201,227], charName:'Defende', charImg:'chars/cronica-argumentativa-artigo-opiniao-hd.png' },
   // ── Matemática
   { disc:'mat',  slug:'tabuada',                      label:'Tabuada',                        emoji:'✖️', pages:null, charName:'Prepo',    charImg:'prepo-hd.png' },
   { disc:'mat',  slug:'multiplicacao-divisao',         label:'Multiplicação e Divisão',        emoji:'🧮', pages:null, charName:'Calco',    charImg:'chars/multiplicacao-divisao-hd.png' },
@@ -4046,7 +4099,8 @@ var THEME_META = {
   'dicionario-verbetes':        { label: 'Estudo do Dicionário: Verbetes', navId: 'nav-port', disc: 'port' },
   'acentuacao-paroxitonas-proparoxitonas': { label: 'Acentuação: Paroxítonas e Proparoxítonas', navId: 'nav-port', disc: 'port' },
   'concordancia-pronomes-verbos': { label: 'Concordância entre Pronomes e Verbos', navId: 'nav-port', disc: 'port' },
-  'registro-formal-informal':    { label: 'Registro Formal e Informal',            navId: 'nav-port', disc: 'port' }
+  'registro-formal-informal':    { label: 'Registro Formal e Informal',            navId: 'nav-port', disc: 'port' },
+  'cronica-argumentativa-artigo-opiniao': { label: 'Crônica Argumentativa e Artigo de Opinião', navId: 'nav-port', disc: 'port' }
 };
 var ACTIVITY_FILE_PATHS = {
   'preposicoes:quiz':                          'portugues/preposicoes/quiz-preposicoes.html',
@@ -4110,6 +4164,10 @@ var ACTIVITY_FILE_PATHS = {
   'registro-formal-informal:transformador':   'portugues/registro-formal-informal/transformador-registro-formal-informal.html',
   'registro-formal-informal:classificador':   'portugues/registro-formal-informal/classificador-registro-formal-informal.html',
   'registro-formal-informal:mapa-mental':     'portugues/registro-formal-informal/mapa-mental-registro-formal-informal.html',
+  'cronica-argumentativa-artigo-opiniao:quiz':       'portugues/cronica-argumentativa-artigo-opiniao/quiz-cronica-argumentativa-artigo-opiniao.html',
+  'cronica-argumentativa-artigo-opiniao:rotulador':  'portugues/cronica-argumentativa-artigo-opiniao/rotulador-partes-cronica-argumentativa-artigo-opiniao.html',
+  'cronica-argumentativa-artigo-opiniao:criador':    'portugues/cronica-argumentativa-artigo-opiniao/criador-artigo-cronica-argumentativa-artigo-opiniao.html',
+  'cronica-argumentativa-artigo-opiniao:mapa-mental':'portugues/cronica-argumentativa-artigo-opiniao/mapa-mental-cronica-argumentativa-artigo-opiniao.html',
   'letral:detetive':                           'portugues/letra-l/detetive-silaba-letra-l.html',
   'letral:fabrica':                            'portugues/letra-l/fabrica-letra-l.html',
   'letral:mapa-mental':                        'portugues/letra-l/mapa-mental-letra-l.html',
