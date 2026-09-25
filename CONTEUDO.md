@@ -1,5 +1,5 @@
 # Conteúdo do Portal — Estado Atual
-**Última atualização:** 2026-08-25
+**Última atualização:** 2026-09-24
 
 ---
 
@@ -412,7 +412,7 @@
 
 ### Giros Angulos
 **Personagem:** Angus (transferidor animado verde-esmeralda)
-**HQ:** ❌ `hq-giros-angulos.png` (ausente) | Prompt: ✅
+**HQ:** ❌ `hq-giros-angulos.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -595,6 +595,7 @@
 |---|
 | `Acentin.png` |
 | `Agro 4.0.png` |
+| `Angus.png` |
 | `Bia com fundo.png` |
 | `Bia.png` |
 | `Calco.png` |
