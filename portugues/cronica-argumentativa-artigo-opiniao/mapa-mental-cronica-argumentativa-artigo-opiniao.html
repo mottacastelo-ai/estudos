@@ -397,7 +397,6 @@ function updateScore(){
   });
   var total=GABARITO.length;
   var pct=Math.round((correct/total)*100);
-  window.sabendoScore=pct;
   document.getElementById('conn-count').textContent=connections.length+' conexão'+(connections.length!==1?'ões':'');
   document.getElementById('score-fill').style.width=pct+'%';
   document.getElementById('score-label').textContent=correct+' de '+total+' conexões certas';
@@ -423,7 +422,15 @@ function toggleGabarito(){
   var p=document.getElementById('gabarito-panel');
   p.style.display=p.style.display==='block'?'none':'block';
   document.getElementById('btn-gabarito').textContent=p.style.display==='block'?'Fechar gabarito':'Ver gabarito';
-  if(p.style.display==='block') updateScore();
+  if(p.style.display==='block'){
+    updateScore();
+    var correct2=0;
+    GABARITO.forEach(function(pair){
+      var a=pair[0],b=pair[1];
+      if(connections.find(function(c){return (c.from===a&&c.to===b)||(c.from===b&&c.to===a);})){correct2++;}
+    });
+    window.sabendoScore=Math.round((correct2/GABARITO.length)*100);
+  }
 }
 
 // ======================== RESET ========================
