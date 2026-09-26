@@ -91,10 +91,14 @@ salvar cada página.
 Se o painel incluir Prepo e/ou Bia (personagens recorrentes do portal), ANTES de gerar você DEVE abrir
 com sua própria ferramenta de leitura de arquivos (não apenas mencionar o caminho) os arquivos:
 - "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\_landing\prepo-hd.png" (Prepo)
-- Uma página aprovada anterior com a Bia, se `character reference` de Bia não estiver na folha deste tema
+- "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\Bia.png" (Bia)
 
-Use a imagem de Prepo efetivamente aberta como referência visual de proporção e forma (corpo cilíndrico
-tipo "cápsula" arredondada, não fino/alongado) — não desenhe Prepo apenas a partir da descrição em texto.
+Use as imagens efetivamente abertas como referência visual de proporção, cor e vestuário — não desenhe
+Prepo ou Bia apenas a partir da descrição em texto:
+- Prepo: corpo cilíndrico tipo "cápsula" arredondada, não fino/alongado.
+- Bia: pele morena dourada (tom quente), camiseta polo azul-marinho com emblema circular branco "54"
+  (NUNCA um logo de escola genérico), calça jeans azul (NUNCA calça de moletom/legging esportiva),
+  tênis azul-marinho com cadarço branco (NUNCA tênis totalmente branco).
 
 Imagens canônicas de referência dos demais personagens fixos já existentes estão em:
 "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\"
@@ -135,15 +139,23 @@ Se QUALQUER um desses três pontos falhar, a imagem é uma regressão para rende
 
 ### Comparação obrigatória com a imagem canônica (Prepo/Bia) — ERR-005j
 
-Se algum painel gerado contém Prepo, use a ferramenta Read para abrir **lado a lado, na mesma resposta**: (a) `_landing/prepo-hd.png` (canônico) e (b) o painel recém-gerado. Compare especificamente:
+Se algum painel gerado contém Prepo e/ou Bia, use a ferramenta Read para abrir **lado a lado, na mesma resposta**: (a) o canônico (`_landing/prepo-hd.png` e/ou `Personagens\5o ano\Bia.png`) e (b) o painel recém-gerado. Compare especificamente:
 
+**Prepo:**
 - Formato do corpo: cilíndrico/cápsula arredondada e "atarracado" (baixo e largo) — NÃO fino, alongado ou retangular
 - Antenas: duas, finas, terminando em "D" e "E" maiúsculos amarelos
 - Olhos: grandes, brancos, redondos, pupila preta circular central
 - Etiqueta "PREPO" no peito: retângulo branco/metálico com o texto em azul, proporção legível
 - Braços/pernas: curtos e atarracados, não longos ou finos
 
-Se a proporção geral do corpo ou qualquer um desses traços estiver visivelmente diferente do canônico (ex: corpo alongado, antenas grossas, olhos pequenos), REJEITAR o painel — não é "estilo artístico", é inconsistência de personagem. Regenerar o painel isolado reforçando no prompt "Prepo tem corpo curto e atarracado como uma cápsula, NUNCA alongado ou fino — replicar a proporção exata da imagem de referência aberta". Aplicar o mesmo princípio à Bia quando houver uma página aprovada anterior dela disponível para comparação. Após 3 tentativas sem sucesso, PARAR e reportar ao orquestrador (não publicar um painel com personagem inconsistente).
+**Bia:**
+- Tom de pele: morena dourada/quente — NÃO clara/pálida
+- Emblema no peito: circular, branco, com "54" em azul-marinho — NÃO um logo de escola genérico, brasão ou texto diferente
+- Calça: jeans azul — NÃO calça de moletom/legging esportiva com listras
+- Tênis: azul-marinho com cadarço branco — NÃO tênis totalmente branco
+- Cabelo: cacheado, muito volumoso, preto, caindo até os ombros
+
+Se a proporção geral do corpo (Prepo) ou qualquer item de vestuário/cor (Bia) estiver visivelmente diferente do canônico, REJEITAR o painel — não é "estilo artístico", é inconsistência de personagem. Regenerar o painel isolado reforçando no prompt os itens exatos que divergiram (ex: "Bia veste calça JEANS azul, não calça esportiva; tênis AZUL-MARINHO com cadarço branco, não branco; emblema circular '54', não logo de escola"). Após 3 tentativas sem sucesso, PARAR e reportar ao orquestrador (não publicar um painel com personagem inconsistente) — é possível que a geração de imagem do Codex não suporte referência de imagem real (apenas texto), nesse caso reportar essa limitação explicitamente em vez de insistir cegamente.
 
 ---
 

@@ -96,7 +96,7 @@ O fluxo antigo (pasta `.claude/pending/`/`.claude/done/`/`.claude/error/` + Code
 | Personagem | Tema/Disciplina | Portrait |
 |---|---|---|
 | Prepo (robô roxo) | Preposições / mascote geral | `_landing/prepo-hd.png` |
-| Bia (menina 11 anos, cabelo cacheado preto, uniforme azul) | Protagonista recorrente | — |
+| Bia (menina 11 anos, pele morena dourada, cabelo cacheado volumoso preto, polo azul-marinho com emblema circular "54", jeans azul, tênis azul-marinho com cadarço branco) | Protagonista recorrente | `Personagens\5o ano\Bia.png` (fora do repo) |
 | Prof. Teatrão (professor dramático, cachecol colorido) | Texto Teatral | `chars/teatral-hd.png` |
 | Verbão (letra animada, 3 roupas: passado/presente/futuro) | Tempos Verbais | `chars/tempos-verbais-hd.png` |
 | Elinho (letra ℓ animada, cowboy/surfista) | Letra ℓ | `chars/letra-l-hd.png` |

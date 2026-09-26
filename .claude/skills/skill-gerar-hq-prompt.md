@@ -30,7 +30,7 @@ A folha de personagens é a **primeira geração** e estabelece a referência vi
 
 Deve conter:
 1. **Personagem principal** — 3 emoções distintas (feliz/animado, explicando, surpreso)
-2. **Bia** — 1 pose de apoio (cabelo cacheado preto, uniforme escolar azul)
+2. **Bia** — 1 pose de apoio (pele morena dourada, cabelo cacheado volumoso preto, polo azul-marinho com emblema circular "54", jeans azul, tênis azul-marinho com cadarço branco — ver `Personagens\5o ano\Bia.png` como referência canônica)
 3. **Paleta de cores detalhada** — hex de cada elemento visual
 4. **Elementos visuais que remetem ao conteúdo** do tema
 
