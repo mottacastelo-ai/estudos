@@ -1,457 +1,703 @@
-# Conteúdo do Portal | Inventário Completo
-
-**Última atualização:** 2026-08-25 13:32
-
-## Resumo por Disciplina
-
-- **Português:** 19 temas
-- **Matemática:** 11 temas
-- **Ciências:** 3 temas
-- **História:** 5 temas
-- **Geografia:** 2 temas
+# Conteúdo do Portal — Estado Atual
+**Última atualização:** 2026-09-26
 
 ---
 
-## Português (19 temas)
-
-### Teatral | páginas não mapeadas
-
-- **HQ:** ✅ `portugues/texto-teatral/hq-texto-teatral.png`
-- **Atividades:** 14 atividades
-  - Arquivos:
-    - ✅ `portugues/texto-teatral/quiz-texto-teatral.html`
-    - ✅ `portugues/texto-teatral/complete-lacuna-texto-teatral.html`
-    - ✅ `portugues/texto-teatral/caca-erro-texto-teatral.html`
-    - ✅ `portugues/texto-teatral/ordenacao-cenas-texto-teatral.html`
-    - ✅ `portugues/texto-teatral/criador-dialogo-texto-teatral.html`
-    - ✅ `portugues/texto-teatral/mapa-mental-texto-teatral.html`
-    - ✅ `portugues/preposicoes/quiz-preposicoes.html`
-    - ✅ `portugues/preposicoes/complete-lacuna-preposicoes.html`
-    - ✅ `portugues/preposicoes/caca-ao-erro-preposicoes.html`
-    - ✅ `portugues/preposicoes/frases-malucas-preposicoes.html`
-    - ✅ `portugues/preposicoes/missao-relampago-preposicoes.html`
-    - ✅ `portugues/preposicoes/criador-de-quiz-preposicoes.html`
-    - ✅ `portugues/preposicoes/domino-preposicoes.html`
-    - ✅ `portugues/preposicoes/mapa-mental-preposicoes.html`
-
-### Verbais | páginas não mapeadas
-
-- **HQ:** ✅ `portugues/tempos-verbais/hq-tempos-verbais.png`
-- **Atividades:** 6 atividades
-  - Arquivos:
-    - ✅ `portugues/tempos-verbais/quiz-tempos-verbais.html`
-    - ✅ `portugues/tempos-verbais/complete-lacuna-tempos-verbais.html`
-    - ✅ `portugues/tempos-verbais/caca-erro-tempos-verbais.html`
-    - ✅ `portugues/tempos-verbais/classificador-tempos-verbais.html`
-    - ✅ `portugues/tempos-verbais/transformador-tempos-verbais.html`
-    - ✅ `portugues/tempos-verbais/mapa-mental-tempos-verbais.html`
-
-### Letral | páginas não mapeadas
-
-- **HQ:** ✅ `portugues/letra-l/hq-letra-l.png`
-- **Atividades:** 5 atividades
-  - Arquivos:
-    - ✅ `portugues/letra-l/sortidor-letra-l.html`
-    - ✅ `portugues/letra-l/fabrica-letra-l.html`
-    - ✅ `portugues/letra-l/detetive-silaba-letra-l.html`
-    - ✅ `portugues/letra-l/memoria-letra-l.html`
-    - ✅ `portugues/letra-l/mapa-mental-letra-l.html`
-
-### Variacao | páginas não mapeadas
-
-- **HQ:** ✅ `portugues/variacao-linguistica/hq-variacao-linguistica.png`
-- **Atividades:** 5 atividades
-  - Arquivos:
-    - ✅ `portugues/variacao-linguistica/quiz-variacao-linguistica.html`
-    - ✅ `portugues/variacao-linguistica/tradutor-regional-variacao.html`
-    - ✅ `portugues/variacao-linguistica/detector-variacao-linguistica.html`
-    - ✅ `portugues/variacao-linguistica/reescritor-variacao-linguistica.html`
-    - ✅ `portugues/variacao-linguistica/mapa-mental-variacao-linguistica.html`
-
-### Pontuacao | páginas não mapeadas
-
-- **HQ:** ✅ `portugues/pontuacao/hq-pontuacao-expressiva.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/pontuacao/quiz-pontuacao-expressiva.html`
-    - ✅ `portugues/pontuacao/escolha-sinal-pontuacao.html`
-    - ✅ `portugues/pontuacao/detector-emocao-pontuacao.html`
-    - ✅ `portugues/pontuacao/transformador-emocao-pontuacao.html`
-
-### Instrucional | páginas não mapeadas
-
-- **HQ:** ✅ `portugues/texto-instrucional/hq-texto-instrucional.png`
-- **Atividades:** 5 atividades
-  - Arquivos:
-    - ✅ `portugues/texto-instrucional/quiz-texto-instrucional.html`
-    - ✅ `portugues/texto-instrucional/organizador-texto-instrucional.html`
-    - ✅ `portugues/texto-instrucional/caca-verbo-instrucional.html`
-    - ✅ `portugues/texto-instrucional/criador-texto-instrucional.html`
-    - ✅ `portugues/texto-instrucional/mapa-mental-texto-instrucional.html`
-
-### Entonacao | páginas não mapeadas
-
-- **HQ:** ✅ `portugues/entonacao/hq-entonacao.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/entonacao/quiz-entonacao.html`
-    - ✅ `portugues/entonacao/detector-entonacao.html`
-    - ✅ `portugues/entonacao/rubrica-entonacao.html`
-    - ✅ `portugues/entonacao/ensaiador-entonacao.html`
-
-### Anuncio Publicitario | pp. 117–135
-
-- **HQ:** ✅ `portugues/anuncio-publicitario/hq-anuncio-publicitario.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/anuncio-publicitario/quiz-anuncio-publicitario.html`
-    - ✅ `portugues/anuncio-publicitario/criador-slogan-anuncio-publicitario.html`
-    - ✅ `portugues/anuncio-publicitario/detetive-elementos-anuncio-publicitario.html`
-    - ✅ `portugues/anuncio-publicitario/mapa-mental-anuncio-publicitario.html`
-
-### Prefixo Sufixo | pp. 122–142
-
-- **HQ:** ✅ `portugues/prefixo-sufixo/hq-prefixo-sufixo.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/prefixo-sufixo/quiz-prefixo-sufixo.html`
-    - ✅ `portugues/prefixo-sufixo/construtor-prefixo-sufixo.html`
-    - ✅ `portugues/prefixo-sufixo/flashcards-prefixo-sufixo.html`
-    - ✅ `portugues/prefixo-sufixo/mapa-mental-prefixo-sufixo.html`
-
-### Sons X Ch | pp. 126–143
-
-- **HQ:** ✅ `portugues/sons-x-ch/hq-sons-x-ch.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/sons-x-ch/quiz-sons-x-ch.html`
-    - ✅ `portugues/sons-x-ch/classificador-sons-x-ch.html`
-    - ✅ `portugues/sons-x-ch/batalha-sons-x-ch.html`
-    - ✅ `portugues/sons-x-ch/mapa-mental-sons-x-ch.html`
-
-### Infografico | pp. 129–133
-
-- **HQ:** ✅ `portugues/infografico/hq-infografico.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/infografico/quiz-infografico.html`
-    - ✅ `portugues/infografico/ordenacao-infografico.html`
-    - ✅ `portugues/infografico/criador-infografico.html`
-    - ✅ `portugues/infografico/mapa-mental-infografico.html`
-
-### Fabulas Conflito Moral | pp. 174–177
-
-- **HQ:** ✅ `portugues/fabulas-conflito-moral/hq-fabulas-conflito-moral.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/fabulas-conflito-moral/quiz-fabulas-conflito-moral.html`
-    - ✅ `portugues/fabulas-conflito-moral/classificador-fabulas-conflito-moral.html`
-    - ✅ `portugues/fabulas-conflito-moral/complete-lacuna-fabulas-conflito-moral.html`
-    - ✅ `portugues/fabulas-conflito-moral/mapa-mental-fabulas-conflito-moral.html`
-
-### Reconto Anedota | pp. 144–169
-
-- **HQ:** ✅ `portugues/reconto-anedota/hq-reconto-anedota.png`
-- **Atividades:** 5 atividades
-  - Arquivos:
-    - ✅ `portugues/reconto-anedota/quiz-reconto-anedota.html`
-    - ✅ `portugues/reconto-anedota/comparador-reconto-anedota.html`
-    - ✅ `portugues/reconto-anedota/construtor-reconto-reconto-anedota.html`
-    - ✅ `portugues/reconto-anedota/montador-anedota-reconto-anedota.html`
-    - ✅ `portugues/reconto-anedota/mapa-mental-reconto-anedota.html`
-
-### Discurso Direto Indireto | pp. 151–171
-
-- **HQ:** ✅ `portugues/discurso-direto-indireto/hq-discurso-direto-indireto.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/discurso-direto-indireto/quiz-discurso-direto-indireto.html`
-    - ✅ `portugues/discurso-direto-indireto/conversor-discurso-direto-indireto.html`
-    - ✅ `portugues/discurso-direto-indireto/marcador-discurso-direto-indireto.html`
-    - ✅ `portugues/discurso-direto-indireto/mapa-mental-discurso-direto-indireto.html`
-
-### Girias Coesao | pp. 154–170
-
-- **HQ:** ✅ `portugues/girias-coesao/hq-girias-coesao.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/girias-coesao/quiz-girias-coesao.html`
-    - ✅ `portugues/girias-coesao/detetive-coesao-girias-coesao.html`
-    - ✅ `portugues/girias-coesao/viajante-tempo-girias-coesao.html`
-    - ✅ `portugues/girias-coesao/mapa-mental-girias-coesao.html`
-
-### Conjuncoes | pp. 178–180
-
-- **HQ:** ✅ `portugues/conjuncoes/hq-conjuncoes.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/conjuncoes/quiz-conjuncoes.html`
-    - ✅ `portugues/conjuncoes/classificador-conjuncoes.html`
-    - ✅ `portugues/conjuncoes/complete-lacuna-conjuncoes.html`
-    - ✅ `portugues/conjuncoes/mapa-mental-conjuncoes.html`
-
-### Poema Visual Onomatopeias | pp. 190–193
-
-- **HQ:** ✅ `portugues/poema-visual-onomatopeias/hq-poema-visual-onomatopeias.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/poema-visual-onomatopeias/quiz-poema-visual-onomatopeias.html`
-    - ✅ `portugues/poema-visual-onomatopeias/classificador-poema-visual-onomatopeias.html`
-    - ✅ `portugues/poema-visual-onomatopeias/complete-lacuna-poema-visual-onomatopeias.html`
-    - ✅ `portugues/poema-visual-onomatopeias/mapa-mental-poema-visual-onomatopeias.html`
-
-### Dicionario Verbetes | pp. 186–189
-
-- **HQ:** ✅ `portugues/dicionario-verbetes/hq-dicionario-verbetes.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `portugues/dicionario-verbetes/quiz-dicionario-verbetes.html`
-    - ✅ `portugues/dicionario-verbetes/classificador-dicionario-verbetes.html`
-    - ✅ `portugues/dicionario-verbetes/complete-lacuna-dicionario-verbetes.html`
-    - ✅ `portugues/dicionario-verbetes/mapa-mental-dicionario-verbetes.html`
-
-### Acentuacao Paroxitonas Proparoxitonas | pp. 196–197
-
-- **HQ:** ✅ `portugues/acentuacao-paroxitonas-proparoxitonas/hq-acentuacao-paroxitonas-proparoxitonas.png`
-- **Atividades:** 9 atividades
-  - Arquivos:
-    - ✅ `portugues/acentuacao-paroxitonas-proparoxitonas/quiz-acentuacao-paroxitonas-proparoxitonas.html`
-    - ✅ `portugues/acentuacao-paroxitonas-proparoxitonas/caca-erro-acentuacao-paroxitonas-proparoxitonas.html`
-    - ✅ `portugues/acentuacao-paroxitonas-proparoxitonas/classificador-acentuacao-paroxitonas-proparoxitonas.html`
-    - ✅ `portugues/acentuacao-paroxitonas-proparoxitonas/mapa-mental-acentuacao-paroxitonas-proparoxitonas.html`
-    - ✅ `matematica/tabuada/flashcards-tabuada.html`
-    - ✅ `matematica/tabuada/treino-tabuada.html`
-    - ✅ `matematica/tabuada/batalha-tabuada.html`
-    - ✅ `matematica/tabuada/caca-erro-tabuada.html`
-    - ✅ `matematica/tabuada/corrida-tabuada.html`
-
-## Matemática (11 temas)
-
-### Multiplicacao Divisao | páginas não mapeadas
-
-- **HQ:** ✅ `matematica/multiplicacao-divisao/hq-multiplicacao-divisao.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `matematica/multiplicacao-divisao/associador-termos-multiplicacao-divisao.html`
-    - ✅ `matematica/multiplicacao-divisao/construtor-expressoes-multiplicacao-divisao.html`
-    - ✅ `matematica/multiplicacao-divisao/resolvedor-problemas-multiplicacao-divisao.html`
-    - ✅ `matematica/multiplicacao-divisao/mapa-mental-multiplicacao-divisao.html`
-
-### Poliedros Prismas Piramides | páginas não mapeadas
-
-- **HQ:** ✅ `matematica/poliedros-prismas-piramides/hq-poliedros-prismas-piramides.png`
-- **Atividades:** 3 atividades
-  - Arquivos:
-    - ✅ `matematica/poliedros-prismas-piramides/quiz-poliedros-prismas-piramides.html`
-    - ✅ `matematica/poliedros-prismas-piramides/classificador-solidos-poliedros-prismas-piramides.html`
-    - ✅ `matematica/poliedros-prismas-piramides/mapa-mental-poliedros-prismas-piramides.html`
-
-### Corpos Redondos Planificacao | páginas não mapeadas
-
-- **HQ:** ✅ `matematica/corpos-redondos-planificacao/hq-corpos-redondos-planificacao.png`
-- **Atividades:** 3 atividades
-  - Arquivos:
-    - ✅ `matematica/corpos-redondos-planificacao/quiz-corpos-redondos-planificacao.html`
-    - ✅ `matematica/corpos-redondos-planificacao/reconhecedor-planificacoes-corpos-redondos-planificacao.html`
-    - ✅ `matematica/corpos-redondos-planificacao/mapa-mental-corpos-redondos-planificacao.html`
-
-### Multiplos Divisores Criterios | pp. 124–135
-
-- **HQ:** ✅ `matematica/multiplos-divisores-criterios/hq-multiplos-divisores-criterios.png`
-- **Atividades:** 6 atividades
-  - Arquivos:
-    - ✅ `matematica/multiplos-divisores-criterios/quiz-multiplos-divisores-criterios.html`
-    - ✅ `matematica/multiplos-divisores-criterios/domino-multiplos-divisores-criterios.html`
-    - ✅ `matematica/multiplos-divisores-criterios/complete-lacuna-multiplos-divisores-criterios.html`
-    - ✅ `matematica/multiplos-divisores-criterios/mapa-mental-multiplos-divisores-criterios.html`
-    - ✅ `matematica/multiplos-divisores-criterios/tabela-divisibilidade-multiplos-divisores-criterios.html`
-    - ✅ `matematica/multiplos-divisores-criterios/treino-multiplos-divisores-criterios.html`
-
-### Primos Compostos Fatoracao | pp. 136–145
-
-- **HQ:** ✅ `matematica/primos-compostos-fatoracao/hq-primos-compostos-fatoracao.png`
-- **Atividades:** 6 atividades
-  - Arquivos:
-    - ✅ `matematica/primos-compostos-fatoracao/quiz-primos-compostos-fatoracao.html`
-    - ✅ `matematica/primos-compostos-fatoracao/ordenacao-primos-compostos-fatoracao.html`
-    - ✅ `matematica/primos-compostos-fatoracao/missao-primos-compostos-fatoracao.html`
-    - ✅ `matematica/primos-compostos-fatoracao/mapa-mental-primos-compostos-fatoracao.html`
-    - ✅ `matematica/primos-compostos-fatoracao/fatoracao-guiada-primos-compostos-fatoracao.html`
-    - ✅ `matematica/primos-compostos-fatoracao/treino-primos-compostos-fatoracao.html`
-
-### Mdc Mmc Problemas | pp. 146–157
-
-- **HQ:** ✅ `matematica/mdc-mmc-problemas/hq-mdc-mmc-problemas.png`
-- **Atividades:** 6 atividades
-  - Arquivos:
-    - ✅ `matematica/mdc-mmc-problemas/quiz-mdc-mmc-problemas.html`
-    - ✅ `matematica/mdc-mmc-problemas/criador-mdc-mmc-problemas.html`
-    - ✅ `matematica/mdc-mmc-problemas/transformador-mdc-mmc-problemas.html`
-    - ✅ `matematica/mdc-mmc-problemas/mapa-mental-mdc-mmc-problemas.html`
-    - ✅ `matematica/mdc-mmc-problemas/problemas-mdc-mmc-problemas.html`
-    - ✅ `matematica/mdc-mmc-problemas/treino-mdc-mmc-problemas.html`
-
-### Reta Semirreta Segmento | pp. 186–196
-
-- **HQ:** ✅ `matematica/reta-semirreta-segmento/hq-reta-semirreta-segmento.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `matematica/reta-semirreta-segmento/quiz-reta-semirreta-segmento.html`
-    - ✅ `matematica/reta-semirreta-segmento/detetive-nomes-reta-semirreta-segmento.html`
-    - ✅ `matematica/reta-semirreta-segmento/classificador-reta-semirreta-segmento.html`
-    - ✅ `matematica/reta-semirreta-segmento/mapa-mental-reta-semirreta-segmento.html`
-
-### Circunferencia Circulo | pp. 213–216
-
-- **HQ:** ✅ `matematica/circunferencia-circulo/hq-circunferencia-circulo.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `matematica/circunferencia-circulo/quiz-circunferencia-circulo.html`
-    - ✅ `matematica/circunferencia-circulo/complete-lacuna-circunferencia-circulo.html`
-    - ✅ `matematica/circunferencia-circulo/criador-circunferencia-circulo.html`
-    - ✅ `matematica/circunferencia-circulo/mapa-mental-circunferencia-circulo.html`
-
-### Poligonos Triangulos Quadrilateros | pp. 203–212
-
-- **HQ:** ✅ `matematica/poligonos-triangulos-quadrilateros/hq-poligonos-triangulos-quadrilateros.png`
-- **Atividades:** 5 atividades
-  - Arquivos:
-    - ✅ `matematica/poligonos-triangulos-quadrilateros/quiz-poligonos-triangulos-quadrilateros.html`
-    - ✅ `matematica/poligonos-triangulos-quadrilateros/classificador-poligonos-triangulos-quadrilateros.html`
-    - ✅ `matematica/poligonos-triangulos-quadrilateros/ordenacao-poligonos-triangulos-quadrilateros.html`
-    - ✅ `matematica/poligonos-triangulos-quadrilateros/complete-lacuna-poligonos-triangulos-quadrilateros.html`
-    - ✅ `matematica/poligonos-triangulos-quadrilateros/mapa-mental-poligonos-triangulos-quadrilateros.html`
-
-### Giros Angulos | pp. 197–202
-
-- **HQ:** ❌ `matematica/giros-angulos/hq-giros-angulos.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `matematica/giros-angulos/mapa-mental-giros-angulos.html`
-    - ✅ `matematica/giros-angulos/classificador-giros-angulos.html`
-    - ✅ `matematica/giros-angulos/frases-giros-angulos.html`
-    - ✅ `matematica/giros-angulos/treino-giros-angulos.html`
-
-### Localizacao Deslocamento Ampliacao | pp. 217–224
-
-- **HQ:** ✅ `matematica/localizacao-deslocamento-ampliacao/hq-localizacao-deslocamento-ampliacao.png`
-- **Atividades:** 8 atividades
-  - Arquivos:
-    - ✅ `matematica/localizacao-deslocamento-ampliacao/mapa-mental-localizacao-deslocamento-ampliacao.html`
-    - ✅ `matematica/localizacao-deslocamento-ampliacao/quiz-localizacao-deslocamento-ampliacao.html`
-    - ✅ `matematica/localizacao-deslocamento-ampliacao/missao-localizacao-deslocamento-ampliacao.html`
-    - ✅ `matematica/localizacao-deslocamento-ampliacao/caca-erro-localizacao-deslocamento-ampliacao.html`
-    - ✅ `ciencias/lixo-que-produzimos/quiz-lixo-que-produzimos.html`
-    - ✅ `ciencias/lixo-que-produzimos/grafico-lixo-que-produzimos.html`
-    - ✅ `ciencias/lixo-que-produzimos/detetive-lixo-que-produzimos.html`
-    - ✅ `ciencias/lixo-que-produzimos/mapa-mental-lixo-que-produzimos.html`
-
-## Ciências (3 temas)
-
-### Caminho Do Lixo | páginas não mapeadas
-
-- **HQ:** ✅ `ciencias/caminho-do-lixo/hq-caminho-do-lixo.jpg`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `ciencias/caminho-do-lixo/quiz-caminho-do-lixo.html`
-    - ✅ `ciencias/caminho-do-lixo/grafico-caminho-do-lixo.html`
-    - ✅ `ciencias/caminho-do-lixo/5rs-caminho-do-lixo.html`
-    - ✅ `ciencias/caminho-do-lixo/mapa-mental-caminho-do-lixo.html`
-
-### Ciclo Da Agua | pp. 62–67
-
-- **HQ:** ✅ `ciencias/ciclo-da-agua/hq-ciclo-da-agua.png`
-- **Atividades:** 5 atividades
-  - Arquivos:
-    - ✅ `ciencias/ciclo-da-agua/quiz-ciclo-da-agua.html`
-    - ✅ `ciencias/ciclo-da-agua/rotulador-ciclo-da-agua.html`
-    - ✅ `ciencias/ciclo-da-agua/ordena-etapas-ciclo-da-agua.html`
-    - ✅ `ciencias/ciclo-da-agua/noticia-ciclo-da-agua.html`
-    - ✅ `ciencias/ciclo-da-agua/mapa-mental-ciclo-da-agua.html`
-
-### Agua Cidades Consumo | pp. 68–83
-
-- **HQ:** ✅ `ciencias/agua-cidades-consumo/hq-agua-cidades-consumo.png`
-- **Atividades:** 9 atividades
-  - Arquivos:
-    - ✅ `ciencias/agua-cidades-consumo/quiz-agua-cidades-consumo.html`
-    - ✅ `ciencias/agua-cidades-consumo/fluxo-causal-agua-cidades.html`
-    - ✅ `ciencias/agua-cidades-consumo/classificador-agua-cidades-consumo.html`
-    - ✅ `ciencias/agua-cidades-consumo/noticia-agua-cidades.html`
-    - ✅ `ciencias/agua-cidades-consumo/mapa-mental-agua-cidades-consumo.html`
-    - ✅ `historia/diversidade-cultural/quiz-diversidade-cultural.html`
-    - ✅ `historia/diversidade-cultural/memoria-festas-diversidade-cultural.html`
-    - ✅ `historia/diversidade-cultural/cartografo-cultural-diversidade-cultural.html`
-    - ✅ `historia/diversidade-cultural/mapa-mental-diversidade-cultural.html`
-
-## História (5 temas)
-
-### Calendarios Povos | páginas não mapeadas
-
-- **HQ:** ✅ `historia/calendarios-povos/hq-calendarios-povos.png`
-- **Atividades:** 3 atividades
-  - Arquivos:
-    - ✅ `historia/calendarios-povos/quiz-calendarios-povos.html`
-    - ✅ `historia/calendarios-povos/comparador-calendarios-povos.html`
-    - ✅ `historia/calendarios-povos/mapa-mental-calendarios-povos.html`
-
-### Marcos Memoria | páginas não mapeadas
-
-- **HQ:** ✅ `historia/marcos-memoria/hq-marcos-memoria.png`
-- **Atividades:** 3 atividades
-  - Arquivos:
-    - ✅ `historia/marcos-memoria/quiz-marcos-memoria.html`
-    - ✅ `historia/marcos-memoria/detetive-nomes-marcos-memoria.html`
-    - ✅ `historia/marcos-memoria/mapa-mental-marcos-memoria.html`
-
-### Memoria Negra Imigrantes | páginas não mapeadas
-
-- **HQ:** ✅ `historia/memoria-negra-imigrantes/hq-memoria-negra-imigrantes.png`
-- **Atividades:** 3 atividades
-  - Arquivos:
-    - ✅ `historia/memoria-negra-imigrantes/quiz-memoria-negra-imigrantes.html`
-    - ✅ `historia/memoria-negra-imigrantes/selos-da-memoria.html`
-    - ✅ `historia/memoria-negra-imigrantes/mapa-mental-memoria-negra-imigrantes.html`
-
-### Fontes Historicas Ambiente | pp. 50–61
-
-- **HQ:** ✅ `historia/fontes-historicas-ambiente/hq-fontes-historicas-ambiente.png`
-- **Atividades:** 5 atividades
-  - Arquivos:
-    - ✅ `historia/fontes-historicas-ambiente/quiz-fontes-historicas-ambiente.html`
-    - ✅ `historia/fontes-historicas-ambiente/classificador-fontes-historicas-ambiente.html`
-    - ✅ `historia/fontes-historicas-ambiente/analisador-fonte-fontes-historicas-ambiente.html`
-    - ✅ `historia/fontes-historicas-ambiente/juiz-inspecao-veicular-fontes-historicas-ambiente.html`
-    - ✅ `historia/fontes-historicas-ambiente/mapa-mental-fontes-historicas-ambiente.html`
-
-### Artesanato Industria | pp. 66–69
-
-- **HQ:** ✅ `historia/artesanato-industria/hq-artesanato-industria.png`
-- **Atividades:** 5 atividades
-  - Arquivos:
-    - ✅ `historia/artesanato-industria/quiz-artesanato-industria.html`
-    - ✅ `historia/artesanato-industria/antes-e-depois-artesanato-industria.html`
-    - ✅ `historia/artesanato-industria/linha-do-tempo-teares-artesanato-industria.html`
-    - ✅ `historia/artesanato-industria/diario-artesao-artesanato-industria.html`
-    - ✅ `historia/artesanato-industria/mapa-mental-artesanato-industria.html`
-
-## Geografia (2 temas)
-
-### Pais De Contrastes | páginas não mapeadas
-
-- **HQ:** ✅ `historia/pais-de-contrastes/hq-pais-de-contrastes.png`
-- **Atividades:** 3 atividades
-  - Arquivos:
-    - ✅ `historia/pais-de-contrastes/quiz-pais-de-contrastes.html`
-    - ✅ `historia/pais-de-contrastes/detector-contrastes-pais-de-contrastes.html`
-    - ✅ `historia/pais-de-contrastes/mapa-mental-pais-de-contrastes.html`
-
-### Tecnologia Agropecuaria | páginas não mapeadas
-
-- **HQ:** ✅ `ciencias/tecnologia-agropecuaria/hq-tecnologia-agropecuaria.png`
-- **Atividades:** 4 atividades
-  - Arquivos:
-    - ✅ `ciencias/tecnologia-agropecuaria/quiz-tecnologia-agropecuaria.html`
-    - ✅ `ciencias/tecnologia-agropecuaria/ordena-etapas-tecnologia-agropecuaria.html`
-    - ✅ `ciencias/tecnologia-agropecuaria/classificador-agrossistemas-tecnologia-agropecuaria.html`
-    - ✅ `ciencias/tecnologia-agropecuaria/mapa-mental-tecnologia-agropecuaria.html`
+## Resumo
+
+| Disciplina | Temas | Atividades |
+|---|---|---|
+| 📝 Português | 24 | 108 |
+| 🔢 Matemática | 12 | 54 |
+| 🔬 Ciências | 4 | 18 |
+| 🌍 Geografia | 3 | 11 |
+| 📜 História | 5 | 19 |
+| **Total** | **48** | **210** |
+
+---
+
+## 📝 Português
+
+### Teatral
+**HQ:** ✅ `hq-texto-teatral.png`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-texto-teatral.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-texto-teatral.html` |
+| Caça ao Erro | ✅ `caca-erro-texto-teatral.html` |
+| Ordene as Cenas | ✅ `ordenacao-cenas-texto-teatral.html` |
+| Criador de Diálogo | ✅ `criador-dialogo-texto-teatral.html` |
+| Mapa Mental | ✅ `mapa-mental-texto-teatral.html` |
+
+---
+
+### Preposicoes
+**HQ:** ✅ `hq-preposicoes.png`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-preposicoes.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-preposicoes.html` |
+| Caça ao Erro | ✅ `caca-ao-erro-preposicoes.html` |
+| Frases Malucas | ✅ `frases-malucas-preposicoes.html` |
+| Missão Relâmpago | ✅ `missao-relampago-preposicoes.html` |
+| Criador de Quiz | ✅ `criador-de-quiz-preposicoes.html` |
+| Dominó de Preposições | ✅ `domino-preposicoes.html` |
+| Mapa Mental | ✅ `mapa-mental-preposicoes.html` |
+
+---
+
+### Verbais
+**HQ:** ✅ `hq-tempos-verbais.png`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-tempos-verbais.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-tempos-verbais.html` |
+| Caça ao Erro | ✅ `caca-erro-tempos-verbais.html` |
+| Linha do Tempo | ✅ `classificador-tempos-verbais.html` |
+| Transformador de Verbos | ✅ `transformador-tempos-verbais.html` |
+| Mapa Mental | ✅ `mapa-mental-tempos-verbais.html` |
+
+---
+
+### Letral
+**HQ:** ✅ `hq-letra-l.png`
+
+| Atividade | Arquivo |
+|---|---|
+| Sortidor de Sons | ✅ `sortidor-letra-l.html` |
+| Fábrica de Palavras | ✅ `fabrica-letra-l.html` |
+| Detetive da Sílaba | ✅ `detetive-silaba-letra-l.html` |
+| Jogo da Memória | ✅ `memoria-letra-l.html` |
+| Mapa Mental | ✅ `mapa-mental-letra-l.html` |
+
+---
+
+### Variacao
+**HQ:** ✅ `hq-variacao-linguistica.png`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-variacao-linguistica.html` |
+| Tradutor Regional | ✅ `tradutor-regional-variacao.html` |
+| Detector de Variação | ✅ `detector-variacao-linguistica.html` |
+| Reescritor de Falas | ✅ `reescritor-variacao-linguistica.html` |
+| Mapa Mental | ✅ `mapa-mental-variacao-linguistica.html` |
+
+---
+
+### Pontuacao
+**HQ:** ✅ `hq-pontuacao-expressiva.png`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-pontuacao-expressiva.html` |
+| Escolha o Sinal | ✅ `escolha-sinal-pontuacao.html` |
+| Detector de Emoção | ✅ `detector-emocao-pontuacao.html` |
+| Transformador de Emoções | ✅ `transformador-emocao-pontuacao.html` |
+
+---
+
+### Instrucional
+**HQ:** ✅ `hq-texto-instrucional.png`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-texto-instrucional.html` |
+| Organizador | ✅ `organizador-texto-instrucional.html` |
+| Caça ao Verbo | ✅ `caca-verbo-instrucional.html` |
+| Criador de Texto | ✅ `criador-texto-instrucional.html` |
+| Mapa Mental | ✅ `mapa-mental-texto-instrucional.html` |
+
+---
+
+### Entonacao
+**HQ:** ✅ `hq-entonacao.png`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-entonacao.html` |
+| Detector de Entonação | ✅ `detector-entonacao.html` |
+| Rubrica ao Vivo | ✅ `rubrica-entonacao.html` |
+| Ensaiador de Falas | ✅ `ensaiador-entonacao.html` |
+
+---
+
+### Anuncio Publicitario
+**HQ:** ✅ `hq-anuncio-publicitario.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-anuncio-publicitario.html` |
+| Oficina de Anúncio | ✅ `criador-slogan-anuncio-publicitario.html` |
+| Detetive dos Elementos | ✅ `detetive-elementos-anuncio-publicitario.html` |
+| Mapa Mental | ✅ `mapa-mental-anuncio-publicitario.html` |
+
+---
+
+### Prefixo Sufixo
+**HQ:** ✅ `hq-prefixo-sufixo.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-prefixo-sufixo.html` |
+| Fábrica de Palavras | ✅ `construtor-prefixo-sufixo.html` |
+| Flashcards de Derivação | ✅ `flashcards-prefixo-sufixo.html` |
+| Mapa Mental | ✅ `mapa-mental-prefixo-sufixo.html` |
+
+---
+
+### Sons X Ch
+**Personagem:** XIS
+**HQ:** ✅ `hq-sons-x-ch.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-sons-x-ch.html` |
+| Classificador dos Sons | ✅ `classificador-sons-x-ch.html` |
+| Batalha X vs CH | ✅ `batalha-sons-x-ch.html` |
+| Mapa Mental | ✅ `mapa-mental-sons-x-ch.html` |
+
+---
+
+### Infografico
+**Personagem:** GRAFO
+**HQ:** ✅ `hq-infografico.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-infografico.html` |
+| Monta o Infográfico | ✅ `ordenacao-infografico.html` |
+| Crie seu Infográfico! | ✅ `criador-infografico.html` |
+| Mapa Mental | ✅ `mapa-mental-infografico.html` |
+
+---
+
+### Fabulas Conflito Moral
+**Personagem:** Morá (pergaminho dourado animado com selo de cera)
+**HQ:** ✅ `hq-fabulas-conflito-moral.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-fabulas-conflito-moral.html` |
+| Classificador de Falas | ✅ `classificador-fabulas-conflito-moral.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-fabulas-conflito-moral.html` |
+| Mapa Mental | ✅ `mapa-mental-fabulas-conflito-moral.html` |
+
+---
+
+### Reconto Anedota
+**Personagem:** Virelivro (livro vivo brincalhão)
+**HQ:** ✅ `hq-reconto-anedota.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-reconto-anedota.html` |
+| Comparador de Versões | ✅ `comparador-reconto-anedota.html` |
+| Construtor de Reconto | ✅ `construtor-reconto-reconto-anedota.html` |
+| Montador de Anedota | ✅ `montador-anedota-reconto-anedota.html` |
+| Mapa Mental | ✅ `mapa-mental-reconto-anedota.html` |
+
+---
+
+### Discurso Direto Indireto
+**HQ:** ✅ `hq-discurso-direto-indireto.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-discurso-direto-indireto.html` |
+| Conversor de Discurso | ✅ `conversor-discurso-direto-indireto.html` |
+| Marcador de Texto | ✅ `marcador-discurso-direto-indireto.html` |
+| Mapa Mental | ✅ `mapa-mental-discurso-direto-indireto.html` |
+
+---
+
+### Girias Coesao
+**HQ:** ✅ `hq-girias-coesao.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-girias-coesao.html` |
+| Detetive da Coesão | ✅ `detetive-coesao-girias-coesao.html` |
+| Viajante do Tempo | ✅ `viajante-tempo-girias-coesao.html` |
+| Mapa Mental | ✅ `mapa-mental-girias-coesao.html` |
+
+---
+
+### Conjuncoes
+**Personagem:** Elo (elo de corrente dourado animado)
+**HQ:** ✅ `hq-conjuncoes.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-conjuncoes.html` |
+| Classificador de Conjunções | ✅ `classificador-conjuncoes.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-conjuncoes.html` |
+| Mapa Mental | ✅ `mapa-mental-conjuncoes.html` |
+
+---
+
+### Poema Visual Onomatopeias
+**HQ:** ✅ `hq-poema-visual-onomatopeias.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-poema-visual-onomatopeias.html` |
+| Classificador | ✅ `classificador-poema-visual-onomatopeias.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-poema-visual-onomatopeias.html` |
+| Mapa Mental | ✅ `mapa-mental-poema-visual-onomatopeias.html` |
+
+---
+
+### Dicionario Verbetes
+**HQ:** ✅ `hq-dicionario-verbetes.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-dicionario-verbetes.html` |
+| Classificador | ✅ `classificador-dicionario-verbetes.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-dicionario-verbetes.html` |
+| Mapa Mental | ✅ `mapa-mental-dicionario-verbetes.html` |
+
+---
+
+### Acentuacao Paroxitonas Proparoxitonas
+**Personagem:** Acentin (acento agudo animado com chapeuzinho no formato de acento)
+**HQ:** ✅ `hq-acentuacao-paroxitonas-proparoxitonas.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-acentuacao-paroxitonas-proparoxitonas.html` |
+| Caça-Erro | ✅ `caca-erro-acentuacao-paroxitonas-proparoxitonas.html` |
+| Classificador | ✅ `classificador-acentuacao-paroxitonas-proparoxitonas.html` |
+| Mapa Mental | ✅ `mapa-mental-acentuacao-paroxitonas-proparoxitonas.html` |
+
+---
+
+### Concordancia Pronomes Verbos
+**Personagem:** Concorda (dupla puzzle: pronome "EU" + relógio-verbo)
+**HQ:** ✅ `hq-concordancia-pronomes-verbos.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-concordancia-pronomes-verbos.html` |
+| Transformador | ✅ `transformador-concordancia-pronomes-verbos.html` |
+| Flashcards | ✅ `flashcards-concordancia-pronomes-verbos.html` |
+| Mapa Mental | ✅ `mapa-mental-concordancia-pronomes-verbos.html` |
+
+---
+
+### Registro Formal Informal
+**HQ:** ✅ `hq-registro-formal-informal.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-registro-formal-informal.html` |
+| Transformador Formal↔Informal | ✅ `transformador-registro-formal-informal.html` |
+| Classificador | ✅ `classificador-registro-formal-informal.html` |
+| Mapa Mental | ✅ `mapa-mental-registro-formal-informal.html` |
+
+---
+
+### Cronica Argumentativa Artigo Opiniao
+**Personagem:** DEFENDE
+**HQ:** ✅ `hq-cronica-argumentativa-artigo-opiniao.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-cronica-argumentativa-artigo-opiniao.html` |
+| Rotulador de Partes | ✅ `rotulador-partes-cronica-argumentativa-artigo-opiniao.html` |
+| Criador de Artigo | ✅ `criador-artigo-cronica-argumentativa-artigo-opiniao.html` |
+| Mapa Mental | ✅ `mapa-mental-cronica-argumentativa-artigo-opiniao.html` |
+
+---
+
+### Acentuacao Oxitonas
+**Personagem:** Oxin (acento agudo animado, caçula da família dos acentos)
+**HQ:** ✅ `hq-acentuacao-oxitonas.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-acentuacao-oxitonas.html` |
+| Flashcards SIM/NÃO | ✅ `flashcards-acentuacao-oxitonas.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-acentuacao-oxitonas.html` |
+| Mapa Mental | ✅ `mapa-mental-acentuacao-oxitonas.html` |
+
+---
+
+## 🔢 Matemática
+
+### Tabuada
+**HQ:** ❌ sem HQ
+
+| Atividade | Arquivo |
+|---|---|
+| Flashcards | ✅ `flashcards-tabuada.html` |
+| Treino Cronometrado | ✅ `treino-tabuada.html` |
+| Batalha da Tabuada | ✅ `batalha-tabuada.html` |
+| Caça ao Erro | ✅ `caca-erro-tabuada.html` |
+| Corrida da Tabuada | ✅ `corrida-tabuada.html` |
+
+---
+
+### Multiplicacao Divisao
+**HQ:** ✅ `hq-multiplicacao-divisao.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Associador de Termos | ✅ `associador-termos-multiplicacao-divisao.html` |
+| Construtor de Expressões | ✅ `construtor-expressoes-multiplicacao-divisao.html` |
+| Resolvedor de Problemas | ✅ `resolvedor-problemas-multiplicacao-divisao.html` |
+| Mapa Mental | ✅ `mapa-mental-multiplicacao-divisao.html` |
+
+---
+
+### Poliedros Prismas Piramides
+**Personagem:** Poli
+**HQ:** ✅ `hq-poliedros-prismas-piramides.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz | ✅ `quiz-poliedros-prismas-piramides.html` |
+| Classificador de Sólidos | ✅ `classificador-solidos-poliedros-prismas-piramides.html` |
+| Mapa Mental | ✅ `mapa-mental-poliedros-prismas-piramides.html` |
+
+---
+
+### Corpos Redondos Planificacao
+**Personagem:** Esfe
+**HQ:** ✅ `hq-corpos-redondos-planificacao.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz | ✅ `quiz-corpos-redondos-planificacao.html` |
+| Reconhecedor de Planificações | ✅ `reconhecedor-planificacoes-corpos-redondos-planificacao.html` |
+| Mapa Mental | ✅ `mapa-mental-corpos-redondos-planificacao.html` |
+
+---
+
+### Multiplos Divisores Criterios
+**Personagem:** DIVI
+**HQ:** ✅ `hq-multiplos-divisores-criterios.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-multiplos-divisores-criterios.html` |
+| Associador de Critérios | ✅ `domino-multiplos-divisores-criterios.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-multiplos-divisores-criterios.html` |
+| Mapa Mental | ✅ `mapa-mental-multiplos-divisores-criterios.html` |
+| Tabela da Divisibilidade | ✅ `tabela-divisibilidade-multiplos-divisores-criterios.html` |
+| Treino no Papel | ✅ `treino-multiplos-divisores-criterios.html` |
+
+---
+
+### Primos Compostos Fatoracao
+**HQ:** ✅ `hq-primos-compostos-fatoracao.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-primos-compostos-fatoracao.html` |
+| Ordene a Fatoração | ✅ `ordenacao-primos-compostos-fatoracao.html` |
+| Missão do Detetive Primo | ✅ `missao-primos-compostos-fatoracao.html` |
+| Mapa Mental | ✅ `mapa-mental-primos-compostos-fatoracao.html` |
+| Fatoração Guiada | ✅ `fatoracao-guiada-primos-compostos-fatoracao.html` |
+| Treino no Papel | ✅ `treino-primos-compostos-fatoracao.html` |
+
+---
+
+### Mdc Mmc Problemas
+**HQ:** ✅ `hq-mdc-mmc-problemas.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-mdc-mmc-problemas.html` |
+| Criador de Fatoração | ✅ `criador-mdc-mmc-problemas.html` |
+| Transformador de Problemas | ✅ `transformador-mdc-mmc-problemas.html` |
+| Mapa Mental | ✅ `mapa-mental-mdc-mmc-problemas.html` |
+| Problemas Contextuais | ✅ `problemas-mdc-mmc-problemas.html` |
+| Treino no Papel | ✅ `treino-mdc-mmc-problemas.html` |
+
+---
+
+### Reta Semirreta Segmento
+**Personagem:** Lino (uma reta animada verde-esmeralda que se transforma em semirreta e segmento)
+**HQ:** ✅ `hq-reta-semirreta-segmento.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-reta-semirreta-segmento.html` |
+| Detetive dos Nomes | ✅ `detetive-nomes-reta-semirreta-segmento.html` |
+| Classificador Geométrico | ✅ `classificador-reta-semirreta-segmento.html` |
+| Mapa Mental | ✅ `mapa-mental-reta-semirreta-segmento.html` |
+
+---
+
+### Circunferencia Circulo
+**Personagem:** Circo (compasso animado verde-esmeralda)
+**HQ:** ✅ `hq-circunferencia-circulo.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-circunferencia-circulo.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-circunferencia-circulo.html` |
+| Monte sua Circunferência | ✅ `criador-circunferencia-circulo.html` |
+| Mapa Mental | ✅ `mapa-mental-circunferencia-circulo.html` |
+
+---
+
+### Poligonos Triangulos Quadrilateros
+**Personagem:** Polito (figura geométrica plana animada, transforma-se em polígonos)
+**HQ:** ✅ `hq-poligonos-triangulos-quadrilateros.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-poligonos-triangulos-quadrilateros.html` |
+| Classificador de Polígonos | ✅ `classificador-poligonos-triangulos-quadrilateros.html` |
+| Ordene as Figuras | ✅ `ordenacao-poligonos-triangulos-quadrilateros.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-poligonos-triangulos-quadrilateros.html` |
+| Mapa Mental | ✅ `mapa-mental-poligonos-triangulos-quadrilateros.html` |
+
+---
+
+### Giros Angulos
+**Personagem:** Angus (transferidor animado verde-esmeralda)
+**HQ:** ❌ `hq-giros-angulos.png` (ausente) | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Mapa Mental | ✅ `mapa-mental-giros-angulos.html` |
+| Classificador de Ângulos | ✅ `classificador-giros-angulos.html` |
+| Frases sobre Ângulos | ✅ `frases-giros-angulos.html` |
+| Treino de Ângulos | ✅ `treino-giros-angulos.html` |
+
+---
+
+### Localizacao Deslocamento Ampliacao
+**Personagem:** Mapi (novo — pino de localização animado)
+**HQ:** ✅ `hq-localizacao-deslocamento-ampliacao.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Mapa Mental | ✅ `mapa-mental-localizacao-deslocamento-ampliacao.html` |
+| Quiz Interativo | ✅ `quiz-localizacao-deslocamento-ampliacao.html` |
+| Missão Mapi | ✅ `missao-localizacao-deslocamento-ampliacao.html` |
+| Caça-Erro | ✅ `caca-erro-localizacao-deslocamento-ampliacao.html` |
+
+---
+
+## 🔬 Ciências
+
+### Lixo Que Produzimos
+**HQ:** ✅ `hq-lixo-que-produzimos.jpg`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-lixo-que-produzimos.html` |
+| Leitura de Gráfico | ✅ `grafico-lixo-que-produzimos.html` |
+| Detetive do Lixo | ✅ `detetive-lixo-que-produzimos.html` |
+| Mapa Mental | ✅ `mapa-mental-lixo-que-produzimos.html` |
+
+---
+
+### Caminho Do Lixo
+**HQ:** ✅ `hq-caminho-do-lixo.jpg`
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-caminho-do-lixo.html` |
+| Gráfico e Classificação | ✅ `grafico-caminho-do-lixo.html` |
+| Jornada dos 5Rs | ✅ `5rs-caminho-do-lixo.html` |
+| Mapa Mental | ✅ `mapa-mental-caminho-do-lixo.html` |
+
+---
+
+### Ciclo Da Agua
+**HQ:** ✅ `hq-ciclo-da-agua.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-ciclo-da-agua.html` |
+| Rotulador do Ciclo | ✅ `rotulador-ciclo-da-agua.html` |
+| Ordenador de Etapas | ✅ `ordena-etapas-ciclo-da-agua.html` |
+| Notícia Científica | ✅ `noticia-ciclo-da-agua.html` |
+| Mapa Mental | ✅ `mapa-mental-ciclo-da-agua.html` |
+
+---
+
+### Agua Cidades Consumo
+**Personagem:** GOTINHA
+**HQ:** ✅ `hq-agua-cidades-consumo.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-agua-cidades-consumo.html` |
+| Diagrama de Causas e Efeitos | ✅ `fluxo-causal-agua-cidades.html` |
+| Classificador Ambiental | ✅ `classificador-agua-cidades-consumo.html` |
+| Notícia Científica | ✅ `noticia-agua-cidades.html` |
+| Mapa Mental | ✅ `mapa-mental-agua-cidades-consumo.html` |
+
+---
+
+## 🌍 Geografia
+
+### Diversidade Cultural
+**HQ:** ✅ `hq-diversidade-cultural.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-diversidade-cultural.html` |
+| Memória das Festas | ✅ `memoria-festas-diversidade-cultural.html` |
+| Cartógrafo Cultural | ✅ `cartografo-cultural-diversidade-cultural.html` |
+| Mapa Mental | ✅ `mapa-mental-diversidade-cultural.html` |
+
+---
+
+### Pais De Contrastes
+**HQ:** ✅ `hq-pais-de-contrastes.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-pais-de-contrastes.html` |
+| Detector de Contrastes | ✅ `detector-contrastes-pais-de-contrastes.html` |
+| Mapa Mental | ✅ `mapa-mental-pais-de-contrastes.html` |
+
+---
+
+### Tecnologia Agropecuaria
+**HQ:** ✅ `hq-tecnologia-agropecuaria.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-tecnologia-agropecuaria.html` |
+| Ordene as Etapas do Café | ✅ `ordena-etapas-tecnologia-agropecuaria.html` |
+| Classificador de Agrossistemas | ✅ `classificador-agrossistemas-tecnologia-agropecuaria.html` |
+| Mapa Mental | ✅ `mapa-mental-tecnologia-agropecuaria.html` |
+
+---
+
+## 📜 História
+
+### Calendarios Povos
+**HQ:** ✅ `hq-calendarios-povos.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-calendarios-povos.html` |
+| Comparador de Calendários | ✅ `comparador-calendarios-povos.html` |
+| Mapa Mental | ✅ `mapa-mental-calendarios-povos.html` |
+
+---
+
+### Marcos Memoria
+**HQ:** ✅ `hq-marcos-memoria.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-marcos-memoria.html` |
+| Detetive dos Nomes | ✅ `detetive-nomes-marcos-memoria.html` |
+| Mapa Mental | ✅ `mapa-mental-marcos-memoria.html` |
+
+---
+
+### Memoria Negra Imigrantes
+**HQ:** ✅ `hq-memoria-negra-imigrantes.png` | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz Interativo | ✅ `quiz-memoria-negra-imigrantes.html` |
+| Selos da Memória | ✅ `selos-da-memoria.html` |
+| Mapa Mental | ✅ `mapa-mental-memoria-negra-imigrantes.html` |
+
+---
+
+### Fontes Historicas Ambiente
+**Personagem:** Lupa
+**HQ:** ✅ `hq-fontes-historicas-ambiente.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz — Fontes e Impactos Ambientais | ✅ `quiz-fontes-historicas-ambiente.html` |
+| Classificador de Fontes | ✅ `classificador-fontes-historicas-ambiente.html` |
+| Analisador de Fonte Histórica | ✅ `analisador-fonte-fontes-historicas-ambiente.html` |
+| Juiz da História | ✅ `juiz-inspecao-veicular-fontes-historicas-ambiente.html` |
+| Mapa Mental | ✅ `mapa-mental-fontes-historicas-ambiente.html` |
+
+---
+
+### Artesanato Industria
+**Personagem:** Fio
+**HQ:** ✅ `hq-artesanato-industria.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz — Artesanato e Indústria | ✅ `quiz-artesanato-industria.html` |
+| Antes e Depois | ✅ `antes-e-depois-artesanato-industria.html` |
+| Linha do Tempo dos Teares | ✅ `linha-do-tempo-teares-artesanato-industria.html` |
+| Diário do Artesão | ✅ `diario-artesao-artesanato-industria.html` |
+| Mapa Mental | ✅ `mapa-mental-artesanato-industria.html` |
+
+---
+
+## 🖼️ Personagens criados (Personagens\5o ano\)
+
+| Arquivo |
+|---|
+| `Acentin.png` |
+| `Agro 4.0.png` |
+| `Angus.png` |
+| `Bia com fundo.png` |
+| `Bia.png` |
+| `Calco.png` |
+| `Calê.png` |
+| `CamaleaoLing.png` |
+| `Ciclao.png` |
+| `Circo.png` |
+| `Concorda.png` |
+| `Defende.png` |
+| `Dicio.png` |
+| `Divi.png` |
+| `Elastico.png` |
+| `Elinho.png` |
+| `Elo.png` |
+| `Esfer.png` |
+| `Faca.png` |
+| `Gotinha.png` |
+| `Grafo.png` |
+| `Lino.png` |
+| `Lixinho.png` |
+| `Mapi.png` |
+| `Max-Min.png` |
+| `Morá.png` |
+| `Oxin.png` |
+| `Poli.png` |
+| `Polito.png` |
+| `Pontuacao.png` |
+| `Prepo musculoso.png` |
+| `Prepo.png` |
+| `Primo.png` |
+| `Prof. Geografina.png` |
+| `Professora Ciencia.png` |
+| `Publinho.png` |
+| `Raizinha.png` |
+| `Toni.png` |
+| `Travessao.png` |
+| `Verbão.png` |
+| `Virelivro.png` |
+| `Xis.png` |
+| `Ze e Das Gracas.png` |
+| `Ziguinho.png` |
+| `memo e timbre.png` |
+
+---
+
+## Legenda
+
+| Símbolo | Significado |
+|---|---|
+| ✅ | Arquivo presente |
+| ❌ | Arquivo ausente |
+| ⭐ | Template canônico de referência |
+| Páginas: ✅ pg1–pg4 | Páginas individuais da HQ salvas |
+| Prompt: ✅ | Arquivo `hq-[slug]-prompt.md` presente |
