@@ -19,7 +19,7 @@
    - **Quando concordam:** as duas peças se encaixam, brilham com um halo amarelo dourado e aparecem estrelinhas ao redor.
    - **Quando discordam:** as peças se afastam, chacoalham, aparecem raios vermelhos entre elas e caretas de confusão.
 
-2. **Bia** — menina de 11 anos com cabelo cacheado e volumoso preto até os ombros, pele morena clara, usando uniforme escolar (camiseta azul marinho com logo redondo pequeno no peito, calça azul escuro) e tênis brancos. Expressão curiosa e sorridente.
+2. **Bia** — menina de 11 anos com cabelo cacheado e volumoso preto até os ombros, pele morena clara, usando uniforme escolar (camiseta polo azul-marinho com colarinho branco e emblema circular branco com o número "54" no peito, calça jeans azul) e tênis azul-marinho com cadarço branco. Expressão curiosa e sorridente.
 
 3. **Prepo** — robô pequeno roxo (#7C3AED) com corpo cilíndrico, duas antenas na cabeça com as letras "D" e "E" nas pontas (maiúsculas amarelas), olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
 
@@ -69,7 +69,7 @@
 > 3. **Confused:** Same lilac clock, hands spinning wildly out of sync, eyes crossed, mouth open in surprise, small red spark above. Label below: "Discordando".
 >
 > **Bottom strip — supporting cast:**
-> - **Bia:** 11-year-old girl with voluminous curly black hair to her shoulders, light brown skin, wearing navy blue school uniform (t-shirt with small round logo on chest, dark blue pants) and white sneakers, waving with a friendly smile. Label: "Bia — amiga humana".
+> - **Bia:** 11-year-old girl with voluminous curly black hair to her shoulders, light brown skin, wearing navy blue polo shirt with white collar and a round white chest badge with the number "54" in navy, blue jeans, and navy-blue sneakers with white laces, waving with a friendly smile. Label: "Bia — amiga humana".
 > - **Prepo:** Small purple robot (#7C3AED), cylindrical body, two head antennas ending in yellow letters "D" and "E", round white eyes with black pupils, metallic chest label reading "PREPO" in blue, short legs with tiny buttons, articulated arms. Standing next to Bia. Label: "Prepo — mascote".
 >
 > Style: children's textbook illustration, clean vector look, bright and friendly, no photorealism.
@@ -80,7 +80,7 @@
 **Cena de abertura:** Bia lê o livro didático em casa; a dupla Concorda salta da página para explicar. Cenário: sala de estudos com estante de livros ao fundo, uma janela com cortina lilás mostrando árvores lá fora, mesa de madeira clara com cadernos abertos e um vaso pequeno com uma planta verde.
 
 **Painel 1 (cena ampla, sala de estudos):**
-> Wide panel, cozy home study room. Background elements: wooden bookshelf with rows of colorful books on the left, a window with lilac curtain showing green trees outside on the right, a wooden desk with an open notebook, a small pencil holder, and a small potted plant. Bia — the 11-year-old girl with voluminous curly black hair, light brown skin, navy blue school uniform t-shirt with round chest logo, dark blue pants, white sneakers — sits at the desk reading a purple textbook. Speech bubble from Bia: *"Nossa! O livro fala em concordância verbal. O que é isso?"*
+> Wide panel, cozy home study room. Background elements: wooden bookshelf with rows of colorful books on the left, a window with lilac curtain showing green trees outside on the right, a wooden desk with an open notebook, a small pencil holder, and a small potted plant. Bia — the 11-year-old girl with voluminous curly black hair, light brown skin, navy blue polo shirt with white collar and a round white chest badge with the number "54" in navy, blue jeans, and navy-blue sneakers with white laces — sits at the desk reading a purple textbook. Speech bubble from Bia: *"Nossa! O livro fala em concordância verbal. O que é isso?"*
 
 **Painel 2 (dupla Concorda aparece saltando do livro):**
 > Same room, closer view. The Concorda duo bursts out of the open textbook in a swirl of golden sparkles. Left character: purple square block (#7C3AED) with bold yellow letters "EU" in the center, round white eyes with black pupils, small smile, puzzle connector on right. Right character: lilac circle clock (#A78BFA) with three labels "PASSADO", "PRESENTE", "FUTURO", yellow clock hands on "PRESENTE", round white eyes with black pupils, small smile, puzzle socket on left. They connect together with a golden glow. Background: same bookshelf and window from panel 1. Speech bubble from the pronoun piece: *"Oi, Bia! Somos o Concorda!"* Speech bubble from the verb piece: *"Pronome mais verbo — sempre juntos!"*
@@ -180,7 +180,7 @@
 **Referência de coerência entre páginas:** ao gerar cada página, referenciar explicitamente a folha de personagens `Concorda.png` como base visual para garantir que:
 - Pronome-EU tem sempre o mesmo tom de roxo, o mesmo formato de "EU" amarelo e o mesmo tipo de olhos.
 - Verbo-relógio tem sempre o mesmo tom de lilás, o mesmo mostrador com PASSADO/PRESENTE/FUTURO e as mesmas mãos amarelas.
-- Bia tem sempre o mesmo cabelo cacheado preto, mesmo uniforme azul e mesmos tênis brancos.
+- Bia tem sempre o mesmo cabelo cacheado preto, mesmo uniforme azul e mesmos tênis azul-marinho com cadarço branco.
 - Prepo tem sempre as antenas D e E, olhos brancos, etiqueta PREPO no peito.
 
 **Nomes finais dos arquivos:**

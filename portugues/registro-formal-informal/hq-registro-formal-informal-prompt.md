@@ -13,9 +13,9 @@
 
 **PERSONAGENS PERMITIDOS NESTA HQ (apenas estes três):**
 
-1. **Camaleão Ling** — camaleão bípede, corpo verde-limão brilhante com escamas suaves, olhos grandes esféricos e independentes (podem apontar em direções diferentes), cauda enrolada na ponta, língua rosa longa que às vezes aparece. Ele TROCA DE ROUPA para representar o registro: modo formal usa terno cinza-chumbo, camisa branca, gravata roxa, sapatos pretos brilhantes; modo informal usa camiseta laranja com estampa de raio amarelo, bermuda jeans, boné azul virado para trás e tênis brancos. A pele muda ligeiramente de tom (mais opaca no formal, mais vibrante no informal). Sempre carrega dois balões pequenos flutuantes acima da cabeça: um com etiqueta "FORMAL" (fundo cinza) e outro "INFORMAL" (fundo laranja) — só acende o balão do modo em uso.
+1. **Camaleão Ling** — camaleão bípede, corpo verde-limão brilhante com escamas suaves, olhos grandes esféricos e independentes (podem apontar em direções diferentes), cauda enrolada na ponta, língua rosa longa que às vezes aparece. Ele TROCA DE ROUPA para representar o registro: modo formal usa terno cinza-chumbo, camisa branca, gravata roxa, sapatos pretos brilhantes; modo informal usa camiseta laranja com estampa de raio amarelo, bermuda jeans, boné azul virado para trás e tênis azul-marinho com cadarço branco. A pele muda ligeiramente de tom (mais opaca no formal, mais vibrante no informal). Sempre carrega dois balões pequenos flutuantes acima da cabeça: um com etiqueta "FORMAL" (fundo cinza) e outro "INFORMAL" (fundo laranja) — só acende o balão do modo em uso.
 
-2. **Bia** — menina de 11 anos, cabelo cacheado e volumoso preto, pele morena clara, uniforme escolar azul (camiseta azul marinho com logo escolar no peito, calça azul escuro) e tênis brancos. Sempre alegre e curiosa.
+2. **Bia** — menina de 11 anos, cabelo cacheado e volumoso preto, pele morena clara, uniforme escolar azul (camiseta polo azul-marinho com colarinho branco e emblema circular branco com o número "54" no peito, calça jeans azul) e tênis azul-marinho com cadarço branco. Sempre alegre e curiosa.
 
 3. **Prepo** — robô pequeno roxo, corpo cilíndrico, duas antenas na cabeça com as letras "D" e "E" nas pontas (maiúsculas, em amarelo), olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
 
@@ -58,7 +58,7 @@
 > **Zone 3 — Ling EXPLAINING (half body, hands gesturing):** wearing a MIX — formal jacket half-open showing informal t-shirt underneath, one hand pointing up teacher-style. Speech bubble empty above him. Expression is friendly, educational.
 >
 > **Zone 4 — Support characters (small half-body portraits, side by side):**
->   - Bia: 11-year-old girl, voluminous curly black hair, light brown skin, blue school uniform (navy blue t-shirt with small school logo, dark blue pants), white sneakers, warm smile.
+>   - Bia: 11-year-old girl, voluminous curly black hair, light brown skin, navy blue polo shirt with white collar and a round white chest badge with the number "54" in navy, blue jeans, and navy-blue sneakers with white laces, warm smile.
 >   - Prepo: small purple robot `#7C3AED`, cylindrical body, two antennas on head with letters "D" and "E" at the tips in yellow, round white eyes with black circular pupils, metal chest badge with the word "PREPO" engraved in blue, short legs with tiny buttons, articulated arms.
 >
 > Style: clean cartoon linework with dark purple outlines `#4C1D95`, flat shading, educational children book aesthetic, no photorealism, no complex shadows. Bottom of sheet: label "CAMALEÃO LING — Registro Linguístico" in purple serif font.
@@ -73,7 +73,7 @@
 
 ### Painel 1 — Ling apresenta o tema (widescreen, ocupa topo)
 **Prompt em inglês:**
-> A bright school library scene: wooden bookshelves filled with colorful books along the back wall, a large window on the right showing green park trees outside, a green chalkboard on the left wall with the words "Registro Linguístico" written in white chalk, wooden floor. Camaleão Ling stands in the center: lime-green bipedal chameleon wearing half formal (grey blazer, white shirt, purple tie on his right side) and half informal (orange t-shirt with yellow lightning bolt visible on left side, sleeve rolled up), one eye happy one eye winking, coiled tail visible behind. He gestures welcomingly with both arms. Bia stands next to him — 11-year-old girl with voluminous curly black hair, light brown skin, navy blue school uniform t-shirt with logo, dark blue pants, white sneakers — looking up curiously. Two speech bubbles.
+> A bright school library scene: wooden bookshelves filled with colorful books along the back wall, a large window on the right showing green park trees outside, a green chalkboard on the left wall with the words "Registro Linguístico" written in white chalk, wooden floor. Camaleão Ling stands in the center: lime-green bipedal chameleon wearing half formal (grey blazer, white shirt, purple tie on his right side) and half informal (orange t-shirt with yellow lightning bolt visible on left side, sleeve rolled up), one eye happy one eye winking, coiled tail visible behind. He gestures welcomingly with both arms. Bia stands next to him — 11-year-old girl with voluminous curly black hair, light brown skin, navy blue polo shirt with white collar and a round white chest badge with the number "54" in navy, blue jeans, and navy-blue sneakers with white laces — looking up curiously. Two speech bubbles.
 >
 > **Ling (balão 1, borda dupla roxa):** "Olá! Eu sou o Camaleão Ling."
 > **Ling (balão 2, borda simples):** "Vou te mostrar dois tipos de registro linguístico."
@@ -94,7 +94,7 @@
 
 ### Painel 4 — Bia sintetiza (widescreen, ocupa base)
 **Prompt em inglês:**
-> A cozy classroom scene: wooden desk in the foreground with an open notebook and colored pencils, a bulletin board on the back wall with colorful children's drawings pinned up, a small potted plant on the corner of the desk, a globe on a side shelf. Bia sits at the desk — 11-year-old girl with voluminous curly black hair, light brown skin, navy blue school uniform shirt with logo, dark blue pants, white sneakers — pointing at her notebook where "FORMAL / INFORMAL" is written. Ling stands next to her in his half-and-half outfit, teaching pose. Prepo hovers beside them — small purple robot, cylindrical body, two antennas with yellow "D" and "E" letters on tips, round white eyes with black pupils, metal chest badge "PREPO" in blue, short legs and articulated arms — with a curious expression.
+> A cozy classroom scene: wooden desk in the foreground with an open notebook and colored pencils, a bulletin board on the back wall with colorful children's drawings pinned up, a small potted plant on the corner of the desk, a globe on a side shelf. Bia sits at the desk — 11-year-old girl with voluminous curly black hair, light brown skin, navy blue polo shirt with white collar and a round white chest badge with the number "54" in navy, blue jeans, and navy-blue sneakers with white laces — pointing at her notebook where "FORMAL / INFORMAL" is written. Ling stands next to her in his half-and-half outfit, teaching pose. Prepo hovers beside them — small purple robot, cylindrical body, two antennas with yellow "D" and "E" letters on tips, round white eyes with black pupils, metal chest badge "PREPO" in blue, short legs and articulated arms — with a curious expression.
 >
 > **Bia (balão simples):** "A mesma ideia, dois modos de dizer!"
 > **Prepo (balão retangular robótico):** "Depende da situação comunicativa."

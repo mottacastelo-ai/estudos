@@ -15,7 +15,7 @@
 
 1. **Oxin** — pequeno acento agudo (´) animado, cor primária ROXA (#7C3AED) com brilho amarelo dourado nas pontas. Corpo em formato de traço agudo inclinado para a direita, com dois olhos redondos brancos com pupila preta circular, sorriso animado desenhado no centro do traço, dois bracinhos finos roxos com luvinhas brancas e duas perninhas curtas com tenizinhos amarelos. Oxin tem uma faixa dourada no meio do corpo escrita "OXIN" em letras maiúsculas amarelas. Ele SEMPRE aparece pulando ou pousando na ÚLTIMA sílaba da palavra que está no ar. Altura aproximada: 1/3 da altura da Bia.
 
-2. **Bia** — menina humana de 11 anos, cabelo cacheado e volumoso preto na altura dos ombros, pele morena clara, olhos castanhos grandes e expressivos, usando uniforme escolar (camiseta azul marinho com logo pequeno de escola no peito esquerdo, calça azul escuro) e tênis brancos com detalhes azuis.
+2. **Bia** — menina humana de 11 anos, cabelo cacheado e volumoso preto na altura dos ombros, pele morena clara, olhos castanhos grandes e expressivos, usando uniforme escolar (camiseta polo azul-marinho com colarinho branco e emblema circular branco com o número "54" no peito, calça jeans azul) e tênis azul-marinho com cadarços brancos.
 
 **PROIBIDO nesta HQ:** qualquer robô roxo, qualquer letra animada tipo ℓ ou X, qualquer criatura verde, qualquer moeda dourada, qualquer novelo, qualquer travessão, qualquer cubo 3D, qualquer gota d'água, qualquer personagem de temas anteriores. Se o roteiro pedir "acento", desenhe APENAS o Oxin conforme descrito acima — nunca reaproveite designs de outras HQs.
 
@@ -60,7 +60,7 @@ Oxin é um pequeno acento agudo (´) animado com corpo em formato de traço diag
 ### Personagem de apoio: BIA
 
 **Descrição visual completa:**
-Bia é uma menina de 11 anos com cabelo cacheado e volumoso preto na altura dos ombros, pele morena clara, olhos castanhos grandes, sobrancelhas expressivas. Usa camiseta azul marinho (#1E3A8A) com um logo pequeno redondo de escola no peito esquerdo, calça azul escura (#1E40AF) e tênis brancos com detalhes azuis. Na folha de personagens ela aparece ao lado de Oxin, sorrindo, segurando um caderno espiral roxo com a mão direita e um lápis com a esquerda.
+Bia é uma menina de 11 anos com cabelo cacheado e volumoso preto na altura dos ombros, pele morena clara, olhos castanhos grandes, sobrancelhas expressivas. Usa camiseta azul marinho (#1E3A8A) com colarinho branco e emblema circular branco com o número "54" no peito, calça jeans azul (#1E40AF) e tênis azul-marinho com cadarços brancos. Na folha de personagens ela aparece ao lado de Oxin, sorrindo, segurando um caderno espiral roxo com a mão direita e um lápis com a esquerda.
 
 ---
 
@@ -72,7 +72,7 @@ Bia é uma menina de 11 anos com cabelo cacheado e volumoso preto na altura dos 
 
 **Painel 1:**
 Cenário: escrivaninha de madeira clara com caderno espiral aberto na página branca, pote metálico com lápis coloridos ao lado, prateleira com três livros coloridos ao fundo, janela quadrada à direita com cortina roxa clara e árvores lá fora, parede lavanda clara.
-Bia (menina de 11 anos, cabelo cacheado preto na altura dos ombros, pele morena clara, uniforme escolar — camiseta azul marinho com logo redondo no peito, calça azul escuro, tênis brancos) está sentada de perfil na cadeira olhando para o caderno com uma cara pensativa, apoiando o rosto na mão esquerda.
+Bia (menina de 11 anos, cabelo cacheado preto na altura dos ombros, pele morena clara, uniforme escolar — camiseta polo azul-marinho com colarinho branco e emblema circular branco com o número "54" no peito, calça jeans azul, tênis azul-marinho com cadarço branco) está sentada de perfil na cadeira olhando para o caderno com uma cara pensativa, apoiando o rosto na mão esquerda.
 Bia: *"Por que 'café' tem acento e 'cafezinho' não?"*
 
 **Painel 2:**
@@ -93,7 +93,7 @@ Oxin: *"Veja 'café' — a força cai na última sílaba!"*
 
 **Painel 5:**
 Cenário: quarto da Bia — mesa com caderno, pote de lápis, cadeira, tapete roxo redondo no chão, janela ao fundo com cortina.
-Bia (cabelo cacheado preto, uniforme azul, tênis brancos) sorri animada, sentada de frente para Oxin, apontando o dedo indicador para cima como quem tem uma ideia.
+Bia (cabelo cacheado preto, uniforme azul, tênis azul-marinho com cadarço branco) sorri animada, sentada de frente para Oxin, apontando o dedo indicador para cima como quem tem uma ideia.
 Bia: *"Ah! Então 'sofá', 'jiló' e 'você' também são oxítonas?"*
 Oxin (acento roxo com "OXIN", pulando de felicidade, olhos fechados em arco): *"Isso mesmo! E todas levam acento!"*
 
@@ -117,7 +117,7 @@ Oxin (fora da lousa, à direita, acento roxo com "OXIN", sorriso animado): *"Vat
 
 **Painel 3:**
 Cenário: quarto da Bia — parede lavanda, canto da prateleira com livros coloridos ao fundo, canto da janela com cortina roxa.
-Bia (menina 11 anos, cabelo cacheado preto, uniforme escolar azul marinho com logo no peito, tênis brancos) segura um caderno espiral aberto anotando com lápis, olhando para Oxin com curiosidade.
+Bia (menina 11 anos, cabelo cacheado preto, uniforme escolar (polo azul-marinho com colarinho branco e emblema circular branco "54" no peito), tênis azul-marinho com cadarço branco) segura um caderno espiral aberto anotando com lápis, olhando para Oxin com curiosidade.
 Bia: *"E se vier um S no final? Tipo 'filés'?"*
 Oxin (acento roxo com faixa "OXIN", olhos brilhando, bracinhos abertos): *"Continua com acento! A, E, O seguidos ou não de S!"*
 
@@ -128,7 +128,7 @@ Oxin (fora da lousa, acento roxo, sorriso didático, um bracinho apontando para 
 
 **Painel 5:**
 Cenário: quarto da Bia — mesa de madeira clara com caderno aberto, pote de lápis coloridos, borracha branca, canto da janela com cortina roxa clara ao fundo, tapete roxo redondo visível no chão.
-Bia (cabelo cacheado preto, uniforme azul, tênis brancos) faz cara de descoberta, apontando com o lápis para a palavra que ela escreveu no caderno: **maracujá**. Do "á" salta um mini-Oxin roxo.
+Bia (cabelo cacheado preto, uniforme azul, tênis azul-marinho com cadarço branco) faz cara de descoberta, apontando com o lápis para a palavra que ela escreveu no caderno: **maracujá**. Do "á" salta um mini-Oxin roxo.
 Bia: *"Então 'maracujá' também é oxítona acentuada!"*
 Oxin (acento roxo com "OXIN" dourado, pulando animado): *"Boa, Bia! Terminou em A na última sílaba forte!"*
 
@@ -142,7 +142,7 @@ Oxin (acento roxo com "OXIN" dourado, pulando animado): *"Boa, Bia! Terminou em 
 
 **Painel 1:**
 Cenário: cozinha — bancada de mármore claro com cesto de frutas (maçãs vermelhas, bananas amarelas), armários brancos ao fundo, geladeira branca à direita, azulejos brancos com detalhes lilases na parede, janela pequena com cortina amarela clara.
-Bia (cabelo cacheado preto volumoso, uniforme azul marinho, tênis brancos) está em pé segurando um pacote com a palavra "ARMAZÉNS" escrita em letras grandes pretas. Ao lado dela Oxin (acento agudo roxo #7C3AED, faixa dourada "OXIN", olhos brancos, sorriso) flutua apontando para o pacote.
+Bia (cabelo cacheado preto volumoso, uniforme azul marinho, tênis azul-marinho com cadarço branco) está em pé segurando um pacote com a palavra "ARMAZÉNS" escrita em letras grandes pretas. Ao lado dela Oxin (acento agudo roxo #7C3AED, faixa dourada "OXIN", olhos brancos, sorriso) flutua apontando para o pacote.
 Oxin: *"Regra 2 — oxítonas terminadas em EM ou ENS!"*
 Bia: *"Como 'armazéns'?"*
 
@@ -153,7 +153,7 @@ Oxin (fora, à direita, acento roxo com "OXIN", expressão didática, bracinho a
 
 **Painel 3:**
 Cenário: cozinha — canto da bancada com cesto de frutas, azulejos brancos com detalhes lilases, canto da janela com cortina amarela clara mostrando árvore verde no quintal.
-Bia (cabelo cacheado preto, uniforme azul, tênis brancos) olha para cima pensativa, um dedo no queixo, com uma pequena bolha de pensamento acima da cabeça.
+Bia (cabelo cacheado preto, uniforme azul, tênis azul-marinho com cadarço branco) olha para cima pensativa, um dedo no queixo, com uma pequena bolha de pensamento acima da cabeça.
 Bia: *"E os ditongos abertos, Oxin? EI, EU, OI?"*
 Oxin (acento roxo com faixa "OXIN", olhos brilhando, bracinhos abertos animado): *"Boa pergunta! Essa é a Regra 3!"*
 
@@ -164,7 +164,7 @@ Oxin (fora, acento roxo com "OXIN", sorriso largo, bracinhos apontando): *"Diton
 
 **Painel 5:**
 Cenário: cozinha — bancada com pratos e cesto, azulejos brancos lilases, canto da janela com cortina amarela clara e árvore verde visível ao fundo, luminária redonda pendurada no teto.
-Bia (cabelo cacheado preto, uniforme azul marinho, tênis brancos) sorri erguendo o polegar em sinal de "beleza", segurando o caderno espiral aberto na outra mão.
+Bia (cabelo cacheado preto, uniforme azul marinho, tênis azul-marinho com cadarço branco) sorri erguendo o polegar em sinal de "beleza", segurando o caderno espiral aberto na outra mão.
 Bia: *"Então 'herói' e 'chapéus' também levam acento!"*
 Oxin (acento roxo com "OXIN" dourado, pulando de alegria, olhos fechados em arco de felicidade, fagulhas amarelas): *"Perfeito, Bia! Você pegou as três regras!"*
 
@@ -178,7 +178,7 @@ Oxin (acento roxo com "OXIN" dourado, pulando de alegria, olhos fechados em arco
 
 **Painel 1:**
 Cenário: quarto — mesa de madeira clara com baralho de cartas coloridas espalhadas em leque, borda da cadeira roxa visível, tapete roxo redondo no chão, canto da prateleira com livros coloridos.
-Bia (cabelo cacheado preto volumoso, uniforme azul marinho com logo, tênis brancos) está sentada olhando as cartas com olhar concentrado, segurando uma carta na mão direita que mostra a palavra "jilo" em letras pretas grandes (sem acento).
+Bia (cabelo cacheado preto volumoso, uniforme azul marinho com logo, tênis azul-marinho com cadarço branco) está sentada olhando as cartas com olhar concentrado, segurando uma carta na mão direita que mostra a palavra "jilo" em letras pretas grandes (sem acento).
 Bia: *"Olha, Oxin! Esta carta tem 'jilo' sem acento!"*
 
 **Painel 2:**
@@ -188,7 +188,7 @@ Oxin: *"Falta o acento! É oxítona terminada em O!"*
 
 **Painel 3:**
 Cenário: mesa de madeira com as cartas, canto do baralho, tapete roxo redondo no chão, prateleira com três livros coloridos ao fundo.
-Bia (cabelo cacheado preto, uniforme azul, tênis brancos) sorri e desenha com um lápis roxo o acento em cima do "o" da carta, transformando "jilo" em **"jiló"**. Um mini-Oxin roxo pula em cima do "ó" comemorando.
+Bia (cabelo cacheado preto, uniforme azul, tênis azul-marinho com cadarço branco) sorri e desenha com um lápis roxo o acento em cima do "o" da carta, transformando "jilo" em **"jiló"**. Um mini-Oxin roxo pula em cima do "ó" comemorando.
 Bia: *"Pronto! Agora está certa: 'jiló'!"*
 Oxin (acento roxo com "OXIN", pulando animado, bracinhos erguidos): *"Muito bem, Bia!"*
 
@@ -202,7 +202,7 @@ Oxin (acento roxo com "OXIN" dourado, expressão didática séria, bracinhos abe
 
 **Painel 5:**
 Cenário: quarto — mesa com caderno aberto, pote de lápis coloridos, cartas do baralho empilhadas ao lado, tapete roxo redondo, canto da janela com cortina.
-Bia (cabelo cacheado preto, uniforme azul, tênis brancos) segura o caderno erguido mostrando a página cheia de palavras oxítonas anotadas com Oxin desenhado em cada uma. Ao lado dela Oxin (acento roxo com "OXIN", pulando de alegria, olhos fechados em arco, fagulhas amarelas) comemora.
+Bia (cabelo cacheado preto, uniforme azul, tênis azul-marinho com cadarço branco) segura o caderno erguido mostrando a página cheia de palavras oxítonas anotadas com Oxin desenhado em cada uma. Ao lado dela Oxin (acento roxo com "OXIN", pulando de alegria, olhos fechados em arco, fagulhas amarelas) comemora.
 Bia: *"Oxítona é força na última sílaba — obrigada, Oxin!"*
 Oxin: *"Qualquer palavra oxítona nova, é só me chamar!"*
 
