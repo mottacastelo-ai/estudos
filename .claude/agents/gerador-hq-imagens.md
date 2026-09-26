@@ -103,7 +103,9 @@ Ao terminar, confirme os 5 arquivos gerados com caminho completo.
 
 Invocar a tool `codex` (ou o nome confirmado no Passo 0) com esse prompt. Aguardar a resposta síncrona/assíncrona conforme o comportamento real da tool (a chamada pode ser bloqueante — não fazer polling manual em arquivo, a tool já retorna quando termina).
 
-> ⚠️ **REGRA ABSOLUTA (ver ERROS.md ERR-005i):** sempre passar explicitamente o parâmetro `model: "gpt-5.6"` na chamada (gpt-5.5 foi descontinuado — atualizado em 2026-09-26). Nunca omitir esse parâmetro confiando apenas no default do `config.toml`, e nunca usar `gpt-6-astra` ou qualquer modelo mais pesado — geração de imagem de HQ não precisa disso e o modelo pesado esgota o rate limit do Codex rapidamente, travando o pipeline inteiro. Se o pipeline bater rate limit com frequência incomum, checar primeiro se alguma chamada está sem o `model: "gpt-5.6"` explícito.
+> ⚠️ **REGRA ABSOLUTA (ver ERROS.md ERR-005i):** sempre passar explicitamente o parâmetro `model: "gpt-5.5"` na chamada. Nunca omitir esse parâmetro confiando apenas no default do `config.toml`, e nunca usar `gpt-6-astra` ou qualquer modelo mais pesado — geração de imagem de HQ não precisa disso e o modelo pesado esgota o rate limit do Codex rapidamente, travando o pipeline inteiro. Se o pipeline bater rate limit com frequência incomum, checar primeiro se alguma chamada está sem o `model: "gpt-5.5"` explícito.
+>
+> **Nota (2026-09-26):** tentativa de usar `gpt-5.6` retornou erro 400 "not supported when using Codex with a ChatGPT account" — o modelo ainda não está disponível para contas autenticadas via login do ChatGPT (apenas `gpt-5.5` funciona nesta conta por enquanto). Se `gpt-5.5` também passar a falhar no futuro, verificar qual modelo leve está disponível antes de trocar (não assumir automaticamente o sucessor anunciado).
 
 ### 1.3 — Validar arquivos gerados
 

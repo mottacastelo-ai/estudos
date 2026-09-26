@@ -388,11 +388,11 @@ Se a mesma falha (Codex retornando wireframe em vez de arte) se repetir de forma
 
 **Ocorrência:** Capítulo 7 de Português (4 temas: Crônica Argumentativa/Artigo de Opinião, Concordância Pronomes-Verbos, Registro Formal/Informal, Acentuação Oxítonas), 2026-09-24. Os 4 agentes `gerador-hq-imagens` chamaram `mcp__codex__codex` em paralelo e todos retornaram erro de limite de uso ("You've hit your usage limit... try again at 10:02 PM") antes de gerar qualquer imagem.
 
-**Causa raiz:** O modelo usado pelo Codex para gerar imagens de HQ deve ser **gpt-5.6**, nunca `gpt-6-astra` (ou outro modelo pesado) — gpt-6-astra é desnecessariamente caro para essa tarefa e esgota a quota/rate limit rapidamente, travando o pipeline inteiro (mesma causa raiz já documentada no projeto irmão `estudos-2ano`, ver memória `feedback_codex_modelo_5_5`). O `C:\Users\wizar\.codex\config.toml` já está corrigido para `model = "gpt-5.6"` por padrão, mas o parâmetro `model` da tool `mcp__codex__codex` pode sobrescrever esse default por chamada — se qualquer prompt ou instrução de agente especificar ou implicar um modelo diferente, ele prevalece sobre o config.toml.
+**Causa raiz:** O modelo usado pelo Codex para gerar imagens de HQ deve ser **gpt-5.5**, nunca `gpt-6-astra` (ou outro modelo pesado) — gpt-6-astra é desnecessariamente caro para essa tarefa e esgota a quota/rate limit rapidamente, travando o pipeline inteiro (mesma causa raiz já documentada no projeto irmão `estudos-2ano`, ver memória `feedback_codex_modelo_5_5`). O `C:\Users\wizar\.codex\config.toml` já está corrigido para `model = "gpt-5.5"` por padrão, mas o parâmetro `model` da tool `mcp__codex__codex` pode sobrescrever esse default por chamada — se qualquer prompt ou instrução de agente especificar ou implicar um modelo diferente, ele prevalece sobre o config.toml.
 
 **Regra ABSOLUTA e não-negociável:**
 
-Toda chamada de `mcp__codex__codex` feita pelo `gerador-hq-imagens` para gerar imagens de HQ (folha de personagens, páginas, portrait HD) DEVE passar explicitamente `model: "gpt-5.6"` no parâmetro da tool — nunca omitir o parâmetro confiando apenas no config.toml, e nunca usar `gpt-6-astra` ou qualquer variante "astra"/modelo mais pesado. Se o pipeline voltar a bater rate limit com frequência incomum, checar primeiro se alguma chamada está usando modelo diferente de gpt-5.6 antes de investigar outras causas.
+Toda chamada de `mcp__codex__codex` feita pelo `gerador-hq-imagens` para gerar imagens de HQ (folha de personagens, páginas, portrait HD) DEVE passar explicitamente `model: "gpt-5.5"` no parâmetro da tool — nunca omitir o parâmetro confiando apenas no config.toml, e nunca usar `gpt-6-astra` ou qualquer variante "astra"/modelo mais pesado. Se o pipeline voltar a bater rate limit com frequência incomum, checar primeiro se alguma chamada está usando modelo diferente de gpt-5.5 antes de investigar outras causas.
 
 ---
 
@@ -411,7 +411,7 @@ Verificação obrigatória antes de considerar qualquer HQ concluída:
 **Imagens (gerador-hq-imagens — ao validar os arquivos gerados):**
 
 - [ ] ⚠️ REGRA ABSOLUTA: As imagens foram geradas via Codex (IA)? Renderização programática (Pillow, matplotlib, SVG geométrico, HTML-to-image) é PROIBIDA — ver ERR-005f.
-- [ ] ⚠️ REGRA ABSOLUTA: A chamada a `mcp__codex__codex` passou `model: "gpt-5.6"` explicitamente? Nunca `gpt-6-astra` ou omitir o parâmetro — ver ERR-005i.
+- [ ] ⚠️ REGRA ABSOLUTA: A chamada a `mcp__codex__codex` passou `model: "gpt-5.5"` explicitamente? Nunca `gpt-6-astra` ou omitir o parâmetro — ver ERR-005i.
 - [ ] ⚠️ REGRA ABSOLUTA: Toda correção foi feita regenerando a página inteira via Codex? Nenhum remendo/patch/overlay manual sobre um PNG já gerado, em nenhuma hipótese — ver ERR-005g.
 - [ ] A proporção/escala dos personagens está consistente entre painéis e com a folha de personagem canônica? (ex: Prepo não pode aparecer do tamanho de um adulto — é um mascote robô, sempre menor ou do porte da criança/personagem humano da cena)
 - [ ] O pixel do canto superior esquerdo de cada portrait tem Alpha=0 (transparente)? (verificado via script, não apenas pela confirmação textual do Codex)
