@@ -67,11 +67,37 @@ Antes de qualquer coisa, verificar se a ferramenta `codex` (ou `mcp__codex__code
 
 ## Passo 1 — Geração via MCP
 
-### 1.1 — Montar o prompt de invocação
+### 1.0 — Parâmetros obrigatórios da chamada (leia antes de tudo)
+
+Toda chamada a `mcp__codex__codex` (inicial) ou `mcp__codex__codex-reply` (continuação de thread) usada por este agente DEVE respeitar:
+
+- `model: "gpt-5.5"` — nunca omitir, nunca usar `gpt-6-astra` (pesado, esgota rate limit — ERR-005i) nem `gpt-5.6` (retorna erro 400 "not supported when using Codex with a ChatGPT account" nesta conta, confirmado em 2026-09-26 — testar antes de trocar caso a OpenAI anuncie outro sucessor).
+- `sandbox: "workspace-write"` — nunca `"danger-full-access"` (é bloqueado pelo classificador de segurança do Claude Code com motivo "Create Unsafe Agents"; já causou falha em produção em 2026-09-26). `workspace-write` é suficiente para gerar e salvar imagens.
+- `approval-policy: "never"` — evita ficar esperando aprovação interativa que não existe nesta sessão.
+
+### 1.1 — O mecanismo correto de consistência visual (ERR-005j)
+
+⚠️ **Esta é a regra mais importante deste documento — leia antes de gerar qualquer painel com Prepo, Bia, ou o personagem novo do tema.**
+
+O Codex tem, internamente, uma ferramenta de geração de imagem (`image_gen.imagegen`) com um **modo de edição/variação que aceita `referenced_image_paths`** — uma lista de arquivos de imagem reais usados como condicionamento visual de verdade (não apenas texto). Confirmado por teste isolado em 2026-09-26: pedir ao Codex para gerar uma cena nova usando `view_image` + `image_gen.imagegen` com `referenced_image_paths` apontando para os canônicos produziu identidade visual quase idêntica ao original, tanto para Prepo quanto para Bia — resultado dramaticamente melhor do que qualquer tentativa usando só descrição em texto (que foi o que este agente fazia antes de 2026-09-26, e a causa de duas rodadas de reprovação em produção).
+
+**Sempre que um painel contiver Prepo e/ou Bia e/ou o personagem novo do tema, instrua o Codex, dentro do prompt de invocação, a seguir estes 2 passos antes de desenhar o painel:**
+
+1. Usar `view_image` para carregar o(s) arquivo(s) de referência real(is) que se aplicam ao painel:
+   - Prepo → `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\_landing\prepo-hd.png`
+   - Bia → `C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\Bia.png`
+   - Personagem novo do tema → a folha de personagens já gerada deste tema (`Personagens\5o ano\{NomePersonagem}.png`), usada como referência para as páginas 2-4 também
+2. Chamar `image_gen.imagegen` em **modo edição/variação**, passando esses arquivos em `referenced_image_paths` — nunca apenas citar o caminho em texto no prompt.
+
+Complementar (reforço, não substituto do passo acima) com a descrição textual: Prepo com corpo cilíndrico tipo "cápsula" arredondada e atarracada; Bia com pele morena dourada, polo azul-marinho com emblema circular branco "54" (NUNCA logo de escola genérico), calça jeans azul (NUNCA moletom/legging esportiva), tênis azul-marinho com cadarço branco (NUNCA tênis totalmente branco).
+
+Se `image_gen.imagegen` não aceitar `referenced_image_paths` nesta sessão (ferramenta indisponível ou erro), reportar isso explicitamente ao orquestrador antes de cair para o modo texto-only — nunca assumir silenciosamente que descrição em texto sozinha é suficiente.
+
+### 1.2 — Montar o prompt de invocação e chamar a tool
 
 Ler o arquivo `.md` de prompt de HQ (`prompt_path`) na íntegra — já contém o bloco de estilo visual global, a folha de personagens e as 4 páginas prontos para colar.
 
-Montar um prompt de instrução para a tool `codex` pedindo explicitamente:
+Montar um prompt de instrução para a tool `codex` (com os parâmetros do Passo 1.0) pedindo explicitamente:
 
 ```
 Você vai gerar as imagens de uma HQ educacional infantil (5º ano, Brasil) usando o conteúdo do
@@ -84,32 +110,15 @@ nestes caminhos absolutos:
 4. Página 3            → "{BASE}\{pasta_tema}\hq-{slug}-pg3.png"
 5. Página 4            → "{BASE}\{pasta_tema}\hq-{slug}-pg4.png"
 
-Use a folha de personagens gerada no passo 1 como referência visual consistente para as páginas 2-4
-(character reference), exatamente como instruído no arquivo de prompt. Validar 1024×1536 antes de
-salvar cada página.
+Para qualquer painel com Prepo, Bia ou [NomePersonagem], use view_image para carregar as imagens de
+referência reais listadas abaixo e depois image_gen.imagegen em modo edição/variação com
+referenced_image_paths apontando para elas — não desenhe esses personagens apenas a partir de
+descrição em texto:
+- Prepo: "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\_landing\prepo-hd.png" (se aplicável a este tema)
+- Bia: "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\Bia.png"
+- [NomePersonagem]: a folha de personagens gerada no item 1 acima (para as páginas 2-4)
 
-⚠️ **MECANISMO OBRIGATÓRIO confirmado por teste em 2026-09-26 (resolve ERR-005j):** o Codex tem uma
-ferramenta interna de geração de imagem (`image_gen.imagegen`) que suporta um modo de **edição/variação
-com imagem de referência real** — não apenas texto. Use SEMPRE esse modo para qualquer painel que
-contenha Prepo, Bia, ou o personagem novo do tema (a partir da folha de personagens já gerada):
-
-1. Primeiro use `view_image` (ou equivalente) para carregar visualmente o arquivo de referência real:
-   - "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\_landing\prepo-hd.png" (Prepo)
-   - "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\Bia.png" (Bia)
-   - A folha de personagens recém-gerada deste tema (personagem novo, nas páginas 2-4)
-2. Chame `image_gen.imagegen` em **modo edição/variação**, passando o(s) caminho(s) real(is) acima em
-   `referenced_image_paths` — nunca apenas mencionar o caminho em texto no prompt e torcer para o
-   modelo "lembrar". Isso é diferente de geração pura texto→imagem e produz identidade visual muito
-   mais fiel (validado: Prepo e Bia ficaram quase idênticos ao canônico usando esse mecanismo, contra
-   resultados claramente divergentes usando só descrição em texto).
-3. Inclua a descrição textual normalmente também (reforço, não substituto): Prepo com corpo cilíndrico
-   tipo "cápsula" arredondada; Bia com pele morena dourada, polo azul-marinho com emblema circular
-   branco "54" (NUNCA logo de escola genérico), calça jeans azul (NUNCA moletom/legging esportiva),
-   tênis azul-marinho com cadarço branco (NUNCA tênis totalmente branco).
-
-Se por algum motivo `image_gen.imagegen` não aceitar `referenced_image_paths` nesta sessão (ferramenta
-indisponível ou erro), reportar isso explicitamente ao orquestrador antes de cair para o modo texto-only
-— não assumir silenciosamente que só descrição em texto é suficiente.
+Validar 1024×1536 antes de salvar cada página.
 
 Imagens canônicas de referência dos demais personagens fixos já existentes estão em:
 "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\"
@@ -119,16 +128,11 @@ Conteúdo completo do prompt (formato .md, já pronto para uso):
 {conteudo_do_prompt_md}
 ---
 
-Ao terminar, confirme os 5 arquivos gerados com caminho completo.
+Ao terminar, confirme os 5 arquivos gerados com caminho completo, e diga explicitamente se usou
+referenced_image_paths de verdade ou apenas descrição em texto para cada personagem recorrente.
 ```
 
-### 1.2 — Chamar a tool
-
-Invocar a tool `codex` (ou o nome confirmado no Passo 0) com esse prompt. Aguardar a resposta síncrona/assíncrona conforme o comportamento real da tool (a chamada pode ser bloqueante — não fazer polling manual em arquivo, a tool já retorna quando termina).
-
-> ⚠️ **REGRA ABSOLUTA (ver ERROS.md ERR-005i):** sempre passar explicitamente o parâmetro `model: "gpt-5.5"` na chamada. Nunca omitir esse parâmetro confiando apenas no default do `config.toml`, e nunca usar `gpt-6-astra` ou qualquer modelo mais pesado — geração de imagem de HQ não precisa disso e o modelo pesado esgota o rate limit do Codex rapidamente, travando o pipeline inteiro. Se o pipeline bater rate limit com frequência incomum, checar primeiro se alguma chamada está sem o `model: "gpt-5.5"` explícito.
->
-> **Nota (2026-09-26):** tentativa de usar `gpt-5.6` retornou erro 400 "not supported when using Codex with a ChatGPT account" — o modelo ainda não está disponível para contas autenticadas via login do ChatGPT (apenas `gpt-5.5` funciona nesta conta por enquanto). Se `gpt-5.5` também passar a falhar no futuro, verificar qual modelo leve está disponível antes de trocar (não assumir automaticamente o sucessor anunciado).
+Invocar a tool com esse prompt. Aguardar a resposta síncrona/assíncrona conforme o comportamento real da tool (a chamada pode ser bloqueante — não fazer polling manual em arquivo, a tool já retorna quando termina).
 
 ### 1.3 — Validar arquivos gerados
 
@@ -234,9 +238,9 @@ Ao instruir o Codex (modo MCP) e ao inspecionar o prompt `.md` (modo legado), ga
 
 ### Descrição obrigatória de Bia em cada painel (ERR-005d)
 
-Para a Bia, usar sempre:
+Para a Bia, usar sempre (descrição corrigida em 2026-09-26 para bater com `Personagens\5o ano\Bia.png` — ver ERR-005j):
 
-> Bia é uma menina de 11 anos com cabelo cacheado e volumoso preto, pele morena clara, usando uniforme escolar azul (camiseta azul marinho com logo de escola no peito, calça azul escuro) e tênis brancos.
+> Bia é uma menina de 11 anos, pele morena dourada em tom quente, cabelo cacheado muito volumoso preto caindo até os ombros, sobrancelhas expressivas. Veste camiseta polo azul-marinho de manga curta com colarinho branco e emblema circular branco no peito com o número "54" em azul-marinho (nunca um logo de escola genérico). Usa calça jeans azul (nunca calça de moletom/legging esportiva), barra levemente dobrada no tornozelo, e tênis casual azul-marinho com cadarços brancos e sola branca (nunca tênis totalmente branco).
 
 ### Verificação visual de cenário e texto (ERR-005b, ERR-005c)
 
