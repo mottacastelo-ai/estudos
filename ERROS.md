@@ -396,6 +396,20 @@ Toda chamada de `mcp__codex__codex` feita pelo `gerador-hq-imagens` para gerar i
 
 ---
 
+### ERR-005j — Prepo com corpo fino/alongado apesar da descrição textual canônica (recorrência de ERR-005d)
+
+**Ocorrência:** Tema "Concordância entre Pronomes e Verbos" (`portugues/concordancia-pronomes-verbos/hq-concordancia-pronomes-verbos-pg1.png`), 2026-09-26. Léo reportou que o Prepo saiu "ridículo" no painel 4 — corpo fino e alongado (tipo robô retangular esguio), muito diferente da forma cilíndrica/cápsula arredondada e atarracada do canônico (`_landing/prepo-hd.png`), apesar do prompt conter a descrição textual completa de Prepo (regra ERR-005d).
+
+**Causa raiz:** ERR-005d corrigiu o problema de personagem "sem descrição" (design totalmente errado, faltando elementos como a etiqueta PREPO), mas não garante consistência de **proporção/forma corporal** — descrição em texto ("corpo cilíndrico", "pernas curtas") é ambígua o suficiente para o Codex gerar formas muito diferentes (esguio vs. atarracado) e ainda "bater" com o texto. Além disso, o prompt do `gerador-hq-imagens` (Passo 1.1) apenas **menciona o caminho** da pasta de imagens canônicas em texto ("estão em: ..."), sem nunca verificar se o Codex de fato abriu e usou o arquivo como referência visual (image-to-image) — a tool `mcp__codex__codex` só aceita `prompt` em texto, não um parâmetro de imagem anexada, então "mencionar o caminho" não é o mesmo que "usar como referência visual".
+
+**Correção aplicada (2026-09-26):**
+1. O prompt de invocação do Codex agora instrui explicitamente que, antes de gerar qualquer painel com Prepo, o Codex deve **abrir o arquivo `_landing/prepo-hd.png` com sua própria ferramenta de leitura** (não apenas ler o caminho em texto) e usá-lo como referência de proporção.
+2. Passo 1.5 (inspeção visual) do `gerador-hq-imagens` agora exige abrir lado a lado o canônico e o painel gerado, comparando 5 traços específicos (formato do corpo, antenas, olhos, etiqueta PREPO, braços/pernas) — rejeitando e regenerando se a proporção geral do corpo divergir, mesmo que os elementos individuais (antenas, etiqueta) estejam presentes.
+
+**Ação pendente:** regenerar o painel 4 de `hq-concordancia-pronomes-verbos-pg1.png` com a correção aplicada, e reinspecionar todos os painéis já publicados que contêm Prepo (4 temas do Capítulo 7) para o mesmo defeito antes de considerar o lote definitivamente aprovado.
+
+---
+
 ## Checklist anti-bug para geração de HQ (gerador-hq-prompt e gerador-hq-imagens)
 
 Verificação obrigatória antes de considerar qualquer HQ concluída:
@@ -414,6 +428,7 @@ Verificação obrigatória antes de considerar qualquer HQ concluída:
 - [ ] ⚠️ REGRA ABSOLUTA: A chamada a `mcp__codex__codex` passou `model: "gpt-5.5"` explicitamente? Nunca `gpt-6-astra` ou omitir o parâmetro — ver ERR-005i.
 - [ ] ⚠️ REGRA ABSOLUTA: Toda correção foi feita regenerando a página inteira via Codex? Nenhum remendo/patch/overlay manual sobre um PNG já gerado, em nenhuma hipótese — ver ERR-005g.
 - [ ] A proporção/escala dos personagens está consistente entre painéis e com a folha de personagem canônica? (ex: Prepo não pode aparecer do tamanho de um adulto — é um mascote robô, sempre menor ou do porte da criança/personagem humano da cena)
+- [ ] ⚠️ REGRA ABSOLUTA: Todo painel com Prepo foi comparado lado a lado com `_landing/prepo-hd.png` (corpo cilíndrico/cápsula atarracado, nunca fino ou alongado)? Ver ERR-005j.
 - [ ] O pixel do canto superior esquerdo de cada portrait tem Alpha=0 (transparente)? (verificado via script, não apenas pela confirmação textual do Codex)
 - [ ] Cada painel das páginas pg1–pg4 tem cenário visível com elementos ilustrados (não fundo branco/liso)?
 - [ ] Os textos dos balões estão legíveis e completos (sem palavras cortadas ou embaralhadas)?

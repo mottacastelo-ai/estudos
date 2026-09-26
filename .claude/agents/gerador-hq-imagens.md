@@ -88,7 +88,15 @@ Use a folha de personagens gerada no passo 1 como referência visual consistente
 (character reference), exatamente como instruído no arquivo de prompt. Validar 1024×1536 antes de
 salvar cada página.
 
-Imagens canônicas de referência dos personagens fixos já existentes estão em:
+Se o painel incluir Prepo e/ou Bia (personagens recorrentes do portal), ANTES de gerar você DEVE abrir
+com sua própria ferramenta de leitura de arquivos (não apenas mencionar o caminho) os arquivos:
+- "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\_landing\prepo-hd.png" (Prepo)
+- Uma página aprovada anterior com a Bia, se `character reference` de Bia não estiver na folha deste tema
+
+Use a imagem de Prepo efetivamente aberta como referência visual de proporção e forma (corpo cilíndrico
+tipo "cápsula" arredondada, não fino/alongado) — não desenhe Prepo apenas a partir da descrição em texto.
+
+Imagens canônicas de referência dos demais personagens fixos já existentes estão em:
 "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\"
 
 Conteúdo completo do prompt (formato .md, já pronto para uso):
@@ -124,6 +132,18 @@ Antes de declarar qualquer página concluída, **use a ferramenta Read para abri
 - O estilo é consistente com o resto do acervo de HQs do portal (comparar mentalmente com uma página já aprovada do mesmo tema, se existir)?
 
 Se QUALQUER um desses três pontos falhar, a imagem é uma regressão para renderização programática — rejeitar, NÃO reportar sucesso, e seguir o fluxo de "geração via Codex falhar repetidamente" (regenerar com prompt mais explícito pedindo estilo de ilustração de HQ; após 3 tentativas, PARAR e reportar ao orquestrador).
+
+### Comparação obrigatória com a imagem canônica (Prepo/Bia) — ERR-005j
+
+Se algum painel gerado contém Prepo, use a ferramenta Read para abrir **lado a lado, na mesma resposta**: (a) `_landing/prepo-hd.png` (canônico) e (b) o painel recém-gerado. Compare especificamente:
+
+- Formato do corpo: cilíndrico/cápsula arredondada e "atarracado" (baixo e largo) — NÃO fino, alongado ou retangular
+- Antenas: duas, finas, terminando em "D" e "E" maiúsculos amarelos
+- Olhos: grandes, brancos, redondos, pupila preta circular central
+- Etiqueta "PREPO" no peito: retângulo branco/metálico com o texto em azul, proporção legível
+- Braços/pernas: curtos e atarracados, não longos ou finos
+
+Se a proporção geral do corpo ou qualquer um desses traços estiver visivelmente diferente do canônico (ex: corpo alongado, antenas grossas, olhos pequenos), REJEITAR o painel — não é "estilo artístico", é inconsistência de personagem. Regenerar o painel isolado reforçando no prompt "Prepo tem corpo curto e atarracado como uma cápsula, NUNCA alongado ou fino — replicar a proporção exata da imagem de referência aberta". Aplicar o mesmo princípio à Bia quando houver uma página aprovada anterior dela disponível para comparação. Após 3 tentativas sem sucesso, PARAR e reportar ao orquestrador (não publicar um painel com personagem inconsistente).
 
 ---
 
