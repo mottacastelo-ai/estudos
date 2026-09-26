@@ -278,7 +278,7 @@
 
 ### Concordancia Pronomes Verbos
 **Personagem:** Concorda (dupla puzzle: pronome "EU" + relógio-verbo)
-**HQ:** ❌ `hq-concordancia-pronomes-verbos.png` (ausente) | Prompt: ✅
+**HQ:** ✅ `hq-concordancia-pronomes-verbos.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -290,7 +290,7 @@
 ---
 
 ### Registro Formal Informal
-**HQ:** ❌ `hq-registro-formal-informal.png` (ausente) | Prompt: ✅
+**HQ:** ✅ `hq-registro-formal-informal.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -303,7 +303,7 @@
 
 ### Cronica Argumentativa Artigo Opiniao
 **Personagem:** DEFENDE
-**HQ:** ❌ `hq-cronica-argumentativa-artigo-opiniao.png` (ausente) | Prompt: ✅
+**HQ:** ✅ `hq-cronica-argumentativa-artigo-opiniao.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -316,7 +316,7 @@
 
 ### Acentuacao Oxitonas
 **Personagem:** Oxin (acento agudo animado, caçula da família dos acentos)
-**HQ:** ❌ `hq-acentuacao-oxitonas.png` (ausente) | Prompt: ✅
+**HQ:** ✅ `hq-acentuacao-oxitonas.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
