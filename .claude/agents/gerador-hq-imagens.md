@@ -157,8 +157,8 @@ Se QUALQUER um desses três pontos falhar, a imagem é uma regressão para rende
 Se algum painel gerado contém Prepo e/ou Bia, use a ferramenta Read para abrir **lado a lado, na mesma resposta**: (a) o canônico (`_landing/prepo-hd.png` e/ou `Personagens\5o ano\Bia.png`) e (b) o painel recém-gerado. Compare especificamente:
 
 **Prepo:**
-- Formato do corpo: cilíndrico/cápsula arredondada e "atarracado" (baixo e largo) — NÃO fino, alongado ou retangular
-- Antenas: duas, finas, terminando em "D" e "E" maiúsculos amarelos
+- Formato do corpo/cabeça: uma única forma oval/esférica arredondada e "atarracada" (baixo e largo, sem separação visível entre cabeça e corpo) — NÃO fino, alongado, retangular ou com cabeça de contorno anguloso/quadrado
+- Antenas: duas, bem finas, cada uma com uma bolinha roxa pequena na base, terminando em uma letra maiúscula ROXA/VIOLETA (mesmo tom do corpo, contorno preto) flutuando na ponta — "D" e "E". A letra NÃO é um disco/botão amarelo nem tem fundo amarelo — é a própria letra na cor do personagem, como uma pequena extensão do corpo
 - Olhos: grandes, brancos, redondos, pupila preta circular central
 - Etiqueta "PREPO" no peito: retângulo branco/metálico com o texto em azul, proporção legível
 - Braços/pernas: curtos e atarracados, não longos ou finos
@@ -234,7 +234,7 @@ $img.Dispose()
 
 Ao instruir o Codex (modo MCP) e ao inspecionar o prompt `.md` (modo legado), garantir que qualquer painel contendo o Prepo use a descrição canônica completa abaixo — nunca uma abreviação como "o robô roxo" ou "Prepo (mascote)":
 
-> Prepo é um robô pequeno roxo com corpo cilíndrico, duas antenas na cabeça com as letras "D" e "E" nas pontas (maiúsculas, em amarelo), olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
+> Prepo é um robô pequeno roxo com corpo cilíndrico, duas antenas finas na cabeça, cada uma com uma pequena bolinha roxa na base e terminando em uma letra maiúscula roxa/violeta (mesmo tom do corpo, com contorno preto) flutuando na ponta — a letra NÃO é um disco ou botão amarelo, é a própria letra na cor roxa do personagem: "D" na antena esquerda, "E" na direita, olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
 
 ### Descrição obrigatória de Bia em cada painel (ERR-005d)
 

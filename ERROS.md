@@ -307,7 +307,7 @@ $img.Dispose()
 
 Descrição canônica obrigatória do **Prepo** — copiar literalmente em cada painel que o contenha:
 
-> Prepo é um robô pequeno roxo com corpo cilíndrico, duas antenas na cabeça com as letras "D" e "E" nas pontas (maiúsculas, em amarelo), olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
+> Prepo é um robô pequeno roxo com corpo cilíndrico, duas antenas finas na cabeça, cada uma com uma pequena bolinha roxa na base e terminando em uma letra maiúscula roxa/violeta (mesmo tom do corpo, com contorno preto) flutuando na ponta — a letra NÃO é um disco ou botão amarelo, é a própria letra na cor roxa do personagem: "D" na antena esquerda, "E" na direita, olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
 
 Descrição canônica obrigatória da **Bia** — copiar literalmente em cada painel que a contenha:
 
