@@ -88,17 +88,28 @@ Use a folha de personagens gerada no passo 1 como referência visual consistente
 (character reference), exatamente como instruído no arquivo de prompt. Validar 1024×1536 antes de
 salvar cada página.
 
-Se o painel incluir Prepo e/ou Bia (personagens recorrentes do portal), ANTES de gerar você DEVE abrir
-com sua própria ferramenta de leitura de arquivos (não apenas mencionar o caminho) os arquivos:
-- "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\_landing\prepo-hd.png" (Prepo)
-- "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\Bia.png" (Bia)
+⚠️ **MECANISMO OBRIGATÓRIO confirmado por teste em 2026-09-26 (resolve ERR-005j):** o Codex tem uma
+ferramenta interna de geração de imagem (`image_gen.imagegen`) que suporta um modo de **edição/variação
+com imagem de referência real** — não apenas texto. Use SEMPRE esse modo para qualquer painel que
+contenha Prepo, Bia, ou o personagem novo do tema (a partir da folha de personagens já gerada):
 
-Use as imagens efetivamente abertas como referência visual de proporção, cor e vestuário — não desenhe
-Prepo ou Bia apenas a partir da descrição em texto:
-- Prepo: corpo cilíndrico tipo "cápsula" arredondada, não fino/alongado.
-- Bia: pele morena dourada (tom quente), camiseta polo azul-marinho com emblema circular branco "54"
-  (NUNCA um logo de escola genérico), calça jeans azul (NUNCA calça de moletom/legging esportiva),
-  tênis azul-marinho com cadarço branco (NUNCA tênis totalmente branco).
+1. Primeiro use `view_image` (ou equivalente) para carregar visualmente o arquivo de referência real:
+   - "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\_landing\prepo-hd.png" (Prepo)
+   - "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\Bia.png" (Bia)
+   - A folha de personagens recém-gerada deste tema (personagem novo, nas páginas 2-4)
+2. Chame `image_gen.imagegen` em **modo edição/variação**, passando o(s) caminho(s) real(is) acima em
+   `referenced_image_paths` — nunca apenas mencionar o caminho em texto no prompt e torcer para o
+   modelo "lembrar". Isso é diferente de geração pura texto→imagem e produz identidade visual muito
+   mais fiel (validado: Prepo e Bia ficaram quase idênticos ao canônico usando esse mecanismo, contra
+   resultados claramente divergentes usando só descrição em texto).
+3. Inclua a descrição textual normalmente também (reforço, não substituto): Prepo com corpo cilíndrico
+   tipo "cápsula" arredondada; Bia com pele morena dourada, polo azul-marinho com emblema circular
+   branco "54" (NUNCA logo de escola genérico), calça jeans azul (NUNCA moletom/legging esportiva),
+   tênis azul-marinho com cadarço branco (NUNCA tênis totalmente branco).
+
+Se por algum motivo `image_gen.imagegen` não aceitar `referenced_image_paths` nesta sessão (ferramenta
+indisponível ou erro), reportar isso explicitamente ao orquestrador antes de cair para o modo texto-only
+— não assumir silenciosamente que só descrição em texto é suficiente.
 
 Imagens canônicas de referência dos demais personagens fixos já existentes estão em:
 "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\"
