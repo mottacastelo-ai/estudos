@@ -21,7 +21,7 @@
 
 2. **Bia** — menina de 11 anos com cabelo cacheado e volumoso preto até os ombros, pele morena clara, usando uniforme escolar (camiseta polo azul-marinho com colarinho branco e emblema circular branco com o número "54" no peito, calça jeans azul) e tênis azul-marinho com cadarço branco. Expressão curiosa e sorridente.
 
-3. **Prepo** — robô pequeno roxo (#7C3AED) com corpo cilíndrico, duas antenas na cabeça com as letras "D" e "E" nas pontas (maiúsculas amarelas), olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
+3. **Prepo** — robô pequeno roxo (#7C3AED) com corpo cilíndrico, duas antenas finas na cabeça, cada uma com uma bolinha roxa pequena na base, terminando em uma letra maiúscula ROXA (mesmo tom do corpo, contorno preto, NUNCA um disco ou fundo amarelo) na ponta: "D" na esquerda, "E" na direita, olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
 
 **PROIBIDO** introduzir qualquer outro personagem além destes três. **PROIBIDO** usar cenários genéricos sem elementos escolares.
 
