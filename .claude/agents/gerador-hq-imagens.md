@@ -89,9 +89,13 @@ O Codex tem, internamente, uma ferramenta de geração de imagem (`image_gen.ima
    - Personagem novo do tema → a folha de personagens já gerada deste tema (`Personagens\5o ano\{NomePersonagem}.png`), usada como referência para as páginas 2-4 também
 2. Chamar `image_gen.imagegen` em **modo edição/variação**, passando esses arquivos em `referenced_image_paths` — nunca apenas citar o caminho em texto no prompt.
 
-Complementar (reforço, não substituto do passo acima) com a descrição textual: Prepo com corpo cilíndrico tipo "cápsula" arredondada e atarracada; Bia com pele morena dourada, polo azul-marinho com emblema circular branco "54" (NUNCA logo de escola genérico), calça jeans azul (NUNCA moletom/legging esportiva), tênis azul-marinho com cadarço branco (NUNCA tênis totalmente branco).
+⚠️ **Quando `referenced_image_paths` é usado, NÃO redescrever a aparência completa do personagem em texto.** Isso foi tentado inicialmente (texto completo + imagem de referência "para reforçar") e causou um bug real em produção em 2026-09-26: a descrição textual de Prepo dizia "letras D/E em amarelo", mas a imagem de referência real mostra as letras roxas — o texto errado por vezes "venceu" a imagem de referência, gerando um Prepo com antenas erradas mesmo com `referenced_image_paths` correto. Descrição textual completa fazia sentido na regra original ERR-005d (quando não existia nenhuma referência visual real, só a memória entre sessões do Codex, que não persiste) — com imagem real anexada, ela é redundante e é uma fonte de risco, não de reforço.
 
-Se `image_gen.imagegen` não aceitar `referenced_image_paths` nesta sessão (ferramenta indisponível ou erro), reportar isso explicitamente ao orquestrador antes de cair para o modo texto-only — nunca assumir silenciosamente que descrição em texto sozinha é suficiente.
+**Prática correta:** quando o painel usa `referenced_image_paths` para Prepo/Bia/personagem novo, o texto do prompt deve apenas dizer algo como *"Prepo aparece exatamente como na imagem de referência fornecida — mesma cor, forma, antenas e etiqueta; não altere o design"*, seguido só da pose/ação específica deste painel (ex: "apontando para a lousa", "flutuando com expressão curiosa"). Não reafirme detalhes físicos completos (cor das antenas, formato do corpo, etc.) — se a imagem de referência estiver correta, ela já garante isso; reafirmar em texto só arrisca contradizê-la.
+
+A descrição textual completa (ERR-005d) continua válida apenas para a geração da folha de personagens de um personagem novo (que ainda não tem nenhuma imagem de referência própria) — depois que a folha existe, ela também vira referência real via `referenced_image_paths` nas páginas seguintes, e a mesma regra de "não redescrever" passa a valer para ela também.
+
+Se `image_gen.imagegen` não aceitar `referenced_image_paths` nesta sessão (ferramenta indisponível ou erro), reportar isso explicitamente ao orquestrador antes de cair para o modo texto-only — nesse caso (e só nesse caso) usar a descrição textual completa da ERR-005d como fallback, nunca assumir silenciosamente que ela sozinha é suficiente sem alertar sobre a degradação de qualidade esperada.
 
 ### 1.2 — Montar o prompt de invocação e chamar a tool
 
@@ -117,6 +121,12 @@ descrição em texto:
 - Prepo: "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos\_landing\prepo-hd.png" (se aplicável a este tema)
 - Bia: "C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano\Bia.png"
 - [NomePersonagem]: a folha de personagens gerada no item 1 acima (para as páginas 2-4)
+
+⚠️ O conteúdo do prompt .md colado abaixo contém descrições físicas completas de Prepo/Bia em cada
+painel (prática antiga, ERR-005d). As imagens de referência acima têm PRIORIDADE ABSOLUTA sobre
+qualquer detalhe físico dessas descrições que divirja delas (cor, formato, acessórios) — use a
+descrição apenas para pose/ação/expressão de cada painel, nunca para redesenhar a aparência a
+partir do zero. Se notar qualquer conflito entre o texto e a imagem de referência, siga a imagem.
 
 Validar 1024×1536 antes de salvar cada página.
 

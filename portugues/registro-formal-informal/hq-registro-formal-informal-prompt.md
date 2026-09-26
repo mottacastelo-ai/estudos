@@ -17,7 +17,7 @@
 
 2. **Bia** — menina de 11 anos, cabelo cacheado e volumoso preto, pele morena clara, uniforme escolar azul (camiseta polo azul-marinho com colarinho branco e emblema circular branco com o número "54" no peito, calça jeans azul) e tênis azul-marinho com cadarço branco. Sempre alegre e curiosa.
 
-3. **Prepo** — robô pequeno roxo, corpo cilíndrico, duas antenas finas na cabeça, cada uma com uma bolinha roxa pequena na base, terminando em uma letra maiúscula ROXA (mesmo tom do corpo, contorno preto, NUNCA um disco ou fundo amarelo) na ponta: "D" na esquerda, "E" na direita, olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
+3. **Prepo** — robô pequeno roxo, corpo em formato oval/cápsula arredondado (baixo e largo, sem bordas retas ou quadradas), duas antenas finas na cabeça, cada uma com uma bolinha roxa pequena na base, terminando em uma letra maiúscula ROXA (mesmo tom do corpo, contorno preto, NUNCA um disco ou fundo amarelo) na ponta: "D" na esquerda, "E" na direita, olhos redondos brancos com pupila preta circular, etiqueta metálica no peito com a palavra "PREPO" gravada em azul, pernas curtas com botõeszinhos e braços articulados.
 
 **PROIBIDO:** qualquer outro personagem de HQs anteriores (Verbão, Elinho, Toni, Publinho, Raizinha, Xis, Grafo, Camaleão de outros contextos, etc.). NÃO invente crianças coadjuvantes com nome próprio — se aparecer uma senhora ou colega em cena para exemplificar situação, ela é figurante genérico e SEM balão de fala nominal.
 
@@ -59,7 +59,7 @@
 >
 > **Zone 4 — Support characters (small half-body portraits, side by side):**
 >   - Bia: 11-year-old girl, voluminous curly black hair, light brown skin, navy blue polo shirt with white collar and a round white chest badge with the number "54" in navy, blue jeans, and navy-blue sneakers with white laces, warm smile.
->   - Prepo: small purple robot `#7C3AED`, cylindrical body, two antennas on head with letters "D" and "E" at the tips in yellow, round white eyes with black circular pupils, metal chest badge with the word "PREPO" engraved in blue, short legs with tiny buttons, articulated arms.
+>   - Prepo: small purple robot `#7C3AED`, rounded oval/capsule-shaped body (wide, low, no flat or straight edges), two thin antennas, each with a small purple ball at the base, ending in a purple/violet capital letter (same tone as the body, black outline, NEVER a yellow disc) at the tip: "D" on the left, "E" on the right, round white eyes with black circular pupils, metal chest badge with the word "PREPO" engraved in blue, short legs with tiny buttons, articulated arms.
 >
 > Style: clean cartoon linework with dark purple outlines `#4C1D95`, flat shading, educational children book aesthetic, no photorealism, no complex shadows. Bottom of sheet: label "CAMALEÃO LING — Registro Linguístico" in purple serif font.
 
@@ -94,7 +94,7 @@
 
 ### Painel 4 — Bia sintetiza (widescreen, ocupa base)
 **Prompt em inglês:**
-> A cozy classroom scene: wooden desk in the foreground with an open notebook and colored pencils, a bulletin board on the back wall with colorful children's drawings pinned up, a small potted plant on the corner of the desk, a globe on a side shelf. Bia sits at the desk — 11-year-old girl with voluminous curly black hair, light brown skin, navy blue polo shirt with white collar and a round white chest badge with the number "54" in navy, blue jeans, and navy-blue sneakers with white laces — pointing at her notebook where "FORMAL / INFORMAL" is written. Ling stands next to her in his half-and-half outfit, teaching pose. Prepo hovers beside them — small purple robot, cylindrical body, two antennas with yellow "D" and "E" letters on tips, round white eyes with black pupils, metal chest badge "PREPO" in blue, short legs and articulated arms — with a curious expression.
+> A cozy classroom scene: wooden desk in the foreground with an open notebook and colored pencils, a bulletin board on the back wall with colorful children's drawings pinned up, a small potted plant on the corner of the desk, a globe on a side shelf. Bia sits at the desk — 11-year-old girl with voluminous curly black hair, light brown skin, navy blue polo shirt with white collar and a round white chest badge with the number "54" in navy, blue jeans, and navy-blue sneakers with white laces — pointing at her notebook where "FORMAL / INFORMAL" is written. Ling stands next to her in his half-and-half outfit, teaching pose. Prepo hovers beside them — small purple robot, rounded oval/capsule-shaped body (wide, low, no flat or straight edges), two thin antennas, each with a small purple ball at the base, ending in a purple/violet capital letter (same tone as the body, black outline, NEVER a yellow disc) at the tip: "D" on the left, "E" on the right, round white eyes with black pupils, metal chest badge "PREPO" in blue, short legs and articulated arms — with a curious expression.
 >
 > **Bia (balão simples):** "A mesma ideia, dois modos de dizer!"
 > **Prepo (balão retangular robótico):** "Depende da situação comunicativa."
@@ -161,7 +161,7 @@
 
 ### Painel 3 — Prepo comenta (esquerda base)
 **Prompt em inglês:**
-> A newsstand scene: colorful magazine and newspaper racks, a "SUPLEMENTO INFANTIL" magazine visible on the front, a small awning above, a chalkboard with today's date, potted plants beside the stand. Prepo hovers near the newsstand — small purple robot, cylindrical body, two antennas with yellow "D" and "E" letters on tips, round white eyes with black pupils, chest badge "PREPO" in blue, short legs, articulated arms — pointing to a children's newspaper supplement.
+> A newsstand scene: colorful magazine and newspaper racks, a "SUPLEMENTO INFANTIL" magazine visible on the front, a small awning above, a chalkboard with today's date, potted plants beside the stand. Prepo hovers near the newsstand — small purple robot, rounded oval/capsule-shaped body (wide, low, no flat or straight edges), two thin antennas, each with a small purple ball at the base, ending in a purple/violet capital letter (same tone as the body, black outline, NEVER a yellow disc) at the tip: "D" on the left, "E" on the right, round white eyes with black pupils, chest badge "PREPO" in blue, short legs, articulated arms — pointing to a children's newspaper supplement.
 >
 > **Prepo (balão robótico):** "A crônica foi publicada em suplemento infantil."
 > **Prepo (balão robótico 2):** "Por isso o autor usa registro informal!"
@@ -203,7 +203,7 @@
 
 ### Painel 4 — Prepo sintetiza (meio direita)
 **Prompt em inglês:**
-> Cozy study room: wooden desk with an open notebook where "FORMAL vs INFORMAL" is written in colored markers, a purple lamp, a cup of pencils, a small bookshelf behind with picture books, a window with cream-colored curtains. Prepo stands on the desk — small purple robot, cylindrical body, two antennas with yellow "D" and "E" letters on tips, round white eyes with black pupils, chest badge "PREPO" in blue, short legs, articulated arms — pointing at the notebook.
+> Cozy study room: wooden desk with an open notebook where "FORMAL vs INFORMAL" is written in colored markers, a purple lamp, a cup of pencils, a small bookshelf behind with picture books, a window with cream-colored curtains. Prepo stands on the desk — small purple robot, rounded oval/capsule-shaped body (wide, low, no flat or straight edges), two thin antennas, each with a small purple ball at the base, ending in a purple/violet capital letter (same tone as the body, black outline, NEVER a yellow disc) at the tip: "D" on the left, "E" on the right, round white eyes with black pupils, chest badge "PREPO" in blue, short legs, articulated arms — pointing at the notebook.
 >
 > **Prepo (balão robótico):** "A situação comunicativa decide o registro."
 > **Prepo (balão robótico 2):** "Formal exige uso monitorado; informal permite espontâneo."
