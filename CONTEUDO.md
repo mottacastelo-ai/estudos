@@ -11,8 +11,8 @@
 | 🔢 Matemática | 12 | 54 |
 | 🔬 Ciências | 4 | 18 |
 | 🌍 Geografia | 3 | 11 |
-| 📜 História | 5 | 19 |
-| **Total** | **48** | **210** |
+| 📜 História | 7 | 27 |
+| **Total** | **50** | **218** |
 
 ---
 
@@ -637,6 +637,31 @@
 | Linha do Tempo dos Teares | ✅ `linha-do-tempo-teares-artesanato-industria.html` |
 | Diário do Artesão | ✅ `diario-artesao-artesanato-industria.html` |
 | Mapa Mental | ✅ `mapa-mental-artesanato-industria.html` |
+
+---
+
+### Patrimonio Mundial
+**HQ:** ❌ `hq-patrimonio-mundial.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz — Patrimônio Mundial | ✅ `quiz-patrimonio-mundial.html` |
+| Caça ao Erro | ✅ `caca-erro-patrimonio-mundial.html` |
+| Criador de Patrimônio | ✅ `criador-patrimonio-mundial.html` |
+| Mapa Mental | ✅ `mapa-mental-patrimonio-mundial.html` |
+
+---
+
+### Tombamento Patrimonio Brasil
+**Personagem:** Carimbo (carimbo de madeira animado, base de borracha vermelha, selo dourado protetor)
+**HQ:** ❌ `hq-tombamento-patrimonio-brasil.png` (ausente) | Prompt: ✅
+
+| Atividade | Arquivo |
+|---|---|
+| Quiz — Tombamento no Brasil | ✅ `quiz-tombamento-patrimonio-brasil.html` |
+| Complete a Lacuna | ✅ `complete-lacuna-tombamento-patrimonio-brasil.html` |
+| Transformador de Texto | ✅ `transformador-tombamento-patrimonio-brasil.html` |
+| Mapa Mental | ✅ `mapa-mental-tombamento-patrimonio-brasil.html` |
 
 ---
 

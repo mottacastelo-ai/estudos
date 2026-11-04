@@ -747,7 +747,7 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
   <button class="disc-nav-btn" id="nav-hist" onclick="showDisc('hist')">
     <span class="d-icon">📜</span>
     <span class="d-name">História</span>
-    <span class="d-count">19</span>
+    <span class="d-count">27</span>
   </button>
   <div class="theme-sub" id="sub-hist">
     <button class="theme-link" onclick="showTheme('hist','calendarios-povos')">🗓️ Diversos Calendários</button>
@@ -755,6 +755,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
     <button class="theme-link" onclick="showTheme('hist','memoria-negra-imigrantes')">✊🏽 Zumbi e Imigrantes</button>
     <button class="theme-link" onclick="showTheme('hist','fontes-historicas-ambiente')">🔍 Fontes Históricas e Impactos Ambientais</button>
     <button class="theme-link" onclick="showTheme('hist','artesanato-industria')">🧵 Do Artesanato à Indústria</button>
+    <button class="theme-link" onclick="showTheme('hist','patrimonio-mundial')">🏛️ Patrimônio Material, Natural e Imaterial</button>
+    <button class="theme-link" onclick="showTheme('hist','tombamento-patrimonio-brasil')">🏺 O Tombamento e o Patrimônio no Brasil</button>
   </div>
 
   <button class="disc-nav-btn" id="nav-cien" onclick="showDisc('cien')">
@@ -789,8 +791,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
       <p>Missões e desafios para dominar cada matéria. Escolha e bora! 🚀</p>
       <div class="home-stats">
         <div class="hstat"><span>5</span>disciplinas</div>
-        <div class="hstat"><span>34</span>temas</div>
-        <div class="hstat"><span>147</span>atividades</div>
+        <div class="hstat"><span>36</span>temas</div>
+        <div class="hstat"><span>155</span>atividades</div>
       </div>
       <div class="home-stats" id="streak-banner">
         <div class="hstat">🔥 <span id="streak-count">0</span>dias seguidos</div>
@@ -887,8 +889,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="dhc-name">História</div>
           <div class="dhc-desc">Calendários, memória e patrimônio histórico</div>
           <div class="dhc-chips">
-            <span class="chip" style="background:#FFF7ED;color:#7C2D12">5 temas</span>
-            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">21 atividades</span>
+            <span class="chip" style="background:#FFF7ED;color:#7C2D12">7 temas</span>
+            <span class="chip" style="background:#EFF6FF;color:#1E3A8A">29 atividades</span>
           </div>
         </button>
         <button class="disc-home-card cien" onclick="showDisc('cien')">
@@ -3214,6 +3216,8 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
         <button class="theme-tab-btn hist-tab" onclick="activateTheme('hist','memoria-negra-imigrantes')">✊🏽 Zumbi e Imigrantes</button>
         <button class="theme-tab-btn hist-tab" onclick="activateTheme('hist','fontes-historicas-ambiente')">🔍 Fontes Históricas e Impactos Ambientais</button>
         <button class="theme-tab-btn hist-tab" onclick="activateTheme('hist','artesanato-industria')">🧵 Do Artesanato à Indústria</button>
+        <button class="theme-tab-btn hist-tab" onclick="activateTheme('hist','patrimonio-mundial')">🏛️ Patrimônio Material, Natural e Imaterial</button>
+        <button class="theme-tab-btn hist-tab" onclick="activateTheme('hist','tombamento-patrimonio-brasil')">🏺 O Tombamento e o Patrimônio no Brasil</button>
       </div>
 
       <!-- TEMA 1: Calendários dos Povos -->
@@ -3448,6 +3452,104 @@ body { font-family: "Baloo 2", cursive; background: var(--bg); color: var(--text
           <div class="sched-row"><span class="sched-day hist">Ter</span><div class="sched-acts"><span class="sched-act hist">🔄 Antes e Depois</span></div></div>
           <div class="sched-row"><span class="sched-day hist">Qua</span><div class="sched-acts"><span class="sched-act hist">🕰️ Linha do Tempo dos Teares</span></div></div>
           <div class="sched-row"><span class="sched-day hist">Qui</span><div class="sched-acts"><span class="sched-act hist">📔 Diário do Artesão</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Sex</span><div class="sched-acts"><span class="sched-act hist">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA 6: Patrimônio Material, Natural e Imaterial -->
+      <div class="theme-content" id="theme-hist-patrimonio-mundial">
+        <div class="hq-card">
+          <img class="hq-img" src="historia/patrimonio-mundial/hq-patrimonio-mundial.png" alt="HQ Patrimônio Material, Natural e Imaterial"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Legado guia Bia pelo museu dos patrimônios e revela a diferença entre bens materiais, naturais e imateriais — 4 páginas · Personagens: Legado e Bia · pp. 94–99</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card hist" href="historia/patrimonio-mundial/quiz-patrimonio-mundial.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz — Patrimônio Mundial</div>
+            <div class="act-desc">10 questões sobre patrimônio material, imaterial e natural e os critérios de reconhecimento pela UNESCO.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card hist" href="historia/patrimonio-mundial/caca-erro-patrimonio-mundial.html" target="sabendo-atividade">
+            <div class="act-icon">🔎</div>
+            <div class="act-title">Caça ao Erro</div>
+            <div class="act-desc">Identifique as afirmações incorretas sobre patrimônio material, natural e imaterial e corrija cada uma.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Analisar</span></div>
+            <div class="level lv2">⚡ Praticar</div>
+          </a>
+          <a class="act-card hist" href="historia/patrimonio-mundial/criador-patrimonio-mundial.html" target="sabendo-atividade">
+            <div class="act-icon">✍️</div>
+            <div class="act-title">Criador de Patrimônio</div>
+            <div class="act-desc">Escolha um bem cultural ou natural, descreva por que merece ser patrimônio e classifique seu tipo.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Criar</span></div>
+            <div class="level lv3">🏆 Criar</div>
+          </a>
+          <a class="act-card hist" href="historia/patrimonio-mundial/mapa-mental-patrimonio-mundial.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa dos tipos de patrimônio. Compare com o gabarito ao final.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Explicar</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><span class="sched-day hist">Seg</span><div class="sched-acts"><span class="sched-act hist">📖 HQ</span><span class="sched-act hist">❓ Quiz</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Ter</span><div class="sched-acts"><span class="sched-act hist">🔎 Caça ao Erro</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Qua</span><div class="sched-acts"><span class="sched-act hist">✍️ Criador de Patrimônio</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Sex</span><div class="sched-acts"><span class="sched-act hist">🗺️ Mapa Mental</span></div></div>
+        </div>
+      </div>
+
+      <!-- TEMA 7: O Tombamento e o Patrimônio no Brasil -->
+      <div class="theme-content" id="theme-hist-tombamento-patrimonio-brasil">
+        <div class="hq-card">
+          <img class="hq-img" src="historia/tombamento-patrimonio-brasil/hq-tombamento-patrimonio-brasil.png" alt="HQ O Tombamento e o Patrimônio no Brasil"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hq-placeholder" style="display:none"><span>🎨</span><p>HQ em produção</p></div>
+          <div class="hq-caption"><span>📖</span><span>Carimbo explica a Bia como funciona o tombamento e por que certos bens precisam de proteção especial no Brasil — 4 páginas · Personagens: Carimbo e Bia · pp. 100–103</span></div>
+        </div>
+        <hr class="sdiv">
+        <div class="act-grid">
+          <a class="act-card hist" href="historia/tombamento-patrimonio-brasil/quiz-tombamento-patrimonio-brasil.html" target="sabendo-atividade">
+            <div class="act-icon">❓</div>
+            <div class="act-title">Quiz — Tombamento no Brasil</div>
+            <div class="act-desc">10 questões sobre tombamento, IPHAN, bens tombados e a importância da preservação do patrimônio brasileiro.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Ativo</span></div>
+            <div class="level lv4">📖 Retrieval practice</div>
+          </a>
+          <a class="act-card hist" href="historia/tombamento-patrimonio-brasil/complete-lacuna-tombamento-patrimonio-brasil.html" target="sabendo-atividade">
+            <div class="act-icon">📝</div>
+            <div class="act-title">Complete a Lacuna</div>
+            <div class="act-desc">Preencha as lacunas sobre tombamento, IPHAN e os bens protegidos no Brasil usando os conceitos do livro.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Recordar</span></div>
+            <div class="level lv2">⚡ Praticar</div>
+          </a>
+          <a class="act-card hist" href="historia/tombamento-patrimonio-brasil/transformador-tombamento-patrimonio-brasil.html" target="sabendo-atividade">
+            <div class="act-icon">🔄</div>
+            <div class="act-title">Transformador de Texto</div>
+            <div class="act-desc">Reescreva textos sobre tombamento adaptando o ponto de vista ou o registro para diferentes contextos.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Reescrever</span></div>
+            <div class="level lv2">⚡ Praticar</div>
+          </a>
+          <a class="act-card hist" href="historia/tombamento-patrimonio-brasil/mapa-mental-tombamento-patrimonio-brasil.html" target="sabendo-atividade">
+            <div class="act-icon">🗺️</div>
+            <div class="act-title">Mapa Mental</div>
+            <div class="act-desc">Arraste os balões e conecte com setas para montar o mapa do tombamento e do patrimônio no Brasil.</div>
+            <div class="act-tags"><span class="tag tag-hist">Digital</span><span class="tag tag-a">Síntese</span></div>
+            <div class="level lv3">🏆 Explicar</div>
+          </a>
+        </div>
+        <hr class="sdiv">
+        <div class="sched-title">📅 Sugestão de uso semanal</div>
+        <div class="sched">
+          <div class="sched-row"><span class="sched-day hist">Seg</span><div class="sched-acts"><span class="sched-act hist">📖 HQ</span><span class="sched-act hist">❓ Quiz</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Ter</span><div class="sched-acts"><span class="sched-act hist">📝 Complete a Lacuna</span></div></div>
+          <div class="sched-row"><span class="sched-day hist">Qua</span><div class="sched-acts"><span class="sched-act hist">🔄 Transformador de Texto</span></div></div>
           <div class="sched-row"><span class="sched-day hist">Sex</span><div class="sched-acts"><span class="sched-act hist">🗺️ Mapa Mental</span></div></div>
         </div>
       </div>
@@ -3793,7 +3895,15 @@ async function loadActivityStatus() {
     'portugues/acentuacao-oxitonas/quiz-acentuacao-oxitonas.html':'acentuacao-oxitonas|quiz',
     'portugues/acentuacao-oxitonas/flashcards-acentuacao-oxitonas.html':'acentuacao-oxitonas|flashcards',
     'portugues/acentuacao-oxitonas/complete-lacuna-acentuacao-oxitonas.html':'acentuacao-oxitonas|complete-lacuna',
-    'portugues/acentuacao-oxitonas/mapa-mental-acentuacao-oxitonas.html':'acentuacao-oxitonas|mapa-mental'
+    'portugues/acentuacao-oxitonas/mapa-mental-acentuacao-oxitonas.html':'acentuacao-oxitonas|mapa-mental',
+    'historia/patrimonio-mundial/quiz-patrimonio-mundial.html':'patrimonio-mundial|quiz',
+    'historia/patrimonio-mundial/mapa-mental-patrimonio-mundial.html':'patrimonio-mundial|mapa-mental',
+    'historia/patrimonio-mundial/caca-erro-patrimonio-mundial.html':'patrimonio-mundial|caca-erro',
+    'historia/patrimonio-mundial/criador-patrimonio-mundial.html':'patrimonio-mundial|criador',
+    'historia/tombamento-patrimonio-brasil/quiz-tombamento-patrimonio-brasil.html':'tombamento-patrimonio-brasil|quiz',
+    'historia/tombamento-patrimonio-brasil/mapa-mental-tombamento-patrimonio-brasil.html':'tombamento-patrimonio-brasil|mapa-mental',
+    'historia/tombamento-patrimonio-brasil/complete-lacuna-tombamento-patrimonio-brasil.html':'tombamento-patrimonio-brasil|complete-lacuna',
+    'historia/tombamento-patrimonio-brasil/transformador-tombamento-patrimonio-brasil.html':'tombamento-patrimonio-brasil|transformador'
   };
   var res = await supa.from('activity_log').select('theme_slug,activity_type,score').eq('user_id', sbUser.id);
   if (res.error || !res.data) return;
@@ -4011,7 +4121,9 @@ var THEME_CATALOG = [
   { disc:'hist', slug:'marcos-memoria',            label:'Marcos de Memória',    emoji:'🗿', pages:null, charName:'Memo',   charImg:'chars/marcos-memoria-hd.png' },
   { disc:'hist', slug:'memoria-negra-imigrantes', label:'Zumbi e Imigrantes',   emoji:'✊🏽', pages:null, charName:'Timbre', charImg:'chars/memoria-negra-imigrantes-hd.png' },
   { disc:'hist', slug:'fontes-historicas-ambiente', label:'Fontes Históricas e Impactos Ambientais', emoji:'🔍', pages:[50,61], charName:'Lupa', charImg:'chars/fontes-historicas-ambiente-hd.png' },
-  { disc:'hist', slug:'artesanato-industria',      label:'Do Artesanato à Indústria', emoji:'🧵', pages:[66,69], charName:'Fio', charImg:'chars/artesanato-industria-hd.png' }
+  { disc:'hist', slug:'artesanato-industria',      label:'Do Artesanato à Indústria', emoji:'🧵', pages:[66,69], charName:'Fio', charImg:'chars/artesanato-industria-hd.png' },
+  { disc:'hist', slug:'patrimonio-mundial',         label:'Patrimônio Material, Natural e Imaterial', emoji:'🏛️', pages:[94,99], charName:'Legado', charImg:'chars/patrimonio-mundial-hd.png' },
+  { disc:'hist', slug:'tombamento-patrimonio-brasil', label:'O Tombamento e o Patrimônio no Brasil', emoji:'🏺', pages:[100,103], charName:'Carimbo', charImg:'chars/tombamento-patrimonio-brasil-hd.png' }
 ];
 
 var DISC_NAMES = { port:'Português', mat:'Matemática', cien:'Ciências', geo:'Geografia', hist:'História' };
@@ -4139,6 +4251,8 @@ var THEME_META = {
   'memoria-negra-imigrantes':    { label: 'Zumbi e Imigrantes',           navId: 'nav-hist', disc: 'hist' },
   'fontes-historicas-ambiente':  { label: 'Fontes Históricas e Impactos Ambientais', navId: 'nav-hist', disc: 'hist' },
   'artesanato-industria':        { label: 'Do Artesanato à Indústria',    navId: 'nav-hist', disc: 'hist' },
+  'patrimonio-mundial':          { label: 'Patrimônio Material, Natural e Imaterial', navId: 'nav-hist', disc: 'hist' },
+  'tombamento-patrimonio-brasil': { label: 'O Tombamento e o Patrimônio no Brasil', navId: 'nav-hist', disc: 'hist' },
   'fabulas-conflito-moral':      { label: 'Fábulas: Conflito e Moral',    navId: 'nav-port', disc: 'port' },
   'reconto-anedota':             { label: 'Reconto e Anedota',            navId: 'nav-port', disc: 'port' },
   'discurso-direto-indireto':    { label: 'Discurso Direto e Indireto',   navId: 'nav-port', disc: 'port' },
@@ -4358,7 +4472,15 @@ var ACTIVITY_FILE_PATHS = {
   'memoria-negra-imigrantes:selos':            'historia/memoria-negra-imigrantes/selos-da-memoria.html',
   'pais-de-contrastes:detector':               'historia/pais-de-contrastes/detector-contrastes-pais-de-contrastes.html',
   'pais-de-contrastes:mapa-mental':            'historia/pais-de-contrastes/mapa-mental-pais-de-contrastes.html',
-  'pais-de-contrastes:quiz':                   'historia/pais-de-contrastes/quiz-pais-de-contrastes.html'
+  'pais-de-contrastes:quiz':                   'historia/pais-de-contrastes/quiz-pais-de-contrastes.html',
+  'patrimonio-mundial:quiz':                   'historia/patrimonio-mundial/quiz-patrimonio-mundial.html',
+  'patrimonio-mundial:mapa-mental':            'historia/patrimonio-mundial/mapa-mental-patrimonio-mundial.html',
+  'patrimonio-mundial:caca-erro':              'historia/patrimonio-mundial/caca-erro-patrimonio-mundial.html',
+  'patrimonio-mundial:criador':                'historia/patrimonio-mundial/criador-patrimonio-mundial.html',
+  'tombamento-patrimonio-brasil:quiz':         'historia/tombamento-patrimonio-brasil/quiz-tombamento-patrimonio-brasil.html',
+  'tombamento-patrimonio-brasil:mapa-mental':  'historia/tombamento-patrimonio-brasil/mapa-mental-tombamento-patrimonio-brasil.html',
+  'tombamento-patrimonio-brasil:complete-lacuna': 'historia/tombamento-patrimonio-brasil/complete-lacuna-tombamento-patrimonio-brasil.html',
+  'tombamento-patrimonio-brasil:transformador': 'historia/tombamento-patrimonio-brasil/transformador-tombamento-patrimonio-brasil.html'
 };
 var ACTIVITY_TYPE_LABELS = {
   'quiz':'Quiz Interativo', 'caca-erro':'Caça ao Erro', 'complete-lacuna':'Complete a Lacuna',
