@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformador de Tombamentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --hist: #B45309;
+  --hist-light: #F59E0B;
+  --hist-bg: #FFFBEB;
+  --hist-dark: #78350F;
+  --border: #FDE68A;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --card: #fff;
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--hist-bg); min-height: 100vh; color: var(--text); }
+
+.hero { background: linear-gradient(135deg, var(--hist-dark), var(--hist) 60%, var(--hist-light)); padding: 1.8rem 1.5rem 1.3rem; text-align: center; color: white; }
+.hero-emoji { font-size: 2.8rem; margin-bottom: .3rem; }
+.hero h1 { font-size: 1.4rem; font-weight: 900; line-height: 1.2; }
+.hero p { font-size: .88rem; opacity: .9; margin-top: .3rem; }
+
+.container { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem 6rem; }
+
+.progress-wrap { margin-bottom: 1.5rem; }
+.progress-label { font-family: 'Space Mono', monospace; font-size: .8rem; font-weight: 700; color: var(--hist); margin-bottom: .4rem; }
+.prog-track { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--hist), var(--hist-light)); border-radius: 99px; transition: width .4s ease; }
+
+.before-card {
+  background: var(--card);
+  border: 2.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.4rem;
+  margin-bottom: 1.2rem;
+}
+.card-badge-before {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #FEF2F2; border: 1.5px solid #FECACA;
+  color: #DC2626; border-radius: 99px;
+  font-size: .75rem; font-weight: 800;
+  padding: .3rem .8rem; margin-bottom: .8rem;
+  font-family: 'Space Mono', monospace;
+}
+.bem-emoji { font-size: 2.4rem; display: block; margin-bottom: .4rem; }
+.bem-nome { font-family: 'Space Mono', monospace; font-size: .9rem; font-weight: 800; color: var(--hist-dark); margin-bottom: .5rem; }
+.bem-desc { font-size: .95rem; font-weight: 600; color: #374151; line-height: 1.5; }
+
+.sel-label {
+  font-family: 'Space Mono', monospace; font-size: .8rem; font-weight: 800;
+  color: var(--hist); letter-spacing: .05em; margin-bottom: .6rem; margin-top: 1.2rem; display: block;
+}
+.opt-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+.opt-btn {
+  border: 2.5px solid var(--border);
+  background: var(--hist-bg);
+  color: #374151;
+  border-radius: 10px;
+  padding: .55rem .9rem;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: .9rem; font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+  flex: 1; min-width: calc(33% - .4rem);
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.opt-btn:hover:not(:disabled) { border-color: var(--hist-light); background: #FEF3C7; }
+.opt-btn.selected { border-color: var(--hist); background: #FEF3C7; color: var(--hist-dark); }
+.opt-btn:disabled { opacity: .6; cursor: default; }
+.opt-em { font-size: 1.2rem; }
+
+.tombar-btn {
+  display: block; width: 100%;
+  background: linear-gradient(135deg, var(--hist), var(--hist-light));
+  color: white; border: none;
+  border-radius: 12px; padding: .9rem 2rem;
+  font-family: 'Baloo 2', sans-serif; font-size: 1.05rem; font-weight: 800;
+  cursor: pointer; margin-top: 1.4rem;
+  transition: transform .15s, opacity .15s;
+}
+.tombar-btn:hover:not(:disabled) { transform: scale(1.02); }
+.tombar-btn:disabled { opacity: .45; cursor: default; transform: none; }
+
+.result-area { display: none; margin-top: 1.2rem; }
+.after-card {
+  background: var(--card);
+  border: 2.5px solid var(--hist);
+  border-radius: var(--radius);
+  padding: 1.4rem;
+  position: relative;
+  overflow: hidden;
+}
+.stamp-overlay {
+  position: absolute; top: 16px; right: 16px;
+  width: 88px; height: 88px;
+  border: 4px solid #DC2626; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(-15deg) scale(0); opacity: 0;
+  transition: transform .5s cubic-bezier(.68,-0.55,.27,1.55), opacity .3s;
+  pointer-events: none;
+}
+.stamp-overlay.show { transform: rotate(-15deg) scale(1); opacity: 1; }
+.stamp-text { font-family: 'Space Mono', monospace; font-size: .52rem; font-weight: 800; color: #DC2626; text-align: center; line-height: 1.6; }
+.card-badge-after {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #ECFDF5; border: 1.5px solid #A7F3D0;
+  color: #059669; border-radius: 99px;
+  font-size: .75rem; font-weight: 800;
+  padding: .3rem .8rem; margin-bottom: .8rem;
+  font-family: 'Space Mono', monospace;
+}
+.choice-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; }
+.choice-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  border-radius: 8px; padding: .3rem .7rem;
+  font-size: .85rem; font-weight: 700;
+  font-family: 'Space Mono', monospace;
+}
+.choice-tag.ok { background: #ECFDF5; color: #059669; border: 1.5px solid #A7F3D0; }
+.choice-tag.err { background: #FEF2F2; color: #DC2626; border: 1.5px solid #FECACA; }
+
+.feedback-box {
+  border-radius: 12px; padding: 1rem 1.1rem; margin-top: .8rem;
+  font-size: .92rem; font-weight: 600; line-height: 1.5;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.feedback-box.correct { background: #ECFDF5; border: 2px solid #A7F3D0; color: #065F46; }
+.feedback-box.wrong { background: #FEF2F2; border: 2px solid #FECACA; color: #7F1D1D; }
+.feedback-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+.next-btn {
+  display: block; width: 100%;
+  background: white; color: var(--hist);
+  border: 2.5px solid var(--hist);
+  border-radius: 12px; padding: .85rem 2rem;
+  font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800;
+  cursor: pointer; margin-top: 1rem; transition: all .15s;
+}
+.next-btn:hover { background: var(--hist); color: white; }
+
+.final-screen { display: none; }
+.final-card {
+  background: var(--card);
+  border: 2.5px solid var(--hist);
+  border-radius: var(--radius);
+  padding: 2rem 1.6rem;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(180,83,9,.12);
+}
+.final-emoji { font-size: 3rem; margin-bottom: .5rem; }
+.final-title { font-family: 'Space Mono', monospace; font-size: 1rem; font-weight: 800; color: var(--hist-dark); margin-bottom: .4rem; }
+.final-score-big { font-size: 2.2rem; font-weight: 900; color: var(--hist); margin: .5rem 0; }
+.final-msg { font-size: .95rem; font-weight: 600; color: #374151; margin-bottom: 1.2rem; line-height: 1.5; }
+.final-breakdown { text-align: left; margin: 1rem 0; }
+.breakdown-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: .5rem 0; border-bottom: 1px solid var(--border);
+  font-size: .9rem; font-weight: 600;
+}
+.breakdown-item:last-child { border-bottom: none; }
+.bd-icon { font-size: 1rem; flex-shrink: 0; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--hist);
+  text-decoration: none; padding: 1rem 1rem 0; cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .opt-btn { min-width: calc(50% - .25rem); font-size: .82rem; padding: .5rem .6rem; }
+  .stamp-overlay { width: 70px; height: 70px; top: 10px; right: 10px; }
+  .stamp-text { font-size: .44rem; }
+  .hero h1 { font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+<a class="back-link" onclick="voltarAoPortal()" href="#">← Voltar ao Portal</a>
+
+<div class="hero">
+  <div class="hero-emoji">📮</div>
+  <h1>Transformador de Tombamentos</h1>
+  <p>Leia a descrição do bem e aplique o tombamento correto · História 5º ano</p>
+</div>
+
+<div class="container">
+  <div class="progress-wrap">
+    <div class="progress-label" id="prog-label">Bem 1 de 5</div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="quiz-panel">
+    <div class="before-card">
+      <div class="card-badge-before">⚠️ SEM PROTEÇÃO LEGAL</div>
+      <div class="bem-emoji" id="bem-emoji">🏚️</div>
+      <div class="bem-nome" id="bem-nome">—</div>
+      <div class="bem-desc" id="bem-desc">—</div>
+    </div>
+
+    <span class="sel-label">1. Qual esfera do Poder Público deve proteger este bem?</span>
+    <div class="opt-row" id="esfera-row">
+      <button class="opt-btn" onclick="selectEsfera(this,'Municipal')"><span class="opt-em">🏙️</span>Municipal</button>
+      <button class="opt-btn" onclick="selectEsfera(this,'Estadual')"><span class="opt-em">🗺️</span>Estadual</button>
+      <button class="opt-btn" onclick="selectEsfera(this,'Federal')"><span class="opt-em">🇧🇷</span>Federal</button>
+    </div>
+
+    <span class="sel-label">2. Qual o principal valor que justifica o tombamento?</span>
+    <div class="opt-row" id="valor-row">
+      <button class="opt-btn" onclick="selectValor(this,'Histórico')"><span class="opt-em">📜</span>Histórico</button>
+      <button class="opt-btn" onclick="selectValor(this,'Cultural')"><span class="opt-em">🎭</span>Cultural</button>
+      <button class="opt-btn" onclick="selectValor(this,'Arquitetônico')"><span class="opt-em">🏛️</span>Arquitetônico</button>
+      <button class="opt-btn" onclick="selectValor(this,'Ambiental')"><span class="opt-em">🌿</span>Ambiental</button>
+      <button class="opt-btn" onclick="selectValor(this,'Afetivo')"><span class="opt-em">💛</span>Afetivo</button>
+    </div>
+
+    <button class="tombar-btn" id="tombar-btn" onclick="tombar()" disabled>🏛️ Aplicar Tombamento!</button>
+
+    <div class="result-area" id="result-area">
+      <div class="after-card">
+        <div class="stamp-overlay" id="stamp">
+          <div class="stamp-text">TOMBADO<br>✓<br>ATO<br>ADMINISTRATIVO</div>
+        </div>
+        <div class="card-badge-after">✓ ATO ADMINISTRATIVO APLICADO</div>
+        <div class="bem-emoji" id="res-emoji">🏚️</div>
+        <div class="bem-nome" id="res-nome">—</div>
+        <div class="bem-desc" id="res-desc">—</div>
+        <div class="choice-row">
+          <span class="choice-tag" id="res-esfera-tag">—</span>
+          <span class="choice-tag" id="res-valor-tag">—</span>
+        </div>
+      </div>
+      <div class="feedback-box" id="feedback-box">
+        <span class="feedback-icon" id="feedback-icon">✓</span>
+        <div id="feedback-text">—</div>
+      </div>
+      <button class="next-btn" id="next-btn" onclick="nextBem()">Próximo bem →</button>
+    </div>
+  </div>
+
+  <div class="final-screen" id="final-screen">
+    <div class="final-card">
+      <div class="final-emoji" id="final-emoji">🏛️</div>
+      <div class="final-title">Relatório de Tombamentos</div>
+      <div class="final-score-big" id="final-score-big">0/5</div>
+      <div class="final-msg" id="final-msg">—</div>
+      <div class="final-breakdown" id="final-breakdown"></div>
+    </div>
+    <button class="next-btn" onclick="voltarAoPortal()" style="margin-top:1rem">← Voltar ao Portal</button>
+  </div>
+</div>
+
+<script>
+var BENS = [
+  {
+    emoji: '🏚️',
+    nome: 'Sobrado da Família Almeida',
+    desc: 'Sobrado de pedra construído em 1870, único exemplar de arquitetura colonial preservado no centro da cidade de São Luís. Moradores e historiadores da cidade pedem sua proteção urgente para evitar a destruição ou descaracterização do edifício.',
+    esfera: 'Municipal',
+    valor: 'Arquitetônico',
+    feedbackOk: 'Tombamento aprovado pelo Poder Público! Como o sobrado é importante para a história da cidade de São Luís, a esfera municipal é a responsável pelo ato administrativo. O valor arquitetônico protege o bem imóvel contra destruição ou descaracterização, conforme a legislação específica.',
+    feedbackErrEsfera: 'A esfera correta é Municipal — o sobrado é importante para a cidade de São Luís, não para o estado inteiro ou o país.',
+    feedbackErrValor: 'O valor correto é Arquitetônico — o bem deve ser protegido por seu estilo colonial único, que pode sofrer destruição ou descaracterização.'
+  },
+  {
+    emoji: '🌲',
+    nome: 'Mata de Araucárias do Paraná',
+    desc: 'Grande área de floresta nativa de pinheiros-do-paraná no planalto do estado do Paraná. Garante o equilíbrio climático regional e abriga espécies ameaçadas de extinção, sendo vital para a natureza de todo o estado.',
+    esfera: 'Estadual',
+    valor: 'Ambiental',
+    feedbackOk: 'Tombamento aprovado pelo Poder Público! A floresta protege o meio ambiente de todo o estado do Paraná — por isso a esfera estadual deve agir com o ato administrativo. O valor ambiental justifica o tombamento para evitar a destruição do ecossistema, conforme a legislação específica.',
+    feedbackErrEsfera: 'A esfera correta é Estadual — a floresta é vital para todo o estado do Paraná, não apenas para uma cidade.',
+    feedbackErrValor: 'O valor correto é Ambiental — o tombamento protege o ecossistema natural contra destruição, que é o principal risco para este bem imóvel.'
+  },
+  {
+    emoji: '⚔️',
+    nome: 'Espada da Independência',
+    desc: 'Espada usada por Dom Pedro I no Grito do Ipiranga em 1822. É um bem móvel guardado no Museu do Ipiranga em São Paulo. Representa um acontecimento que mudou a história de todo o Brasil e é símbolo da nação.',
+    esfera: 'Federal',
+    valor: 'Histórico',
+    feedbackOk: 'Tombamento aprovado pelo Poder Público! A espada faz parte da história de todo o Brasil — por isso o Poder Público federal deve protegê-la com o ato administrativo. O valor histórico justifica o tombamento: ela registra um fato que fundou a nação, conforme a legislação específica.',
+    feedbackErrEsfera: 'A esfera correta é Federal — a espada representa a história de todo o Brasil, não apenas de um estado ou cidade.',
+    feedbackErrValor: 'O valor correto é Histórico — o bem móvel deve ser protegido por registrar um fato histórico fundamental da nação brasileira.'
+  },
+  {
+    emoji: '🎭',
+    nome: 'Teatro Pedro II de Recife',
+    desc: 'Teatro inaugurado em 1900 que abriga as festas culturais, apresentações artísticas e eventos tradicionais da cidade de Recife há mais de um século. É o coração das tradições e manifestações culturais da cidade.',
+    esfera: 'Municipal',
+    valor: 'Cultural',
+    feedbackOk: 'Tombamento aprovado pelo Poder Público! O teatro é o centro das manifestações culturais da cidade de Recife — por isso a esfera municipal deve protegê-lo com o ato administrativo. O valor cultural justifica o tombamento, pois ele guarda tradições artísticas locais, impedindo sua descaracterização.',
+    feedbackErrEsfera: 'A esfera correta é Municipal — o teatro é o coração cultural da cidade de Recife, não do estado inteiro.',
+    feedbackErrValor: 'O valor correto é Cultural — o bem imóvel deve ser protegido por abrigar manifestações culturais e artísticas da cidade.'
+  },
+  {
+    emoji: '🏛️',
+    nome: 'Palácio do Governo de Goiás',
+    desc: 'Palácio construído em 1750, sede do governo estadual de Goiás desde sua fundação. É o edifício mais antigo do estado, onde foram tomadas as principais decisões políticas do estado ao longo de mais de dois séculos.',
+    esfera: 'Estadual',
+    valor: 'Histórico',
+    feedbackOk: 'Tombamento aprovado pelo Poder Público! O palácio é central para a história política do estado de Goiás — por isso a esfera estadual deve protegê-lo com o ato administrativo. O valor histórico justifica o tombamento: ele registra fatos políticos que moldaram todo o estado, conforme a legislação específica.',
+    feedbackErrEsfera: 'A esfera correta é Estadual — o palácio é importante para a história de todo o estado de Goiás, não apenas de uma cidade.',
+    feedbackErrValor: 'O valor correto é Histórico — o bem imóvel deve ser protegido por registrar as decisões políticas que moldaram o estado ao longo do tempo.'
+  }
+];
+
+var quizIndex = 0;
+var chosenEsfera = '';
+var chosenValor = '';
+var tombResults = [];
+
+function renderBem() {
+  var bem = BENS[quizIndex];
+  var total = BENS.length;
+  document.getElementById('prog-label').textContent = 'Bem ' + (quizIndex + 1) + ' de ' + total;
+  document.getElementById('prog-fill').style.width = (quizIndex / total * 100) + '%';
+  document.getElementById('bem-emoji').textContent = bem.emoji;
+  document.getElementById('bem-nome').textContent = bem.nome;
+  document.getElementById('bem-desc').textContent = bem.desc;
+
+  chosenEsfera = '';
+  chosenValor = '';
+  document.querySelectorAll('#esfera-row .opt-btn').forEach(function(b) { b.classList.remove('selected'); b.disabled = false; });
+  document.querySelectorAll('#valor-row .opt-btn').forEach(function(b) { b.classList.remove('selected'); b.disabled = false; });
+  document.getElementById('tombar-btn').disabled = true;
+  document.getElementById('result-area').style.display = 'none';
+  document.getElementById('stamp').classList.remove('show');
+}
+
+function selectEsfera(el, v) {
+  document.querySelectorAll('#esfera-row .opt-btn').forEach(function(b) { b.classList.remove('selected'); });
+  el.classList.add('selected');
+  chosenEsfera = v;
+  checkReady();
+}
+
+function selectValor(el, v) {
+  document.querySelectorAll('#valor-row .opt-btn').forEach(function(b) { b.classList.remove('selected'); });
+  el.classList.add('selected');
+  chosenValor = v;
+  checkReady();
+}
+
+function checkReady() {
+  document.getElementById('tombar-btn').disabled = !(chosenEsfera && chosenValor);
+}
+
+function tombar() {
+  var bem = BENS[quizIndex];
+  var okEsfera = (chosenEsfera === bem.esfera);
+  var okValor = (chosenValor === bem.valor);
+  var pontos = (okEsfera ? 1 : 0) + (okValor ? 1 : 0);
+
+  tombResults.push({
+    nome: bem.nome,
+    emoji: bem.emoji,
+    esfera: chosenEsfera,
+    valor: chosenValor,
+    corrEsfera: bem.esfera,
+    corrValor: bem.valor,
+    pontos: pontos
+  });
+
+  document.getElementById('res-emoji').textContent = bem.emoji;
+  document.getElementById('res-nome').textContent = bem.nome;
+  document.getElementById('res-desc').textContent = bem.desc;
+
+  var esferaTag = document.getElementById('res-esfera-tag');
+  esferaTag.textContent = (okEsfera ? '✓' : '✗') + ' Esfera: ' + chosenEsfera;
+  esferaTag.className = 'choice-tag ' + (okEsfera ? 'ok' : 'err');
+
+  var valorTag = document.getElementById('res-valor-tag');
+  valorTag.textContent = (okValor ? '✓' : '✗') + ' Valor: ' + chosenValor;
+  valorTag.className = 'choice-tag ' + (okValor ? 'ok' : 'err');
+
+  var fbBox = document.getElementById('feedback-box');
+  var fbIcon = document.getElementById('feedback-icon');
+  var fbText = document.getElementById('feedback-text');
+
+  if (okEsfera && okValor) {
+    fbBox.className = 'feedback-box correct';
+    fbIcon.textContent = '✓';
+    fbText.textContent = bem.feedbackOk;
+  } else {
+    fbBox.className = 'feedback-box wrong';
+    fbIcon.textContent = '✗';
+    var errMsgs = [];
+    if (!okEsfera) errMsgs.push(bem.feedbackErrEsfera);
+    if (!okValor) errMsgs.push(bem.feedbackErrValor);
+    fbText.textContent = errMsgs.join(' ') + ' Respostas corretas: Esfera ' + bem.esfera + ' · Valor ' + bem.valor + '.';
+  }
+
+  document.getElementById('result-area').style.display = 'block';
+  setTimeout(function() { document.getElementById('stamp').classList.add('show'); }, 300);
+
+  document.getElementById('next-btn').textContent =
+    (quizIndex === BENS.length - 1) ? 'Ver resultado final 🏛️' : 'Próximo bem →';
+
+  document.querySelectorAll('#esfera-row .opt-btn, #valor-row .opt-btn').forEach(function(b) { b.disabled = true; });
+  document.getElementById('tombar-btn').disabled = true;
+
+  document.getElementById('result-area').scrollIntoView({ behavior: 'smooth' });
+}
+
+function nextBem() {
+  quizIndex++;
+  if (quizIndex >= BENS.length) {
+    showFinal();
+    return;
+  }
+  renderBem();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showFinal() {
+  document.getElementById('quiz-panel').style.display = 'none';
+  document.getElementById('final-screen').style.display = 'block';
+
+  var totalPontos = tombResults.reduce(function(acc, r) { return acc + r.pontos; }, 0);
+  var maxPontos = BENS.length * 2;
+  var pct = Math.round((totalPontos / maxPontos) * 100);
+
+  window.sabendoScore = pct;
+
+  var tombCorretos = tombResults.filter(function(r) { return r.pontos === 2; }).length;
+  document.getElementById('final-score-big').textContent = tombCorretos + '/' + BENS.length + ' tombamentos corretos';
+
+  var finalEmoji = pct >= 80 ? '🏆' : pct >= 60 ? '📮' : '📚';
+  document.getElementById('final-emoji').textContent = finalEmoji;
+
+  var finalMsg =
+    pct >= 80
+      ? 'Excelente! Você aplicou o tombamento corretamente na maioria dos bens. O Poder Público precisa de técnicos como você para proteger o patrimônio brasileiro!'
+      : pct >= 60
+      ? 'Bom trabalho! Você entendeu as esferas e valores do tombamento. Revise os casos em que errou para fixar melhor a legislação específica.'
+      : 'Continue estudando! O tombamento é um ato administrativo importante — pratique identificar qual esfera e qual valor se aplicam a cada bem.';
+  document.getElementById('final-msg').textContent = finalMsg;
+
+  var bd = document.getElementById('final-breakdown');
+  bd.innerHTML = tombResults.map(function(r) {
+    var ok = (r.pontos === 2);
+    return '<div class="breakdown-item">' +
+      '<span class="bd-icon">' + r.emoji + '</span>' +
+      '<span style="flex:1;font-size:.88rem">' + r.nome + '</span>' +
+      '<span style="font-size:.8rem;font-weight:800;color:' + (ok ? '#059669' : '#DC2626') + '">' +
+        (ok ? '✓ Correto' : r.pontos + '/2 pts') +
+      '</span></div>';
+  }).join('');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderBem();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "tombamento-patrimonio-brasil";
+  var ACTIVITY_TYPE = "transformador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Carimbo",
+    characterEmoji: "📮",
+    characterImg:   "chars/tombamento-patrimonio-brasil-hd.png",
+    themeLabel:     "O Tombamento e o Patrimônio no Brasil · História",
+    totalActivities: 4,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: "../../index.html#theme-hist-tombamento-patrimonio-brasil",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
