@@ -106,6 +106,16 @@ body { font-family: "Baloo 2", cursive; background: var(--hist-bg); color: var(-
   </div>
 </div>
 <script>
+function shuffleArr(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+var currentShuffledCorrect = 0;
+
 var quizQuestions = [
   {
     text: "O Comitê do Patrimônio Cultural Mundial da Unesco foi criado em 1972. Que tipo de bens ele protege?",
@@ -171,10 +181,10 @@ var quizQuestions = [
   {
     text: "Quais dos exemplos abaixo fazem parte do Patrimônio Cultural Imaterial Mundial, conforme a Convenção de 2003?",
     options: [
-      "Apenas monumentos históricos e parques nacionais",
-      "Tradições orais, artes performáticas, práticas sociais e habilidades artesanais",
-      "Apenas formações geológicas e fossas oceânicas",
-      "Apenas bens inscritos antes do ano 2000"
+      "Monumentos arquitetônicos, esculturas e edifícios históricos",
+      "Tradições orais, danças, rituais e habilidades artesanais",
+      "Formações rochosas, fósseis e espécies marinhas",
+      "Obras tombadas pelo governo antes do ano 2000"
     ],
     correct: 1,
     explanation: "A Convenção de 2003 protege: tradições orais, artes performáticas, práticas sociais/rituais, conhecimentos ligados à natureza e habilidades artesanais."
@@ -246,11 +256,13 @@ function loadQuestion() {
   var optsEl = document.getElementById('options');
   optsEl.innerHTML = '';
   var letters = ['A', 'B', 'C', 'D'];
-  q.options.forEach(function(opt, i) {
+  var shuffledIndices = shuffleArr([0, 1, 2, 3]);
+  currentShuffledCorrect = shuffledIndices.indexOf(q.correct);
+  shuffledIndices.forEach(function(origIdx, displayIdx) {
     var btn = document.createElement('button');
     btn.className = 'option';
-    btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + opt;
-    btn.addEventListener('click', function() { selectOption(i); });
+    btn.innerHTML = '<span class="opt-letter">' + letters[displayIdx] + '</span>' + q.options[origIdx];
+    btn.addEventListener('click', function() { selectOption(displayIdx); });
     optsEl.appendChild(btn);
   });
 
@@ -275,7 +287,7 @@ function selectOption(index) {
 
   opts.forEach(function(o) { o.disabled = true; });
 
-  var isCorrect = index === q.correct;
+  var isCorrect = index === currentShuffledCorrect;
   quizLog.push(isCorrect);
 
   if (isCorrect) {
@@ -289,7 +301,7 @@ function selectOption(index) {
     document.getElementById('hits-display').textContent = hitsCount;
   } else {
     opts[index].classList.add('wrong');
-    opts[q.correct].classList.add('correct');
+    opts[currentShuffledCorrect].classList.add('correct');
     fb.className = 'feedback wrong-fb show';
     document.getElementById('fb-icon').textContent = '❌';
     document.getElementById('fb-text').textContent = 'Resposta errada. ' + q.explanation;

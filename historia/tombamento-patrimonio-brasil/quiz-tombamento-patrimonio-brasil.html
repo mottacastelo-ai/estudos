@@ -72,14 +72,24 @@ body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 10
   </div>
 </div>
 <script>
+function shuffleArr(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+var currentShuffledCorrect = 0;
+
 var quizQuestions = [
   {
     q: "O que é o tombamento?",
     opts: [
-      "Uma lei que proíbe novas construções próximas a monumentos",
-      "Um ato administrativo do Poder Público que preserva bens de valor histórico, cultural, arquitetônico, ambiental ou afetivo",
-      "Um imposto cobrado de museus e colecionadores de arte",
-      "Uma premiação dada a cidades com arquitetura bem conservada"
+      "Uma lei que restringe construções próximas a bens históricos",
+      "Um ato do Poder Público que protege bens históricos e culturais",
+      "Um imposto cobrado sobre imóveis em áreas históricas tombadas",
+      "Uma distinção concedida a cidades com arquitetura bem preservada"
     ],
     correct: 1,
     explanation: "O tombamento é um ato administrativo do Poder Público que, por meio de legislação específica, preserva bens de valor histórico, cultural, arquitetônico, ambiental ou afetivo, impedindo sua destruição ou descaracterização."
@@ -153,10 +163,10 @@ var quizQuestions = [
   {
     q: "O Conjunto Arquitetônico da Pampulha, em Belo Horizonte (MG), recebeu o título de Patrimônio Cultural da Humanidade. Essa proteção foi concedida por qual organização?",
     opts: [
-      "Governo do Estado de Minas Gerais",
+      "Secretaria de Estado de Cultura de Minas Gerais (SECULT-MG)",
       "Instituto do Patrimônio Histórico e Artístico Nacional (IPHAN)",
       "Organização das Nações Unidas para a Educação, Ciência e Cultura (UNESCO)",
-      "Ministério do Turismo do Brasil"
+      "Ministério do Turismo e Cultura do Brasil (MTC)"
     ],
     correct: 2,
     explanation: "O Conjunto Arquitetônico da Pampulha, reconhecido em 2016, recebeu o título de Patrimônio Cultural da Humanidade da UNESCO, o organismo responsável por reconhecer bens de valor universal excepcional."
@@ -196,11 +206,13 @@ function renderQuestion() {
   document.getElementById('quiz-progress').style.width = ((currentQIndex + 1) / 10 * 100) + '%';
   var optsEl = document.getElementById('options');
   optsEl.innerHTML = '';
-  q.opts.forEach(function(opt, i) {
+  var shuffledIndices = shuffleArr([0, 1, 2, 3]);
+  currentShuffledCorrect = shuffledIndices.indexOf(q.correct);
+  shuffledIndices.forEach(function(origIdx, displayIdx) {
     var btn = document.createElement('button');
     btn.className = 'opt-btn';
-    btn.textContent = opt;
-    btn.addEventListener('click', function() { selectOption(i); });
+    btn.textContent = q.opts[origIdx];
+    btn.addEventListener('click', function() { selectOption(displayIdx); });
     optsEl.appendChild(btn);
   });
   var fb = document.getElementById('feedback');
@@ -217,11 +229,11 @@ function selectOption(idx) {
   var btns = document.querySelectorAll('.opt-btn');
   btns.forEach(function(b, i) {
     b.disabled = true;
-    if (i === q.correct) b.classList.add('correct');
-    else if (i === idx && idx !== q.correct) b.classList.add('wrong');
+    if (i === currentShuffledCorrect) b.classList.add('correct');
+    else if (i === idx && idx !== currentShuffledCorrect) b.classList.add('wrong');
   });
   var fb = document.getElementById('feedback');
-  if (idx === q.correct) {
+  if (idx === currentShuffledCorrect) {
     quizHits++;
     fb.className = 'feedback correct show';
     fb.textContent = '✓ ' + q.explanation;
