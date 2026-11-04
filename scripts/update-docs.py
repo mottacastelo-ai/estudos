@@ -12,7 +12,7 @@ from datetime import date
 
 BASE        = r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\estudos"
 PERS_DIR    = r"C:\Users\wizar\OneDrive\Documentos\Projeto Estudos\Personagens\5o ano"
-CONTEUDO    = os.path.join(BASE, "CONTEUDO.md")
+CONTEUDO    = os.path.join(BASE, "referencias", "CONTEUDO.md")
 SQUAD       = os.path.join(BASE, "SQUAD.md")
 AGENTS_DIR  = os.path.join(BASE, ".claude", "agents")
 INDEX_HTML  = os.path.join(BASE, "index.html")
