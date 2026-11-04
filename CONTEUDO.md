@@ -641,7 +641,7 @@
 ---
 
 ### Patrimonio Mundial
-**HQ:** ❌ `hq-patrimonio-mundial.png` (ausente) | Prompt: ✅
+**HQ:** ✅ `hq-patrimonio-mundial.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -690,6 +690,7 @@
 | `Faca.png` |
 | `Gotinha.png` |
 | `Grafo.png` |
+| `Legado.png` |
 | `Lino.png` |
 | `Lixinho.png` |
 | `Mapi.png` |
