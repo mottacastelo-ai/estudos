@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Patrimônio Material, Natural e Imaterial</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --hist: #B45309; --hist-light: #F59E0B; --hist-bg: #FFFBEB;
+  --text: #1A1A2E; --muted: #6B7280; --border: #FDE68A;
+  --card: #fff; --radius: 18px;
+}
+body { font-family: "Baloo 2", cursive; background: var(--hist-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--hist); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .75; }
+.card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(180,83,9,.1); }
+.card-header { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.progress-wrap { padding: 14px 24px 0; }
+.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.prog-track { height: 8px; border-radius: 999px; background: var(--border); }
+.prog-fill { height: 8px; border-radius: 999px; background: linear-gradient(90deg, #B45309, #F59E0B); transition: width .4s; }
+.dots-wrap { display: flex; gap: 5px; padding: 10px 24px 0; flex-wrap: wrap; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background .25s; }
+.dot.current { background: #F59E0B; }
+.dot.correct { background: #22C55E; }
+.dot.wrong { background: #EF4444; }
+.score-bar { display: flex; align-items: center; gap: 10px; padding: 10px 24px; font-size: 13px; font-weight: 700; color: var(--hist); }
+.score-bar span { background: var(--hist-bg); border: 2px solid var(--border); border-radius: 999px; padding: 3px 12px; font-size: 12px; }
+.question-area { padding: 20px 24px 16px; }
+.q-number { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--hist); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.q-text { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text); margin-bottom: 18px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option { background: var(--card); border: 2px solid var(--border); border-radius: 14px; padding: 12px 16px; font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; color: var(--text); transition: all .18s; display: flex; align-items: center; gap: 12px; }
+.option:hover:not(:disabled) { border-color: var(--hist-light); background: var(--hist-bg); }
+.opt-letter { width: 26px; height: 26px; border-radius: 50%; background: var(--hist-bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--hist); flex-shrink: 0; }
+.option.correct { background: #DCFCE7; border-color: #22C55E; }
+.option.correct .opt-letter { background: #22C55E; border-color: #22C55E; color: #fff; }
+.option.wrong { background: #FEE2E2; border-color: #EF4444; }
+.option.wrong .opt-letter { background: #EF4444; border-color: #EF4444; color: #fff; }
+.option:disabled { cursor: default; }
+.feedback { margin: 14px 24px 0; padding: 12px 16px; border-radius: 14px; font-size: 13px; font-weight: 600; line-height: 1.5; display: none; }
+.feedback.show { display: flex; align-items: flex-start; gap: 10px; }
+.feedback.correct-fb { background: #DCFCE7; border: 2px solid #22C55E; color: #15803D; }
+.feedback.wrong-fb { background: #FEE2E2; border: 2px solid #EF4444; color: #DC2626; }
+.feedback-icon { font-size: 18px; flex-shrink: 0; }
+.btn-next { margin: 16px 24px 20px; padding: 13px 28px; border: none; border-radius: 50px; background: linear-gradient(135deg,#B45309,#F59E0B); color: #fff; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; display: none; }
+.btn-next.show { display: block; }
+.btn-next:hover { opacity: .88; }
+.result-panel { padding: 32px 24px; text-align: center; display: none; }
+.result-panel.show { display: block; }
+.result-emoji { font-size: 60px; margin-bottom: 12px; }
+.result-title { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--hist); margin-bottom: 6px; }
+.result-score { font-size: 48px; font-weight: 900; color: var(--hist); margin: 8px 0 4px; }
+.result-sub { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 20px; }
+.btn-retry { padding: 12px 32px; border: none; border-radius: 50px; background: linear-gradient(135deg,#B45309,#F59E0B); color: #fff; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+@keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.question-area { animation: slideIn .3s ease; }
+@media (max-width: 480px) {
+  .card-header h1 { font-size: 14px; }
+  .q-text { font-size: 15px; }
+  .option { font-size: 13px; padding: 10px 12px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal(); return false;">← Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">🏛️</div>
+      <div><h1>Quiz — Patrimônio Mundial</h1><p>Patrimônio Material, Natural e Imaterial · Capítulo 13</p></div>
+      <div class="hbadge">10 questões</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label" id="progress-label">Questão 1 de 10</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="dots-wrap" id="dots"></div>
+    <div class="score-bar">
+      Pontos: <span id="score-display">0</span> &nbsp;|&nbsp; Acertos: <span id="hits-display">0</span>
+    </div>
+    <div class="question-area" id="question-card">
+      <div class="q-number" id="q-number">Questão 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+    </div>
+    <div class="feedback" id="feedback">
+      <span class="feedback-icon" id="fb-icon"></span>
+      <div id="fb-text"></div>
+    </div>
+    <button class="btn-next" id="btn-next">Próxima questão →</button>
+    <div class="result-panel" id="result-panel">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title">Resultado</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <button class="btn-retry" onclick="restart()">Tentar novamente</button>
+    </div>
+  </div>
+</div>
+<script>
+var quizQuestions = [
+  {
+    text: "O Comitê do Patrimônio Cultural Mundial da Unesco foi criado em 1972. Que tipo de bens ele protege?",
+    options: [
+      "Apenas tradições orais e danças populares",
+      "Monumentos e conjuntos históricos construídos pelo ser humano",
+      "Apenas formações geológicas e habitats de animais",
+      "Apenas bens localizados na Europa"
+    ],
+    correct: 1,
+    explanation: "A Convenção de 1972 protege o Patrimônio Cultural Mundial: monumentos (obras arquitetônicas, esculturas) e conjuntos (grupos de construções com valor histórico)."
+  },
+  {
+    text: "Carcassonne, cidade medieval murada da França, foi inscrita no Patrimônio Mundial pela Unesco em 1997. A que categoria ela pertence?",
+    options: [
+      "Patrimônio Natural Mundial",
+      "Patrimônio Cultural Imaterial Mundial",
+      "Patrimônio Cultural Mundial",
+      "Patrimônio Mundial em Perigo"
+    ],
+    correct: 2,
+    explanation: "Carcassonne é um conjunto histórico construído pelo ser humano — portanto, Patrimônio Cultural Mundial, inscrito em 1997."
+  },
+  {
+    text: "O Patrimônio Natural Mundial protege áreas com formações físicas ou biológicas e habitats de espécies em extinção. Qual dos locais abaixo é um Patrimônio Natural Mundial?",
+    options: [
+      "Carcassonne (França)",
+      "Ouro Preto (Brasil)",
+      "Parque Nacional do Serengeti (Tanzânia)",
+      "Karagöz — teatro de sombras (Turquia)"
+    ],
+    correct: 2,
+    explanation: "O Parque Nacional do Serengeti, inscrito em 1981, é um Patrimônio Natural Mundial: savana africana com habitats de espécies selvagens."
+  },
+  {
+    text: "A Convenção para a Salvaguarda do Patrimônio Cultural Imaterial foi assinada pela Unesco em qual ano?",
+    options: ["1972", "1981", "1997", "2003"],
+    correct: 3,
+    explanation: "A Convenção do Patrimônio Cultural Imaterial Mundial foi assinada em 2003 — 31 anos depois da Convenção de 1972 para o Patrimônio Cultural e Natural."
+  },
+  {
+    text: "O Karagöz, inscrito no Patrimônio Cultural Imaterial Mundial em 2009, é uma arte da Turquia. O que é o Karagöz?",
+    options: [
+      "Um parque nacional com animais ameaçados",
+      "Uma cidade histórica medieval da Turquia",
+      "Uma mina de prata do século XVI",
+      "Um teatro de sombras transmitido de geração em geração por artesãos"
+    ],
+    correct: 3,
+    explanation: "Karagöz é um teatro de sombras turco, inscrito em 2009 como Patrimônio Cultural Imaterial Mundial — um exemplo de habilidade artesanal transmitida oralmente."
+  },
+  {
+    text: "Ouro Preto, em Minas Gerais, é um conjunto de igrejas barrocas e casarões coloniais do século XVIII. A que tipo de patrimônio ela pertence?",
+    options: [
+      "Patrimônio Natural Mundial",
+      "Patrimônio Cultural Imaterial Mundial",
+      "Patrimônio Cultural Mundial",
+      "Patrimônio Mundial em Perigo"
+    ],
+    correct: 2,
+    explanation: "Ouro Preto é um conjunto histórico construído pelo ser humano — portanto, Patrimônio Cultural Mundial, listado pela Unesco."
+  },
+  {
+    text: "Quais dos exemplos abaixo fazem parte do Patrimônio Cultural Imaterial Mundial, conforme a Convenção de 2003?",
+    options: [
+      "Apenas monumentos históricos e parques nacionais",
+      "Tradições orais, artes performáticas, práticas sociais e habilidades artesanais",
+      "Apenas formações geológicas e fossas oceânicas",
+      "Apenas bens inscritos antes do ano 2000"
+    ],
+    correct: 1,
+    explanation: "A Convenção de 2003 protege: tradições orais, artes performáticas, práticas sociais/rituais, conhecimentos ligados à natureza e habilidades artesanais."
+  },
+  {
+    text: "O que ameaça os Everglades (EUA), colocando-os na lista do 'Patrimônio Mundial em Perigo'?",
+    options: ["Conflitos armados", "Poluição", "Construções modernas", "Mineração intensa"],
+    correct: 1,
+    explanation: "Os Everglades estão em perigo por causa da poluição — o ecossistema de pântanos e habitats de espécies raras é afetado pela contaminação da água e do solo."
+  },
+  {
+    text: "O Parque Nacional do Virunga (RD Congo) consta na lista de 'Patrimônio Mundial em Perigo'. Qual é a ameaça principal?",
+    options: [
+      "Poluição industrial",
+      "Construções modernas no entorno",
+      "Caça ilegal e desmatamento",
+      "Rebaixamento do nível do rio"
+    ],
+    correct: 2,
+    explanation: "O Virunga, habitat de gorilas-das-montanhas, está em perigo por causa da caça ilegal e do desmatamento que destroem o ecossistema florestal."
+  },
+  {
+    text: "Por que a cidade de Viena (Áustria) foi incluída na lista de 'Patrimônio Mundial em Perigo'?",
+    options: [
+      "Poluição do Rio Danúbio",
+      "Conflitos armados na região",
+      "Construções modernas que alteram a paisagem histórica",
+      "Desmatamento de parques urbanos"
+    ],
+    correct: 2,
+    explanation: "Viena foi listada em perigo porque projetos de construções modernas (edifícios altos) ameaçam alterar a paisagem histórica da cidade, reconhecida como Patrimônio Cultural Mundial."
+  }
+];
+
+var currentQ = 0, scorePoints = 0, hitsCount = 0, answered = false;
+var quizLog = [];
+
+function buildDots() {
+  var container = document.getElementById('dots');
+  container.innerHTML = '';
+  quizQuestions.forEach(function(_, i) {
+    var d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' current' : '');
+    d.id = 'dot-' + i;
+    container.appendChild(d);
+  });
+}
+
+function updateDots() {
+  quizQuestions.forEach(function(_, i) {
+    var d = document.getElementById('dot-' + i);
+    d.className = 'dot';
+    if (i < currentQ) {
+      d.classList.add(quizLog[i] ? 'correct' : 'wrong');
+    } else if (i === currentQ) {
+      d.classList.add('current');
+    }
+  });
+}
+
+function loadQuestion() {
+  answered = false;
+  var q = quizQuestions[currentQ];
+  document.getElementById('q-number').textContent = 'Questão ' + (currentQ + 1);
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('progress-label').textContent = 'Questão ' + (currentQ + 1) + ' de ' + quizQuestions.length;
+  document.getElementById('prog-fill').style.width = ((currentQ / quizQuestions.length) * 100) + '%';
+
+  var optsEl = document.getElementById('options');
+  optsEl.innerHTML = '';
+  var letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + opt;
+    btn.addEventListener('click', function() { selectOption(i); });
+    optsEl.appendChild(btn);
+  });
+
+  var fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  document.getElementById('fb-icon').textContent = '';
+  document.getElementById('fb-text').textContent = '';
+  document.getElementById('btn-next').className = 'btn-next';
+  document.getElementById('question-card').style.animation = 'none';
+  requestAnimationFrame(function() {
+    document.getElementById('question-card').style.animation = 'slideIn 0.3s ease';
+  });
+  updateDots();
+}
+
+function selectOption(index) {
+  if (answered) return;
+  answered = true;
+  var q = quizQuestions[currentQ];
+  var opts = document.querySelectorAll('.option');
+  var fb = document.getElementById('feedback');
+
+  opts.forEach(function(o) { o.disabled = true; });
+
+  var isCorrect = index === q.correct;
+  quizLog.push(isCorrect);
+
+  if (isCorrect) {
+    opts[index].classList.add('correct');
+    fb.className = 'feedback correct-fb show';
+    document.getElementById('fb-icon').textContent = '✅';
+    document.getElementById('fb-text').textContent = 'Correto! ' + q.explanation;
+    scorePoints += 10;
+    hitsCount++;
+    document.getElementById('score-display').textContent = scorePoints;
+    document.getElementById('hits-display').textContent = hitsCount;
+  } else {
+    opts[index].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb show';
+    document.getElementById('fb-icon').textContent = '❌';
+    document.getElementById('fb-text').textContent = 'Resposta errada. ' + q.explanation;
+  }
+
+  document.getElementById('btn-next').className = 'btn-next show';
+  updateDots();
+}
+
+document.getElementById('btn-next').addEventListener('click', function() {
+  currentQ++;
+  if (currentQ < quizQuestions.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult() {
+  document.getElementById('question-card').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('progress-label').textContent = 'Concluído!';
+
+  var pct = Math.round((hitsCount / quizQuestions.length) * 100);
+  window.sabendoScore = pct;
+
+  var panel = document.getElementById('result-panel');
+  panel.classList.add('show');
+
+  var emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👏' : '📚';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-score').textContent = hitsCount + '/' + quizQuestions.length;
+  document.getElementById('result-sub').textContent = 'Acerto: ' + pct + '% — ' + scorePoints + ' pontos';
+}
+
+function restart() {
+  currentQ = 0; scorePoints = 0; hitsCount = 0; answered = false; quizLog = [];
+  document.getElementById('score-display').textContent = '0';
+  document.getElementById('hits-display').textContent = '0';
+  document.getElementById('question-card').style.display = '';
+  document.getElementById('feedback').style.display = '';
+  document.getElementById('btn-next').style.display = '';
+  document.getElementById('result-panel').classList.remove('show');
+  buildDots();
+  loadQuestion();
+}
+
+buildDots();
+loadQuestion();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "patrimonio-mundial";
+  var ACTIVITY_TYPE = "quiz";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Legado",
+    characterEmoji: "🏛️",
+    characterImg:   "chars/patrimonio-mundial-hd.png",
+    themeLabel:     "Patrimônio Material, Natural e Imaterial · História",
+    totalActivities: 4,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: "../../index.html#theme-hist-patrimonio-mundial",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var quizScore = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: quizScore, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

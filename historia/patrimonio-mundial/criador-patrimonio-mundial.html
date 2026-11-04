@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criador — Meu Patrimônio em Perigo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --hist: #B45309; --hist-light: #F59E0B; --hist-bg: #FFFBEB;
+  --text: #1A1A2E; --muted: #6B7280; --border: #FDE68A; --card: #fff;
+}
+body { font-family: "Baloo 2", cursive; background: var(--hist-bg); color: var(--text); min-height: 100vh; padding: 24px 16px 80px; }
+.wrap { max-width: 680px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--hist); text-decoration: none; margin-bottom: 16px; }
+.back-link:hover { opacity: .75; }
+.card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(180,83,9,.1); }
+.card-header { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 20px 24px 18px; display: flex; align-items: center; gap: 14px; }
+.card-header .hicon { font-size: 32px; line-height: 1; }
+.card-header h1 { font-family: "Space Mono", monospace; font-size: 17px; color: #fff; line-height: 1.2; }
+.card-header p { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 2px; font-weight: 600; }
+.hbadge { margin-left: auto; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.steps-bar { display: flex; align-items: center; gap: 0; padding: 12px 24px; border-bottom: 2px solid var(--border); overflow-x: auto; }
+.step-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--card); display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+.step-dot.active { background: var(--hist); border-color: var(--hist); color: white; }
+.step-dot.done   { background: #22C55E; border-color: #22C55E; color: white; }
+.step-line { flex: 1; height: 2px; background: var(--border); min-width: 20px; }
+.step-label { font-size: 11px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.step-wrap { padding: 24px 24px 20px; display: none; }
+.step-wrap.active { display: block; animation: slideUp .3s ease; }
+@keyframes slideUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.step-num { font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; color: var(--hist); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.step-title { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+.step-hint { font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 16px; }
+.field-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.field-label span { color: var(--hist); }
+input[type="text"], textarea {
+  width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 12px;
+  font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 600; color: var(--text);
+  background: var(--hist-bg); transition: border-color .2s; resize: vertical;
+}
+input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--hist-light); }
+.char-count { font-size: 11px; color: var(--muted); text-align: right; margin-top: 4px; }
+.radio-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+.radio-opt { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; transition: all .18s; background: var(--hist-bg); }
+.radio-opt:hover { border-color: var(--hist-light); background: #FEF3C7; }
+.radio-opt input[type="radio"] { margin-top: 2px; accent-color: var(--hist); flex-shrink: 0; }
+.radio-opt .opt-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.radio-opt .opt-desc  { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.radio-opt.selected { border-color: var(--hist); background: #FEF3C7; }
+.threat-opts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.threat-btn { padding: 7px 14px; border: 2px solid var(--border); border-radius: 999px; background: var(--hist-bg); font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; color: var(--muted); }
+.threat-btn:hover { border-color: var(--hist-light); color: var(--hist); }
+.threat-btn.selected { background: #FEF3C7; border-color: var(--hist); color: var(--hist); }
+.nav-btns { display: flex; gap: 10px; margin-top: 20px; }
+.btn-next-step { flex: 1; padding: 13px 20px; border: none; border-radius: 50px; background: linear-gradient(135deg,#B45309,#F59E0B); color: #fff; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+.btn-next-step:hover { opacity: .88; }
+.btn-back-step { padding: 13px 20px; border: 2px solid var(--border); border-radius: 50px; background: var(--card); color: var(--muted); font-family: "Baloo 2", cursive; font-size: 14px; font-weight: 700; cursor: pointer; }
+.btn-back-step:hover { border-color: var(--hist-light); color: var(--hist); }
+/* Preview card */
+.preview-card { background: var(--hist-bg); border: 2px solid var(--border); border-radius: 18px; padding: 20px; margin-bottom: 20px; }
+.preview-badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; color: white; margin-bottom: 10px; }
+.preview-title { font-size: 20px; font-weight: 900; color: var(--text); margin-bottom: 6px; }
+.preview-row { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text); margin-top: 8px; line-height: 1.5; }
+.preview-row strong { color: var(--hist); flex-shrink: 0; }
+/* Celebration */
+.celebration { padding: 32px 24px; text-align: center; display: none; }
+.celebration.show { display: block; }
+.celeb-emoji { font-size: 64px; margin-bottom: 10px; }
+.celeb-title { font-family: "Space Mono", monospace; font-size: 18px; font-weight: 700; color: var(--hist); margin-bottom: 8px; }
+.celeb-sub { font-size: 14px; color: var(--muted); font-weight: 600; line-height: 1.6; }
+.celeb-stars { font-size: 32px; margin: 12px 0; }
+.btn-new { margin-top: 20px; padding: 12px 32px; border: none; border-radius: 50px; background: linear-gradient(135deg,#B45309,#F59E0B); color: #fff; font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; cursor: pointer; }
+@media (max-width: 480px) {
+  .card-header h1 { font-size: 14px; }
+  .step-title { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../../index.html" onclick="voltarAoPortal(); return false;">← Voltar ao portal</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="hicon">✍️</div>
+      <div><h1>Criador — Meu Patrimônio em Perigo</h1><p>Patrimônio Material, Natural e Imaterial · Capítulo 13</p></div>
+      <div class="hbadge">Produção</div>
+    </div>
+    <div class="steps-bar">
+      <div class="step-dot active" id="sdot-1">1</div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="sdot-2">2</div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="sdot-3">3</div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="sdot-4">4</div>
+    </div>
+
+    <!-- Step 1: Nome do patrimônio -->
+    <div class="step-wrap active" id="step-1">
+      <div class="step-num">Passo 1 de 4</div>
+      <div class="step-title">Qual é o nome do seu patrimônio?</div>
+      <div class="step-hint">
+        Pense em um lugar histórico, uma área natural ou uma tradição cultural do seu bairro, cidade ou região
+        que você acha importante preservar.
+        Pode ser uma praça antiga, um parque, uma festa típica, uma receita tradicional...
+      </div>
+      <div class="field-label">Nome do patrimônio <span>*</span></div>
+      <input type="text" id="f-nome" maxlength="80" placeholder="Ex.: Feira de Artesanato da Rua X, Parque do Bairro Y...">
+      <div class="char-count" id="cc-nome">0/80</div>
+      <div class="field-label" style="margin-top:14px">Localização (cidade ou bairro) <span>*</span></div>
+      <input type="text" id="f-local" maxlength="60" placeholder="Ex.: São Paulo (SP), Bairro da Liberdade...">
+      <div class="char-count" id="cc-local">0/60</div>
+      <div class="nav-btns">
+        <button class="btn-next-step" onclick="goStep(2)">Próximo →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Categoria -->
+    <div class="step-wrap" id="step-2">
+      <div class="step-num">Passo 2 de 4</div>
+      <div class="step-title">Que tipo de patrimônio é esse?</div>
+      <div class="step-hint">
+        Lembre-se das três categorias que a Unesco reconhece:
+      </div>
+      <div class="radio-group" id="cat-group">
+        <label class="radio-opt" id="opt-cultural">
+          <input type="radio" name="categoria" value="cultural" onchange="selectCat(this)">
+          <div>
+            <div class="opt-title">🏰 Patrimônio Cultural</div>
+            <div class="opt-desc">Monumentos, castelos, igrejas, conjuntos históricos — criados pelo ser humano. Ex.: Carcassonne, Ouro Preto.</div>
+          </div>
+        </label>
+        <label class="radio-opt" id="opt-natural">
+          <input type="radio" name="categoria" value="natural" onchange="selectCat(this)">
+          <div>
+            <div class="opt-title">🌿 Patrimônio Natural</div>
+            <div class="opt-desc">Formações geológicas, habitats de animais em extinção, parques e reservas. Ex.: Serengeti, Everglades.</div>
+          </div>
+        </label>
+        <label class="radio-opt" id="opt-imaterial">
+          <input type="radio" name="categoria" value="imaterial" onchange="selectCat(this)">
+          <div>
+            <div class="opt-title">🎭 Patrimônio Imaterial</div>
+            <div class="opt-desc">Tradições orais, danças, rituais, habilidades artesanais transmitidas de geração em geração. Ex.: Karagöz.</div>
+          </div>
+        </label>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-back-step" onclick="goStep(1)">← Voltar</button>
+        <button class="btn-next-step" onclick="goStep(3)">Próximo →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Ameaça -->
+    <div class="step-wrap" id="step-3">
+      <div class="step-num">Passo 3 de 4</div>
+      <div class="step-title">Por que esse patrimônio está em perigo?</div>
+      <div class="step-hint">
+        Escolha uma ou mais ameaças (os mesmos tipos que ameaçam patrimônios reais do mundo):
+      </div>
+      <div class="threat-opts" id="threat-opts">
+        <button class="threat-btn" onclick="toggleThreat(this,'Poluição')">🏭 Poluição</button>
+        <button class="threat-btn" onclick="toggleThreat(this,'Desmatamento')">🌳 Desmatamento</button>
+        <button class="threat-btn" onclick="toggleThreat(this,'Construções modernas')">🏗️ Construções modernas</button>
+        <button class="threat-btn" onclick="toggleThreat(this,'Abandono e falta de cuidado')">😢 Abandono</button>
+        <button class="threat-btn" onclick="toggleThreat(this,'Mineração')">⛏️ Mineração</button>
+        <button class="threat-btn" onclick="toggleThreat(this,'Caça ilegal')">🚫 Caça ilegal</button>
+        <button class="threat-btn" onclick="toggleThreat(this,'Esquecimento cultural')">📖 Esquecimento</button>
+        <button class="threat-btn" onclick="toggleThreat(this,'Outras razões')">➕ Outros</button>
+      </div>
+      <div class="field-label" style="margin-top:14px">Explique a ameaça com suas palavras <span>*</span></div>
+      <textarea id="f-ameaca" rows="3" maxlength="300" placeholder="Ex.: Novas construções estão sendo feitas ao redor do parque, destruindo as árvores antigas..."></textarea>
+      <div class="char-count" id="cc-ameaca">0/300</div>
+      <div class="nav-btns">
+        <button class="btn-back-step" onclick="goStep(2)">← Voltar</button>
+        <button class="btn-next-step" onclick="goStep(4)">Próximo →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Justificativa + Preview -->
+    <div class="step-wrap" id="step-4">
+      <div class="step-num">Passo 4 de 4</div>
+      <div class="step-title">Por que esse patrimônio merece ser protegido?</div>
+      <div class="step-hint">
+        Convença a Unesco! Fale sobre o valor histórico, natural ou cultural desse lugar ou tradição para a comunidade.
+      </div>
+      <div class="field-label">Justificativa <span>*</span></div>
+      <textarea id="f-justif" rows="4" maxlength="400" placeholder="Ex.: Esta festa de colheita existe há mais de 100 anos na nossa cidade. As receitas e danças são transmitidas oralmente pelos mais velhos e fazem parte da identidade do nosso povo..."></textarea>
+      <div class="char-count" id="cc-justif">0/400</div>
+      <div class="nav-btns">
+        <button class="btn-back-step" onclick="goStep(3)">← Voltar</button>
+        <button class="btn-next-step" onclick="showPreview()">Ver prévia →</button>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="step-wrap" id="step-preview">
+      <div class="step-num">Prévia da proposta</div>
+      <div class="step-title">Sua proposta de Patrimônio em Perigo</div>
+      <div class="preview-card" id="preview-card"></div>
+      <div style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:16px;">
+        Leia a sua proposta. Se quiser ajustar algo, volte e edite.
+      </div>
+      <div class="nav-btns">
+        <button class="btn-back-step" onclick="goStep(4)">← Ajustar</button>
+        <button class="btn-next-step" onclick="submitProposal()">Enviar proposta 🏛️</button>
+      </div>
+    </div>
+
+    <!-- Celebration -->
+    <div class="celebration" id="celebration">
+      <div class="celeb-emoji">🏛️</div>
+      <div class="celeb-title">Proposta enviada!</div>
+      <div class="celeb-stars">⭐⭐⭐</div>
+      <div class="celeb-sub">
+        Você aplicou os conceitos de <strong>Patrimônio Cultural, Natural e Imaterial</strong>
+        para propor a proteção de um bem importante para a sua comunidade —
+        exatamente o que a Unesco faz desde 1972!
+      </div>
+      <button class="btn-new" onclick="restart()">Criar outra proposta</button>
+    </div>
+  </div>
+</div>
+<script>
+var criadStep = 1;
+var selectedThreats = [];
+var selectedCat = '';
+
+var catColors = {
+  cultural:  '#7C3AED',
+  natural:   '#059669',
+  imaterial: '#0284C7'
+};
+var catLabels = {
+  cultural:  '🏰 Patrimônio Cultural',
+  natural:   '🌿 Patrimônio Natural',
+  imaterial: '🎭 Patrimônio Imaterial'
+};
+
+// Character counters
+function setupCounters() {
+  var fields = [
+    ['f-nome','cc-nome',80],['f-local','cc-local',60],
+    ['f-ameaca','cc-ameaca',300],['f-justif','cc-justif',400]
+  ];
+  fields.forEach(function(f) {
+    var el = document.getElementById(f[0]);
+    var cc = document.getElementById(f[1]);
+    el.addEventListener('input', function() {
+      cc.textContent = el.value.length + '/' + f[2];
+    });
+  });
+}
+setupCounters();
+
+function goStep(n) {
+  if (n === 2) {
+    var nome = document.getElementById('f-nome').value.trim();
+    var local = document.getElementById('f-local').value.trim();
+    if (!nome || !local) { alert('Preencha o nome e a localização antes de continuar.'); return; }
+  }
+  if (n === 3) {
+    if (!selectedCat) { alert('Selecione uma categoria antes de continuar.'); return; }
+  }
+  if (n === 4) {
+    var ameaca = document.getElementById('f-ameaca').value.trim();
+    if (!ameaca) { alert('Descreva a ameaça antes de continuar.'); return; }
+  }
+
+  document.getElementById('step-' + criadStep) && (document.getElementById('step-' + criadStep).classList.remove('active'));
+  document.getElementById('step-preview') && (document.getElementById('step-preview').classList.remove('active'));
+
+  document.getElementById('sdot-' + criadStep).className = 'step-dot done';
+  criadStep = n;
+
+  var stepEl = document.getElementById('step-' + n);
+  if (stepEl) {
+    stepEl.classList.add('active');
+    document.getElementById('sdot-' + n).className = 'step-dot active';
+  }
+}
+
+function selectCat(radio) {
+  selectedCat = radio.value;
+  document.querySelectorAll('.radio-opt').forEach(function(opt) {
+    opt.classList.remove('selected');
+  });
+  radio.closest('.radio-opt').classList.add('selected');
+}
+
+function toggleThreat(btn, threat) {
+  var idx = selectedThreats.indexOf(threat);
+  if (idx === -1) {
+    selectedThreats.push(threat);
+    btn.classList.add('selected');
+  } else {
+    selectedThreats.splice(idx, 1);
+    btn.classList.remove('selected');
+  }
+}
+
+function showPreview() {
+  var justif = document.getElementById('f-justif').value.trim();
+  if (!justif) { alert('Escreva a justificativa antes de continuar.'); return; }
+
+  var nome   = document.getElementById('f-nome').value.trim();
+  var local  = document.getElementById('f-local').value.trim();
+  var ameaca = document.getElementById('f-ameaca').value.trim();
+
+  var color = catColors[selectedCat] || '#B45309';
+  var label = catLabels[selectedCat] || '';
+
+  var threatsText = selectedThreats.length > 0 ? selectedThreats.join(', ') : '(não especificadas)';
+
+  document.getElementById('preview-card').innerHTML =
+    '<span class="preview-badge" style="background:' + color + '">' + label + '</span>' +
+    '<div class="preview-title">' + nome + '</div>' +
+    '<div class="preview-row"><strong>Local:</strong> ' + local + '</div>' +
+    '<div class="preview-row"><strong>Ameaças:</strong> ' + threatsText + '</div>' +
+    '<div class="preview-row"><strong>Por que está em perigo:</strong> ' + ameaca + '</div>' +
+    '<div class="preview-row"><strong>Por que merece proteção:</strong> ' + justif + '</div>';
+
+  document.getElementById('step-4').classList.remove('active');
+  document.getElementById('step-preview').classList.add('active');
+  document.getElementById('sdot-4').className = 'step-dot done';
+}
+
+function submitProposal() {
+  document.getElementById('step-preview').classList.remove('active');
+  document.getElementById('celebration').classList.add('show');
+  window.sabendoScore = 100;
+  document.dispatchEvent(new Event('sabendo:criador-done'));
+}
+
+function restart() {
+  criadStep = 1;
+  selectedThreats = [];
+  selectedCat = '';
+  ['f-nome','f-local','f-ameaca','f-justif'].forEach(function(id) {
+    document.getElementById(id).value = '';
+  });
+  ['cc-nome','cc-local','cc-ameaca','cc-justif'].forEach(function(id) {
+    var el = document.getElementById(id);
+    var max = id === 'cc-ameaca' ? '300' : id === 'cc-justif' ? '400' : id === 'cc-local' ? '60' : '80';
+    el.textContent = '0/' + max;
+  });
+  document.querySelectorAll('.radio-opt').forEach(function(opt) { opt.classList.remove('selected'); });
+  document.querySelectorAll('.threat-btn').forEach(function(btn) { btn.classList.remove('selected'); });
+  document.getElementById('celebration').classList.remove('show');
+  document.getElementById('step-preview').classList.remove('active');
+  for (var i = 1; i <= 4; i++) {
+    document.getElementById('sdot-' + i).className = 'step-dot' + (i === 1 ? ' active' : '');
+  }
+  document.getElementById('step-1').classList.add('active');
+}
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "patrimonio-mundial";
+  var ACTIVITY_TYPE = "criador";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Legado",
+    characterEmoji: "🏛️",
+    characterImg:   "chars/patrimonio-mundial-hd.png",
+    themeLabel:     "Patrimônio Material, Natural e Imaterial · História",
+    totalActivities: 4,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: "../../index.html#theme-hist-patrimonio-mundial",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var criadScore = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: criadScore, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete a Definição — Tombamento e Patrimônio</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #B45309; --light: #F59E0B; --bg: #FFFBEB; --dark: #78350F; --border: #FDE68A; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Baloo 2', sans-serif; background: var(--bg); min-height: 100vh; color: #1A1A2E; }
+.hero { background: linear-gradient(135deg, #78350F, #B45309 60%, #F59E0B); padding: 1.8rem 1.5rem 1.5rem; text-align: center; color: white; }
+.hero-emoji { font-size: 2.8rem; margin-bottom: .3rem; }
+.hero h1 { font-size: 1.4rem; font-weight: 900; line-height: 1.2; }
+.hero p { font-size: .9rem; opacity: .9; margin-top: .3rem; }
+.container { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.instrucao { background: white; border: 2px solid var(--border); border-radius: 14px; padding: 1rem 1.2rem; font-size: .9rem; font-weight: 600; color: #374151; margin-bottom: 1.2rem; line-height: 1.5; }
+.instrucao strong { color: var(--primary); }
+.text-card { background: white; border: 2px solid var(--border); border-radius: 18px; padding: 1.6rem 1.4rem; font-size: 1.08rem; font-weight: 600; line-height: 2.2; color: #1A1A2E; margin-bottom: 1.2rem; box-shadow: 0 2px 12px rgba(180,83,9,.07); }
+.text-card em { font-style: normal; font-weight: 700; color: var(--primary); }
+.blank { display: inline-flex; align-items: center; justify-content: center; min-width: 160px; min-height: 36px; border-radius: 8px; border: 2.5px dashed #FCD34D; background: #FEF3C7; padding: 2px 10px; font-size: .95rem; font-weight: 700; cursor: pointer; transition: all .18s; vertical-align: middle; margin: 0 2px; color: transparent; user-select: none; }
+.blank.has-word { color: var(--dark); background: #FEF9C3; border-style: solid; border-color: var(--light); }
+.blank.has-word:hover { background: #FBBF24; border-color: var(--primary); color: white; }
+.blank.correct { background: #d1fae5; border-color: #059669; border-style: solid; color: #065f46; cursor: default; }
+.blank.wrong { background: #fee2e2; border-color: #DC2626; border-style: solid; color: #7f1d1d; cursor: default; }
+.blank.empty-hint { animation: pulse .6s 2; }
+@keyframes pulse { 0%,100%{border-color:#FCD34D} 50%{border-color:#B45309} }
+.bank-label { font-family: 'Space Mono', monospace; font-size: .8rem; font-weight: 800; color: var(--primary); letter-spacing: .06em; margin-bottom: .6rem; }
+.word-bank { display: flex; flex-wrap: wrap; gap: .5rem; background: white; border: 2px solid var(--border); border-radius: 14px; padding: 1rem; margin-bottom: 1.2rem; min-height: 54px; }
+.word-btn { font-family: 'Baloo 2', sans-serif; font-size: .9rem; font-weight: 700; padding: .45rem 1.1rem; border-radius: 999px; border: 2px solid var(--border); background: var(--bg); color: var(--dark); cursor: pointer; transition: all .15s; }
+.word-btn:hover { background: var(--primary); color: white; border-color: var(--primary); transform: scale(1.05); }
+.word-btn.used { opacity: 0; pointer-events: none; }
+.check-btn { background: linear-gradient(135deg, var(--primary), var(--light)); color: white; border: none; border-radius: 12px; padding: .85rem 2.2rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: transform .15s; display: none; }
+.check-btn:hover { transform: scale(1.04); }
+.feedback-panel { display: none; background: white; border: 2px solid var(--border); border-radius: 18px; padding: 1.4rem; margin-top: 1rem; }
+.feedback-title { font-family: 'Space Mono', monospace; font-size: .9rem; font-weight: 800; color: var(--primary); margin-bottom: .8rem; }
+.feedback-row { display: flex; align-items: flex-start; gap: .8rem; margin-bottom: .6rem; font-size: .9rem; font-weight: 600; line-height: 1.4; }
+.fb-icon { font-size: 1.1rem; flex-shrink: 0; }
+.answer-reveal { background: #FEF3C7; border-radius: 12px; padding: .7rem 1rem; margin-top: .8rem; font-size: .9rem; font-weight: 600; border: 1px solid #FCD34D; }
+.answer-reveal strong { color: var(--dark); }
+.score-display { text-align: center; margin-top: 1rem; }
+.score-big { font-size: 2.4rem; font-weight: 900; color: var(--primary); }
+.score-msg { font-size: .95rem; font-weight: 700; color: #6b7280; margin-top: .3rem; }
+.retry-btn { background: white; border: 2.5px solid var(--primary); color: var(--primary); border-radius: 12px; padding: .7rem 1.8rem; font-family: 'Baloo 2', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: .8rem; transition: all .2s; }
+.retry-btn:hover { background: var(--primary); color: white; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; padding: 1rem 1rem 0; cursor: pointer; }
+</style>
+</head>
+<body>
+<a class="back-link" onclick="voltarAoPortal()" href="#">← Voltar ao Portal</a>
+<div class="hero">
+  <div class="hero-emoji">📋</div>
+  <h1>Complete a Definição</h1>
+  <p>Tombamento e Patrimônio · História 5º ano</p>
+</div>
+<div class="container">
+  <div class="instrucao">
+    <strong>Como fazer:</strong> Clique em uma <strong>palavra do banco</strong> e ela irá para a próxima lacuna vazia.
+    Para devolver uma palavra, clique na lacuna preenchida. Quando terminar, clique em <strong>Verificar</strong>!
+  </div>
+
+  <div class="text-card" id="text-block">
+    O tombamento é um <span class="blank" id="b0" onclick="returnWord(0)" title="Clique para devolver"></span>
+    do <span class="blank" id="b1" onclick="returnWord(1)" title="Clique para devolver"></span>
+    que, por meio de <span class="blank" id="b2" onclick="returnWord(2)" title="Clique para devolver"></span>,
+    preserva bens de valor <span class="blank" id="b3" onclick="returnWord(3)" title="Clique para devolver"></span>,
+    cultural, arquitetônico, ambiental ou
+    <span class="blank" id="b4" onclick="returnWord(4)" title="Clique para devolver"></span>,
+    impedindo a sua <span class="blank" id="b5" onclick="returnWord(5)" title="Clique para devolver"></span>
+    ou <span class="blank" id="b6" onclick="returnWord(6)" title="Clique para devolver"></span>.
+  </div>
+
+  <div class="bank-label">📦 BANCO DE PALAVRAS — clique para preencher</div>
+  <div class="word-bank" id="word-bank"></div>
+
+  <button class="check-btn" id="check-btn" onclick="checkAnswers()">Verificar respostas ✓</button>
+
+  <div class="feedback-panel" id="feedback-panel">
+    <div class="feedback-title" id="fb-title">RESULTADO</div>
+    <div id="fb-rows"></div>
+    <div class="answer-reveal" id="answer-reveal" style="display:none"></div>
+    <div class="score-display">
+      <div class="score-big" id="fb-score"></div>
+      <div class="score-msg" id="fb-msg"></div>
+      <br>
+      <button class="retry-btn" onclick="resetActivity()">↺ Tentar novamente</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var BLANKS_DATA = [
+  { answer: "ato administrativo",   hint: "Lacuna 1: tipo de ação do poder público" },
+  { answer: "Poder Público",         hint: "Lacuna 2: quem realiza o tombamento" },
+  { answer: "legislação específica", hint: "Lacuna 3: o instrumento legal utilizado" },
+  { answer: "histórico",             hint: "Lacuna 4: um dos valores que justifica o tombamento" },
+  { answer: "afetivo",               hint: "Lacuna 5: outro valor que justifica o tombamento" },
+  { answer: "destruição",            hint: "Lacuna 6: o que o tombamento impede (1)" },
+  { answer: "descaracterização",     hint: "Lacuna 7: o que o tombamento impede (2)" },
+];
+
+var FEEDBACK_EXPLANATION = [
+  "O tombamento é um <strong>ato administrativo</strong> — uma ação formal do governo, não uma lei ou acordo informal.",
+  "Quem realiza o tombamento é o <strong>Poder Público</strong> — pode ser nas esferas municipal, estadual ou federal.",
+  "O tombamento é feito por meio de <strong>legislação específica</strong> — há leis próprias que regulam como um bem é tombado.",
+  "O tombamento preserva bens de valor <strong>histórico</strong> — além de cultural, arquitetônico, ambiental ou afetivo.",
+  "O tombamento também protege bens de valor <strong>afetivo</strong> — ou seja, que têm grande importância emocional para uma comunidade.",
+  "O tombamento impede a <strong>destruição</strong> do bem — ele não pode ser demolido ou eliminado.",
+  "O tombamento também impede a <strong>descaracterização</strong> — ou seja, mudanças que destruam as características originais do bem."
+];
+
+var WORD_BANK_OPTIONS = [
+  "ato administrativo", "lei penal", "acordo privado",
+  "Poder Público", "Empresa Privada", "Governo Estrangeiro",
+  "legislação específica", "tradição oral", "decreto informal",
+  "histórico", "financeiro", "turístico",
+  "afetivo", "lucrativo", "político",
+  "destruição", "venda", "restauração",
+  "descaracterização", "modernização", "remodelação"
+];
+
+var lacunaFilled = new Array(7).fill(null);
+var wordUsed = {};
+var checked = false;
+
+function shuffleArr(arr) {
+  var a = arr.slice();
+  for (var i = a.length-1; i > 0; i--) {
+    var j = Math.floor(Math.random()*(i+1));
+    var tmp=a[i]; a[i]=a[j]; a[j]=tmp;
+  }
+  return a;
+}
+
+function buildBank() {
+  var bank = document.getElementById('word-bank');
+  bank.innerHTML = '';
+  var shuffled = shuffleArr(WORD_BANK_OPTIONS);
+  shuffled.forEach(function(w) {
+    var btn = document.createElement('button');
+    btn.className = 'word-btn' + (wordUsed[w] ? ' used' : '');
+    btn.textContent = w;
+    btn.dataset.word = w;
+    btn.addEventListener('click', function() { placeWord(w, btn); });
+    bank.appendChild(btn);
+  });
+}
+
+function getBtn(w) {
+  var btns = document.querySelectorAll('.word-btn');
+  for (var i=0;i<btns.length;i++) { if (btns[i].dataset.word===w) return btns[i]; }
+  return null;
+}
+
+function placeWord(w, btn) {
+  if (checked) return;
+  if (wordUsed[w]) return;
+  // find first empty blank
+  var idx = -1;
+  for (var i=0;i<lacunaFilled.length;i++) { if (lacunaFilled[i]===null) { idx=i; break; } }
+  if (idx === -1) return;
+  lacunaFilled[idx] = w;
+  wordUsed[w] = true;
+  btn.classList.add('used');
+  updateBlanks();
+  checkAllFilled();
+}
+
+function returnWord(idx) {
+  if (checked) return;
+  var w = lacunaFilled[idx];
+  if (!w) return;
+  lacunaFilled[idx] = null;
+  wordUsed[w] = false;
+  var btn = getBtn(w);
+  if (btn) btn.classList.remove('used');
+  updateBlanks();
+  document.getElementById('check-btn').style.display = 'none';
+}
+
+function updateBlanks() {
+  for (var i=0;i<lacunaFilled.length;i++) {
+    var el = document.getElementById('b'+i);
+    if (lacunaFilled[i]) {
+      el.textContent = lacunaFilled[i];
+      el.classList.add('has-word');
+    } else {
+      el.textContent = '';
+      el.classList.remove('has-word');
+    }
+  }
+}
+
+function checkAllFilled() {
+  var allFilled = lacunaFilled.every(function(v){ return v!==null; });
+  document.getElementById('check-btn').style.display = allFilled ? 'inline-block' : 'none';
+}
+
+function checkAnswers() {
+  checked = true;
+  document.getElementById('check-btn').style.display = 'none';
+  var lacunaHits = 0;
+  for (var i=0;i<BLANKS_DATA.length;i++) {
+    var el = document.getElementById('b'+i);
+    el.onclick = null;
+    if (lacunaFilled[i] === BLANKS_DATA[i].answer) {
+      el.classList.remove('has-word');
+      el.classList.add('correct');
+      lacunaHits++;
+    } else {
+      el.classList.remove('has-word');
+      el.classList.add('wrong');
+    }
+  }
+  var pct = Math.round((lacunaHits / BLANKS_DATA.length) * 100);
+  window.sabendoScore = pct;
+
+  // build feedback rows
+  var rows = '';
+  for (var i=0;i<BLANKS_DATA.length;i++) {
+    var ok = lacunaFilled[i] === BLANKS_DATA[i].answer;
+    rows += '<div class="feedback-row"><span class="fb-icon">' + (ok?'✅':'❌') + '</span>' +
+      '<div>' + FEEDBACK_EXPLANATION[i] + '</div></div>';
+  }
+  document.getElementById('fb-rows').innerHTML = rows;
+  document.getElementById('fb-score').textContent = lacunaHits + '/7 corretas';
+  var msgs = ['Continue estudando! Leia novamente a definição de tombamento. 📚',
+              'Quase! Mais um pouco de revisão e você acerta tudo. 💪',
+              'Muito bem! Você conhece bem o tombamento. 🌟',
+              'Perfeito! Guardião do patrimônio! 🏆'];
+  var mIdx = lacunaHits <= 2 ? 0 : lacunaHits <= 4 ? 1 : lacunaHits <= 6 ? 2 : 3;
+  document.getElementById('fb-msg').textContent = msgs[mIdx];
+  document.getElementById('feedback-panel').style.display = 'block';
+}
+
+function resetActivity() {
+  checked = false;
+  lacunaFilled = new Array(7).fill(null);
+  wordUsed = {};
+  for (var i=0;i<7;i++) {
+    var el = document.getElementById('b'+i);
+    el.className = 'blank';
+    el.textContent = '';
+    el.onclick = (function(idx){ return function(){ returnWord(idx); }; })(i);
+  }
+  document.getElementById('feedback-panel').style.display = 'none';
+  document.getElementById('check-btn').style.display = 'none';
+  buildBank();
+}
+
+buildBank();
+</script>
+
+<!-- concluir-btn -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../../shared/gamification.js"></script>
+<script>
+(function() {
+  var SUPA_URL = "https://mmtrzxmitklpibfilbio.supabase.co";
+  var SUPA_KEY = "sb_publishable_ZgA70ikD1XRgEhxzz7aKzQ_TNSAsxQ_";
+  var DISCIPLINE = "hist";
+  var THEME_SLUG = "tombamento-patrimonio-brasil";
+  var ACTIVITY_TYPE = "complete-lacuna";
+  var supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var GAMI_CONFIG = {
+    characterName: "Carimbo",
+    characterEmoji: "📮",
+    characterImg:   "chars/tombamento-patrimonio-brasil-hd.png",
+    themeLabel:     "O Tombamento e o Patrimônio no Brasil · História",
+    totalActivities: 4,
+    primaryColor: "#B45309",
+    lightColor: "#F59E0B",
+    bgColor: "#FFFBEB",
+    glowRgb: "180,83,9",
+    backUrl: "../../index.html#theme-hist-tombamento-patrimonio-brasil",
+    activityType: ACTIVITY_TYPE,
+  };
+
+  var btn = document.createElement("button");
+  btn.id = "concluir-btn";
+  btn.textContent = "Concluir atividade";
+  btn.style.cssText = "display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:linear-gradient(135deg,#B45309,#F59E0B);color:white;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(180,83,9,.4);font-family:sans-serif;transition:all .2s;";
+  document.body.appendChild(btn);
+
+  var _capturedScore = null;
+  function showBtn() {
+    if (typeof window._sabendoScoreInternal !== "number") return;
+    if (btn.style.display === "none") {
+      _capturedScore = Math.round(window._sabendoScoreInternal);
+      btn.style.display = "block";
+    }
+  }
+
+  var _sabendoScoreInternal = null;
+  try {
+    Object.defineProperty(window, 'sabendoScore', {
+      configurable: true,
+      get: function() { return _sabendoScoreInternal; },
+      set: function(v) {
+        _sabendoScoreInternal = v;
+        window._sabendoScoreInternal = v;
+        showBtn();
+      }
+    });
+  } catch(e) {}
+
+  document.addEventListener('sabendo:criador-done', function() {
+    window._sabendoScoreInternal = 100;
+    showBtn();
+  });
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      var el = m.target;
+      if (m.attributeName === "style" && el.style && el.style.display === "block") {
+        var sig = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig)) showBtn();
+      }
+      if (m.attributeName === "class" && el.classList && el.classList.contains("show")) {
+        var sig2 = (el.id || "") + " " + (el.className || "");
+        if (/result|score|gabarito|feedback|correc/i.test(sig2)) showBtn();
+      }
+    });
+  });
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class","style"] });
+
+  btn.addEventListener("click", async function() {
+    btn.textContent = "Registrando...";
+    btn.disabled = true;
+
+    var res = await supa.auth.getSession();
+    var session = res.data.session;
+    if (!session) {
+      btn.textContent = "Faca login no portal";
+      btn.style.background = "#EF4444";
+      setTimeout(function() { btn.textContent = "Concluir atividade"; btn.style.background = "linear-gradient(135deg,#B45309,#F59E0B)"; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    var uid = session.user.id;
+    var score = _capturedScore;
+    var today = new Date().toISOString().split("T")[0];
+
+    var existCheck = await supa.from("activity_log")
+      .select("id").eq("user_id", uid).eq("theme_slug", THEME_SLUG).eq("activity_type", ACTIVITY_TYPE).limit(1);
+    var isFirst = !existCheck.data || existCheck.data.length === 0;
+
+    await supa.from("activity_log").insert({
+      user_id: uid, discipline: DISCIPLINE, theme_slug: THEME_SLUG,
+      activity_type: ACTIVITY_TYPE, score: score, is_first_attempt: isFirst
+    });
+
+    var sr = await supa.from("streaks").select("*").eq("user_id", uid).single();
+    if (sr.data) {
+      var s = sr.data;
+      var yest = new Date(); yest.setDate(yest.getDate() - 1);
+      var yStr = yest.toISOString().split("T")[0];
+      var ns = (s.last_activity_date === today) ? s.current_streak : (s.last_activity_date === yStr) ? s.current_streak + 1 : 1;
+      await supa.from("streaks").update({ current_streak: ns, longest_streak: Math.max(ns, s.longest_streak), last_activity_date: today, total_activities: s.total_activities + 1, updated_at: new Date().toISOString() }).eq("user_id", uid);
+    }
+
+    btn.style.display = "none";
+
+    if (window.SabendoGamification) {
+      await SabendoGamification.run(supa, uid, THEME_SLUG, DISCIPLINE, GAMI_CONFIG);
+    }
+  });
+})();
+</script>
+<script src="../../shared/portal-back.js"></script>
+</body>
+</html>
