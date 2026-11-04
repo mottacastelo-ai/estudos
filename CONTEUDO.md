@@ -654,7 +654,7 @@
 
 ### Tombamento Patrimonio Brasil
 **Personagem:** Carimbo (carimbo de madeira animado, base de borracha vermelha, selo dourado protetor)
-**HQ:** ❌ `hq-tombamento-patrimonio-brasil.png` (ausente) | Prompt: ✅
+**HQ:** ✅ `hq-tombamento-patrimonio-brasil.png` | Páginas: ✅ pg1–pg4 | Prompt: ✅
 
 | Atividade | Arquivo |
 |---|---|
@@ -677,6 +677,7 @@
 | `Calco.png` |
 | `Calê.png` |
 | `CamaleaoLing.png` |
+| `Carimbo.png` |
 | `Ciclao.png` |
 | `Circo.png` |
 | `Concorda.png` |
